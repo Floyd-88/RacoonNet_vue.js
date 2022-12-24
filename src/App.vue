@@ -1,26 +1,32 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <div>
+      <HeaderNet/>
+    </div>
+   <div>
+     <NavigationNet/>
+     <FooterNet/>
+   </div>
+
+  </div>
+
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import HeaderNet from "@/components/HeaderNet";
+import NavigationNet from "@/components/NavigationNet";
+import FooterNet from "@/components/FooterNet";
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    FooterNet,
+    NavigationNet,
+    HeaderNet,
+
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
