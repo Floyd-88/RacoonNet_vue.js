@@ -1,5 +1,4 @@
 <template>
-  <div>
     <header class="header">
       <div class="header_wrapper_logo">
         <img class="header_logo" src="../assets/logo/logo.png">
@@ -8,16 +7,6 @@
         <h1 class="header_title"> RacoonNet</h1>
       </div>
     </header>
-    <nav>
-
-    </nav>
-    <main>
-
-    </main>
-    <footer>
-
-    </footer>
-  </div>
 </template>
 
 <script>
@@ -33,6 +22,8 @@ export default {
   background: cornflowerblue;
   border: 1px solid black;
   justify-content: flex-start;
+  position: fixed;
+  width: 100%;
 }
 .header_wrapper_logo {
   display: flex;
