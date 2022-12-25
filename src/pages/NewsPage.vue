@@ -1,4 +1,6 @@
-
+<template>
+  Новости
+</template>
 
 <script>
 export default {

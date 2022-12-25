@@ -1,26 +1,27 @@
 <template>
   <div class="wrapper_nav">
     <div class="wrapper_nav_link">
-      <p class="link">Моя страница</p>
+       <button class="link" @click="$router.push('/mypage')"> Моя страница </button>
     </div>
     <div class="wrapper_nav_link">
-      <p class="link">Сообщения</p>
+      <button class="link" @click="$router.push('/message')">Сообщения</button>
     </div>
     <div class="wrapper_nav_link">
-      <p class="link">Мои друзья</p>
+      <button class="link" @click="$router.push('/friends')"> Мои друзья</button>
     </div>
     <div class="wrapper_nav_link">
-      <p class="link">Галерея</p>
+      <button class="link" @click="$router.push('/gallery')"> Галерея</button>
     </div>
     <div class="wrapper_nav_link">
-      <p class="link">Новости</p>
+      <button class="link" @click="$router.push('/news')"> Новости </button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "NavigationNet"
+  name: "NavigationNet",
+
 }
 </script>
 
@@ -42,5 +43,8 @@ export default {
   margin: 10px 0px;
   font-size: 18px;
   font-family: cursive;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 </style>

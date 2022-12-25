@@ -1,9 +1,9 @@
 <template>
+  <HeaderNet/>
   <div class="wrapper">
-    <HeaderNet/>
     <NavigationNet/>
     <div class="wrapper_main">
-      <MainPage/>
+      <router-view></router-view>
     </div>
   </div>
 
@@ -12,14 +12,10 @@
 <script>
 import HeaderNet from "@/components/HeaderNet";
 import NavigationNet from "@/components/NavigationNet";
-// import FooterNet from "@/components/FooterNet";
-import MainPage from "@/pages/MainPage";
 
 export default {
   name: 'App',
   components: {
-    MainPage,
-    // FooterNet,
     NavigationNet,
     HeaderNet,
 
@@ -37,6 +33,7 @@ body {
   background: aliceblue;
 }
 .wrapper {
+  margin: 0 10%;
 }
 
 .wrapper_main {

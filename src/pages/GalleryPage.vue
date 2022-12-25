@@ -1,4 +1,6 @@
-
+<template>
+  Галерея
+</template>
 
 <script>
 export default {

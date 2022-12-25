@@ -1,4 +1,6 @@
-
+<template>
+  Сообщения
+</template>
 
 <script>
 export default {

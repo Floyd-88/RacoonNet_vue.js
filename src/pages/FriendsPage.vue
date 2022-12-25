@@ -1,4 +1,6 @@
-
+<template>
+  Мои друзья
+</template>
 
 <script>
 export default {
