@@ -10,16 +10,10 @@
 </template>
 
 <script>
-import HeaderNet from "@/components/HeaderNet";
-import NavigationNet from "@/components/NavigationNet";
 
 export default {
   name: 'App',
-  components: {
-    NavigationNet,
-    HeaderNet,
-
-  }
+  components: {}
 }
 </script>
 

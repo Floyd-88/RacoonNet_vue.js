@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import pages from '@/pages'
+import components from "@/components";
 import router from "@/router/router";
 
 
@@ -11,9 +12,9 @@ pages.forEach(page => {
     app.component(page.name, page)
 });
 
-// components.forEach(comp=> {
-//     app.component(comp.name, comp)
-// })
+components.forEach(comp=> {
+    app.component(comp.name, comp)
+})
 
 app.use(router)
 app.mount('#app');
