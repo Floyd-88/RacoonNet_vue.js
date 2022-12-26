@@ -1,44 +1,90 @@
 <template>
 
-  <div class="post">
+  <div class="post"
+       v-for="post of posts"
+       :key="post.id"
+  >
+
     <div class="wrapper_post">
 
       <div class="wrapper_ava_posts">
-        <img class="ava_posts" src="@/assets/ava/ava_1.jpg" alt="">
+        <img class="ava_posts" :src=post.ava alt="ava">
       </div>
 
       <div class="wrapper_post_user">
         <div class="wrapper_post_name">
-          <p class="post_name">Name</p>
+          <p class="post_name">{{ post.name + " " + post.surname }}</p>
         </div>
 
         <div class="wrapper_data_post">
-          <p class="data_post">01.01.2022</p>
+          <p class="data_post">{{ post.date }}</p>
         </div>
 
-        <div class="wrapper_text_post">
-          <p class="text_post">Lorem ipsum dolor sit amet, consectetur adipisicing elit. A accusamus animi at aut
-            blanditiis culpa cumque delectus deserunt ea error fuga, incidunt magnam maxime minima minus modi,
-            necessitatibus nemo officia officiis, omnis porro quisquam reiciendis sapiente suscipit unde.</p>
-        </div>
+        <template v-if="post.flag">
+
+          <div class="wrapper_text_post">
+            <p class="text_post">
+              {{ post.body }}
+            </p>
+          </div>
+
+        </template>
+
+        <template v-else>
+          <div class="wrapper_edit_text_body">
+             <textarea
+                 class="edit_text_body"
+                 :value="value"
+                 @input="this.$emit('update:value', $event.target.value)"
+             ></textarea>
+          </div>
+
+        </template>
       </div>
 
     </div>
 
+
     <div class="btns_post">
-      <UIbtn>Редактировать</UIbtn>
-      <UIbtn style="margin-left: 5px">Удалить</UIbtn>
+      <UIbtn
+          @click="editPost(post.id)"
+      >
+        {{ post.nameBtnEdit }}
+      </UIbtn>
+      <UIbtn style="margin-left: 5px"
+             @click="this.$emit('removePost', post.id)"
+      >
+        Удалить
+      </UIbtn>
     </div>
 
   </div>
+
+
 </template>
 
 <script>
-import UIbtn from "@/components/UI/UIbtn";
 
 export default {
   name: "PostMyPage",
-  components: {UIbtn}
+  emits: [
+    "removePost",
+    "editPost",
+    "update:value",
+  ],
+  props: {
+    value: [String, Number],
+    posts: {
+      type: Array,
+      required: true,
+    },
+  },
+
+  methods: {
+    editPost(id) {
+      this.$emit('editPost', id)
+    },
+  }
 }
 </script>
 
@@ -47,9 +93,12 @@ export default {
   border: 1px solid;
   margin-bottom: 20px;
 }
+
 .wrapper_post {
   display: flex;
   margin-bottom: 10px;
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .wrapper_ava_posts {
@@ -62,7 +111,9 @@ export default {
 }
 
 .wrapper_post_user {
-
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .wrapper_post_name {
@@ -91,10 +142,22 @@ export default {
 .text_post {
 
 }
+
 .btns_post {
   display: flex;
   display: flex;
   justify-content: flex-end;
   margin: 5px;
+}
+
+.wrapper_edit_text_body {
+  width: 100%;
+  padding-right: 5px;
+}
+
+.edit_text_body {
+  width: 100%;
+  resize: none;
+  height: 70px;
 }
 </style>

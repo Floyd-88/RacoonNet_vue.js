@@ -4,6 +4,7 @@ import HeaderNet from "@/components/HeaderNet";
 import PostsMyPage from "@/components/MyPage/PostsMyPage";
 import PostMyPage from "@/components/MyPage/PostMyPage";
 import UIbtn from "@/components/UI/UIbtn";
+import AddPost from "@/components/MyPage/AddPost";
 
 export default [
     UserInfo,
@@ -12,5 +13,6 @@ export default [
     PostsMyPage,
     PostMyPage,
     UIbtn,
+    AddPost
 
 ]

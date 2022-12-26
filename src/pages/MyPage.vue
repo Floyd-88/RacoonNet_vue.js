@@ -1,8 +1,6 @@
 <template>
   <div class="wrapper_myPage">
-
     <UserInfo/>
-
     <div class="wrapper_contents_main">
 
       <div class="wrapper_contents">
@@ -28,7 +26,15 @@
         </div>
 
         <div class="wrapper_posts">
-          <PostsMyPage/>
+          <AddPost
+              @addPost="addPost"
+          />
+          <PostMyPage
+              v-model:value="changePost"
+              :posts="posts"
+              @removePost="removePost"
+              @editPost="editPost"
+          />
         </div>
       </div>
 
@@ -47,6 +53,94 @@
 <script>
 export default {
   name: "MyPage",
+
+  data() {
+    return {
+      changePost: "",
+
+      posts: [
+        {
+          id: "1",
+          ava: '/img/ava_1.776f687c.jpg',
+          name: 'Илья',
+          surname: 'Сазонов',
+          date: '111',
+          body: 'fff',
+          flag: true,
+          nameBtnEdit: "Редактировать",
+        },
+        {
+          id: "2",
+          ava: '/img/ava_1.776f687c.jpg',
+          name: 'Илья',
+          surname: 'Сазонов',
+          date: '222',
+          body: 'jjjjjj',
+          flag: true,
+          nameBtnEdit: "Редактировать",
+        },
+        {
+          id: "3",
+          ava: '/img/ava_1.776f687c.jpg',
+          name: 'Илья',
+          surname: 'Сазонов',
+          date: '333',
+          body: 'kkkkkkk',
+          flag: true,
+          nameBtnEdit: "Редактировать",
+        },
+      ],
+
+    }
+  },
+
+  methods: {
+    addPost(body) {
+      const newPost = {
+        id: Date.now(),
+        ava: '/img/ava_1.776f687c.jpg',
+        name: 'Илья',
+        surname: 'Сазонов',
+        date: this.newDate(),
+        body: body,
+        flag: true,
+        nameBtnEdit: "Редактировать",
+      }
+      this.posts.unshift(newPost);
+    },
+
+    removePost(id) {
+      this.posts = this.posts.filter(post => post.id !== id);
+    },
+
+    editPost(id) {
+      this.posts.map(post => {
+        if (post.flag) {
+          if (post.id === id) {
+            this.changePost = post.body;
+            post.flag = !post.flag;
+            post.nameBtnEdit = "Cохранить";
+          }
+        } else {
+            post.body = this.changePost;
+            post.date = "Изменено: " + this.newDate();
+            post.flag = !post.flag;
+            post.nameBtnEdit = "Редактировать";
+        }
+      })
+    },
+
+    newDate() {
+      const date = new Date();
+      const dateNow = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+      return dateNow;
+    }
+
+  },
+
+  computed: {
+
+  }
 }
 </script>
 
@@ -54,7 +148,6 @@ export default {
 .wrapper_myPage {
 
 }
-
 
 
 .wrapper_contents_main {

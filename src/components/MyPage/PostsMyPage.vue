@@ -1,45 +1,51 @@
 <template>
-  <div class="wrapper_text_new_post">
-    <textarea class="text_new_post" placeholder="Введите текст поста"></textarea>
-  </div>
-
-  <div class="wrapper_btn_addPost">
-<!--    <button class="btn_addPost">Опубликовать</button>-->
-    <UIbtn class="btn_addPost">Опубликовать</UIbtn>
-  </div>
 
 
-    <PostMyPage/>
-
-
+  <PostMyPage
+      :posts="posts"
+  />
 </template>
 
 <script>
-
 export default {
   name: "PostsMyPage",
+  emits: [
+    "addPost",
+  ],
+  props: {
+    // modelValue: [String, Number],
+    posts: {
+      type: Array,
+      required: true,
+    },
+  },
+    data() {
+      return {
+        post: {
+          id: "",
+          ava: '/img/ava_1.776f687c.jpg',
+          name: 'Илья',
+          surname: 'Сазонов',
+          date: '',
+          body: '',
+        },
+      }
+    },
+
+    methods: {
+      addPost(body) {
+        this.post.id = Date.now();
+        this.post.date = new Date();
+        this.body = body;
+        this.$emit('addPost', this.post);
+      },
+    }
+
 }
 </script>
 
 <style scoped>
-.wrapper_text_new_post {
-  width: 100%;
-}
 
-.text_new_post {
-  width: 100%;
-  min-height: 100px;
-  resize: none;
-}
-
-.wrapper_btn_addPost {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-}
-
-.btn_addPost {
-}
 
 
 </style>
