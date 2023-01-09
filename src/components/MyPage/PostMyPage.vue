@@ -61,6 +61,7 @@
   </div>
 
 
+
 </template>
 
 <script>
@@ -84,7 +85,9 @@ export default {
     editPost(id) {
       this.$emit('editPost', id)
     },
-  }
+  },
+
+
 }
 </script>
 
@@ -160,4 +163,6 @@ export default {
   resize: none;
   height: 70px;
 }
+
+
 </style>
