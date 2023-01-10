@@ -68,33 +68,24 @@ export default {
 
   methods: {
     addPost(body) {
-      axios.post('http://localhost:8000/dataBase.js', {
-              ava: '/img/ava_1.776f687c.jpg',
-              name: 'Илья',
-              surname: 'Сазонов',
-              date: this.newDate(),
-              body: body,
-              flag: '1',
-              nameBtnEdit: "Редактировать",
-      })
+      const newPost = {
+        id: Date.now(),
+        ava: '/img/ava_1.776f687c.jpg',
+        name: 'Илья',
+        surname: 'Сазонов',
+        date: this.newDate(),
+        body: body,
+        flag: '1',
+        nameBtnEdit: "Редактировать",
+      }
+      this.posts.unshift(newPost);
+      axios.post('http://localhost:8000/dataBase.js', newPost)
           .then(function (response) {
             console.log(response);
           })
           .catch(function (error) {
             console.log(error);
           });
-
-      // const newPost = {
-      //   id: Date.now(),
-      //   ava: '/img/ava_1.776f687c.jpg',
-      //   name: 'Илья',
-      //   surname: 'Сазонов',
-      //   date: this.newDate(),
-      //   body: body,
-      //   flag: true,
-      //   nameBtnEdit: "Редактировать",
-      // }
-      // this.posts.unshift(newPost);
     },
 
     removePost(id) {
@@ -129,9 +120,10 @@ async loadPostServer() {
         await axios.get('http://localhost:8000/dataBase.js').then((response) => {
           const dd = response.data;
           if(dd.length === 0) {
-            console.log('Посты не найдены')
+            console.log('Посты не найдены');
           } else {
-              this.posts = [...this.posts, ...dd]
+              this.posts = [...this.posts, ...dd];
+            console.log(dd)
             }
         });
       } catch (err) {
@@ -157,7 +149,13 @@ async loadPostServer() {
     observer.observe(this.$refs.observer);
   },
 
-  computed: {}
+  computed: {
+    newPosts() {
+      return this.posts
+    }
+  },
+
+
 }
 </script>
 

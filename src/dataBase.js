@@ -14,7 +14,7 @@ const app = express();
 
 async function load_posts_DB() {
     const connection = await mysql.createConnection(config);
-    const [arr] = await connection.execute("SELECT * FROM posts");
+    const [arr] = await connection.execute("SELECT * FROM posts ORDER BY id DESC ");
     connection.end();
     return arr;
 }
