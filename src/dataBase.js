@@ -11,7 +11,7 @@ const app = express();
 
 
 
-
+// загрузка постов из базы данны
 async function load_posts_DB(params) {
     const connection = await mysql.createConnection(config);
     const [arr] = await connection.execute(`SELECT * FROM posts ORDER BY id DESC LIMIT ${params._count}, ${params._limit}`);
@@ -19,11 +19,21 @@ async function load_posts_DB(params) {
     return arr;
 }
 
+//добавление поста в базу данных
 async function add_post_DB(body) {
     const connection = await mysql.createConnection(config);
     await connection.execute(`INSERT INTO posts(ava, name, surname, date, body, flag, nameBtnEdit) VALUES ('${body.ava}', '${body.name}', '${body.surname}', '${body.date}', '${body.body}', '${body.flag}', '${body.nameBtnEdit}' )`);
     connection.end();
 }
+
+// редактирование поста
+async function edit_post_DB(body) {
+    const connection = await mysql.createConnection(config);
+    await connection.execute(`UPDATE posts SET body='${body.body}' WHERE id = ${body.id}`);
+    connection.end();
+}
+
+// удаление поста
 
 app.use(cors())
 app.use(bodyParser.urlencoded({extended: true}));
@@ -37,6 +47,10 @@ app.get('/dataBase.js', async function(req, res) {
 });
 app.post('/dataBase.js', async function(req, res) {
     await add_post_DB(req.body);
+    res.send(req.body)
+});
+app.put('/dataBase.js', async function(req, res) {
+    await edit_post_DB(req.body);
     res.send(req.body)
 });
 

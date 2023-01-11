@@ -35,6 +35,7 @@
               @removePost="removePost"
               @editPost="editPost"
           />
+
           <div class="wrapper_not_posts"
           v-if="posts.length === 0"
           >
@@ -66,7 +67,7 @@ export default {
 
   data() {
     return {
-      changePost: "", //текс имененного поста при редактировании
+      changePost: "", //текс измененного поста при редактировании
       posts: [], //массив постов подгружаемый из базы данных
       countPosts: 0, //номер массива страницы
       limitPosts: 0, //количество постов на одной странице
@@ -113,6 +114,17 @@ export default {
           }
         } else {
           post.body = this.changePost;
+          axios.put('http://localhost:8000/dataBase.js', {
+            id: post.id,
+            body: post.body,
+          })
+              .then(function(response) {
+                console.log(response)
+              })
+              .catch(function(error) {
+                console.log(error)
+              })
+
           post.date = "Изменено: " + this.newDate();
           post.flag = !post.flag;
           post.nameBtnEdit = "Редактировать";
