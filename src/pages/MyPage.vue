@@ -35,7 +35,13 @@
               @removePost="removePost"
               @editPost="editPost"
           />
+          <div class="wrapper_not_posts"
+          v-if="posts.length === 0"
+          >
+            <p class="not_posts">Посты не найдены!!!</p>
+          </div>
           <div ref="observer" class="observer"></div>
+
         </div>
       </div>
 
@@ -54,19 +60,22 @@
 <script>
 
 import axios from "axios";
-// import connection from "/src/connection.php"
 
 export default {
   name: "MyPage",
 
   data() {
     return {
-      changePost: "",
-      posts: [],
+      changePost: "", //текс имененного поста при редактировании
+      posts: [], //массив постов подгружаемый из базы данных
+      countPosts: 0, //номер массива страницы
+      limitPosts: 0, //количество постов на одной странице
+      totalCount: 0, //всего страниц
     }
   },
 
   methods: {
+    // добавление нового поста на мою страницу
     addPost(body) {
       const newPost = {
         id: Date.now(),
@@ -88,10 +97,12 @@ export default {
           });
     },
 
+    //удаление поста
     removePost(id) {
       this.posts = this.posts.filter(post => post.id !== id);
     },
 
+    // изменение поста
     editPost(id) {
       this.posts.map(post => {
         if (post.flag) {
@@ -109,22 +120,28 @@ export default {
       })
     },
 
+    //функция устанавливает отредактированный формат даты и времени
     newDate() {
       const date = new Date();
       const dateNow = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
       return dateNow;
     },
 
-async loadPostServer() {
+    //загрузка постов с базы данных
+    async loadPostServer() {
       try {
-        await axios.get('http://localhost:8000/dataBase.js').then((response) => {
-          const dd = response.data;
-          if(dd.length === 0) {
-            console.log('Посты не найдены');
-          } else {
-              this.posts = [...this.posts, ...dd];
-            console.log(dd)
-            }
+        await axios.get('http://localhost:8000/dataBase.js', {
+          params: {
+            _count: this.countPosts,
+            _limit: this.limitPosts,
+          }
+        }).then((response) => {
+          const arr_posts = response.data;
+          // if (arr_posts.length === 0) {
+          //   console.log('Посты не найдены');
+          // } else {
+            this.posts = [...this.posts, ...arr_posts];
+          // }
         });
       } catch (err) {
         console.error(err);
@@ -133,27 +150,24 @@ async loadPostServer() {
   },
 
   mounted() {
-    this.loadPostServer();
-
+    // обсервер срабатывает каждый раз когда докручиваем страницу донизу
     const options = {
       rootMargin: '0px',
       threshold: 1.0
     };
     const callback = (entries) => {
       if (entries[0].isIntersecting) {
-        console.log(entries[0].isIntersecting)
-        // this.loadPostServer()
+          this.limitPosts = 3;
+        this.countPosts = this.posts.length;
+          this.loadPostServer();
       }
     };
     const observer = new IntersectionObserver(callback, options);
     observer.observe(this.$refs.observer);
+
   },
 
-  computed: {
-    newPosts() {
-      return this.posts
-    }
-  },
+  computed: {},
 
 
 }
@@ -163,7 +177,6 @@ async loadPostServer() {
 .wrapper_myPage {
 
 }
-
 
 .wrapper_contents_main {
   display: flex;
@@ -216,5 +229,12 @@ async loadPostServer() {
   border: 1px solid;
   height: 1px;
   background: black;
+}
+
+.not_posts {
+  margin: 10px 0;
+  font-size: 18px;
+  font-family: cursive;
+  font-weight: 600;
 }
 </style>

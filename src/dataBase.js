@@ -12,9 +12,9 @@ const app = express();
 
 
 
-async function load_posts_DB() {
+async function load_posts_DB(params) {
     const connection = await mysql.createConnection(config);
-    const [arr] = await connection.execute("SELECT * FROM posts ORDER BY id DESC ");
+    const [arr] = await connection.execute(`SELECT * FROM posts ORDER BY id DESC LIMIT ${params._count}, ${params._limit}`);
     connection.end();
     return arr;
 }
@@ -31,7 +31,8 @@ app.use(express.json());
 // app.use(bodyParser.json())
 
 app.get('/dataBase.js', async function(req, res) {
-    let a = await load_posts_DB();
+    console.log(req.query)
+    let a = await load_posts_DB(req.query);
     res.json(a);
 });
 app.post('/dataBase.js', async function(req, res) {
