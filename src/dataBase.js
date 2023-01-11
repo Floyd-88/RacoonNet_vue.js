@@ -34,11 +34,16 @@ async function edit_post_DB(body) {
 }
 
 // удаление поста
+async function remove_post_DB(id) {
+    const connection = await mysql.createConnection(config);
+    await connection.execute(`DELETE from posts WHERE id = ${id}`);
+    connection.end();
+}
 
 app.use(cors())
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
-// app.use(bodyParser.json())
+
 
 app.get('/dataBase.js', async function(req, res) {
     console.log(req.query)
@@ -53,6 +58,11 @@ app.put('/dataBase.js', async function(req, res) {
     await edit_post_DB(req.body);
     res.send(req.body)
 });
+app.delete('/dataBase.js', async function(req, res) {
+    await remove_post_DB(req.query.id);
+    res.send(req.body)
+});
+
 
 app.listen(8000, function() {
     console.log('Ok');

@@ -101,6 +101,14 @@ export default {
     //удаление поста
     removePost(id) {
       this.posts = this.posts.filter(post => post.id !== id);
+
+      axios.delete('http://localhost:8000/dataBase.js?id=' + id)
+          .then(function(response) {
+            console.log(response)
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
     },
 
     // изменение поста
@@ -159,6 +167,7 @@ export default {
         console.error(err);
       }
     },
+
   },
 
   mounted() {
@@ -180,7 +189,6 @@ export default {
   },
 
   computed: {},
-
 
 }
 </script>
