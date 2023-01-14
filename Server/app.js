@@ -4,9 +4,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 
-const DB = require('./authorizationUserDB');
+const AuthorizationUserDB = require('./AuthorizationUserDB');
+const PostsDB = require('./PostsDB');
 
-const db = new DB();
+const authorization = new AuthorizationUserDB();
+const posts = new PostsDB();
 
 const app = express();
 
@@ -23,16 +25,16 @@ const allowCrossDomain = function(req, res, next) {
 }
 app.use(allowCrossDomain);
 
+//регистрируем обычного пользователя
 router.post('/register', function(req, res) {
-    db.insert([
+    authorization.insert([
             req.body.name,
             req.body.email,
             bcrypt.hashSync(req.body.password, 8)
-        ],
-        function (err) {
+        ],(err) => {
             if (err) return res.status(500).send("There was a problem registering the user.");
 
-            db.selectByEmail(req.body.email, (err,user) => {
+            authorization.selectByEmail(req.body.email, (err,user) => {
                 if (err) return res.status(500).send("There was a problem getting user");
 
                 let token = jwt.sign(
@@ -45,17 +47,17 @@ router.post('/register', function(req, res) {
         });
 });
 
+//регистрируем пользователя с правми администротора
 router.post('/register-admin', function(req, res) {
-    db.insertAdmin([
+    authorization.insertAdmin([
             req.body.name,
             req.body.email,
             bcrypt.hashSync(req.body.password, 8),
             req.body.is_admin,
-        ],
-        function (err) {
+        ],(err) => {
             if (err) return res.status(500).send("There was a problem registering the user.")
 
-            db.selectByEmail(req.body.email, (err,user) => {
+            authorization.selectByEmail(req.body.email, (err,user) => {
                 if (err) return res.status(500).send("There was a problem getting user")
 
                 let token = jwt.sign(
@@ -68,8 +70,9 @@ router.post('/register-admin', function(req, res) {
         });
 });
 
-router.post('/login', (req, res) => {
-    db.selectByEmail(req.body.email, (err, user) => {
+//авторизуем пользователя при вводе логина и пароля
+router.post('/login', function (req, res) {
+    authorization.selectByEmail(req.body.email, (err, user) => {
         if (err) return res.status(500).send('Error on the server.');
         if (!user) return res.status(404).send('No user found.');
 
@@ -84,6 +87,55 @@ router.post('/login', (req, res) => {
         res.status(200).send({auth: true, token: token, user: user});
     });
 })
+
+//подгружаем посты пользователя при посещении 'Моей страницы'
+router.get('/dataBase.js', function(req, res) {
+        posts.load_posts_DB([
+            req.query._count,
+            req.query._limit
+        ],(err, allPosts) => {
+            if (err) return res.status(500).send('Error on the server.');
+            if (!allPosts) return res.status(404).send('No posts found.');
+            res.json(allPosts);
+            res.status(200);
+        });
+});
+
+//добавляем новый пост
+router.post('/dataBase.js',  function(req, res) {
+        posts.add_post_DB([
+            req.body.ava,
+            req.body.name,
+            req.body.surname,
+            req.body.date,
+            req.body.body,
+            req.body.flag,
+            req.body.nameBtnEdit,
+        ], (err) => {
+        if (err) return res.status(500).send('Error on the server.');
+            res.status(200);
+    });
+});
+
+//редактируем пост
+router.put('/dataBase.js', function(req, res) {
+        posts.edit_post_DB([
+            req.body.body,
+            req.body.id
+        ],(err) => {
+            if (err) return res.status(500).send('Error on the server.');
+            res.status(200);
+        });
+});
+
+//удаляем пост
+router.delete('/dataBase.js', function(req, res) {
+        posts.remove_post_DB(req.query.id, (err) => {
+            if (err) return res.status(500).send('Error on the server.');
+            res.status(200);
+        });
+});
+
 app.use(router)
 
 let port = process.env.PORT || 8000;

@@ -79,12 +79,12 @@ export default {
     // добавление нового поста на мою страницу
     addPost(body) {
       const newPost = {
-        id: Date.now(),
+        // id: Date.now(),
         ava: '/img/ava_1.776f687c.jpg',
         name: 'Илья',
         surname: 'Сазонов',
         date: this.newDate(),
-        body: body,
+        body: body.trim(),
         flag: '1',
         nameBtnEdit: "Редактировать",
       }
@@ -123,8 +123,8 @@ export default {
         } else {
           post.body = this.changePost;
           axios.put('http://localhost:8000/dataBase.js', {
-            id: post.id,
             body: post.body,
+            id: post.id,
           })
               .then(function(response) {
                 console.log(response)
@@ -143,8 +143,7 @@ export default {
     //функция устанавливает отредактированный формат даты и времени
     newDate() {
       const date = new Date();
-      const dateNow = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-      return dateNow;
+      return  date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     },
 
     //загрузка постов с базы данных
