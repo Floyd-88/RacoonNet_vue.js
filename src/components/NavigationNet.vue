@@ -40,7 +40,7 @@ export default {
 
 }
 .link {
-  margin: 10px 0px;
+  margin: 10px 0;
   font-size: 18px;
   font-family: cursive;
   background: none;

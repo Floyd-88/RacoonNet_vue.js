@@ -1,6 +1,6 @@
 module.exports = {
     host: "localhost",
     user: "mysql",
-    database: "racoonnet",
+    database: "raccoon_net",
     password: "mysql",
 }
