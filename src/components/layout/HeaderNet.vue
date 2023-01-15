@@ -1,18 +1,18 @@
 <template>
     <header class="header">
-      <div class="header_wrapper_logo">
-        <img class="header_logo" src="../assets/logo/logo.png" alt="logo">
-      </div>
-      <div class="header_wrapper_title">
-        <button class="btn_title" @click="$router.push('/')">RacoonNet</button>
+
+      <div class="header_wrapper_logo_title">
+        <div class="header_wrapper_logo">
+          <img class="header_logo" src="../../assets/logo/logo.png" alt="logo">
+        </div>
+
+        <div class="header_wrapper_title">
+          <button class="btn_title" @click="$router.push('mypage')">RacсoonNet</button>
+        </div>
       </div>
 
-      <div id="app">
-        <div id="nav">
-          <router-link to="/">Home</router-link> |
-          <router-link to="/mypage">About</router-link>
-          <span v-if="isLoggedIn"> | <a @click="logout">Logout</a></span>
-        </div>
+      <div class="header_wrapper_exit">
+          <span class="header_exit" v-if="isLoggedIn"> <a @click="logout">Выход</a></span>
       </div>
 
 
@@ -27,7 +27,7 @@ export default {
     logout: function () {
       this.$store.dispatch('logout')
           .then(() => {
-            this.$router.push('/login')
+            this.$router.push('/')
           })
     }
   },
@@ -42,19 +42,22 @@ export default {
 </script>
 
 <style scoped>
-.header{
+.header {
   display: flex;
+  justify-content: space-between;
   height: 100px;
   background: cornflowerblue;
   border: 1px solid black;
-  justify-content: flex-start;
   position: fixed;
   width: 100%;
+}
+.header_wrapper_logo_title {
+  display: flex;
+  margin-left: 5%;
 }
 .header_wrapper_logo {
   display: flex;
   align-items: center;
-  margin: 0 20px 0 5%;
 }
 .header_logo {
 width: 100px;
@@ -62,7 +65,7 @@ width: 100px;
 .header_wrapper_title {
   display: flex;
   align-items: center;
-  margin-left: 5px;
+  margin-left: 20px;
 }
 .btn_title {
   border: none;
@@ -73,5 +76,15 @@ width: 100px;
   font-size: 40px;
   font-family: fantasy;
   cursor: pointer;
+}
+.header_wrapper_exit {
+  display: flex;
+  align-items: center;
+  margin-right: 35px;
+}
+.header_exit {
+  cursor: pointer;
+  font-size: 18px;
+  font-family: fantasy;
 }
 </style>

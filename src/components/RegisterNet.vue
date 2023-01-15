@@ -35,76 +35,71 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 
 export default {
   name: "RegisterNet",
   props : ["nextUrl"],
     data(){
       return {
-        name : "",
-        email : "",
-        password : "",
-        password_confirmation : "",
-        is_admin : null
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+        is_admin: null
       }
     },
 
   methods: {
 
     handleSubmit(e) {
-      e.preventDefault()
-      if (this.password === this.password_confirmation && this.password.length > 0)
-      {
-        console.log(this.is_admin)
-        let url = "http://localhost:8000/register"
+      e.preventDefault();
 
-        if (this.is_admin === '1') {
-          url = "http://localhost:8000/register-admin"
-        }
-        axios.post(url, {
-          name: this.name,
-          email: this.email,
-          password: this.password,
-          is_admin: this.is_admin
-        })
-            .then(response => {
-              localStorage.setItem('user', JSON.stringify(response.data.user))
-              localStorage.setItem('jwt', response.data.token)
-              if (localStorage.getItem('jwt') != null){
-                this.$emit('loggedIn')
-                if(this.$route.params.nextUrl != null){
-                  this.$router.push(this.$route.params.nextUrl)
-                }
-                else{
-                  this.$router.push('/')
-                }
-              }
-            })
-            .catch(error => {
-              console.error(error);
-            });
-      } else {
-        this.password = ""
-        this.password_confirmation = ""
-        return alert("Passwords do not match")
+      let data = {
+        name: this.name,
+        email: this.email,
+        password: this.password,
+        is_admin: this.is_admin
       }
-    }
+      this.$store.dispatch('register', data)
+          .then(() => this.$router.push('mypage'))
+          .catch(err => console.log(err))
 
-
-
-    // register: function () {
-    //   let data = {
-    //     name: this.name,
-    //     email: this.email,
-    //     password: this.password,
-    //     is_admin: this.is_admin
+    //   if (this.password === this.password_confirmation && this.password.length > 0)
+    //   {
+    //     let url = "http://localhost:8000/register"
+    //
+    //     if (this.is_admin === '1') {
+    //       url = "http://localhost:8000/register-admin"
+    //     }
+    //     axios.post(url, {
+    //       name: this.name,
+    //       email: this.email,
+    //       password: this.password,
+    //       is_admin: this.is_admin
+    //     })
+    //         .then(response => {
+    //           localStorage.setItem('user', JSON.stringify(response.data.user))
+    //           localStorage.setItem('jwt', response.data.token)
+    //           if (localStorage.getItem('jwt') != null){
+    //             this.$emit('loggedIn')
+    //             if(this.$route.params.nextUrl != null){
+    //               this.$router.push(this.$route.params.nextUrl)
+    //             }
+    //             else{
+    //               this.$router.push('/')
+    //             }
+    //           }
+    //         })
+    //         .catch(error => {
+    //           console.error(error);
+    //         });
+    //   } else {
+    //     this.password = ""
+    //     this.password_confirmation = ""
+    //     return alert("Passwords do not match")
     //   }
-    //   this.$store.dispatch('register', data)
-    //       .then(() => this.$router.push('/'))
-    //       .catch(err => console.log(err))
-    // },
-
+    }
   },
 
 }

@@ -3,15 +3,14 @@ import App from './App.vue'
 import pages from '@/pages'
 import components from "@/components"
 import router from "@/router/router"
-import axios from "axios"
 import store from "@/store/store";
+import axios from "axios";
 
 const app = createApp(App);
 
-app.$http = axios;
 const token = localStorage.getItem('token');
 if(token) {
-    app.$http.defaults.headers.common['Authorization'] = token;
+    axios.defaults.headers.common['Authorization'] = token;
 }
 
 pages.forEach(page => {

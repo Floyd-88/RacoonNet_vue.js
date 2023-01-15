@@ -1,10 +1,12 @@
 import UserInfo from "@/components/MyPage/UserInfo";
-import NavigationNet from "@/components/NavigationNet";
-import HeaderNet from "@/components/HeaderNet";
+import NavigationNet from "@/components/layout/NavigationNet";
+import HeaderNet from "@/components/layout/HeaderNet";
 import PostsMyPage from "@/components/MyPage/PostsMyPage";
 import PostMyPage from "@/components/MyPage/PostMyPage";
 import UIbtn from "@/components/UI/UIbtn";
 import AddPost from "@/components/MyPage/AddPost";
+import LoginNet from "@/components/LoginNet";
+import RegisterNet from "@/components/RegisterNet";
 
 export default [
     UserInfo,
@@ -13,6 +15,8 @@ export default [
     PostsMyPage,
     PostMyPage,
     UIbtn,
-    AddPost
+    AddPost,
+    LoginNet,
+    RegisterNet,
 
 ]

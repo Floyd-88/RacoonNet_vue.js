@@ -1,32 +1,41 @@
 <template>
   <HeaderNet/>
   <div class="wrapper">
-    <NavigationNet/>
+    <NavigationNet
+    v-if="route"
+    />
     <div class="wrapper_main">
       <router-view></router-view>
     </div>
   </div>
-
 </template>
 
 <script>
 
+import axios from "axios";
+
 export default {
   name: 'App',
 
-  // created: function () {
-  //   this.$http.interceptors.response.use(undefined, function (err) {
-  //     return new Promise(function (resolve) {
-  //       if (err.status === 401 && err.config
-  //           && !err.config.__isRetryRequest
-  //       ) {
-  //         this.$store.dispatch("logout")
-  //         resolve()
-  //       }
-  //       throw err;
-  //     });
-  //   });
-  // }
+  created: function () {
+    axios.interceptors.response.use(undefined, function (err) {
+      return new Promise(function (resolve) {
+        if (err.status === 401 && err.config
+            && !err.config.__isRetryRequest
+        ) {
+          this.$store.dispatch("logout")
+          resolve()
+        }
+        throw err;
+      });
+    });
+  },
+
+  computed: {
+    route() {
+      return this.$store.getters.isLoggedIn;
+    }
+  }
 }
 </script>
 
@@ -44,10 +53,8 @@ body {
 }
 
 .wrapper_main {
-  margin-left: 180px;
   padding: 120px 20px;
   background: aliceblue;
-
 }
 
 </style>

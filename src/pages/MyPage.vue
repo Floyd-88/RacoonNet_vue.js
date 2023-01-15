@@ -1,61 +1,62 @@
 <template>
-  <div class="wrapper_myPage">
-    <UserInfo/>
-    <div class="wrapper_contents_main">
+  <div class="main">
+    <div class="wrapper_myPage">
+      <UserInfo/>
+      <div class="wrapper_contents_main">
 
-      <div class="wrapper_contents">
-        <div class="wrapper_preview_myPhoto">
-          <div class="preview_myPhoto">
-            <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+        <div class="wrapper_contents">
+          <div class="wrapper_contents_myPhoto">
+            <h2>Мои фото</h2>
+            <div class="wrapper_preview_myPhoto">
+              <div class="preview_myPhoto">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+              </div>
+              <div class="preview_myPhoto">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+              </div>
+              <div class="preview_myPhoto">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+              </div>
+              <div class="preview_myPhoto">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+              </div>
+              <div class="preview_myPhoto">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+              </div>
+              <div class="preview_myPhoto">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+              </div>
+            </div>
           </div>
-          <div class="preview_myPhoto">
-            <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
-          </div>
-          <div class="preview_myPhoto">
-            <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
-          </div>
-          <div class="preview_myPhoto">
-            <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
-          </div>
-          <div class="preview_myPhoto">
-            <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
-          </div>
-          <div class="preview_myPhoto">
-            <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+
+          <div class="wrapper_posts">
+            <AddPost
+                @addPost="addPost"
+            />
+            <PostMyPage
+                v-model:value="changePost"
+                :posts="posts"
+                @removePost="removePost"
+                @editPost="editPost"
+            />
+
+            <div class="wrapper_not_posts"
+                 v-if="posts.length === 0"
+            >
+              <p class="not_posts">Посты не найдены!!!</p>
+            </div>
+            <div ref="observer" class="observer"></div>
+
           </div>
         </div>
 
-        <div class="wrapper_posts">
-          <AddPost
-              @addPost="addPost"
-          />
-          <PostMyPage
-              v-model:value="changePost"
-              :posts="posts"
-              @removePost="removePost"
-              @editPost="editPost"
-          />
-
-          <div class="wrapper_not_posts"
-          v-if="posts.length === 0"
-          >
-            <p class="not_posts">Посты не найдены!!!</p>
-          </div>
-          <div ref="observer" class="observer"></div>
-
+        <div class="wrapper_myFriends">
+          Мои друзья
         </div>
-      </div>
 
-      <div class="wrapper_myFriends">
-        Мои друзья
       </div>
 
     </div>
-
-
-    <div>
-    </div>
-
   </div>
 </template>
 <script>
@@ -64,7 +65,6 @@ import axios from "axios";
 
 export default {
   name: "MyPage",
-
   data() {
     return {
       changePost: "", //текс измененного поста при редактировании
@@ -103,10 +103,10 @@ export default {
       this.posts = this.posts.filter(post => post.id !== id);
 
       axios.delete('http://localhost:8000/dataBase.js?id=' + id)
-          .then(function(response) {
+          .then(function (response) {
             console.log(response)
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.log(error)
           })
     },
@@ -126,10 +126,10 @@ export default {
             body: post.body,
             id: post.id,
           })
-              .then(function(response) {
+              .then(function (response) {
                 console.log(response)
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 console.log(error)
               })
 
@@ -143,7 +143,7 @@ export default {
     //функция устанавливает отредактированный формат даты и времени
     newDate() {
       const date = new Date();
-      return  date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+      return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     },
 
     //загрузка постов с базы данных
@@ -159,7 +159,7 @@ export default {
           // if (arr_posts.length === 0) {
           //   console.log('Посты не найдены');
           // } else {
-            this.posts = [...this.posts, ...arr_posts];
+          this.posts = [...this.posts, ...arr_posts];
           // }
         });
       } catch (err) {
@@ -177,9 +177,9 @@ export default {
     };
     const callback = (entries) => {
       if (entries[0].isIntersecting) {
-          this.limitPosts = 3;
+        this.limitPosts = 3;
         this.countPosts = this.posts.length;
-          this.loadPostServer();
+        this.loadPostServer();
       }
     };
     const observer = new IntersectionObserver(callback, options);
@@ -193,6 +193,11 @@ export default {
 </script>
 
 <style scoped>
+.main {
+  margin-left: 180px;
+  background: aliceblue;
+}
+
 .wrapper_myPage {
 
 }
@@ -209,11 +214,15 @@ export default {
   flex: 0 0 70%;
 }
 
+.wrapper_contents_myPhoto {
+  border: 1px solid black;
+}
+
 .wrapper_preview_myPhoto {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 25px;
-  border: 1px solid;
+
 }
 
 .preview_myPhoto {

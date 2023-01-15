@@ -10,7 +10,7 @@ import MessagePage from "@/pages/MessagePage";
 import FriendsPage from "@/pages/FriendsPage";
 import GalleryPage from "@/pages/GalleryPage";
 import NewsPage from "@/pages/NewsPage";
-import LoginNet from "@/components/LoginNet";
+// import LoginNet from "@/components/LoginNet";
 import RegisterNet from "@/components/RegisterNet";
 import AdminNet from "@/components/AdminNet";
 import SecureNet from "@/components/SecureNet";
@@ -22,6 +22,9 @@ import SecureNet from "@/components/SecureNet";
             path: "/",
             component: MainPage,
             name: "mainpage",
+            meta: {
+                guest: true
+            }
         },
         {
             path: "/mypage",
@@ -63,14 +66,14 @@ import SecureNet from "@/components/SecureNet";
                 requiresAuth: true
             }
         },
-        {
-            path: "/login",
-            component: LoginNet,
-            name: "login",
-            meta: {
-                guest: true
-            }
-        },
+        // {
+        //     path: "/login",
+        //     component: LoginNet,
+        //     name: "login",
+        //     meta: {
+        //         guest: true
+        //     }
+        // },
         {
             path: "/register",
             component: RegisterNet,
@@ -96,6 +99,15 @@ import SecureNet from "@/components/SecureNet";
                 is_admin: true
             }
         },
+        {
+            path: "/:pathMatch(.*)*",
+            name: "mainpage",
+            component: MainPage,
+            meta: {
+                guest: true
+            }
+        }
+
     ];
 
 const router = createRouter({
@@ -105,9 +117,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     if(to.matched.some(record => record.meta.requiresAuth)) {
-        if (localStorage.getItem('jwt') == null) {
+        if (localStorage.getItem('token') === null) {
             next({
-                path: '/login',
+                path: '/',
                 params: { nextUrl: to.fullPath }
             })
         } else {
@@ -124,7 +136,7 @@ router.beforeEach((to, from, next) => {
             }
         }
     } else if(to.matched.some(record => record.meta.guest)) {
-        if(localStorage.getItem('jwt') == null){
+        if(localStorage.getItem('token') === null){
             next()
         }
         else{
