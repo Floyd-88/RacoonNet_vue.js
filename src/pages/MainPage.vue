@@ -1,23 +1,47 @@
 <template>
-  <div class="wrapper_mainPage">
-    <div class="wrapper_title">
+  <div>
+
+    <UImodal
+        @click="setNotShowModalWindow"
+        :show-modal="showModal"
+    >
+      <RegisterNet/>
+    </UImodal>
+
+    <div class="wrapper_mainPage">
+
+      <div class="wrapper_title">
         <h2 class="welcome_title"><span class="name_net_title">RacсoonNet</span>Добро пожаловать в социальную сеть для общения со своими близкими </h2>
-    </div>
-    <div class="wrapper_form">
-      <LoginNet/>
+      </div>
+
+      <div class="wrapper_form">
+        <LoginNet @showModalTrue = "showModalTrue"/>
+      </div>
+
     </div>
 
   </div>
 
-
 </template>
 
 <script>
-import LoginNet from "@/components/LoginNet";
 
 export default {
   name: "MainPage",
-  components: {LoginNet}
+  data() {
+    return {
+      showModal: false,
+    }
+  },
+
+  methods: {
+    showModalTrue: function () {
+      this.showModal = true;
+    },
+    setNotShowModalWindow: function () {
+      this.showModal = false;
+    }
+  }
 }
 </script>
 

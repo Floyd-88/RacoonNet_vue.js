@@ -1,33 +1,79 @@
 <template>
-  <div>
-    <h4>Register</h4>
-    <form>
-      <label for="name">Name</label>
-      <div>
-        <input id="name" type="text" v-model="name" required autofocus>
+  <h4 class="form_register_title">Регистрация</h4>
+  <div class="wrapper_form_register">
+
+    <form class="form_register">
+      <div class="wrapper_form_register_name">
+<!--        <label class="form_label_register" for="name">Имя</label>-->
+        <div class="wrapper_form_register_input">
+          <input class="form_register_input" id="name" type="text" placeholder="Имя" v-model="name" required autofocus>
+        </div>
+
+<!--        <label class="form_label_register" for="surname">Фамилия</label>-->
+        <div class="wrapper_form_register_input form_register_surname ">
+          <input class="form_register_input" id="surname" type="text" placeholder="Фамилия" v-model="surname" required>
+        </div>
       </div>
-      <label for="email" >E-Mail Address</label>
-      <div>
-        <input id="email" type="email" v-model="email" required>
+
+<!--      <label class="form_label_register" for="email">Электронная почта</label>-->
+      <div class="wrapper_form_register_input">
+        <input class="form_register_input" id="email" type="email" placeholder="Электронная почта" v-model="email" required>
       </div>
-      <label for="password">Password</label>
-      <div>
-        <input id="password" type="password" v-model="password" required>
+
+<!--      <label class="form_label_register" for="password">Пароль</label>-->
+      <div class="wrapper_form_register_input">
+        <input class="form_register_input" id="password" type="password" placeholder="Пароль" v-model="password" required>
       </div>
-      <label for="password-confirm">Confirm Password</label>
-      <div>
-        <input id="password-confirm" type="password" v-model="password_confirmation" required>
+
+<!--      <label class="form_label_register" for="password-confirm">Подтвердите пароль</label>-->
+      <div class="wrapper_form_register_input">
+        <input class="form_register_input" id="password-confirm" type="password" placeholder="Подтвердите пароль" v-model="password_confirmation" required>
       </div>
-      <label for="password-confirm">Is this an administrator account?</label>
-      <div>
-        <select v-model="is_admin">
-          <option value=1>Yes</option>
-          <option value=0>No</option>
-        </select>
+
+      <label class="form_label_register" for="date_birth">Дата рождения</label>
+      <div class="wrapper_form_register_date">
+        <div class="form_register_date">
+          <select class="select_form_register_date">
+            <option class="option_form_register_date">1</option>
+            <option class="option_form_register_date">2</option>
+            <option class="option_form_register_date">3</option>
+          </select>
+        </div>
+        <div class="form_register_date form_register_date_month">
+          <select class="select_form_register_date">
+            <option class="option_form_register_date">январь</option>
+            <option class="option_form_register_date">февраль</option>
+            <option class="option_form_register_date">март</option>
+          </select>
+        </div>
+        <div class="form_register_date">
+          <select class="select_form_register_date">
+            <option class="option_form_register_date">2023</option>
+            <option class="option_form_register_date">2022</option>
+            <option class="option_form_register_date">2021</option>
+          </select>
+        </div>
       </div>
-      <div>
-        <button type="submit" @click="handleSubmit">
-          Register
+
+      <label class="form_label_register" for="gender">Ваш пол</label>
+      <div class="wrapper_form_register_gender">
+        <div class="form_register_gender">
+          <select class="select_form_register_gender">
+            <option value="man" class="option_form_register_gender">Мужской</option>
+            <option value="woman" class="option_form_register_gender">Женский</option>
+          </select>
+        </div>
+      </div>
+      <!--      <label class="form_label_register" for="password-confirm">Is this an administrator account?</label>-->
+      <!--      <div>-->
+      <!--        <select v-model="is_admin">-->
+      <!--          <option value=1>Yes</option>-->
+      <!--          <option value=0>No</option>-->
+      <!--        </select>-->
+      <!--      </div>-->
+      <div class="wrapper_form_register_btn">
+        <button class="form_register_btn" type="submit" @click="handleSubmit">
+          Зарегистрироваться
         </button>
       </div>
     </form>
@@ -39,16 +85,17 @@
 
 export default {
   name: "RegisterNet",
-  props : ["nextUrl"],
-    data(){
-      return {
-        name: "",
-        email: "",
-        password: "",
-        password_confirmation: "",
-        is_admin: null
-      }
-    },
+  props: ["nextUrl"],
+  data() {
+    return {
+      name: "",
+      surname: "",
+      email: "",
+      password: "",
+      password_confirmation: "",
+      is_admin: null
+    }
+  },
 
   methods: {
 
@@ -57,6 +104,7 @@ export default {
 
       let data = {
         name: this.name,
+        surname: this.surname,
         email: this.email,
         password: this.password,
         is_admin: this.is_admin
@@ -65,40 +113,40 @@ export default {
           .then(() => this.$router.push('mypage'))
           .catch(err => console.log(err))
 
-    //   if (this.password === this.password_confirmation && this.password.length > 0)
-    //   {
-    //     let url = "http://localhost:8000/register"
-    //
-    //     if (this.is_admin === '1') {
-    //       url = "http://localhost:8000/register-admin"
-    //     }
-    //     axios.post(url, {
-    //       name: this.name,
-    //       email: this.email,
-    //       password: this.password,
-    //       is_admin: this.is_admin
-    //     })
-    //         .then(response => {
-    //           localStorage.setItem('user', JSON.stringify(response.data.user))
-    //           localStorage.setItem('jwt', response.data.token)
-    //           if (localStorage.getItem('jwt') != null){
-    //             this.$emit('loggedIn')
-    //             if(this.$route.params.nextUrl != null){
-    //               this.$router.push(this.$route.params.nextUrl)
-    //             }
-    //             else{
-    //               this.$router.push('/')
-    //             }
-    //           }
-    //         })
-    //         .catch(error => {
-    //           console.error(error);
-    //         });
-    //   } else {
-    //     this.password = ""
-    //     this.password_confirmation = ""
-    //     return alert("Passwords do not match")
-    //   }
+      //   if (this.password === this.password_confirmation && this.password.length > 0)
+      //   {
+      //     let url = "http://localhost:8000/register"
+      //
+      //     if (this.is_admin === '1') {
+      //       url = "http://localhost:8000/register-admin"
+      //     }
+      //     axios.post(url, {
+      //       name: this.name,
+      //       email: this.email,
+      //       password: this.password,
+      //       is_admin: this.is_admin
+      //     })
+      //         .then(response => {
+      //           localStorage.setItem('user', JSON.stringify(response.data.user))
+      //           localStorage.setItem('jwt', response.data.token)
+      //           if (localStorage.getItem('jwt') != null){
+      //             this.$emit('loggedIn')
+      //             if(this.$route.params.nextUrl != null){
+      //               this.$router.push(this.$route.params.nextUrl)
+      //             }
+      //             else{
+      //               this.$router.push('/')
+      //             }
+      //           }
+      //         })
+      //         .catch(error => {
+      //           console.error(error);
+      //         });
+      //   } else {
+      //     this.password = ""
+      //     this.password_confirmation = ""
+      //     return alert("Passwords do not match")
+      //   }
     }
   },
 
@@ -106,5 +154,94 @@ export default {
 </script>
 
 <style scoped>
+.form_register_title {
+  display: flex;
+  justify-content: center;
+  margin: 15px;
+  font-size: 23px;
+  border-bottom: 2px solid;
+  padding-bottom: 5px;
+}
 
+.wrapper_form_register {
+  display: flex;
+  justify-content: center;
+  padding: 0 13px;
+}
+.form_register {
+  width: 100%;
+}
+
+.wrapper_form_register_name {
+  display: flex;
+  justify-content: space-around;
+}
+
+.wrapper_form_register_input {
+  width: 100%;
+margin-bottom: 15px;
+}
+
+.form_register_surname {
+margin-left: 5px;
+}
+.form_label_register {
+font-size: 14px;
+}
+
+.form_register_input {
+  /*margin: 5px;*/
+  height: 40px;
+  width: 100%;
+  /*padding-left: 3px;*/
+}
+.wrapper_form_register_date {
+display: flex;
+  margin-bottom: 10px;
+}
+.form_register_date {
+width: 100%;
+  height: 27px;
+}
+.select_form_register_date {
+width: 100%;
+  height: 100%;
+}
+.form_register_date_month {
+  margin: 0 5px;
+}
+.option_form_register_date {
+
+}
+.wrapper_form_register_gender {
+margin-bottom: 15px;
+}
+.form_register_gender {
+height: 27px;
+}
+.select_form_register_gender {
+  height: 100%;
+  width: 32%;
+}
+.option_form_register_gender {
+
+}
+.wrapper_form_register_btn {
+  display: flex;
+  justify-content: center;
+  height: 45px;
+  margin: 20px 5px 5px 5px;
+}
+
+.form_register_btn {
+  width: 100%;
+  height: 100%;
+  border: 1px solid;
+  border-radius: 5px;
+  background: cornflowerblue;
+  cursor: pointer;
+  font-size: 28px;
+  color: white;
+  font-family: emoji;
+}
 </style>
