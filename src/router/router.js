@@ -11,7 +11,7 @@ import FriendsPage from "@/pages/FriendsPage";
 import GalleryPage from "@/pages/GalleryPage";
 import NewsPage from "@/pages/NewsPage";
 // import LoginNet from "@/components/LoginNet";
-import RegisterNet from "@/components/RegisterNet";
+// import RegisterNet from "@/components/RegisterNet";
 import AdminNet from "@/components/AdminNet";
 import SecureNet from "@/components/SecureNet";
 
@@ -74,14 +74,14 @@ import SecureNet from "@/components/SecureNet";
         //         guest: true
         //     }
         // },
-        {
-            path: "/register",
-            component: RegisterNet,
-            name: "register",
-            meta: {
-                guest: true
-            }
-        },
+        // {
+        //     path: "/register",
+        //     component: RegisterNet,
+        //     name: "register",
+        //     meta: {
+        //         guest: true
+        //     }
+        // },
         {
             path: "/secure",
             component: SecureNet,
@@ -120,7 +120,7 @@ router.beforeEach((to, from, next) => {
         if (localStorage.getItem('token') === null) {
             next({
                 path: '/',
-                params: { nextUrl: to.fullPath }
+                params: { nextUrl: to.fullPath } //???????????????????????????
             })
         } else {
             let user = JSON.parse(localStorage.getItem('user'))

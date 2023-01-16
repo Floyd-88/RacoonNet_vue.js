@@ -27,20 +27,25 @@ app.use(allowCrossDomain);
 
 //регистрируем обычного пользователя
 router.post('/register', function(req, res) {
+    if(!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthday || !req.body.selectedGender) return res.status(500).send("There was a problem registering the user.");
+
     authorization.insert([
-            req.body.name,
-            req.body.email,
-            bcrypt.hashSync(req.body.password, 8)
+        req.body.name,
+        req.body.surname,
+        req.body.email,
+        bcrypt.hashSync(req.body.password, 8),
+        req.body.birthday,
+        req.body.selectedGender
         ],(err) => {
             if (err) return res.status(500).send("There was a problem registering the user.");
 
             authorization.selectByEmail(req.body.email, (err,user) => {
                 if (err) return res.status(500).send("There was a problem getting user");
 
-                let token = jwt.sign(
-                    {id: user.id},
-                    tokenKey.secret,
-                    {expiresIn: 86400} // expires in 24 hours
+                let token = jwt.sign( //???????????????????????????????????????????????????
+                    {id: user.id},  //????????????????????????????????????????????
+                    tokenKey.secret, //??????????????????????????????????????????????????????
+                    {expiresIn: 86400} // expires in 24 hours  //???????????????????????????????/
                 );
                 res.status(200).send({auth: true, token: token, user: user});
             });
@@ -49,11 +54,16 @@ router.post('/register', function(req, res) {
 
 //регистрируем пользователя с правми администротора
 router.post('/register-admin', function(req, res) {
+    if(!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthday || !req.body.selectedGender) return res.status(500).send("There was a problem registering the user.");
+
     authorization.insertAdmin([
-            req.body.name,
-            req.body.email,
-            bcrypt.hashSync(req.body.password, 8),
-            req.body.is_admin,
+        req.body.name,
+        req.body.surname,
+        req.body.email,
+        bcrypt.hashSync(req.body.password, 8),
+        req.body.birthday,
+        req.body.selectedGender,
+        req.body.is_admin,
         ],(err) => {
             if (err) return res.status(500).send("There was a problem registering the user.")
 
@@ -76,7 +86,7 @@ router.post('/login', function (req, res) {
         if (err) return res.status(500).send('Error on the server.');
         if (!user) return res.status(404).send('No user found.');
 
-        let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
+        let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass); //???????????????????????????????
         if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
 
         let token = jwt.sign(

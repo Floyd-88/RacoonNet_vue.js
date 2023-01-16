@@ -29,7 +29,7 @@
 
       <div class="wrapper_form_login_btn">
         <button class="form_register_btn"
-        @click.prevent="this.$emit('showModalTrue')"
+                @click.prevent="this.$emit('showModalTrue')"
         >
           Создать новый аккаунт
         </button>
@@ -57,12 +57,20 @@ export default {
     handleSubmit(e) {
       e.preventDefault();
 
-      let email = this.email
-      let password = this.password
-      this.$store.dispatch('login', {email, password})
-          .then(() => this.$router.push('mypage'))
-          .catch(err => console.log(err))
+      if (this.password.length > 0) {
+        let email = this.email;
+        let password = this.password;
 
+        this.$store.dispatch('login', {email, password})
+            .then((resp) => {
+              if (resp.data.user.is_admin === 1) {
+                this.$router.push('admin')
+              } else {
+                this.$router.push('mypage')
+              }
+            })
+            .catch(err => console.log("Авторизация завершилась с ошибкой" + err))
+      }
 
       //   if (this.password.length > 0) {
       //     axios.post('http://localhost:8000/login', {
@@ -145,16 +153,18 @@ export default {
   margin-top: 10px;
 }
 
-.wrapper_form_not_password{
+.wrapper_form_not_password {
   display: flex;
   justify-content: center;
 }
+
 .form_not_password {
   background: white;
   border: none;
   cursor: pointer;
   text-decoration: underline;
 }
+
 .form_register_btn {
   width: 70%;
   height: 100%;
