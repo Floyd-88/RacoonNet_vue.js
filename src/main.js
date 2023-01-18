@@ -6,6 +6,8 @@ import router from "@/router/router"
 import store from "@/store/store";
 import axios from "axios";
 
+
+
 const app = createApp(App);
 
 const token = localStorage.getItem('token');
@@ -22,6 +24,6 @@ components.forEach(comp=> {
 });
 
 app.use(router);
-app.use(store)
+app.use(store);
 app.mount('#app');
 

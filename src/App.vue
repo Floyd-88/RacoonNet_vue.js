@@ -8,6 +8,7 @@
       <router-view></router-view>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -34,7 +35,7 @@ export default {
   computed: {
     route() {
       return this.$store.getters.isLoggedIn;
-    }
+    },
   }
 }
 </script>

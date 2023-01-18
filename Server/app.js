@@ -35,7 +35,9 @@ router.post('/register', function(req, res) {
         req.body.email,
         bcrypt.hashSync(req.body.password, 8),
         req.body.birthday,
-        req.body.selectedGender
+        req.body.selectedGender,
+        req.body.country,
+        req.body.city
         ],(err) => {
             if (err) return res.status(500).send("There was a problem registering the user.");
 
@@ -63,7 +65,9 @@ router.post('/register-admin', function(req, res) {
         bcrypt.hashSync(req.body.password, 8),
         req.body.birthday,
         req.body.selectedGender,
-        req.body.is_admin,
+        req.body.country,
+        req.body.city,
+        req.body.is_admin
         ],(err) => {
             if (err) return res.status(500).send("There was a problem registering the user.")
 
@@ -101,6 +105,7 @@ router.post('/login', function (req, res) {
 //подгружаем посты пользователя при посещении 'Моей страницы'
 router.get('/dataBase.js', function(req, res) {
         posts.load_posts_DB([
+            req.query.userID,
             req.query._count,
             req.query._limit
         ],(err, allPosts) => {
@@ -121,8 +126,10 @@ router.post('/dataBase.js',  function(req, res) {
             req.body.body,
             req.body.flag,
             req.body.nameBtnEdit,
-        ], (err) => {
+            req.body.userID
+        ], (err, post) => {
         if (err) return res.status(500).send('Error on the server.');
+            res.json(post);
             res.status(200);
     });
 });

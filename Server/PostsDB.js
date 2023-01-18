@@ -9,21 +9,21 @@ class PostsDB {
 
     //создаем таблицу БД с постами
     createTablePosts() {
-        const sql = `CREATE TABLE IF NOT EXISTS posts (id integer PRIMARY KEY AUTO_INCREMENT, ava varchar(100),  name varchar(30), surname varchar(30), date varchar(50), body text, flag integer, nameBtnEdit varchar(30))`;
+        const sql = `CREATE TABLE IF NOT EXISTS posts (id integer PRIMARY KEY AUTO_INCREMENT, ava varchar(100),  name varchar(30), surname varchar(30), date varchar(50), body text, flag integer, nameBtnEdit varchar(30), userID integer, FOREIGN KEY (userID) REFERENCES users(userID))`;
         this.connection.execute(sql);
     }
 
     // загрузка постов из базы данны
     load_posts_DB(params, callback) {
-      return this.connection.execute(`SELECT * FROM posts ORDER BY id DESC LIMIT ?, ?`,params, (err, row) => {
+      return this.connection.execute(`SELECT * FROM posts WHERE userID = ? ORDER BY id DESC LIMIT ?, ?`, params, (err, row) => {
             callback(err, row)
         });
     }
 
 //добавление поста в базу данных
     add_post_DB(body, callback) {
-      return   this.connection.execute(`INSERT INTO posts(ava, name, surname, date, body, flag, nameBtnEdit) VALUES (?,?,?,?,?,?,?)`, body, (err) => {
-          callback(err);
+      return   this.connection.execute(`INSERT INTO posts(ava, name, surname, date, body, flag, nameBtnEdit, userID) VALUES (?,?,?,?,?,?,?,?)`, body, (err, row) => {
+          callback(err, row);
       });
     }
 

@@ -62,7 +62,7 @@
 <script>
 
 import axios from "axios";
-
+import {mapGetters} from "vuex"
 export default {
   name: "MyPage",
   data() {
@@ -79,27 +79,31 @@ export default {
     // добавление нового поста на мою страницу
     addPost(body) {
       const newPost = {
-        // id: Date.now(),
+        userID: this.userID,
         ava: '/img/ava_1.776f687c.jpg',
-        name: 'Илья',
-        surname: 'Сазонов',
+        name: this.nameUser,
+        surname: this.surnameUser,
         date: this.newDate(),
         body: body.trim(),
         flag: '1',
         nameBtnEdit: "Редактировать",
       }
-      this.posts.unshift(newPost);
+
+      // console.log(this.posts)
       axios.post('http://localhost:8000/dataBase.js', newPost)
           .then(function (response) {
-            console.log(response);
+            console.log(response.data.insertId);
+            newPost.id = response.data.insertId;
           })
           .catch(function (error) {
             console.log(error);
           });
+      this.posts.unshift(newPost);
     },
 
     //удаление поста
     removePost(id) {
+      console.log(id)
       this.posts = this.posts.filter(post => post.id !== id);
 
       axios.delete('http://localhost:8000/dataBase.js?id=' + id)
@@ -153,6 +157,7 @@ export default {
           params: {
             _count: this.countPosts,
             _limit: this.limitPosts,
+            userID: this.userID
           }
         }).then((response) => {
           const arr_posts = response.data;
@@ -161,6 +166,7 @@ export default {
           // } else {
           this.posts = [...this.posts, ...arr_posts];
           // }
+          // console.log(this.posts)
         });
       } catch (err) {
         console.error(err);
@@ -187,7 +193,13 @@ export default {
 
   },
 
-  computed: {},
+  computed: {
+    ...mapGetters({
+      nameUser: "nameUser",
+      surnameUser: "surnameUser",
+      userID: "userID"
+    }),
+  }
 
 }
 </script>

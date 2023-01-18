@@ -2,42 +2,141 @@
   <h4 class="form_register_title">Регистрация</h4>
   <div class="wrapper_form_register">
 
-    <form class="form_register">
+    <form class="form_register" @submit.prevent="handleSubmit" novalidate>
       <div class="wrapper_form_register_name">
-        <!--        <label class="form_label_register" for="name">Имя</label>-->
+
         <div class="wrapper_form_register_input">
-          <input class="form_register_input" id="name" type="text" placeholder="Имя" v-model="name" required autofocus>
+          <div class="input-errors"
+               v-for="(error, index) of v$.name.$errors"
+               :key="index">
+            <div class="error-msg"
+                 v-if="error.$message === 'Value is required'"
+            >Необходимо указать корректное имя
+            </div>
+          </div>
+          <input class="form_register_input"
+                 id="name"
+                 type="text"
+                 placeholder="Имя"
+                 autofocus
+                 v-model="v$.name.$model"
+                 :class="{invalid: (v$.name.$error)}"
+          >
         </div>
 
-        <!--        <label class="form_label_register" for="surname">Фамилия</label>-->
         <div class="wrapper_form_register_input form_register_surname ">
-          <input class="form_register_input" id="surname" type="text" placeholder="Фамилия" v-model="surname" required>
+          <div class="input-errors"
+               v-for="(error, index) of v$.surname.$errors"
+               :key="index">
+            <div class="error-msg"
+                 v-if="error.$message === 'Value is required'"
+            >Необходимо указать корректную фамилию
+            </div>
+          </div>
+          <input class="form_register_input"
+                 id="surname"
+                 type="text"
+                 placeholder="Фамилия"
+                 v-model="v$.surname.$model"
+                 :class="{invalid: (v$.surname.$error)}">
         </div>
       </div>
 
-      <!--      <label class="form_label_register" for="email">Электронная почта</label>-->
       <div class="wrapper_form_register_input">
-        <input class="form_register_input" id="email" type="email" placeholder="Электронная почта" v-model="email"
-               required>
+        <div class="input-errors"
+             v-for="(error, index) of v$.email.$errors"
+             :key="index">
+          <div class="error-msg"
+               v-if="error.$message === 'Value is not a valid email address'"
+          >Некорректный адрес электронной почты
+          </div>
+        </div>
+        <input class="form_register_input"
+               id="email"
+               type="email"
+               placeholder="Электронная почта"
+               v-model="v$.email.$model"
+               :class="{invalid: (v$.email.$error)}"
+        >
       </div>
 
-      <!--      <label class="form_label_register" for="password">Пароль</label>-->
       <div class="wrapper_form_register_input">
-        <input class="form_register_input" id="password" type="password" placeholder="Пароль" v-model="password"
-               required>
+        <div class="input-errors"
+             v-for="(error, index) of v$.password.$errors"
+             :key="index">
+          <div class="error-msg" v-if="error.$message === 'This field should be at least 8 characters long'">Пароль должен состоять минимум из 8 символов
+          </div>
+        </div>
+        <input class="form_register_input"
+               id="password"
+               type="password"
+               placeholder="Пароль"
+               v-model="v$.password.$model"
+               :class="{invalid: (v$.password.$error)}"
+               >
       </div>
 
-      <!--      <label class="form_label_register" for="password-confirm">Подтвердите пароль</label>-->
       <div class="wrapper_form_register_input">
-        <input class="form_register_input" id="password-confirm" type="password" placeholder="Подтвердите пароль"
-               v-model="password_confirmation" required>
+        <div class="input-errors">
+          <div class="error-msg" v-if="double_password">Пароли не свопадают</div>
+        </div>
+        <input class="form_register_input"
+               id="password-confirm"
+               type="password"
+               placeholder="Подтвердите пароль"
+               @change="checkPassword"
+               v-model="v$.password_confirmation.$model"
+               :class="{invalid: (v$.password_confirmation.$error)}"
+        >
+      </div>
+
+      <div class="wrapper_form_register_input">
+        <div class="input-errors"
+             v-for="(error, index) of v$.country.$errors"
+             :key="index">
+          <div class="error-msg"
+               v-if="error.$message === 'Value is required'"
+          >Необходимо указать корректную страну
+          </div>
+        </div>
+        <input class="form_register_input"
+               id="country"
+               type="text"
+               placeholder="Страна"
+               v-model="v$.country.$model"
+               :class="{invalid: (v$.country.$error)}"
+        >
+      </div>
+
+      <div class="wrapper_form_register_input">
+        <div class="input-errors"
+             v-for="(error, index) of v$.city.$errors"
+             :key="index">
+          <div class="error-msg"
+               v-if="error.$message === 'Value is required'"
+          >Необходимо указать корректный населенный пункт
+          </div>
+        </div>
+        <input class="form_register_input"
+               id="city"
+               type="text"
+               placeholder="Населенный пункт"
+               v-model="v$.city.$model"
+               :class="{invalid: (v$.city.$error)}"
+        >
       </div>
 
       <label class="form_label_register" for="date_birth">Дата рождения</label>
       <div class="wrapper_form_register_date">
         <div class="form_register_date">
-          <select class="select_form_register_date" v-model="selectedDay">
-            <option class="option_form_register_date" disabled value="">день</option>
+
+          <select class="select_form_register_date"
+                  v-model="selectedDay">
+            <option class="option_form_register_date"
+                    disabled
+                    value=""
+            > день
+            </option>
             <option class="option_form_register_date"
                     v-for="n in 31"
                     :key="n"
@@ -45,22 +144,35 @@
             >{{n}}
             </option>
           </select>
+
         </div>
         <div class="form_register_date form_register_date_month">
-          <select class="select_form_register_date" v-model="selectedMonth">
-            <option class="option_form_register_date" disabled value="">месяц</option>
+
+          <select class="select_form_register_date"
+                  v-model="selectedMonth">
+            <option class="option_form_register_date"
+                    disabled
+                    value=""
+            >месяц
+            </option>
             <option class="option_form_register_date"
                     v-for="(month, index) in arrMonth"
                     :key="month"
                     :value="index"
-            >
-              {{month}}
+            >{{month}}
             </option>
           </select>
+
         </div>
         <div class="form_register_date">
-          <select class="select_form_register_date" v-model="selectedYear">
-            <option class="option_form_register_date" disabled value="">год</option>
+
+          <select class="select_form_register_date"
+                  v-model="selectedYear">
+            <option class="option_form_register_date"
+                    disabled
+                    value=""
+            >год
+            </option>
             <option class="option_form_register_date"
                     v-for="year in years"
                     :key="year"
@@ -68,17 +180,28 @@
             >{{year}}
             </option>
           </select>
+
         </div>
       </div>
 
-      <label class="form_label_register" for="gender">Ваш пол</label>
+      <label class="form_label_register"
+             for="gender"
+      >Ваш пол
+      </label>
       <div class="wrapper_form_register_gender">
         <div class="form_register_gender">
-          <select class="select_form_register_gender" v-model="selectedGender">
-            <option class="option_form_register_gender" value="" disabled>пол</option>
+
+          <select class="select_form_register_gender"
+                  v-model="selectedGender">
+            <option class="option_form_register_gender"
+                    value=""
+                    disabled
+            > пол
+            </option>
             <option class="option_form_register_gender" value="man">Мужской</option>
             <option class="option_form_register_gender" value="woman">Женский</option>
           </select>
+
         </div>
       </div>
       <!--      <label class="form_label_register" for="password-confirm">Is this an administrator account?</label>-->
@@ -89,7 +212,9 @@
       <!--        </select>-->
       <!--      </div>-->
       <div class="wrapper_form_register_btn">
-        <button class="form_register_btn" type="submit" @click="handleSubmit">
+        <button class="form_register_btn" type="submit"
+                :disabled="v$.$invalid && !double_password && selectedDay && selectedMonth && selectedYear && selectedGender"
+        >
           Зарегистрироваться
         </button>
       </div>
@@ -98,11 +223,23 @@
 </template>
 
 <script>
-// import axios from "axios";
+import {useVuelidate} from "@vuelidate/core";
+import {required, email, minLength} from "@vuelidate/validators";
+
+export function validName(name) {
+  let validNamePattern = new RegExp("^[a-zA-Zа-яА-Я]+(?:[-'\\s][a-zA-Zа-яА-Я]+)*$");
+  return validNamePattern.test(name);
+
+}
 
 export default {
   name: "RegisterNet",
   props: ["nextUrl"],
+
+  setup() {
+    return {v$: useVuelidate()}
+  },
+
   data() {
     return {
       name: "",
@@ -110,28 +247,66 @@ export default {
       email: "",
       password: "",
       password_confirmation: "",
+      country: "",
+      city: "",
       is_admin: null,
       selectedDay: "",
       selectedMonth: "",
       selectedYear: "",
-      arrMonth: ['Январь' , 'Февраль' , 'Март' , 'Апрель' , 'Май' , 'Июнь' , 'Июль' , 'Август' , 'Сентябрь' , 'Октябрь' , 'Ноябрь' , 'Декабрь' ],
-      selectedGender: ""
+      selectedGender: "",
+      arrMonth: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+      double_password: false
+    }
+  },
+
+  validations() {
+    return {
+      name: {
+        required, name_validation: {
+          $validator: validName,
+          $message: 'Invalid Name'
+        }
+      },
+      surname: {
+        required, name_validation: {
+          $validator: validName,
+          $message: 'Invalid Name'
+        }
+      },
+      email: {required, email},
+      password: {required, min: minLength(8)},
+      password_confirmation: {required},
+      country: {
+        required, name_validation: {
+          $validator: validName,
+          $message: 'Invalid Name'
+        }
+      },
+      city: {
+        required, name_validation: {
+          $validator: validName,
+          $message: 'Invalid Name'
+        }
+      },
+      selectedDay: {required},
+      selectedMonth: {required},
+      selectedYear: {required},
+      selectedGender: {required},
     }
   },
 
   methods: {
-
-    handleSubmit(e) {
-      e.preventDefault();
-
+    handleSubmit() {
       if (this.password === this.password_confirmation && this.password.length >= 8) {
         let user = {
           name: this.name,
           surname: this.surname,
           email: this.email,
           password: this.password,
-          birthday: this.selectedYear +"-"+ this.selectedMonth +"-"+ this.selectedDay,
+          birthday: this.selectedYear + "-" + this.selectedMonth + "-" + this.selectedDay,
           selectedGender: this.selectedGender,
+          country: this.country,
+          city: this.city,
           is_admin: this.is_admin
         }
         this.$store.dispatch('register', user)
@@ -140,53 +315,26 @@ export default {
             })
             .catch(err => console.log('Регистрация заершилась с ошибкой:' + err))
       } else {
-            this.password = ""
-            this.password_confirmation = ""
-            return console.log('Повторный пароль не совпадает или менее 8 символов')
-          }
-      //   if (this.password === this.password_confirmation && this.password.length > 0)
-      //   {
-      //     let url = "http://localhost:8000/register"
-      //
-      //     if (this.is_admin === '1') {
-      //       url = "http://localhost:8000/register-admin"
-      //     }
-      //     axios.post(url, {
-      //       name: this.name,
-      //       email: this.email,
-      //       password: this.password,
-      //       is_admin: this.is_admin
-      //     })
-      //         .then(response => {
-      //           localStorage.setItem('user', JSON.stringify(response.data.user))
-      //           localStorage.setItem('jwt', response.data.token)
-      //           if (localStorage.getItem('jwt') != null){
-      //             this.$emit('loggedIn')
-      //             if(this.$route.params.nextUrl != null){
-      //               this.$router.push(this.$route.params.nextUrl)
-      //             }
-      //             else{
-      //               this.$router.push('/')
-      //             }
-      //           }
-      //         })
-      //         .catch(error => {
-      //           console.error(error);
-      //         });
-      //   } else {
-      //     this.password = ""
-      //     this.password_confirmation = ""
-      //     return alert("Passwords do not match")
-      //   }
+        this.password = ""
+        this.password_confirmation = ""
+        return console.log('Повторный пароль не совпадает или менее 8 символов')
+      }
+    },
+    checkPassword() {
+      this.double_password = this.password !== this.password_confirmation;
     }
+
+
   },
   computed: {
-    years () {
+    years() {
       const year = new Date().getFullYear()
       return Array.from({length: year - 1900}, (value, index) => year - index)
-    }
-  }
+    },
 
+
+
+  }
 }
 </script>
 
@@ -292,5 +440,12 @@ export default {
   font-size: 28px;
   color: white;
   font-family: emoji;
+}
+.error-msg {
+  color: red;
+  font-size: 14px;
+}
+.invalid {
+  border-color: red;
 }
 </style>

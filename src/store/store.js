@@ -6,21 +6,28 @@ import axios from 'axios';
 // Vue.use(Vuex);
 
 export default createStore({
-    state: {
+    namespaced: true,
+
+    state: () => ({
         status: '',
         token: localStorage.getItem('token') || '',
-        user : {}
-    },
-
+        user: JSON.parse(localStorage.getItem('user')) || {},
+    }),
     getters : {
         isLoggedIn: state => !!state.token,
         authStatus: state => state.status,
+        nameUser: state => state.user.name,
+        surnameUser: state => state.user.surname,
+        ageUser: state => state.user.birthday,
+        countryUser: state => state.user.country,
+        cityUser: state => state.user.city,
+        userID: state => state.user.userID,
     },
     mutations: {
         auth_request(state){
             state.status = 'loading';
         },
-        auth_success(state, token, user){
+        auth_success(state, {user, token}){
             state.status = 'success';
             state.token = token;
             state.user = user;
@@ -39,16 +46,16 @@ export default createStore({
                 commit('auth_request')
                 axios({url: 'http://localhost:8000/login', data: user, method: 'POST' })
                     .then(resp => {
-                        const token = "resp.data.token";
-                        const user = JSON.stringify(resp.data.user);
+                        const token = resp.data.token;
+                        const user = resp.data.user;
 
                             if(token !== null && user !== null) {
                                 localStorage.setItem('token', token);
-                                localStorage.setItem('user', user);
+                                localStorage.setItem('user', JSON.stringify(user));
 
                                 axios.defaults.headers.common['Authorization'] = token //?????????????????
 
-                                commit('auth_success', token, user);
+                                commit('auth_success', {user, token});
                                 resolve(resp);
                             }
                     })
@@ -80,7 +87,7 @@ export default createStore({
 
                             axios.defaults.headers.common['Authorization'] = token; //???????????????????????
 
-                            commit('auth_success', token, user);
+                            commit('auth_success', {user, token});
                             resolve(resp);
                         }
                     })
@@ -91,6 +98,7 @@ export default createStore({
                     })
             })
         },
+
 
         logout({commit}){
             return new Promise((resolve) => {

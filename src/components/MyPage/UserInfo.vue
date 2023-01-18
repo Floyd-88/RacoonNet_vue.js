@@ -9,17 +9,18 @@
 
       <div class="wrapper_info_user">
         <div class="wrapper_name_user">
-          <p class="name_user">Илья Сазонов</p>
+          <p class="name_user">{{nameUser + " " + surnameUser}}</p>
         </div>
         <div class="wrapper_city_user">
-          <p class="city_user">г. Ставрополь</p>
+          <p class="city_user">Страна: {{countryUser}}</p>
+          <p class="city_user">Населенный пункт: {{cityUser}}</p>
+          <p class="city_user">Возраст:{{age}}</p>
         </div>
       </div>
 
     </div>
 
     <div class="wrapper_btn">
-<!--      <button class="btn">Редактировать профиль</button>-->
       <UIbtn>Редактировать профиль</UIbtn>
     </div>
 
@@ -28,9 +29,31 @@
 
 <script>
 import UIbtn from "@/components/UI/UIbtn";
+import {mapGetters} from "vuex"
 export default {
   name: "UserInfo",
-  components: {UIbtn}
+  components: {UIbtn},
+
+  computed: {
+    ...mapGetters({
+      nameUser: "nameUser",
+      surnameUser: "surnameUser",
+      ageUser: "ageUser",
+      countryUser: "countryUser",
+      cityUser: "cityUser",
+    }),
+    age() {
+        const today = new Date();
+        const birthDate = new Date(this.ageUser);
+        const age = today.getFullYear() - birthDate.getFullYear();
+        if (
+            today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+        ) {
+          return age - 1;
+        }
+    return age;
+    },
+  }
 }
 </script>
 
@@ -62,11 +85,12 @@ export default {
   font-family: cursive;
 }
 .wrapper_city_user {
+  margin-top: 5px;
 }
 .city_user {
   font-size: 16px;
   font-family: cursive;
-  margin-bottom: 20px;
+  /*margin-bottom: 5px;*/
 }
 .wrapper_btn {
   margin: 20px;

@@ -1,30 +1,43 @@
 <template>
   <div>
-    <form>
-      <label class="form_label_login" for="email">Электронная почта</label>
+    <form @submit.prevent="handleSubmit" novalidate>
+
       <div class="form_login">
-        <input class="form_login_input" id="email" type="email"
-               placeholder="Введите электронный адрес"
-               required autofocus
-               v-model="email">
+        <div class="input-errors" v-for="(error, index) of v$.email.$errors" :key="index">
+          <div class="error-msg" v-if="error.$message === 'Value is not a valid email address'">Некорректный адрес электронной почты</div>
+          <div class="error-msg" v-if="error.$message === 'Value is required'">Введите электронную почту указанную при регистрации</div>
+        </div>
+        <input class="form_login_input" id="email" type="text"
+               placeholder="Введите электронный адрес" autofocus
+               v-model="v$.email.$model"
+               :class="{invalid: (v$.email.$error)}"
+        >
       </div>
 
-      <label class="form_label_login" for="password">Пароль</label>
       <div class="form_login">
+        <div class="input-errors" v-for="(error, index) of v$.password.$errors" :key="index">
+          <div class="error-msg" v-if="error.$message === 'Value is required'">Введите пароль указанный при регистрации
+          </div>
+        </div>
         <input class="form_login_input" id="password" type="password"
                placeholder="Введите пароль"
-               required
-               v-model="password">
+               v-model="v$.password.$model"
+               :class="{invalid: (v$.password.$error)}"
+        >
       </div>
 
       <div class="wrapper_form_login_btn">
-        <button class="form_login_btn" type="submit" @click="handleSubmit">
+        <button class="form_login_btn" type="submit"
+                :disabled="v$.$invalid">
           Вход
         </button>
       </div>
 
       <div class="wrapper_form_not_password">
-        <button class="form_not_password" @click="$router.push('/')"> Забыли пароль?</button>
+        <button class="form_not_password"
+                @click="$router.push('/')"
+        > Забыли пароль?
+        </button>
       </div>
 
       <div class="wrapper_form_login_btn">
@@ -40,23 +53,33 @@
 </template>
 
 <script>
-// import axios from "axios";
+import {useVuelidate} from '@vuelidate/core'
+import {required, email} from '@vuelidate/validators'
 
 export default {
   name: "LoginNet",
 
+  setup() {
+    return {v$: useVuelidate()}
+  },
+
   data() {
     return {
-      email: "",
-      password: ""
+      email: '',
+      password: '',
+    }
+  },
+
+  validations() {
+    return {
+      email: {required, email},
+      password: {required},
     }
   },
 
   methods: {
 
-    handleSubmit(e) {
-      e.preventDefault();
-
+    handleSubmit() {
       if (this.password.length > 0) {
         let email = this.email;
         let password = this.password;
@@ -71,41 +94,7 @@ export default {
             })
             .catch(err => console.log("Авторизация завершилась с ошибкой" + err))
       }
-
-      //   if (this.password.length > 0) {
-      //     axios.post('http://localhost:8000/login', {
-      //       email: this.email,
-      //       password: this.password
-      //     })
-      //         .then( (response) => {
-      //           let is_admin = response.data.user.is_admin
-
-      //           localStorage.setItem('user',JSON.stringify(response.data.user))
-      //           localStorage.setItem('jwt',response.data.token)
-
-      //           if (localStorage.getItem('jwt') != null){
-      //             // this.$emit('loggedIn')
-      //             console.log(this.$route.params.nextUrl);
-      //             if(this.$route.params.nextUrl != null){
-      //               this.$router.push(this.$route.params.nextUrl)
-      //             }
-      //             else {
-      //               if(is_admin === 1){
-      //                 this.$router.push('admin')
-      //               }
-      //               else {
-      //                 this.$router.push('mypage')
-      //               }
-      //             }
-      //           }
-      //         })
-      //         .catch(function (error) {
-      //           console.error(error.response);
-      //         });
-      //   }
-      // }
     }
-
   }
 }
 </script>
@@ -175,5 +164,12 @@ export default {
   font-size: 19px;
   color: white;
   font-family: emoji;
+}
+.error-msg {
+  color: red;
+  font-size: 14px;
+}
+.invalid {
+  border-color: red;
 }
 </style>
