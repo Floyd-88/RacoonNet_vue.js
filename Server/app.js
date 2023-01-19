@@ -1,18 +1,24 @@
 const express = require('express');
-const tokenKey = require('./tokenKey');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const { validationResult} = require('express-validator');
 
+//подключаем серкретный ключ для токена
+const tokenKey = require('./tokenKey');
+
+//подключаем экземпляры классов
 const AuthorizationUserDB = require('./AuthorizationUserDB');
 const PostsDB = require('./PostsDB');
 
+//создаем объекты на основе экземпляров классов
 const authorization = new AuthorizationUserDB();
 const posts = new PostsDB();
 
+//подключаем массивы с валидацией
 const loginValidate = require('./validate/loginValidate')
-const registerValidate = require('./validate/registerValidate.js')
+const registerValidate = require('./validate/registerValidate')
+const postValidate = require('./validate/postValidate')
 
 const app = express();
 
@@ -33,8 +39,7 @@ app.use(allowCrossDomain);
 router.post('/register', registerValidate, function(req, res) {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
-        return res.status(422)
-            .json( { errors: errors.array() });
+        return res.status(422).json( { errors: errors.array() });
     }
 
     if(!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthday || !req.body.selectedGender) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
@@ -69,8 +74,7 @@ router.post('/register-admin', registerValidate, function(req, res) {
 
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
-        return res.status(422)
-            .json( { errors: errors.array() });
+        return res.status(422).json( { errors: errors.array() });
     }
 
     if(!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthday || !req.body.selectedGender) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
@@ -105,12 +109,11 @@ router.post('/register-admin', registerValidate, function(req, res) {
 router.post('/login', loginValidate, function (req, res) {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
-        return res.status(422)
-            .json( { errors: errors.array() });
+        return res.status(422).json( { errors: errors.array() });
     }
     authorization.selectByEmail(req.body.email, (err, user) => {
         if (err) return res.status(500).send('Ошибка на сервере.');
-        if (!user) return res.status(404).send('Такого пользователя не существует.');
+        if (!user) return res.status(404).send({err: 'Такого пользователя не существует'});
 
         let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass); //???????????????????????????????
         if (!passwordIsValid) return res.status(401).send({ auth: false, token: null, err: 'Пароль не действителен' });
@@ -139,7 +142,13 @@ router.get('/dataBase.js', function(req, res) {
 });
 
 //добавляем новый пост
-router.post('/dataBase.js',  function(req, res) {
+router.post('/dataBase.js', postValidate,  function(req, res) {
+
+    const errors = validationResult(req.body.body);
+    if(!errors.isEmpty()) {
+        return res.status(422).json( { errors: errors.array() });
+    }
+
         posts.add_post_DB([
             req.body.ava,
             req.body.name,

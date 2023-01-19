@@ -2,6 +2,9 @@
   <div class="modal_fone"
        v-if="showModal">
     <div @click.stop class="modal_window">
+      <div class="close_modal"
+           @click="this.$emit('setNotShowModalWindow')"
+      ></div>
       <slot></slot>
     </div>
   </div>
@@ -34,12 +37,28 @@ export default {
   z-index: 1;
 }
 .modal_window {
+  position: relative;
   background: white;
-  /*border-radius: 18px;*/
   width: 450px;
-  height: 80%;
+  height: max-content;
+  padding-bottom: 10px;
   border-radius: 5px;
   background: white;
   box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 70%);
+  overflow: auto;
 }
+.close_modal {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border: 1px solid black;
+    background-image: url("../../assets/icons/close.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 </style>

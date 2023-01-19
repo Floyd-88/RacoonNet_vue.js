@@ -25,6 +25,10 @@
                :class="{invalid: (v$.password.$error)}"
         >
       </div>
+      <div class="wrapper_error_login"
+          v-if="errorLogin">
+        <p class="error_login">{{errorLogin}}</p>
+      </div>
 
       <div class="wrapper_form_login_btn">
         <button class="form_login_btn" type="submit"
@@ -68,6 +72,7 @@ export default {
     return {
       email: '',
       password: '',
+      errorLogin: '',
     }
   },
 
@@ -92,7 +97,10 @@ export default {
                 this.$router.push('mypage')
               }
             })
-            .catch(err => console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(err)))
+            .catch((err) => {
+              this.errorLogin = JSON.stringify(err.err).slice(1, -1);
+              console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(err))
+            })
       }
     }
   }
@@ -170,6 +178,12 @@ export default {
   font-size: 14px;
 }
 .invalid {
-  border-color: red;
+  border: 1px solid red;
+}
+.wrapper_error_login {
+
+}
+.error_login {
+  color: red;
 }
 </style>

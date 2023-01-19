@@ -139,11 +139,11 @@ export default {
 }
 
 .wrapper_text_post {
-
+padding-right: 5px;
 }
 
 .text_post {
-
+word-break: break-word;
 }
 
 .btns_post {

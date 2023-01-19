@@ -2,8 +2,8 @@
   <div>
 
     <UImodal
-        @click="setNotShowModalWindow"
         :show-modal="showModal"
+        @setNotShowModalWindow="setNotShowModalWindow"
     >
       <RegisterNet/>
     </UImodal>

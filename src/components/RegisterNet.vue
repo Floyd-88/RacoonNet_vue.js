@@ -73,6 +73,7 @@
                placeholder="Пароль"
                v-model="v$.password.$model"
                :class="{invalid: (v$.password.$error)}"
+               @change="checkPassword"
                >
       </div>
 
@@ -277,13 +278,13 @@ export default {
       password: {required, min: minLength(8)},
       password_confirmation: {required},
       country: {
-        required, name_validation: {
+        required, min: minLength(2), name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
         }
       },
       city: {
-        required, name_validation: {
+        required, min: minLength(2), name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
         }
@@ -323,17 +324,13 @@ export default {
     checkPassword() {
       this.double_password = this.password !== this.password_confirmation;
     }
-
-
   },
+
   computed: {
     years() {
       const year = new Date().getFullYear()
       return Array.from({length: year - 1900}, (value, index) => year - index)
     },
-
-
-
   }
 }
 </script>
@@ -446,6 +443,6 @@ export default {
   font-size: 14px;
 }
 .invalid {
-  border-color: red;
+  border: 1px solid red;
 }
 </style>

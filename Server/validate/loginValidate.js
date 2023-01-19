@@ -11,12 +11,6 @@ let loginValidate = [
 
         // Check Password
         check('password')
-            .isLength({min: 8})
-            .withMessage('Пароль должен содержать не менее 8 сиволов')
-            // .matches('[0-9]')
-            // .withMessage('Password Must Contain a Number')
-            // .matches('[A-Z]')
-            // .withMessage('Password Must Contain an Uppercase Letter')
             .trim()
             .escape(),
 ]

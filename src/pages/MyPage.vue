@@ -92,7 +92,6 @@ export default {
       // console.log(this.posts)
       axios.post('http://localhost:8000/dataBase.js', newPost)
           .then(function (response) {
-            console.log(response.data.insertId);
             newPost.id = response.data.insertId;
           })
           .catch(function (error) {
@@ -224,10 +223,13 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 0 0 70%;
+  overflow: hidden;
 }
 
 .wrapper_contents_myPhoto {
   border: 1px solid black;
+  margin-right: 20px;
+  margin-bottom: 20px;
 }
 
 .wrapper_preview_myPhoto {

@@ -5,8 +5,8 @@
       <textarea
           class="text_new_post"
           placeholder="Введите текст поста"
+          required
           v-model="body"
-          @keydown.enter.prevent.exact="addPost"
       ></textarea>
 
   </div>
