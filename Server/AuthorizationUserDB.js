@@ -9,7 +9,7 @@ class AuthorizationUserDB {
 
     // создаем таблицу с зарегистрированными пользователями
    createTableUsers() {
-       const sql = `CREATE TABLE IF NOT EXISTS users (userID integer PRIMARY KEY AUTO_INCREMENT, name varchar(50) NOT NULL, surname varchar(50) NOT NULL, email varchar(50) UNIQUE NOT NULL, user_pass text NOT NULL, birthday date NOT NULL, selectedGender varchar(20) NOT NULL, country varchar(50), city varchar(50),  is_admin integer)`;
+       const sql = `CREATE TABLE IF NOT EXISTS users (userID integer PRIMARY KEY AUTO_INCREMENT, name varchar(50) NOT NULL, surname varchar(50) NOT NULL, email varchar(50) UNIQUE NOT NULL, user_pass text NOT NULL, birthday datetime NOT NULL, selectedGender varchar(20) NOT NULL, country varchar(50), city varchar(50),  is_admin integer)`;
        this.connection.execute(sql);
     }
 

@@ -28,7 +28,8 @@
 
       <div class="wrapper_form_login_btn">
         <button class="form_login_btn" type="submit"
-                :disabled="v$.$invalid">
+                :disabled="v$.$invalid"
+        >
           Вход
         </button>
       </div>
@@ -78,7 +79,6 @@ export default {
   },
 
   methods: {
-
     handleSubmit() {
       if (this.password.length > 0) {
         let email = this.email;
@@ -92,7 +92,7 @@ export default {
                 this.$router.push('mypage')
               }
             })
-            .catch(err => console.log("Авторизация завершилась с ошибкой" + err))
+            .catch(err => console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(err)))
       }
     }
   }

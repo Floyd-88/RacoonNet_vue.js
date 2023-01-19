@@ -3,12 +3,16 @@ const tokenKey = require('./tokenKey');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
+const { validationResult} = require('express-validator');
 
 const AuthorizationUserDB = require('./AuthorizationUserDB');
 const PostsDB = require('./PostsDB');
 
 const authorization = new AuthorizationUserDB();
 const posts = new PostsDB();
+
+const loginValidate = require('./validate/loginValidate')
+const registerValidate = require('./validate/registerValidate.js')
 
 const app = express();
 
@@ -25,9 +29,15 @@ const allowCrossDomain = function(req, res, next) {
 }
 app.use(allowCrossDomain);
 
-//регистрируем обычного пользователя
-router.post('/register', function(req, res) {
-    if(!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthday || !req.body.selectedGender) return res.status(500).send("There was a problem registering the user.");
+// регистрируем обычного пользователя
+router.post('/register', registerValidate, function(req, res) {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(422)
+            .json( { errors: errors.array() });
+    }
+
+    if(!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthday || !req.body.selectedGender) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
 
     authorization.insert([
         req.body.name,
@@ -39,10 +49,10 @@ router.post('/register', function(req, res) {
         req.body.country,
         req.body.city
         ],(err) => {
-            if (err) return res.status(500).send("There was a problem registering the user.");
+            if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err);
 
             authorization.selectByEmail(req.body.email, (err,user) => {
-                if (err) return res.status(500).send("There was a problem getting user");
+                if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
 
                 let token = jwt.sign( //???????????????????????????????????????????????????
                     {id: user.id},  //????????????????????????????????????????????
@@ -55,8 +65,15 @@ router.post('/register', function(req, res) {
 });
 
 //регистрируем пользователя с правми администротора
-router.post('/register-admin', function(req, res) {
-    if(!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthday || !req.body.selectedGender) return res.status(500).send("There was a problem registering the user.");
+router.post('/register-admin', registerValidate, function(req, res) {
+
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(422)
+            .json( { errors: errors.array() });
+    }
+
+    if(!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthday || !req.body.selectedGender) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
 
     authorization.insertAdmin([
         req.body.name,
@@ -69,10 +86,10 @@ router.post('/register-admin', function(req, res) {
         req.body.city,
         req.body.is_admin
         ],(err) => {
-            if (err) return res.status(500).send("There was a problem registering the user.")
+            if (err) return res.status(500).send("При регистрации пользователя возникли проблемы.")
 
             authorization.selectByEmail(req.body.email, (err,user) => {
-                if (err) return res.status(500).send("There was a problem getting user")
+                if (err) return res.status(500).send("Ошибка на сервере.")
 
                 let token = jwt.sign(
                     {id: user.id},
@@ -85,13 +102,18 @@ router.post('/register-admin', function(req, res) {
 });
 
 //авторизуем пользователя при вводе логина и пароля
-router.post('/login', function (req, res) {
+router.post('/login', loginValidate, function (req, res) {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(422)
+            .json( { errors: errors.array() });
+    }
     authorization.selectByEmail(req.body.email, (err, user) => {
-        if (err) return res.status(500).send('Error on the server.');
-        if (!user) return res.status(404).send('No user found.');
+        if (err) return res.status(500).send('Ошибка на сервере.');
+        if (!user) return res.status(404).send('Такого пользователя не существует.');
 
         let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass); //???????????????????????????????
-        if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
+        if (!passwordIsValid) return res.status(401).send({ auth: false, token: null, err: 'Пароль не действителен' });
 
         let token = jwt.sign(
             {id: user.id},

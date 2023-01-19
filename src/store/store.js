@@ -59,11 +59,11 @@ export default createStore({
                                 resolve(resp);
                             }
                     })
-                    .catch(err => {
+                    .catch((err) => {
                         commit('auth_error');
                         localStorage.removeItem('token');
                         localStorage.removeItem('user');
-                        reject(err);
+                        reject(err.response.data);
                     })
             })
         },
@@ -94,7 +94,7 @@ export default createStore({
                     .catch(err => {
                         commit('auth_error', err);
                         localStorage.removeItem('token')
-                        reject(err);
+                        reject(err.response.data);
                     })
             })
         },

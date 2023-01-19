@@ -262,13 +262,13 @@ export default {
   validations() {
     return {
       name: {
-        required, name_validation: {
+        required, min: minLength(2), name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
         }
       },
       surname: {
-        required, name_validation: {
+        required, min: minLength(2), name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
         }
@@ -299,21 +299,21 @@ export default {
     handleSubmit() {
       if (this.password === this.password_confirmation && this.password.length >= 8) {
         let user = {
-          name: this.name,
-          surname: this.surname,
+          name: this.name.charAt(0).toUpperCase() + this.name.slice(1),
+          surname: this.surname.charAt(0).toUpperCase() + this.surname.slice(1),
           email: this.email,
           password: this.password,
           birthday: this.selectedYear + "-" + this.selectedMonth + "-" + this.selectedDay,
           selectedGender: this.selectedGender,
-          country: this.country,
-          city: this.city,
+          country: this.country.charAt(0).toUpperCase() + this.country.slice(1),
+          city: this.city.charAt(0).toUpperCase() + this.city.slice(1),
           is_admin: this.is_admin
         }
         this.$store.dispatch('register', user)
             .then(() => {
               this.$router.push('mypage');
             })
-            .catch(err => console.log('Регистрация заершилась с ошибкой:' + err))
+            .catch(err => console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err)))
       } else {
         this.password = ""
         this.password_confirmation = ""
