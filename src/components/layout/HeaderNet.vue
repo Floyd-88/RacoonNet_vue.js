@@ -12,7 +12,7 @@
       </div>
 
       <div class="header_wrapper_exit">
-          <span class="header_exit" v-if="isLoggedIn"> <a @click="logout">Выход</a></span>
+          <span class="header_exit" v-if="isLoggedIn"> <a @click="runLogout">Выход</a></span>
       </div>
 
 
@@ -20,12 +20,16 @@
 </template>
 
 <script>
+import {mapGetters, mapActions} from "vuex";
+
 export default {
   name: "HeaderNet",
 
   methods: {
-    logout: function () {
-      this.$store.dispatch('logout')
+    ...mapActions({logout: "authorizationStore/logout"}),
+
+    runLogout() {
+      this.logout()
           .then(() => {
             this.$router.push('/')
           })
@@ -33,9 +37,7 @@ export default {
   },
 
   computed : {
-    isLoggedIn : function(){
-      return this.$store.getters.isLoggedIn
-    }
+    ...mapGetters({isLoggedIn: "authorizationStore/isLoggedIn"})
   },
 
 }

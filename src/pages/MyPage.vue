@@ -62,7 +62,8 @@
 <script>
 
 import axios from "axios";
-import {mapGetters} from "vuex"
+import {mapGetters} from "vuex";
+
 export default {
   name: "MyPage",
   data() {
@@ -76,13 +77,14 @@ export default {
   },
 
   methods: {
+
     // добавление нового поста на мою страницу
     addPost(body) {
       const newPost = {
-        userID: this.userID,
+        userID: this.getUser.userID,
         ava: '/img/ava_1.776f687c.jpg',
-        name: this.nameUser,
-        surname: this.surnameUser,
+        name: this.getUser.name,
+        surname: this.getUser.surname,
         date: this.newDate(),
         body: body.trim(),
         flag: '1',
@@ -156,7 +158,7 @@ export default {
           params: {
             _count: this.countPosts,
             _limit: this.limitPosts,
-            userID: this.userID
+            userID: this.getUser.userID
           }
         }).then((response) => {
           const arr_posts = response.data;
@@ -193,11 +195,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      nameUser: "nameUser",
-      surnameUser: "surnameUser",
-      userID: "userID"
-    }),
+    ...mapGetters({getUser: "authorizationStore/getUser"}),
   }
 
 }

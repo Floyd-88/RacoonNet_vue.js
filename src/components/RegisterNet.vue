@@ -226,6 +226,7 @@
 <script>
 import {useVuelidate} from "@vuelidate/core";
 import {required, email, minLength} from "@vuelidate/validators";
+import {mapActions} from "vuex";
 
 export function validName(name) {
   let validNamePattern = new RegExp("^[a-zA-Zа-яА-Я]+(?:[-'\\s][a-zA-Zа-яА-Я]+)*$");
@@ -297,6 +298,9 @@ export default {
   },
 
   methods: {
+
+    ...mapActions({register: "authorizationStore/register"}),
+
     handleSubmit() {
       if (this.password === this.password_confirmation && this.password.length >= 8) {
         let user = {
@@ -310,7 +314,7 @@ export default {
           city: this.city.charAt(0).toUpperCase() + this.city.slice(1),
           is_admin: this.is_admin
         }
-        this.$store.dispatch('register', user)
+        this.register(user)
             .then(() => {
               this.$router.push('mypage');
             })

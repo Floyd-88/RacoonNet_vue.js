@@ -9,11 +9,11 @@
 
       <div class="wrapper_info_user">
         <div class="wrapper_name_user">
-          <p class="name_user">{{nameUser + " " + surnameUser}}</p>
+          <p class="name_user">{{getUser.name + " " + getUser.surname}}</p>
         </div>
         <div class="wrapper_city_user">
-          <p class="city_user">Страна: {{countryUser}}</p>
-          <p class="city_user">Населенный пункт: {{cityUser}}</p>
+          <p class="city_user">Страна: {{getUser.country}}</p>
+          <p class="city_user">Населенный пункт: {{getUser.city}}</p>
           <p class="city_user">Возраст:{{age}}</p>
         </div>
       </div>
@@ -28,23 +28,16 @@
 </template>
 
 <script>
-import UIbtn from "@/components/UI/UIbtn";
 import {mapGetters} from "vuex"
 export default {
   name: "UserInfo",
-  components: {UIbtn},
 
   computed: {
-    ...mapGetters({
-      nameUser: "nameUser",
-      surnameUser: "surnameUser",
-      ageUser: "ageUser",
-      countryUser: "countryUser",
-      cityUser: "cityUser",
-    }),
+    ...mapGetters({getUser: "authorizationStore/getUser"}),
+
     age() {
         const today = new Date();
-        const birthDate = new Date(this.ageUser);
+        const birthDate = new Date(this.getUser.birthday);
         const age = today.getFullYear() - birthDate.getFullYear();
         if (
             today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
