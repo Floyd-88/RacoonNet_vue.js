@@ -148,7 +148,6 @@ router.post('/dataBase.js', postValidate,  function(req, res) {
     if(!errors.isEmpty()) {
         return res.status(422).json( { errors: errors.array() });
     }
-
         posts.add_post_DB([
             req.body.ava,
             req.body.name,
@@ -169,6 +168,7 @@ router.post('/dataBase.js', postValidate,  function(req, res) {
 router.put('/dataBase.js', function(req, res) {
         posts.edit_post_DB([
             req.body.body,
+            req.body.date,
             req.body.id
         ],(err) => {
             if (err) return res.status(500).send('Error on the server.');

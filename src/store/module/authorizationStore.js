@@ -8,7 +8,7 @@ export const authorizationStore = {
     }),
     getters : {
         isLoggedIn: state => !!state.token, //показываем кнопку выход в header
-        authStatus: state => state.status,
+        // authStatus: state => state.status,
         getUser: state => state.user,
     },
     mutations: {

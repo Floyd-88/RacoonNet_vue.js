@@ -1,12 +1,10 @@
-// import Vue from 'vue'
-// import Vuex from 'vuex'
 import {createStore} from "vuex";
-import {authorizationStore} from "./module/authorizationStore";
-// import {postsMyPageStore} from "./module//postsMyPageStore";
+import {authorizationStore} from "@/store/module/authorizationStore";
+import {postsMyPageStore} from "@/store/module/postsMyPageStore";
 
 export default createStore( {
     modules: {
         authorizationStore,
-        // postsMyPageStore,
+        postsMyPageStore,
     }
 });

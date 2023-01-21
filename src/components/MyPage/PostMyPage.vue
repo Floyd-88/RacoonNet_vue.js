@@ -1,9 +1,8 @@
 <template>
 
   <div class="post"
-       v-for="post of posts"
-       :key="post.id"
-  >
+       v-for="post of getPost"
+       :key="post.id">
 
     <div class="wrapper_post">
 
@@ -21,22 +20,16 @@
         </div>
 
         <template v-if="post.flag">
-
           <div class="wrapper_text_post">
             <p class="text_post">
               {{ post.body }}
             </p>
           </div>
-
         </template>
 
         <template v-else>
           <div class="wrapper_edit_text_body">
-             <textarea
-                 class="edit_text_body"
-                 :value="value"
-                 @input="this.$emit('update:value', $event.target.value)"
-             ></textarea>
+            <textarea class="edit_text_body" v-model="post.body"></textarea>
           </div>
 
         </template>
@@ -44,16 +37,13 @@
 
     </div>
 
-
     <div class="btns_post">
-      <UIbtn
-          @click="editPost(post.id)"
-      >
+      <UIbtn @click="this.$emit('editPost', post.id)">
         {{ post.nameBtnEdit }}
       </UIbtn>
+
       <UIbtn style="margin-left: 5px"
-             @click="this.$emit('removePost', post.id)"
-      >
+             @click="this.$emit('removePost', post.id)">
         Удалить
       </UIbtn>
     </div>
@@ -61,33 +51,19 @@
   </div>
 
 
-
 </template>
 
 <script>
+import {mapGetters} from "vuex";
 
 export default {
   name: "PostMyPage",
   emits: [
     "removePost",
     "editPost",
-    "update:value",
   ],
-  props: {
-    value: [String, Number],
-    posts: {
-      type: Array,
-      required: true,
-    },
-  },
 
-  methods: {
-    editPost(id) {
-      this.$emit('editPost', id)
-    },
-  },
-
-
+  computed: {...mapGetters({getPost: "postsMyPageStore/getPosts"})}
 }
 </script>
 
@@ -139,11 +115,11 @@ export default {
 }
 
 .wrapper_text_post {
-padding-right: 5px;
+  padding-right: 5px;
 }
 
 .text_post {
-word-break: break-word;
+  word-break: break-word;
 }
 
 .btns_post {

@@ -9,22 +9,22 @@
             <h2>Мои фото</h2>
             <div class="wrapper_preview_myPhoto">
               <div class="preview_myPhoto">
-                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="photo">
               </div>
               <div class="preview_myPhoto">
-                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="photo">
               </div>
               <div class="preview_myPhoto">
-                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="photo">
               </div>
               <div class="preview_myPhoto">
-                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="photo">
               </div>
               <div class="preview_myPhoto">
-                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="photo">
               </div>
               <div class="preview_myPhoto">
-                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="foto_1">
+                <img class="myPhoto" src="@/assets/photo/man.jpg" alt="photo">
               </div>
             </div>
           </div>
@@ -34,14 +34,12 @@
                 @addPost="addPost"
             />
             <PostMyPage
-                v-model:value="changePost"
-                :posts="posts"
-                @removePost="removePost"
                 @editPost="editPost"
+                @removePost="removePost"
             />
 
             <div class="wrapper_not_posts"
-                 v-if="posts.length === 0"
+                 v-if="getPosts.length === 0"
             >
               <p class="not_posts">Посты не найдены!!!</p>
             </div>
@@ -60,121 +58,10 @@
   </div>
 </template>
 <script>
-
-import axios from "axios";
-import {mapGetters} from "vuex";
+import {mapGetters, mapActions, mapMutations} from "vuex";
 
 export default {
   name: "MyPage",
-  data() {
-    return {
-      changePost: "", //текс измененного поста при редактировании
-      posts: [], //массив постов подгружаемый из базы данных
-      countPosts: 0, //номер массива страницы
-      limitPosts: 0, //количество постов на одной странице
-      totalCount: 0, //всего страниц
-    }
-  },
-
-  methods: {
-
-    // добавление нового поста на мою страницу
-    addPost(body) {
-      const newPost = {
-        userID: this.getUser.userID,
-        ava: '/img/ava_1.776f687c.jpg',
-        name: this.getUser.name,
-        surname: this.getUser.surname,
-        date: this.newDate(),
-        body: body.trim(),
-        flag: '1',
-        nameBtnEdit: "Редактировать",
-      }
-
-      // console.log(this.posts)
-      axios.post('http://localhost:8000/dataBase.js', newPost)
-          .then(function (response) {
-            newPost.id = response.data.insertId;
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      this.posts.unshift(newPost);
-    },
-
-    //удаление поста
-    removePost(id) {
-      console.log(id)
-      this.posts = this.posts.filter(post => post.id !== id);
-
-      axios.delete('http://localhost:8000/dataBase.js?id=' + id)
-          .then(function (response) {
-            console.log(response)
-          })
-          .catch(function (error) {
-            console.log(error)
-          })
-    },
-
-    // изменение поста
-    editPost(id) {
-      this.posts.map(post => {
-        if (post.flag) {
-          if (post.id === id) {
-            this.changePost = post.body;
-            post.flag = !post.flag;
-            post.nameBtnEdit = "Cохранить";
-          }
-        } else {
-          post.body = this.changePost;
-          axios.put('http://localhost:8000/dataBase.js', {
-            body: post.body,
-            id: post.id,
-          })
-              .then(function (response) {
-                console.log(response)
-              })
-              .catch(function (error) {
-                console.log(error)
-              })
-
-          post.date = "Изменено: " + this.newDate();
-          post.flag = !post.flag;
-          post.nameBtnEdit = "Редактировать";
-        }
-      })
-    },
-
-    //функция устанавливает отредактированный формат даты и времени
-    newDate() {
-      const date = new Date();
-      return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    },
-
-    //загрузка постов с базы данных
-    async loadPostServer() {
-      try {
-        await axios.get('http://localhost:8000/dataBase.js', {
-          params: {
-            _count: this.countPosts,
-            _limit: this.limitPosts,
-            userID: this.getUser.userID
-          }
-        }).then((response) => {
-          const arr_posts = response.data;
-          // if (arr_posts.length === 0) {
-          //   console.log('Посты не найдены');
-          // } else {
-          this.posts = [...this.posts, ...arr_posts];
-          // }
-          // console.log(this.posts)
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    },
-
-  },
 
   mounted() {
     // обсервер срабатывает каждый раз когда докручиваем страницу донизу
@@ -184,18 +71,33 @@ export default {
     };
     const callback = (entries) => {
       if (entries[0].isIntersecting) {
-        this.limitPosts = 3;
-        this.countPosts = this.posts.length;
+        this.setLimitPosts();
+        this.setCountPosts();
         this.loadPostServer();
       }
     };
     const observer = new IntersectionObserver(callback, options);
     observer.observe(this.$refs.observer);
+  },
 
+
+  methods: {
+    ...mapActions({
+      addPost: "postsMyPageStore/addPost",
+      loadPostServer: "postsMyPageStore/loadPostServer",
+      removePost: "postsMyPageStore/removePost",
+      editPost: "postsMyPageStore/editPost"
+    }),
+    ...mapMutations({
+      setCountPosts: "postsMyPageStore/setCountPosts",
+      setLimitPosts: "postsMyPageStore/setLimitPosts",
+    }),
   },
 
   computed: {
-    ...mapGetters({getUser: "authorizationStore/getUser"}),
+    ...mapGetters({
+      getPosts: "postsMyPageStore/getPosts",
+    }),
   }
 
 }

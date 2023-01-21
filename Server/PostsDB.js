@@ -29,7 +29,7 @@ class PostsDB {
 
 // редактирование поста
     edit_post_DB(body, callback) {
-       return this.connection.execute(`UPDATE posts SET body=? WHERE id =?`, body, (err) => {
+       return this.connection.execute(`UPDATE posts SET body=?, date=? WHERE id =?`, body, (err) => {
            callback(err);
        });
     }
