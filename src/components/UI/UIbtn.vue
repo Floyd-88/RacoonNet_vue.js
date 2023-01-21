@@ -12,10 +12,17 @@ export default {
 
 <style scoped>
 .btn {
-  background: aquamarine;
-  border: 1px solid black;
+  border-radius: 5px;
+  background: gainsboro;
+  border: 0px solid black;
   padding: 5px;
-  font-family: cursive;
+  font-family: fantasy;
   cursor: pointer;
+  color: black;
+  box-shadow: 0px 1px 0px 0px rgb(0 0 0 / 40%);
+}
+.btn:hover {
+  filter: brightness(80%);
+  transition: 0.3s;
 }
 </style>

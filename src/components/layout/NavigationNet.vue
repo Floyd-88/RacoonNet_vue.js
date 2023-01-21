@@ -27,7 +27,7 @@ export default {
 
 <style scoped>
 .wrapper_nav {
-  background: floralwhite;
+  /*background: floralwhite;*/
   padding: 30px;
   display: flex;
   flex-direction: column;
@@ -40,11 +40,26 @@ export default {
 
 }
 .link {
-  margin: 10px 0;
+  margin: 7px 0;
   font-size: 18px;
-  font-family: cursive;
-  background: none;
+  font-family: fantasy;
   border: none;
   cursor: pointer;
+  background: none;
+  color: cornflowerblue;
+}
+.link:after {
+  display: block; /*превращаем его в блочный элемент*/
+  content: ""; /*контента в данном блоке не будет поэтому в кавычках ничего не ставим*/
+  height: 3px; /*задаём высоту линии*/
+  width: 0%; /*задаём начальную ширину элемента (линии)*/
+  background-color: #3b57a1; /*цвет фона элемента*/
+  transition: width 0.2s ease-in-out; /*данное свойство отвечает за плавное изменение ширины. Здесь можно задать время анимации в секундах (в данном случае задано 0.4 секунды)*/
+}
+.link:hover:after{
+  width: 100%;
+}
+.link:hover{
+  color:#3b57a1;
 }
 </style>

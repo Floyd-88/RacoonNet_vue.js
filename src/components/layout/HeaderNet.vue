@@ -90,4 +90,18 @@ width: 100px;
   font-size: 18px;
   font-family: fantasy;
 }
+.header_exit:after {
+  display: block;
+  content: "";
+  height: 3px;
+  width: 0%;
+  background-color: black;
+  transition: width 0.2s ease-in-out;
+}
+.header_exit:hover:after {
+  width: 100%;
+}
+.header_exit:hover{
+  color: black;
+}
 </style>

@@ -3,52 +3,67 @@
     <form @submit.prevent="handleSubmit" novalidate>
 
       <div class="form_login">
-        <div class="input-errors" v-for="(error, index) of v$.email.$errors" :key="index">
-          <div class="error-msg" v-if="error.$message === 'Value is not a valid email address'">Некорректный адрес электронной почты</div>
-          <div class="error-msg" v-if="error.$message === 'Value is required'">Введите электронную почту указанную при регистрации</div>
+        <div class="input-errors"
+             v-for="(error, index) of v$.email.$errors"
+             :key="index">
+          <div class="error-msg"
+               v-if="error.$message === 'Value is not a valid email address'">
+            Некорректный адрес электронной почты
+          </div>
+          <div class="error-msg"
+               v-if="error.$message === 'Value is required'">
+            Введите электронную почту указанную при регистрации
+          </div>
         </div>
-        <input class="form_login_input" id="email" type="text"
-               placeholder="Введите электронный адрес" autofocus
+        <input class="form_login_input"
+               id="email"
+               type="text"
+               placeholder="Введите электронный адрес"
+               autofocus
                v-model="v$.email.$model"
-               :class="{invalid: (v$.email.$error)}"
-        >
+               :class="{invalid: (v$.email.$error)}">
       </div>
 
       <div class="form_login">
-        <div class="input-errors" v-for="(error, index) of v$.password.$errors" :key="index">
-          <div class="error-msg" v-if="error.$message === 'Value is required'">Введите пароль указанный при регистрации
+        <div class="input-errors"
+             v-for="(error, index) of v$.password.$errors"
+             :key="index">
+          <div class="error-msg"
+               v-if="error.$message === 'Value is required'">
+            Введите пароль указанный при регистрации
           </div>
         </div>
-        <input class="form_login_input" id="password" type="password"
+        <input class="form_login_input"
+               id="password"
+               type="password"
                placeholder="Введите пароль"
                v-model="v$.password.$model"
                :class="{invalid: (v$.password.$error)}"
         >
       </div>
       <div class="wrapper_error_login"
-          v-if="errorLogin">
-        <p class="error_login">{{errorLogin}}</p>
+           v-if="errorLogin">
+        <p class="error_login">{{ errorLogin }}</p>
       </div>
 
       <div class="wrapper_form_login_btn">
-        <button class="form_login_btn" type="submit"
-                :disabled="v$.$invalid"
-        >
+        <button class="form_login_btn"
+                type="submit"
+                :disabled="v$.$invalid">
           Вход
         </button>
       </div>
 
       <div class="wrapper_form_not_password">
         <button class="form_not_password"
-                @click="$router.push('/')"
-        > Забыли пароль?
+                @click="$router.push('/')">
+          Забыли пароль?
         </button>
       </div>
 
       <div class="wrapper_form_login_btn">
         <button class="form_register_btn"
-                @click.prevent="this.$emit('showModalTrue')"
-        >
+                @click.prevent="this.$emit('showModalTrue')">
           Создать новый аккаунт
         </button>
       </div>
@@ -85,14 +100,12 @@ export default {
   },
 
   methods: {
-
     ...mapActions({login: "authorizationStore/login"}),
 
     handleSubmit() {
       if (this.password.length > 0) {
         let email = this.email;
         let password = this.password;
-
 
         this.login({email, password})
             .then((resp) => {
@@ -103,7 +116,7 @@ export default {
               }
             })
             .catch((err) => {
-              if(err.err) {
+              if (err.err) {
                 this.errorLogin = JSON.stringify(err.err).slice(1, -1)
               }
               console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(err))
@@ -180,16 +193,20 @@ export default {
   color: white;
   font-family: emoji;
 }
+
 .error-msg {
   color: red;
   font-size: 14px;
 }
+
 .invalid {
   border: 1px solid red;
 }
+
 .wrapper_error_login {
 
 }
+
 .error_login {
   color: red;
 }

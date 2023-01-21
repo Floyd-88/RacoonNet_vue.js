@@ -66,22 +66,6 @@ import SecureNet from "@/components/SecureNet";
                 requiresAuth: true
             }
         },
-        // {
-        //     path: "/login",
-        //     component: LoginNet,
-        //     name: "login",
-        //     meta: {
-        //         guest: true
-        //     }
-        // },
-        // {
-        //     path: "/register",
-        //     component: RegisterNet,
-        //     name: "register",
-        //     meta: {
-        //         guest: true
-        //     }
-        // },
         {
             path: "/secure",
             component: SecureNet,
@@ -107,7 +91,6 @@ import SecureNet from "@/components/SecureNet";
                 guest: true
             }
         }
-
     ];
 
 const router = createRouter({

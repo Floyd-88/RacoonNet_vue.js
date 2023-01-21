@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent>
-  <div class="wrapper_text_new_post">
+    <div class="wrapper_text_new_post">
 
       <textarea
           class="text_new_post"
@@ -8,26 +8,23 @@
           v-model="body"
       ></textarea>
 
-  </div>
+    </div>
 
-  <div class="wrapper_btn_addPost">
-    <UIbtn
-        class="btn_addPost"
-        @click="addPost"
-        :disabled="body.length < 1"
-    >
-      Опубликовать
-    </UIbtn>
-  </div>
+    <div class="wrapper_btn_addPost">
+      <UIbtn class="btn_addPost"
+             @click="addPost"
+             :disabled="body.length < 1"
+      >
+        Добавить
+      </UIbtn>
+    </div>
   </form>
 </template>
 
 <script>
 export default {
   name: "AddPost",
-  emits: [
-    "addPost",
-  ],
+  emits: ["addPost"],
   data() {
     return {
       body: "",
@@ -36,10 +33,8 @@ export default {
 
   methods: {
     addPost() {
-      if(this.body) {
-        this.$emit('addPost', this.body);
-        this.body = "";
-      }
+      this.$emit('addPost', this.body);
+      this.body = "";
     },
   }
 
@@ -64,5 +59,14 @@ export default {
 }
 
 .btn_addPost {
+  width: 150px;
+  height: 40px;
+  font-size: 19px;
+  font-family: fantasy;
+  background: cornflowerblue;
+}
+.btn_addPost:hover {
+  filter: brightness(80%);
+  transition: 0.3s;
 }
 </style>

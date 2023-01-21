@@ -8,8 +8,18 @@ export const authorizationStore = {
     }),
     getters : {
         isLoggedIn: state => !!state.token, //показываем кнопку выход в header
-        // authStatus: state => state.status,
         getUser: state => state.user,
+        age: (state) => {
+            const today = new Date();
+            const birthDate = new Date(state.user.birthday);
+            const age = today.getFullYear() - birthDate.getFullYear();
+            if (
+                today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+            ) {
+                return age - 1;
+            }
+            return age;
+        },
     },
     mutations: {
         auth_request(state){

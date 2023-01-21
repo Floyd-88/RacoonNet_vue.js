@@ -41,7 +41,6 @@ export default {
   },
 
   computed: {
-
     ...mapGetters({isLoggedIn: "authorizationStore/isLoggedIn"}),
   }
 }
@@ -58,15 +57,14 @@ export default {
   box-sizing: border-box;
 }
 body {
-  background: aliceblue;
+  background: #f8f8f9;
 }
 .wrapper {
   margin: 0 10%;
 }
 
 .wrapper_main {
-  padding: 120px 20px;
-  background: aliceblue;
+  padding: 120px 20px 5px;
 }
 
 </style>

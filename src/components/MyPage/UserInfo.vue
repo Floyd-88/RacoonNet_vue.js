@@ -13,15 +13,15 @@
         </div>
         <div class="wrapper_city_user">
           <p class="city_user">Страна: {{getUser.country}}</p>
-          <p class="city_user">Населенный пункт: {{getUser.city}}</p>
-          <p class="city_user">Возраст:{{age}}</p>
+          <p class="city_user">Город: {{getUser.city}}</p>
+          <p class="city_user">Возраст: {{age}}</p>
         </div>
       </div>
 
     </div>
 
     <div class="wrapper_btn">
-      <UIbtn>Редактировать профиль</UIbtn>
+      <UIbtn class="redaction_profile_btn">Редактировать профиль</UIbtn>
     </div>
 
   </div>
@@ -33,19 +33,10 @@ export default {
   name: "UserInfo",
 
   computed: {
-    ...mapGetters({getUser: "authorizationStore/getUser"}),
-
-    age() {
-        const today = new Date();
-        const birthDate = new Date(this.getUser.birthday);
-        const age = today.getFullYear() - birthDate.getFullYear();
-        if (
-            today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
-        ) {
-          return age - 1;
-        }
-    return age;
-    },
+    ...mapGetters({
+      getUser: "authorizationStore/getUser",
+      age: "authorizationStore/age"
+    }),
   }
 }
 </script>
@@ -54,8 +45,10 @@ export default {
 .wrapper_user {
   display: flex;
   justify-content: space-between;
-  border: 1px solid;
   margin-bottom: 15px;
+  border-radius: 5px;
+  background: #f8f8f9;
+  box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
 }
 .wrapper_ava_user {
 }
@@ -75,17 +68,21 @@ export default {
 }
 .name_user {
   font-size: 20px;
-  font-family: cursive;
+  font-family: fantasy;
 }
 .wrapper_city_user {
   margin-top: 5px;
 }
 .city_user {
   font-size: 16px;
-  font-family: cursive;
+  font-family: math;
   /*margin-bottom: 5px;*/
 }
 .wrapper_btn {
   margin: 20px;
+}
+.redaction_profile_btn {
+  width: 155px;
+  font-size: 13px;
 }
 </style>

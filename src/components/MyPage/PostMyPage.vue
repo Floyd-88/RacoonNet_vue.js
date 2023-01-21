@@ -30,7 +30,6 @@
         <template v-else>
           <div class="wrapper_edit_text_body">
             <textarea class="edit_text_body"
-                      required
                       v-model="post.body"
             ></textarea>
           </div>
@@ -40,15 +39,16 @@
 
     </div>
 
-    <div class="btns_post">
-      <UIbtn @click="this.$emit('editPost', post.id)"
+    <div class="btn_post">
+      <UIbtn class="redaction_post_btn"
+          @click="this.$emit('editPost', post.id)"
              :disabled="post.body.length < 1"
       >
         {{ post.nameBtnEdit }}
       </UIbtn>
 
-      <UIbtn style="margin-left: 5px"
-             @click="this.$emit('removePost', post.id)">
+      <UIbtn class="delete_post_btn"
+          @click="this.$emit('removePost', post.id)">
         Удалить
       </UIbtn>
     </div>
@@ -74,8 +74,10 @@ export default {
 
 <style scoped>
 .post {
-  border: 1px solid;
   margin-bottom: 20px;
+  border-radius: 5px;
+  background: #f8f8f9;
+  box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
 }
 
 .wrapper_post {
@@ -127,11 +129,22 @@ export default {
   word-break: break-word;
 }
 
-.btns_post {
+.btn_post {
   display: flex;
   display: flex;
   justify-content: flex-end;
   margin: 5px;
+}
+
+.redaction_post_btn{
+  width: 100px;
+  font-size: 13px;
+  margin-right: 5px;
+}
+
+.delete_post_btn {
+  width: 70px;
+  font-size: 13px;
 }
 
 .wrapper_edit_text_body {
