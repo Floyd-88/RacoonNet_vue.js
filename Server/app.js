@@ -109,6 +109,7 @@ router.post('/register-admin', registerValidate, function(req, res) {
 router.post('/login', loginValidate, function (req, res) {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
+        console.log(errors)
         return res.status(422).json( { errors: errors.array() });
     }
     authorization.selectByEmail(req.body.email, (err, user) => {
@@ -143,8 +144,7 @@ router.get('/dataBase.js', function(req, res) {
 
 //добавляем новый пост
 router.post('/dataBase.js', postValidate,  function(req, res) {
-
-    const errors = validationResult(req.body.body);
+    const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(422).json( { errors: errors.array() });
     }
@@ -165,7 +165,12 @@ router.post('/dataBase.js', postValidate,  function(req, res) {
 });
 
 //редактируем пост
-router.put('/dataBase.js', function(req, res) {
+router.put('/dataBase.js',postValidate, function(req, res) {
+
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
         posts.edit_post_DB([
             req.body.body,
             req.body.date,

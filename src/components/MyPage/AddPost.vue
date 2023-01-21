@@ -5,7 +5,6 @@
       <textarea
           class="text_new_post"
           placeholder="Введите текст поста"
-          required
           v-model="body"
       ></textarea>
 
@@ -15,6 +14,7 @@
     <UIbtn
         class="btn_addPost"
         @click="addPost"
+        :disabled="body.length < 1"
     >
       Опубликовать
     </UIbtn>

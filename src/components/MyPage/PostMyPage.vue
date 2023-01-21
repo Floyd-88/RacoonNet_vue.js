@@ -3,7 +3,7 @@
   <div class="post"
        v-for="post of getPost"
        :key="post.id">
-
+    <form @submit.prevent>
     <div class="wrapper_post">
 
       <div class="wrapper_ava_posts">
@@ -29,7 +29,10 @@
 
         <template v-else>
           <div class="wrapper_edit_text_body">
-            <textarea class="edit_text_body" v-model="post.body"></textarea>
+            <textarea class="edit_text_body"
+                      required
+                      v-model="post.body"
+            ></textarea>
           </div>
 
         </template>
@@ -38,7 +41,9 @@
     </div>
 
     <div class="btns_post">
-      <UIbtn @click="this.$emit('editPost', post.id)">
+      <UIbtn @click="this.$emit('editPost', post.id)"
+             :disabled="post.body.length < 1"
+      >
         {{ post.nameBtnEdit }}
       </UIbtn>
 
@@ -47,7 +52,7 @@
         Удалить
       </UIbtn>
     </div>
-
+    </form>
   </div>
 
 

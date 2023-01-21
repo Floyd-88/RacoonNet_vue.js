@@ -46,7 +46,7 @@ export const postsMyPageStore = {
                         userID: getters.getUser.userID
                     }
                 }).then((response) => {
-                      commit("setPosts", [...state.posts, ...response.data]);
+                    commit("setPosts", [...state.posts, ...response.data]);
                 });
             } catch (err) {
                 console.error(err);
@@ -69,11 +69,12 @@ export const postsMyPageStore = {
                 await axios.post('http://localhost:8000/dataBase.js', newPost)
                     .then(function (response) {
                         newPost.id = response.data.insertId;
+                        commit("setAddPosts", newPost);
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        console.log("Ошибка при добавлении поста: " + error);
                     });
-            commit("setAddPosts", newPost)
+
         },
 
         // изменение поста
@@ -87,18 +88,17 @@ export const postsMyPageStore = {
             } else {
                 post.nameBtnEdit = "Сохранить";
             }
-
-            await axios.put('http://localhost:8000/dataBase.js', {
-                body: post.body,
-                date: date,
-                id: post.id,
-            })
-                .then(function (response) {
-                    console.log(response)
+                await axios.put('http://localhost:8000/dataBase.js', {
+                    body: post.body,
+                    date: date,
+                    id: post.id,
                 })
-                .catch(function (error) {
-                    console.log(error)
-                })
+                    .then(function (response) {
+                        console.log(response)
+                    })
+                    .catch(function (error) {
+                        console.log("Ошибка при редактировании поста: " + error)
+                    })
         },
 
         //удаление поста

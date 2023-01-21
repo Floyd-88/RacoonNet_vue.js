@@ -103,7 +103,9 @@ export default {
               }
             })
             .catch((err) => {
-              this.errorLogin = JSON.stringify(err.err).slice(1, -1);
+              if(err.err) {
+                this.errorLogin = JSON.stringify(err.err).slice(1, -1)
+              }
               console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(err))
             })
       }
