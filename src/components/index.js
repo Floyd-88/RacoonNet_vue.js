@@ -7,6 +7,8 @@ import AddPost from "@/components/MyPage/AddPost";
 import LoginNet from "@/components/LoginNet";
 import RegisterNet from "@/components/RegisterNet";
 import UImodal from "@/components/UI/UImodal";
+import PhotoMyPage from "@/components/MyPage/PhotoMyPage";
+import MyFriends from "@/components/MyPage/MyFriends";
 
 export default [
     UserInfo,
@@ -17,5 +19,7 @@ export default [
     AddPost,
     LoginNet,
     RegisterNet,
-    UImodal
+    UImodal,
+    PhotoMyPage,
+    MyFriends
 ]

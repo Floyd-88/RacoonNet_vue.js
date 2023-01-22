@@ -1,23 +1,15 @@
 <template>
   <div>
-
-    <UImodal
-        :show-modal="showModal"
-        @setNotShowModalWindow="setNotShowModalWindow"
-    >
-      <RegisterNet/>
-    </UImodal>
+    <UImodal> <RegisterNet/> </UImodal>
 
     <div class="wrapper_mainPage">
-
       <div class="wrapper_title">
-        <h2 class="welcome_title"><span class="name_net_title">RacсoonNet</span>Добро пожаловать в социальную сеть для общения со своими близкими </h2>
+        <h2 class="welcome_title">
+          <span class="name_net_title">RacсoonNet</span>
+          Добро пожаловать в социальную сеть для общения со своими близкими
+        </h2>
       </div>
-
-      <div class="wrapper_form">
-        <LoginNet @showModalTrue = "showModalTrue"/>
-      </div>
-
+      <div class="wrapper_form"> <LoginNet/> </div>
     </div>
 
   </div>
@@ -29,19 +21,9 @@
 export default {
   name: "MainPage",
   data() {
-    return {
-      showModal: false,
-    }
+    return {}
   },
 
-  methods: {
-    showModalTrue: function () {
-      this.showModal = true;
-    },
-    setNotShowModalWindow: function () {
-      this.showModal = false;
-    }
-  }
 }
 </script>
 

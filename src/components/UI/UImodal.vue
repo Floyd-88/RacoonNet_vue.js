@@ -1,9 +1,9 @@
 <template>
   <div class="modal_fone"
-       v-if="showModal">
+       v-if="getModal">
     <div @click.stop class="modal_window">
       <div class="close_modal"
-           @click="this.$emit('setNotShowModalWindow')"
+           @click="setNotShowModalWindow"
       ></div>
       <slot></slot>
     </div>
@@ -11,13 +11,17 @@
 </template>
 
 <script>
+import {mapGetters, mapMutations} from "vuex";
+
 export default {
   name: "UImodal",
 
-  props: {
-    showModal: {
-      type: Boolean,
-    }
+  methods: {
+    ...mapMutations({setNotShowModalWindow: "modalStore/setNotShowModalWindow"})
+  },
+
+  computed: {
+    ...mapGetters({getModal: "modalStore/getModal"})
   }
 
 }

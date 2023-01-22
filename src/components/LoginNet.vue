@@ -63,7 +63,7 @@
 
       <div class="wrapper_form_login_btn">
         <button class="form_register_btn"
-                @click.prevent="this.$emit('showModalTrue')">
+                @click.prevent="showModalTrue">
           Создать новый аккаунт
         </button>
       </div>
@@ -75,7 +75,8 @@
 <script>
 import {useVuelidate} from '@vuelidate/core'
 import {required, email} from '@vuelidate/validators'
-import {mapActions} from "vuex"
+import {mapActions, mapMutations} from "vuex"
+
 
 export default {
   name: "LoginNet",
@@ -101,6 +102,7 @@ export default {
 
   methods: {
     ...mapActions({login: "authorizationStore/login"}),
+    ...mapMutations({showModalTrue: "modalStore/showModalTrue"}),
 
     handleSubmit() {
       if (this.password.length > 0) {
