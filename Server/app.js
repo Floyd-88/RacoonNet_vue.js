@@ -42,14 +42,16 @@ router.post('/register', registerValidate, function (req, res) {
         return res.status(422).json({errors: errors.array()});
     }
 
-    if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthday || !req.body.selectedGender) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
+    if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day|| !req.body.selectedGender || !req.body.country || !req.body.city) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
 
     authorization.insert([
         req.body.name,
         req.body.surname,
         req.body.email,
         bcrypt.hashSync(req.body.password, 8),
-        req.body.birthday,
+        req.body.year,
+        req.body.month,
+        req.body.day,
         req.body.selectedGender,
         req.body.country,
         req.body.city
@@ -81,14 +83,16 @@ router.post('/register-admin', registerValidate, function (req, res) {
         return res.status(422).json({errors: errors.array()});
     }
 
-    if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthday || !req.body.selectedGender) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
+    if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day|| !req.body.selectedGender || !req.body.country || !req.body.city) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
 
     authorization.insertAdmin([
         req.body.name,
         req.body.surname,
         req.body.email,
         bcrypt.hashSync(req.body.password, 8),
-        req.body.birthday,
+        req.body.year,
+        req.body.month,
+        req.body.day,
         req.body.selectedGender,
         req.body.country,
         req.body.city,

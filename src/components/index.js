@@ -9,6 +9,7 @@ import RegisterNet from "@/components/RegisterNet";
 import UImodal from "@/components/UI/UImodal";
 import PhotoMyPage from "@/components/MyPage/PhotoMyPage";
 import MyFriends from "@/components/MyPage/MyFriends";
+import EditProfile from "@/components/MyPage/EditProfile";
 
 export default [
     UserInfo,
@@ -21,5 +22,6 @@ export default [
     RegisterNet,
     UImodal,
     PhotoMyPage,
-    MyFriends
+    MyFriends,
+    EditProfile
 ]

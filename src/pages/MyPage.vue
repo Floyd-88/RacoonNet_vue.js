@@ -1,5 +1,9 @@
 <template>
   <div class="main">
+    <UImodal>
+      <EditProfile/>
+    </UImodal>
+
     <UserInfo/>
     <div class="wrapper_myPage">
       <div class="wrapper_contents">
@@ -10,7 +14,6 @@
           <PostMyPage
               @editPost="editPost"
               @removePost="removePost"/>
-
 
           <div class="wrapper_not_posts"
                v-if="getPosts.length === 0">
@@ -29,10 +32,12 @@
 </template>
 <script>
 import {mapGetters, mapActions, mapMutations} from "vuex";
+import EditProfile from "@/components/MyPage/EditProfile";
+
 
 export default {
   name: "MyPage",
-
+  components: {EditProfile},
   mounted() {
     // обсервер срабатывает каждый раз когда докручиваем страницу донизу
     const options = {

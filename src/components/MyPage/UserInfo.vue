@@ -21,16 +21,22 @@
     </div>
 
     <div class="wrapper_btn">
-      <UIbtn class="redaction_profile_btn">Редактировать профиль</UIbtn>
+      <UIbtn class="redaction_profile_btn"
+      @click="showModalTrue"
+      >Редактировать профиль</UIbtn>
     </div>
 
   </div>
 </template>
 
 <script>
-import {mapGetters} from "vuex"
+import {mapGetters, mapMutations} from "vuex"
 export default {
   name: "UserInfo",
+
+  methods: {
+    ...mapMutations({showModalTrue: "modalStore/showModalTrue"})
+  },
 
   computed: {
     ...mapGetters({

@@ -8,10 +8,13 @@ export const authorizationStore = {
     }),
     getters : {
         isLoggedIn: state => !!state.token, //показываем кнопку выход в header
-        getUser: state => state.user,
+
+        getUser: (state) => state.user,
+
         age: (state) => {
             const today = new Date();
-            const birthDate = new Date(state.user.birthday);
+            const birthday = state.user.year_user + "-" + state.user.month_user + "-" + state.user.day_user;
+            const birthDate = new Date(birthday);
             const age = today.getFullYear() - birthDate.getFullYear();
             if (
                 today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
@@ -20,6 +23,7 @@ export const authorizationStore = {
             }
             return age;
         },
+
     },
     mutations: {
         auth_request(state){
@@ -36,6 +40,39 @@ export const authorizationStore = {
         logout(state){
             state.status = '';
             state.token = '';
+        },
+
+        setUser(state, user) {
+            state.user = user;
+        },
+
+        setName(state, name) {
+            state.user.name = name;
+        },
+        setSurname(state, surname) {
+            state.user.surname = surname;
+        },
+        setCountry(state, country) {
+            state.user.country = country;
+        },
+        setEmail(state, email) {
+            state.user.email = email;
+        },
+        setCity(state, city) {
+            state.user.city = city;
+        },
+
+        setYear(state, year) {
+            state.user.year_user = year;
+        },
+        setMonth(state, month) {
+            state.user.month_user = month;
+        },
+        setDay(state, day) {
+            state.user.day_user = day;
+        },
+        setGender(state, gender) {
+            state.user.selectedGender = gender;
         },
     },
     actions: {
@@ -105,8 +142,12 @@ export const authorizationStore = {
                 delete axios.defaults.headers.common['Authorization'];
                 resolve();
             })
-        }
+        },
 
+
+        actionUser({commit}, user) {
+            commit('setUsers', user);
+        },
     },
 
     namespaced: true,

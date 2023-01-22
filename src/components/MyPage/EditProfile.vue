@@ -1,11 +1,9 @@
 <template>
-  <h4 class="form_register_title">Регистрация</h4>
+  <h4 class="form_register_title">Изменить личные данные</h4>
   <div class="wrapper_form_register">
-
     <form class="form_register"
           @submit.prevent="handleSubmit"
           novalidate>
-
       <div class="wrapper_form_register_name">
 
         <!--вставить имя-->
@@ -22,10 +20,8 @@
                  id="name"
                  type="text"
                  placeholder="Имя"
-                 autofocus
-                 v-model="v$.name.$model"
-                 :class="{invalid: (v$.name.$error)}"
-          >
+                 v-model="changeName"
+                 :class="{invalid: (v$.name.$error)}">
         </div>
 
         <!--вставить фамилию-->
@@ -42,7 +38,7 @@
                  id="surname"
                  type="text"
                  placeholder="Фамилия"
-                 v-model="v$.surname.$model"
+                 v-model="changeSurname"
                  :class="{invalid: (v$.surname.$error)}">
         </div>
       </div>
@@ -64,44 +60,44 @@
                id="email"
                type="email"
                placeholder="Электронная почта"
-               v-model="v$.email.$model"
+               v-model="changeEmail"
                :class="{invalid: (v$.email.$error)}"
         >
       </div>
 
       <!--вставить пароль-->
-      <div class="wrapper_form_register_input">
-        <div class="input-errors"
-             v-for="(error, index) of v$.password.$errors"
-             :key="index">
-          <div class="error-msg" v-if="error.$message === 'This field should be at least 8 characters long'">
-            Пароль должен состоять минимум из 8 символов
-          </div>
-        </div>
-        <input class="form_register_input"
-               id="password"
-               type="password"
-               placeholder="Пароль"
-               v-model="v$.password.$model"
-               :class="{invalid: (v$.password.$error)}"
-               @change="checkPassword"
-               >
-      </div>
+      <!--      <div class="wrapper_form_register_input">-->
+      <!--        <div class="input-errors"-->
+      <!--             v-for="(error, index) of v$.password.$errors"-->
+      <!--             :key="index">-->
+      <!--          <div class="error-msg" v-if="error.$message === 'This field should be at least 8 characters long'">-->
+      <!--            Пароль должен состоять минимум из 8 символов-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--        <input class="form_register_input"-->
+      <!--               id="password"-->
+      <!--               type="password"-->
+      <!--               placeholder="Пароль"-->
+      <!--               v-model="v$.password.$model"-->
+      <!--               :class="{invalid: (v$.password.$error)}"-->
+      <!--               @change="checkPassword"-->
+      <!--        >-->
+      <!--      </div>-->
 
       <!--продублировать пароль-->
-      <div class="wrapper_form_register_input">
-        <div class="input-errors">
-          <div class="error-msg" v-if="double_password">Пароли не свопадают</div>
-        </div>
-        <input class="form_register_input"
-               id="password-confirm"
-               type="password"
-               placeholder="Подтвердите пароль"
-               @change="checkPassword"
-               v-model="v$.password_confirmation.$model"
-               :class="{invalid: (v$.password_confirmation.$error)}"
-        >
-      </div>
+      <!--      <div class="wrapper_form_register_input">-->
+      <!--        <div class="input-errors">-->
+      <!--          <div class="error-msg" v-if="double_password">Пароли не свопадают</div>-->
+      <!--        </div>-->
+      <!--        <input class="form_register_input"-->
+      <!--               id="password-confirm"-->
+      <!--               type="password"-->
+      <!--               placeholder="Подтвердите пароль"-->
+      <!--               @change="checkPassword"-->
+      <!--               v-model="v$.password_confirmation.$model"-->
+      <!--               :class="{invalid: (v$.password_confirmation.$error)}"-->
+      <!--        >-->
+      <!--      </div>-->
 
       <!--вставить страну-->
       <div class="wrapper_form_register_input">
@@ -117,7 +113,7 @@
                id="country"
                type="text"
                placeholder="Страна"
-               v-model="v$.country.$model"
+               v-model="changeCountry"
                :class="{invalid: (v$.country.$error)}"
         >
       </div>
@@ -136,7 +132,7 @@
                id="city"
                type="text"
                placeholder="Населенный пункт"
-               v-model="v$.city.$model"
+               v-model="changeCity"
                :class="{invalid: (v$.city.$error)}"
         >
       </div>
@@ -148,7 +144,7 @@
 
           <!--день-->
           <select class="select_form_register_date"
-                  v-model="selectedDay">
+                  v-model="changeDay">
             <option class="option_form_register_date"
                     disabled
                     value="">
@@ -158,7 +154,7 @@
                     v-for="n in 31"
                     :key="n"
                     :value="n"
-            >{{n}}
+            >{{ n }}
             </option>
           </select>
         </div>
@@ -166,7 +162,7 @@
         <div class="form_register_date form_register_date_month">
           <!--месяц-->
           <select class="select_form_register_date"
-                  v-model="selectedMonth">
+                  v-model="changeMonth">
             <option class="option_form_register_date"
                     disabled
                     value="">
@@ -176,7 +172,7 @@
                     v-for="(month, index) in arrMonth"
                     :key="month"
                     :value="index"
-            >{{month}}
+            >{{ month }}
             </option>
           </select>
         </div>
@@ -184,7 +180,7 @@
         <div class="form_register_date">
           <!--год-->
           <select class="select_form_register_date"
-                  v-model="selectedYear">
+                  v-model="changeYear">
             <option class="option_form_register_date"
                     disabled
                     value="">
@@ -194,7 +190,7 @@
                     v-for="year in years"
                     :key="year"
                     :value="year"
-            >{{year}}
+            >{{ year }}
             </option>
           </select>
         </div>
@@ -209,7 +205,7 @@
         <div class="form_register_gender">
 
           <select class="select_form_register_gender"
-                  v-model="selectedGender">
+                  v-model="changeGender">
             <option class="option_form_register_gender"
                     value=""
                     disabled
@@ -232,9 +228,8 @@
 
       <div class="wrapper_form_register_btn">
         <button class="form_register_btn"
-                type="submit"
-                :disabled="v$.$invalid && !double_password && selectedDay && selectedMonth && selectedYear && selectedGender">
-          Зарегистрироваться
+                type="submit">
+          Сохранить изменения
         </button>
       </div>
     </form>
@@ -244,16 +239,17 @@
 <script>
 import {useVuelidate} from "@vuelidate/core";
 import {required, email, minLength} from "@vuelidate/validators";
-import {mapActions} from "vuex";
+
+import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 
 //функция для валидации имяни и фамилии
-export function validName(name) {
+export function validName(first_name) {
   let validNamePattern = new RegExp("^[a-zA-Zа-яА-Я]+(?:[-'\\s][a-zA-Zа-яА-Я]+)*$");
-  return validNamePattern.test(name);
+  return validNamePattern.test(first_name);
 }
 
 export default {
-  name: "RegisterNet",
+  name: "editProfile",
   props: ["nextUrl"],
 
   setup() {
@@ -262,13 +258,13 @@ export default {
 
   data() {
     return {
-      name: "",
-      surname: "",
-      email: "",
+      // name: this.getUser.name,
+      // surname: "",
+      // email: "",
       password: "",
       password_confirmation: "",
-      country: "",
-      city: "",
+      // country: "",
+      // city: "",
       is_admin: null,
       selectedDay: "",
       selectedMonth: "",
@@ -280,13 +276,14 @@ export default {
     }
   },
 
-  validations() {
-    return {
+  validations: {
       name: {
-        required, min: minLength(2), name_validation: {
+        required,
+        min: minLength(2),
+        name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
-        }
+        },
       },
       surname: {
         required, min: minLength(2), name_validation: {
@@ -313,63 +310,170 @@ export default {
       selectedMonth: {required},
       selectedYear: {required},
       selectedGender: {required},
-    }
   },
 
   methods: {
     ...mapActions({register: "authorizationStore/register"}),
+    ...mapMutations({
+      setName: "authorizationStore/setName",
+      setSurname: "authorizationStore/setSurname",
+      setEmail: "authorizationStore/setEmail",
+      setCountry: "authorizationStore/setCountry",
+      setCity: "authorizationStore/setCity",
+      setYear: "authorizationStore/setYear",
+      setMonth: "authorizationStore/setMonth",
+      setDay: "authorizationStore/setDay",
+      setGender: "authorizationStore/setGender",
+    }),
 
-    handleSubmit() {
-      if (this.password === this.password_confirmation && this.password.length >= 8) {
-        let user = {
-          name: this.name.charAt(0).toUpperCase() + this.name.slice(1),
-          surname: this.surname.charAt(0).toUpperCase() + this.surname.slice(1),
-          email: this.email,
-          password: this.password,
-          year: this.selectedYear,
-          month: this.selectedMonth,
-          day: this.selectedDay,
-          selectedGender: this.selectedGender,
-          country: this.country.charAt(0).toUpperCase() + this.country.slice(1),
-          city: this.city.charAt(0).toUpperCase() + this.city.slice(1),
-          is_admin: this.is_admin
-        }
-        this.register(user)
-            .then(() => {
-              this.$router.push('mypage');
-            })
-            .catch((err) => {
-              if(err === "Пользователь с такой почтой уже зарегистрирован") {
-                this.double_email = true;
-              }
-              console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err));
-            })
-      } else {
-        this.password = ""
-        this.password_confirmation = ""
-        return console.log('Повторный пароль не совпадает или менее 8 символов');
-      }
-    },
+    // handleSubmit() {
+    //   if (this.password === this.password_confirmation && this.password.length >= 8) {
+    //     let user = {
+    //       name: this.getUser.name.charAt(0).toUpperCase() + this.name.slice(1),
+    //       surname: this.surname.charAt(0).toUpperCase() + this.surname.slice(1),
+    //       email: this.email,
+    //       password: this.password,
+    //       birthday: this.selectedYear + "-" + this.selectedMonth + "-" + this.selectedDay,
+    //       selectedGender: this.selectedGender,
+    //       country: this.country.charAt(0).toUpperCase() + this.country.slice(1),
+    //       city: this.city.charAt(0).toUpperCase() + this.city.slice(1),
+    //       is_admin: this.is_admin
+    //     }
+    //     this.register(user)
+    //         .then(() => {
+    //           this.$router.push('mypage');
+    //         })
+    //         .catch((err) => {
+    //           if (err === "Пользователь с такой почтой уже зарегистрирован") {
+    //             this.double_email = true;
+    //           }
+    //           console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err));
+    //         })
+    //   } else {
+    //     this.password = ""
+    //     this.password_confirmation = ""
+    //     return console.log('Повторный пароль не совпадает или менее 8 символов');
+    //   }
+    // },
 
     //проверка пароля и второго пароля на свопадение
-    checkPassword() {
-      this.double_password = this.password !== this.password_confirmation;
-    }
+    // checkPassword() {
+    //   this.double_password = this.password !== this.password_confirmation;
+    // },
+
+    // changeInput(field, e){
+    //   console.log(e.target.value)
+    //   this.changeUser([field, e.target.value]);
+    //   this.v$.name.$touch();
+    // },
   },
 
   computed: {
+    ...mapGetters({getUser: "authorizationStore/getUser"}),
+    ...mapState({
+      name: (state) => state.authorizationStore.user.name,
+      surname: (state) => state.authorizationStore.user.surname,
+      email: (state) => state.authorizationStore.user.email,
+      country: (state) => state.authorizationStore.user.country,
+      city: (state) => state.authorizationStore.user.city,
+      year: (state) => state.authorizationStore.user.year_user,
+      month: (state) => state.authorizationStore.user.month_user,
+      day: (state) => state.authorizationStore.user.day_user,
+      gender: (state) => state.authorizationStore.user.selectedGender
+    }),
+
+    changeName: {
+      get() {
+        return this.getUser.name
+      },
+      set(value) {
+        this.setName(value)
+        this.v$.name.$touch()
+      }
+    },
+    changeSurname: {
+      get() {
+        return this.getUser.surname
+      },
+      set(value) {
+        this.setSurname(value)
+        this.v$.surname.$touch()
+      }
+    },
+    changeEmail: {
+      get() {
+        return this.getUser.email
+      },
+      set(value) {
+        this.setEmail(value)
+        this.v$.email.$touch()
+      }
+    },
+    changeCountry: {
+      get() {
+        return this.getUser.country
+      },
+      set(value) {
+        this.setCountry(value)
+        this.v$.country.$touch()
+      }
+    },
+    changeCity: {
+      get() {
+        return this.getUser.city
+      },
+      set(value) {
+        this.setCity(value)
+        this.v$.city.$touch()
+      }
+    },
+    changeDay: {
+      get() {
+        return this.getUser.day_user
+      },
+      set(value) {
+        this.setDay(value)
+      }
+    },
+    changeMonth: {
+      get() {
+        return this.getUser.month_user
+      },
+      set(value) {
+        this.setMonth(value)
+      }
+    },
+    changeYear: {
+      get() {
+        return this.getUser.year_user
+      },
+      set(value) {
+        this.setYear(value)
+      }
+    },
+    changeGender: {
+      get() {
+        return this.getUser.selectedGender
+      },
+      set(value) {
+        this.setGender(value)
+      }
+    },
+
+
     //в поле option доступны годы от 1900 до текущего
     years() {
       const year = new Date().getFullYear()
       return Array.from({length: year - 1900}, (value, index) => year - index)
-    }
+    },
   },
 
   watch: {
     //при вводе в поле email сбрасывается ошибка "такой пользователь уже существует"
-  email() {
-    this.double_email = false;
-  }
+    email() {
+      this.double_email = false;
+    },
+
   }
 }
 </script>
@@ -477,11 +581,15 @@ export default {
   color: white;
   font-family: emoji;
 }
+
 .error-msg {
   color: red;
   font-size: 14px;
 }
+
 .invalid {
   border: 1px solid red;
 }
 </style>
+
+
