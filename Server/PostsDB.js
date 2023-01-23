@@ -20,26 +20,34 @@ class PostsDB {
         });
     }
 
-//добавление поста в базу данных
+    //добавление поста в базу данных
     add_post_DB(body, callback) {
       return   this.connection.execute(`INSERT INTO posts(ava, name, surname, date, body, flag, nameBtnEdit, userID) VALUES (?,?,?,?,?,?,?,?)`, body, (err, row) => {
           callback(err, row);
       });
     }
 
-// редактирование поста
+    // редактирование поста
     edit_post_DB(body, callback) {
        return this.connection.execute(`UPDATE posts SET body=?, date=? WHERE id =?`, body, (err) => {
            callback(err);
        });
     }
 
-// удаление поста
+    // удаление поста
     remove_post_DB(id, callback) {
        return this.connection.execute(`DELETE from posts WHERE id = ?`, [id], (err) => {
            callback(err);
        });
     }
+
+    //обновление имени и фамилии в постах при редактировании профиля
+    updateTitlePosts(name, callback) {
+        return this.connection.execute(`UPDATE posts SET name=?, surname=? WHERE userID =?`, name, (err) => {
+            callback(err);
+        })
+    }
+
 }
 module.exports = PostsDB;
 

@@ -6,6 +6,9 @@ export const modalStore = {
 
     getters: {
         getModal: (state) => state.modal,
+        getUser: (state, getters, rootState, rootGetters) => {
+            return rootGetters["authorizationStore/getUser"]
+        }
     },
 
     mutations: {
@@ -17,7 +20,12 @@ export const modalStore = {
         }
     },
 
-    actions: {},
+    actions: {
+       async closeModule({commit, getters}) {
+            commit("setNotShowModalWindow");
+            commit('authorizationStore/setEditingUser', getters.getUser, {root:true});
+        }
+    },
 
     namespaced: true,
 }

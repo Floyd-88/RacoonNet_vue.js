@@ -49,6 +49,7 @@ class AuthorizationUserDB {
             callback(err);
         });
     }
+
 }
 
 

@@ -191,6 +191,7 @@ export const authorizationStore = {
                             // commit('auth_success', {user});
                             // commit('setEditingUser', user);
                             resolve(resp);
+                            window.location.href = '/'
                         }
                     })
                     .catch(err => {

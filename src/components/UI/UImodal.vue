@@ -3,7 +3,7 @@
        v-if="getModal">
     <div @click.stop class="modal_window">
       <div class="close_modal"
-           @click="setNotShowModalWindow"
+           @click="closeModule"
       ></div>
       <slot></slot>
     </div>
@@ -11,17 +11,22 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from "vuex";
+import {mapGetters, mapMutations, mapActions} from "vuex";
 
 export default {
   name: "UImodal",
 
   methods: {
-    ...mapMutations({setNotShowModalWindow: "modalStore/setNotShowModalWindow"})
+    ...mapMutations({
+    // setNotShowModalWindow: "modalStore/setNotShowModalWindow",
+      setEditingUser: "authorizationStore/setEditingUser"
+    }),
+    ...mapActions({closeModule: "modalStore/closeModule"})
+
   },
 
   computed: {
-    ...mapGetters({getModal: "modalStore/getModal"})
+    ...mapGetters({getModal: "modalStore/getModal"}),
   }
 
 }

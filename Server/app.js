@@ -19,6 +19,7 @@ const posts = new PostsDB();
 const loginValidate = require('./validate/loginValidate')
 const registerValidate = require('./validate/registerValidate')
 const postValidate = require('./validate/postValidate')
+const updateUserValidate = require('./validate/updateUserValidate')
 
 const app = express();
 
@@ -140,12 +141,13 @@ router.post('/login', loginValidate, function (req, res) {
 })
 
 //редактирование профиля пользователя
-router.put('/register', function (req, res) {
+router.put('/register', updateUserValidate, function (req, res) {
 
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //     return res.status(422).json({errors: errors.array()});
-    // }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
+    //обновление информации о пользователе
     authorization.updateUser([
         req.body.name,
         req.body.surname,
@@ -160,19 +162,26 @@ router.put('/register', function (req, res) {
         req.body.id
         // req.body.is_admin
     ], (err) => {
-        // if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
-        if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы")
-        authorization.selectByEmail(req.body.email, (err, user) => {
-            if (err) return res.status(500).send("Ошибка на сервере.")
 
-            // let token = jwt.sign(
-            //     {id: user.id},
-            //     tokenKey.secret,
-            //     {expiresIn: 86400}, // expires in 24 hours
-            // );
-            res.status(200).send({auth: true, user: user});
+        //проверка по email о дублировании пользователя
+        if(err !== null) {
+            if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+        }
+        if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы");
+
+        //обновление имени и фамилии пользователя в постах при редактировании профиля
+        posts.updateTitlePosts([req.body.name, req.body.surname, req.body.id], (err) => {
+            if (err) return res.status(500).send("Ошибка при обновдении title в постах.");
+
+            //получение данных о пользователе после обновления
+        authorization.selectByEmail(req.body.email, (err, user) => {
+            if (err) return res.status(500).send("Ошибка на сервере.");
+                res.status(200).send({auth: true, user: user});
+            })
         });
     });
+
+
 });
 
 

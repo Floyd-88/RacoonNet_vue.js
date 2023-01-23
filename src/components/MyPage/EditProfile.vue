@@ -314,8 +314,6 @@ export default {
     }),
 
     handleSubmit() {
-      this.setUser()
-      this.setNotShowModalWindow();
       // if () {
         let user = {
           name: this.getEditingUser.name.charAt(0).toUpperCase() + this.name.slice(1),
@@ -333,6 +331,8 @@ export default {
         this.updateProfile(user)
             .then(() => {
               this.$router.push('mypage');
+              this.setNotShowModalWindow();
+              this.setUser()
             })
             .catch((err) => {
               if (err === "Пользователь с такой почтой уже зарегистрирован") {
