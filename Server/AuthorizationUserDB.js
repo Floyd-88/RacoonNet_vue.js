@@ -42,5 +42,15 @@ class AuthorizationUserDB {
                 callback(err);
             })
     }
+
+    //редактирование информации и пользователе
+    updateUser(user, callback) {
+        return this.connection.execute(`UPDATE users SET name=?, surname=?, email=?, year_user=?, month_user=?, day_user=?, selectedGender=?, country=?, city=? WHERE userID =?`, user, (err) => {
+            callback(err);
+        });
+    }
 }
+
+
+
 module.exports = AuthorizationUserDB;

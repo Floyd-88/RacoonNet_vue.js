@@ -3,7 +3,7 @@
   <div class="post"
        v-for="post of getPost"
        :key="post.id">
- 
+
     <div class="wrapper_post">
 
       <div class="wrapper_ava_posts">

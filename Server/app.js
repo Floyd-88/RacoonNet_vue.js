@@ -98,7 +98,9 @@ router.post('/register-admin', registerValidate, function (req, res) {
         req.body.city,
         req.body.is_admin
     ], (err) => {
-        // if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+        if(err !== null) {
+            if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+        }
         if (err) return res.status(500).send("При регистрации пользователя возникли проблемы.")
 
         authorization.selectByEmail(req.body.email, (err, user) => {
@@ -136,6 +138,43 @@ router.post('/login', loginValidate, function (req, res) {
         res.status(200).send({auth: true, token: token, user: user});
     });
 })
+
+//редактирование профиля пользователя
+router.put('/register', function (req, res) {
+
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //     return res.status(422).json({errors: errors.array()});
+    // }
+    authorization.updateUser([
+        req.body.name,
+        req.body.surname,
+        req.body.email,
+        // bcrypt.hashSync(req.body.password, 8),
+        req.body.year,
+        req.body.month,
+        req.body.day,
+        req.body.selectedGender,
+        req.body.country,
+        req.body.city,
+        req.body.id
+        // req.body.is_admin
+    ], (err) => {
+        // if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+        if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы")
+        authorization.selectByEmail(req.body.email, (err, user) => {
+            if (err) return res.status(500).send("Ошибка на сервере.")
+
+            // let token = jwt.sign(
+            //     {id: user.id},
+            //     tokenKey.secret,
+            //     {expiresIn: 86400}, // expires in 24 hours
+            // );
+            res.status(200).send({auth: true, user: user});
+        });
+    });
+});
+
 
 //подгружаем посты пользователя при посещении 'Моей страницы'
 router.get('/dataBase.js', function (req, res) {

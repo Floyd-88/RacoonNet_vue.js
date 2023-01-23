@@ -139,10 +139,10 @@
 
       <!--указать дату родения-->
       <label class="form_label_register" for="date_birth">Дата рождения</label>
+
+      <!--день-->
       <div class="wrapper_form_register_date">
         <div class="form_register_date">
-
-          <!--день-->
           <select class="select_form_register_date"
                   v-model="changeDay">
             <option class="option_form_register_date"
@@ -159,8 +159,8 @@
           </select>
         </div>
 
+        <!--месяц-->
         <div class="form_register_date form_register_date_month">
-          <!--месяц-->
           <select class="select_form_register_date"
                   v-model="changeMonth">
             <option class="option_form_register_date"
@@ -177,8 +177,8 @@
           </select>
         </div>
 
+        <!--год-->
         <div class="form_register_date">
-          <!--год-->
           <select class="select_form_register_date"
                   v-model="changeYear">
             <option class="option_form_register_date"
@@ -218,21 +218,16 @@
         </div>
       </div>
 
-      <!--      <label class="form_label_register" for="password-confirm">Is this an administrator account?</label>-->
-      <!--      <div>-->
-      <!--        <select v-model="is_admin">-->
-      <!--          <option value=1>Yes</option>-->
-      <!--          <option value=0>No</option>-->
-      <!--        </select>-->
-      <!--      </div>-->
-
       <div class="wrapper_form_register_btn">
         <button class="form_register_btn"
-                type="submit">
+                type="submit"
+                :disabled="v$.$invalid"
+        >
           Сохранить изменения
         </button>
       </div>
     </form>
+
   </div>
 </template>
 
@@ -258,18 +253,7 @@ export default {
 
   data() {
     return {
-      // name: this.getUser.name,
-      // surname: "",
-      // email: "",
-      password: "",
-      password_confirmation: "",
-      // country: "",
-      // city: "",
       is_admin: null,
-      selectedDay: "",
-      selectedMonth: "",
-      selectedYear: "",
-      selectedGender: "",
       arrMonth: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
       double_password: false,
       double_email: false,
@@ -292,8 +276,8 @@ export default {
         }
       },
       email: {required, email},
-      password: {required, min: minLength(8)},
-      password_confirmation: {required},
+      // password: {required, min: minLength(8)},
+      // password_confirmation: {required},
       country: {
         required, min: minLength(2), name_validation: {
           $validator: validName,
@@ -313,7 +297,7 @@ export default {
   },
 
   methods: {
-    ...mapActions({register: "authorizationStore/register"}),
+    ...mapActions({updateProfile: "authorizationStore/updateProfile"}),
     ...mapMutations({
       setName: "authorizationStore/setName",
       setSurname: "authorizationStore/setSurname",
@@ -324,67 +308,69 @@ export default {
       setMonth: "authorizationStore/setMonth",
       setDay: "authorizationStore/setDay",
       setGender: "authorizationStore/setGender",
+
+      setUser: "authorizationStore/setUser",
+      setNotShowModalWindow: "modalStore/setNotShowModalWindow",
     }),
 
-    // handleSubmit() {
-    //   if (this.password === this.password_confirmation && this.password.length >= 8) {
-    //     let user = {
-    //       name: this.getUser.name.charAt(0).toUpperCase() + this.name.slice(1),
-    //       surname: this.surname.charAt(0).toUpperCase() + this.surname.slice(1),
-    //       email: this.email,
-    //       password: this.password,
-    //       birthday: this.selectedYear + "-" + this.selectedMonth + "-" + this.selectedDay,
-    //       selectedGender: this.selectedGender,
-    //       country: this.country.charAt(0).toUpperCase() + this.country.slice(1),
-    //       city: this.city.charAt(0).toUpperCase() + this.city.slice(1),
-    //       is_admin: this.is_admin
-    //     }
-    //     this.register(user)
-    //         .then(() => {
-    //           this.$router.push('mypage');
-    //         })
-    //         .catch((err) => {
-    //           if (err === "Пользователь с такой почтой уже зарегистрирован") {
-    //             this.double_email = true;
-    //           }
-    //           console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err));
-    //         })
-    //   } else {
-    //     this.password = ""
-    //     this.password_confirmation = ""
-    //     return console.log('Повторный пароль не совпадает или менее 8 символов');
-    //   }
-    // },
+    handleSubmit() {
+      this.setUser()
+      this.setNotShowModalWindow();
+      // if () {
+        let user = {
+          name: this.getEditingUser.name.charAt(0).toUpperCase() + this.name.slice(1),
+          surname: this.getEditingUser.surname.charAt(0).toUpperCase() + this.surname.slice(1),
+          email: this.getEditingUser.email,
+          // password: this.password,
+          day: this.getEditingUser.day_user,
+          month: this.getEditingUser.month_user,
+          year: this.getEditingUser.year_user,
+          selectedGender: this.selectedGender,
+          country: this.getEditingUser.country.charAt(0).toUpperCase() + this.country.slice(1),
+          city: this.getEditingUser.city.charAt(0).toUpperCase() + this.city.slice(1),
+          // is_admin: this.is_admin
+        }
+        this.updateProfile(user)
+            .then(() => {
+              this.$router.push('mypage');
+            })
+            .catch((err) => {
+              if (err === "Пользователь с такой почтой уже зарегистрирован") {
+                this.double_email = true;
+              }
+              console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err));
+            })
+      // }
+      // else {
+      //   this.password = ""
+      //   this.password_confirmation = ""
+      //   return console.log('Повторный пароль не совпадает или менее 8 символов');
+      // }
+    },
 
     //проверка пароля и второго пароля на свопадение
     // checkPassword() {
     //   this.double_password = this.password !== this.password_confirmation;
     // },
-
-    // changeInput(field, e){
-    //   console.log(e.target.value)
-    //   this.changeUser([field, e.target.value]);
-    //   this.v$.name.$touch();
-    // },
   },
 
   computed: {
-    ...mapGetters({getUser: "authorizationStore/getUser"}),
+    ...mapGetters({getEditingUser: "authorizationStore/getEditingUser"}),
     ...mapState({
-      name: (state) => state.authorizationStore.user.name,
-      surname: (state) => state.authorizationStore.user.surname,
-      email: (state) => state.authorizationStore.user.email,
-      country: (state) => state.authorizationStore.user.country,
-      city: (state) => state.authorizationStore.user.city,
-      year: (state) => state.authorizationStore.user.year_user,
-      month: (state) => state.authorizationStore.user.month_user,
-      day: (state) => state.authorizationStore.user.day_user,
-      gender: (state) => state.authorizationStore.user.selectedGender
+      name: (state) => state.authorizationStore.editingUser.name,
+      surname: (state) => state.authorizationStore.editingUser.surname,
+      email: (state) => state.authorizationStore.editingUser.email,
+      country: (state) => state.authorizationStore.editingUser.country,
+      city: (state) => state.authorizationStore.editingUser.city,
+      selectedYear: (state) => state.authorizationStore.editingUser.year_user,
+      selectedMonth: (state) => state.authorizationStore.editingUser.month_user,
+      selectedDay: (state) => state.authorizationStore.editingUser.day_user,
+      selectedGender: (state) => state.authorizationStore.editingUser.selectedGender
     }),
 
     changeName: {
       get() {
-        return this.getUser.name
+        return this.getEditingUser.name
       },
       set(value) {
         this.setName(value)
@@ -393,7 +379,7 @@ export default {
     },
     changeSurname: {
       get() {
-        return this.getUser.surname
+        return this.getEditingUser.surname
       },
       set(value) {
         this.setSurname(value)
@@ -402,7 +388,7 @@ export default {
     },
     changeEmail: {
       get() {
-        return this.getUser.email
+        return this.getEditingUser.email
       },
       set(value) {
         this.setEmail(value)
@@ -411,7 +397,7 @@ export default {
     },
     changeCountry: {
       get() {
-        return this.getUser.country
+        return this.getEditingUser.country
       },
       set(value) {
         this.setCountry(value)
@@ -420,7 +406,7 @@ export default {
     },
     changeCity: {
       get() {
-        return this.getUser.city
+        return this.getEditingUser.city
       },
       set(value) {
         this.setCity(value)
@@ -429,7 +415,7 @@ export default {
     },
     changeDay: {
       get() {
-        return this.getUser.day_user
+        return this.getEditingUser.day_user
       },
       set(value) {
         this.setDay(value)
@@ -437,7 +423,7 @@ export default {
     },
     changeMonth: {
       get() {
-        return this.getUser.month_user
+        return this.getEditingUser.month_user
       },
       set(value) {
         this.setMonth(value)
@@ -445,7 +431,7 @@ export default {
     },
     changeYear: {
       get() {
-        return this.getUser.year_user
+        return this.getEditingUser.year_user
       },
       set(value) {
         this.setYear(value)
@@ -453,7 +439,7 @@ export default {
     },
     changeGender: {
       get() {
-        return this.getUser.selectedGender
+        return this.getEditingUser.selectedGender
       },
       set(value) {
         this.setGender(value)

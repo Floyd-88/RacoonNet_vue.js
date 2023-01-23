@@ -244,7 +244,7 @@
 <script>
 import {useVuelidate} from "@vuelidate/core";
 import {required, email, minLength} from "@vuelidate/validators";
-import {mapActions} from "vuex";
+import {mapActions, mapMutations} from "vuex";
 
 //функция для валидации имяни и фамилии
 export function validName(name) {
@@ -318,6 +318,7 @@ export default {
 
   methods: {
     ...mapActions({register: "authorizationStore/register"}),
+    ...mapMutations({setNotShowModalWindow: "modalStore/setNotShowModalWindow"}),
 
     handleSubmit() {
       if (this.password === this.password_confirmation && this.password.length >= 8) {
@@ -337,6 +338,7 @@ export default {
         this.register(user)
             .then(() => {
               this.$router.push('mypage');
+              this.setNotShowModalWindow();
             })
             .catch((err) => {
               if(err === "Пользователь с такой почтой уже зарегистрирован") {
