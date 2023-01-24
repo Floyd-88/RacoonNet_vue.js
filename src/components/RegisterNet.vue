@@ -1,5 +1,9 @@
 <template>
+  <!--  Закрыть модальное окно-->
+  <CloseModal/>
+
   <h4 class="form_register_title">Регистрация</h4>
+
   <div class="wrapper_form_register">
 
     <form class="form_register"
@@ -245,6 +249,7 @@
 import {useVuelidate} from "@vuelidate/core";
 import {required, email, minLength} from "@vuelidate/validators";
 import {mapActions, mapMutations} from "vuex";
+import CloseModal from "@/components/UI/CloseModal";
 
 //функция для валидации имяни и фамилии
 export function validName(name) {
@@ -254,6 +259,7 @@ export function validName(name) {
 
 export default {
   name: "RegisterNet",
+  components: {CloseModal},
   props: ["nextUrl"],
 
   setup() {
@@ -389,6 +395,7 @@ export default {
 .wrapper_form_register {
   display: flex;
   justify-content: center;
+  width: 450px;
   padding: 0 13px;
 }
 
@@ -440,9 +447,9 @@ export default {
   margin: 0 5px;
 }
 
-.option_form_register_date {
+/* .option_form_register_date {
 
-}
+} */
 
 .wrapper_form_register_gender {
   margin-bottom: 15px;
@@ -457,9 +464,9 @@ export default {
   width: 32%;
 }
 
-.option_form_register_gender {
+/* .option_form_register_gender {
 
-}
+} */
 
 .wrapper_form_register_btn {
   display: flex;

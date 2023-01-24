@@ -10,6 +10,8 @@ import UImodal from "@/components/UI/UImodal";
 import PhotoMyPage from "@/components/MyPage/PhotoMyPage";
 import MyFriends from "@/components/MyPage/MyFriends";
 import EditProfile from "@/components/MyPage/EditProfile";
+import ChangePassword from "@/components/MyPage/ChangePassword";
+import CloseModal from "@/components/UI/CloseModal";
 
 export default [
     UserInfo,
@@ -23,5 +25,7 @@ export default [
     UImodal,
     PhotoMyPage,
     MyFriends,
-    EditProfile
+    EditProfile,
+    ChangePassword,
+    CloseModal
 ]

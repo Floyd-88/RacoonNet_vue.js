@@ -205,9 +205,9 @@ export default {
   border: 1px solid red;
 }
 
-.wrapper_error_login {
+/* .wrapper_error_login {
 
-}
+} */
 
 .error_login {
   color: red;

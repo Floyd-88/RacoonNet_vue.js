@@ -7,9 +7,9 @@ export const authorizationStore = {
         user: JSON.parse(localStorage.getItem('user')) || {}, //получаем данные юзера при авторизаци
         editingUser: JSON.parse(localStorage.getItem('user')) || {},
     }),
+
     getters: {
         isLoggedIn: state => !!state.token, //показываем кнопку выход в header
-
         getUser: (state) => state.user,
         getEditingUser: (state) => state.editingUser,
 
@@ -27,16 +27,17 @@ export const authorizationStore = {
         },
 
     },
+
     mutations: {
         auth_request(state) {
             state.status = 'loading';
         },
-        auth_success(state, {user, token}) {
+        auth_success(state, { user, token }) {
             state.status = 'success';
             state.token = token;
             state.user = user;
         },
-        setEditingUser(state, user){
+        setEditingUser(state, user) {
             state.editingUser.name = user.name
             state.editingUser.surname = user.surname
             state.editingUser.country = user.country
@@ -55,17 +56,19 @@ export const authorizationStore = {
             state.token = '';
         },
 
-        setUser(state) {
-            if(state.editingUser.name) state.user.name = state.editingUser.name;
-            if(state.editingUser.surname) state.user.surname = state.editingUser.surname;
-            if(state.editingUser.country) state.user.country = state.editingUser.country;
-            if(state.editingUser.email) state.user.email = state.editingUser.email;
-            if(state.editingUser.city) state.user.city = state.editingUser.city;
-            if(state.editingUser.year_user) state.user.year_user = state.editingUser.year_user;
-            if(state.editingUser.month_user) state.user.month_user = state.editingUser.month_user;
-            if(state.editingUser.day_user) state.user.day_user = state.editingUser.day_user;
-            if(state.editingUser.selectedGender) state.user.selectedGender = state.editingUser.selectedGender;
+        setUser() {
+            // state.user = state.editingUser;
+            // if(state.editingUser.name) state.user.name = state.editingUser.name;
+            // if(state.editingUser.surname) state.user.surname = state.editingUser.surname;
+            // if(state.editingUser.country) state.user.country = state.editingUser.country;
+            // if(state.editingUser.email) state.user.email = state.editingUser.email;
+            // if(state.editingUser.city) state.user.city = state.editingUser.city;
+            // if(state.editingUser.year_user) state.user.year_user = state.editingUser.year_user;
+            // if(state.editingUser.month_user) state.user.month_user = state.editingUser.month_user;
+            // if(state.editingUser.day_user) state.user.day_user = state.editingUser.day_user;
+            // if(state.editingUser.selectedGender) state.user.selectedGender = state.editingUser.selectedGender;
         },
+
         // setUserUpdate(state, user) {
         //   state.user.
         // },
@@ -100,10 +103,10 @@ export const authorizationStore = {
         },
     },
     actions: {
-        login({commit}, user) {
+        login({ commit }, user) {
             return new Promise((resolve, reject) => {
                 commit('auth_request')
-                axios({url: 'http://localhost:8000/login', data: user, method: 'POST'})
+                axios({ url: 'http://localhost:8000/login', data: user, method: 'POST' })
                     .then(resp => {
                         const token = resp.data.token;
                         const user = resp.data.user;
@@ -114,7 +117,7 @@ export const authorizationStore = {
 
                             axios.defaults.headers.common['Authorization'] = token //?????????????????
 
-                            commit('auth_success', {user, token});
+                            commit('auth_success', { user, token });
                             commit('setEditingUser', user);
                             resolve(resp);
                         }
@@ -128,7 +131,7 @@ export const authorizationStore = {
             })
         },
 
-        register({commit}, user) {
+        register({ commit }, user) {
             return new Promise((resolve, reject) => {
                 commit('auth_request')
 
@@ -136,7 +139,7 @@ export const authorizationStore = {
                 if (user.is_admin === '1') {
                     url = "http://localhost:8000/register-admin";
                 }
-                axios({url: url, data: user, method: 'POST'})
+                axios({ url: url, data: user, method: 'POST' })
                     .then(resp => {
                         const token = resp.data.token;
                         const user = resp.data.user;
@@ -147,7 +150,7 @@ export const authorizationStore = {
 
                             axios.defaults.headers.common['Authorization'] = token; //???????????????????????
 
-                            commit('auth_success', {user, token});
+                            commit('auth_success', { user, token });
                             commit('setEditingUser', user);
                             resolve(resp);
                         }
@@ -160,7 +163,7 @@ export const authorizationStore = {
             })
         },
 
-        logout({commit}) {
+        logout({ commit }) {
             return new Promise((resolve) => {
                 commit('logout');
                 localStorage.removeItem('token');
@@ -170,37 +173,7 @@ export const authorizationStore = {
             })
         },
 
-        updateProfile({commit, state}, user) {
-            return new Promise((resolve, reject) => {
-                commit('auth_request')
 
-                let url = "http://localhost:8000/register";
-                user.id = state.user.userID;
-
-                axios({url: url, data: user, method: 'PUT'})
-                    .then(resp => {
-                        // const token = resp.data.token;
-                        const user = resp.data.user;
-
-                        if (user !== null) {
-                            // localStorage.setItem('token', token);
-                            localStorage.setItem('user', JSON.stringify(user));
-
-                            // axios.defaults.headers.common['Authorization'] = token; //???????????????????????
-
-                            // commit('auth_success', {user});
-                            // commit('setEditingUser', user);
-                            resolve(resp);
-                            window.location.href = '/'
-                        }
-                    })
-                    .catch(err => {
-                        commit('auth_error', err);
-                        // localStorage.removeItem('token')
-                        reject(err.response.data);
-                    })
-            })
-        }
 
 
     },

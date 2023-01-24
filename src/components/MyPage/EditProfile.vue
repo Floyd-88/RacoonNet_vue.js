@@ -1,5 +1,9 @@
 <template>
+<!--  Закрыть модальное окно-->
+  <CloseModal/>
+
   <h4 class="form_register_title">Изменить личные данные</h4>
+
   <div class="wrapper_form_register">
     <form class="form_register"
           @submit.prevent="handleSubmit"
@@ -65,40 +69,6 @@
         >
       </div>
 
-      <!--вставить пароль-->
-      <!--      <div class="wrapper_form_register_input">-->
-      <!--        <div class="input-errors"-->
-      <!--             v-for="(error, index) of v$.password.$errors"-->
-      <!--             :key="index">-->
-      <!--          <div class="error-msg" v-if="error.$message === 'This field should be at least 8 characters long'">-->
-      <!--            Пароль должен состоять минимум из 8 символов-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--        <input class="form_register_input"-->
-      <!--               id="password"-->
-      <!--               type="password"-->
-      <!--               placeholder="Пароль"-->
-      <!--               v-model="v$.password.$model"-->
-      <!--               :class="{invalid: (v$.password.$error)}"-->
-      <!--               @change="checkPassword"-->
-      <!--        >-->
-      <!--      </div>-->
-
-      <!--продублировать пароль-->
-      <!--      <div class="wrapper_form_register_input">-->
-      <!--        <div class="input-errors">-->
-      <!--          <div class="error-msg" v-if="double_password">Пароли не свопадают</div>-->
-      <!--        </div>-->
-      <!--        <input class="form_register_input"-->
-      <!--               id="password-confirm"-->
-      <!--               type="password"-->
-      <!--               placeholder="Подтвердите пароль"-->
-      <!--               @change="checkPassword"-->
-      <!--               v-model="v$.password_confirmation.$model"-->
-      <!--               :class="{invalid: (v$.password_confirmation.$error)}"-->
-      <!--        >-->
-      <!--      </div>-->
-
       <!--вставить страну-->
       <div class="wrapper_form_register_input">
         <div class="input-errors"
@@ -140,8 +110,8 @@
       <!--указать дату родения-->
       <label class="form_label_register" for="date_birth">Дата рождения</label>
 
-      <!--день-->
       <div class="wrapper_form_register_date">
+        <!--день-->
         <div class="form_register_date">
           <select class="select_form_register_date"
                   v-model="changeDay">
@@ -218,14 +188,33 @@
         </div>
       </div>
 
+<!--      поменять пароль-->
+      <div class="wrapper_change_password">
+        <UIbtn @click.prevent="setOpenChangePassword">
+          Изменить пароль
+        </UIbtn>
+      </div>
+
+<!--      Окно с вводом нового пароля-->
+      <template v-if="getShowPassword">
+        <UImodal class="change_password_modal">
+          <ChangePassword/>
+        </UImodal>
+        
+      </template>
+
       <div class="wrapper_form_register_btn">
         <button class="form_register_btn"
                 type="submit"
-                :disabled="v$.$invalid"
-        >
+                :disabled="v$.$invalid">
           Сохранить изменения
         </button>
       </div>
+
+      <div class="wrapper_delete_profile">
+        <p class="delete_profile">Удалить профиль</p>
+      </div>
+
     </form>
 
   </div>
@@ -236,6 +225,7 @@ import {useVuelidate} from "@vuelidate/core";
 import {required, email, minLength} from "@vuelidate/validators";
 
 import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
+import CloseModal from "@/components/UI/CloseModal";
 
 //функция для валидации имяни и фамилии
 export function validName(first_name) {
@@ -245,6 +235,7 @@ export function validName(first_name) {
 
 export default {
   name: "editProfile",
+  components: {CloseModal},
   props: ["nextUrl"],
 
   setup() {
@@ -255,49 +246,50 @@ export default {
     return {
       is_admin: null,
       arrMonth: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-      double_password: false,
-      double_email: false,
+      double_email: false, //можно перенести в стор
     }
   },
 
   validations: {
-      name: {
-        required,
-        min: minLength(2),
-        name_validation: {
-          $validator: validName,
-          $message: 'Invalid Name'
-        },
+    name: {
+      required,
+      min: minLength(2),
+      name_validation: {
+        $validator: validName,
+        $message: 'Invalid Name'
       },
-      surname: {
-        required, min: minLength(2), name_validation: {
-          $validator: validName,
-          $message: 'Invalid Name'
-        }
-      },
-      email: {required, email},
-      // password: {required, min: minLength(8)},
-      // password_confirmation: {required},
-      country: {
-        required, min: minLength(2), name_validation: {
-          $validator: validName,
-          $message: 'Invalid Name'
-        }
-      },
-      city: {
-        required, min: minLength(2), name_validation: {
-          $validator: validName,
-          $message: 'Invalid Name'
-        }
-      },
-      selectedDay: {required},
-      selectedMonth: {required},
-      selectedYear: {required},
-      selectedGender: {required},
+    },
+    surname: {
+      required, min: minLength(2), name_validation: {
+        $validator: validName,
+        $message: 'Invalid Name'
+      }
+    },
+    email: {required, email},
+    // new_password: {required, min: minLength(8)},
+    // new_password_confirmation: {required},
+    country: {
+      required, min: minLength(2), name_validation: {
+        $validator: validName,
+        $message: 'Invalid Name'
+      }
+    },
+    city: {
+      required, min: minLength(2), name_validation: {
+        $validator: validName,
+        $message: 'Invalid Name'
+      }
+    },
+    selectedDay: {required},
+    selectedMonth: {required},
+    selectedYear: {required},
+    selectedGender: {required},
   },
 
   methods: {
-    ...mapActions({updateProfile: "authorizationStore/updateProfile"}),
+    ...mapActions({
+      updateProfile: "editProfileStore/updateProfile",
+    }),
     ...mapMutations({
       setName: "authorizationStore/setName",
       setSurname: "authorizationStore/setSurname",
@@ -309,53 +301,41 @@ export default {
       setDay: "authorizationStore/setDay",
       setGender: "authorizationStore/setGender",
 
-      setUser: "authorizationStore/setUser",
-      setNotShowModalWindow: "modalStore/setNotShowModalWindow",
+      // setUser: "authorizationStore/setUser",
+      setOpenChangePassword: "editProfileStore/setOpenChangePassword"
     }),
 
     handleSubmit() {
-      // if () {
-        let user = {
-          name: this.getEditingUser.name.charAt(0).toUpperCase() + this.name.slice(1),
-          surname: this.getEditingUser.surname.charAt(0).toUpperCase() + this.surname.slice(1),
-          email: this.getEditingUser.email,
-          // password: this.password,
-          day: this.getEditingUser.day_user,
-          month: this.getEditingUser.month_user,
-          year: this.getEditingUser.year_user,
-          selectedGender: this.selectedGender,
-          country: this.getEditingUser.country.charAt(0).toUpperCase() + this.country.slice(1),
-          city: this.getEditingUser.city.charAt(0).toUpperCase() + this.city.slice(1),
-          // is_admin: this.is_admin
-        }
-        this.updateProfile(user)
-            .then(() => {
-              this.$router.push('mypage');
-              this.setNotShowModalWindow();
-              this.setUser()
-            })
-            .catch((err) => {
-              if (err === "Пользователь с такой почтой уже зарегистрирован") {
-                this.double_email = true;
-              }
-              console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err));
-            })
-      // }
-      // else {
-      //   this.password = ""
-      //   this.password_confirmation = ""
-      //   return console.log('Повторный пароль не совпадает или менее 8 символов');
-      // }
+      let user = {
+        name: this.getEditingUser.name.charAt(0).toUpperCase() + this.name.slice(1),
+        surname: this.getEditingUser.surname.charAt(0).toUpperCase() + this.surname.slice(1),
+        email: this.getEditingUser.email,
+
+        day: this.getEditingUser.day_user,
+        month: this.getEditingUser.month_user,
+        year: this.getEditingUser.year_user,
+        selectedGender: this.selectedGender,
+        country: this.getEditingUser.country.charAt(0).toUpperCase() + this.country.slice(1),
+        city: this.getEditingUser.city.charAt(0).toUpperCase() + this.city.slice(1),
+        // is_admin: this.is_admin
+      }
+      this.updateProfile(user)
+          .then(() => {})
+          .catch((err) => {
+            if (err === "Пользователь с такой почтой уже зарегистрирован") {
+              this.double_email = true;
+            }
+            console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err));
+          })
     },
 
-    //проверка пароля и второго пароля на свопадение
-    // checkPassword() {
-    //   this.double_password = this.password !== this.password_confirmation;
-    // },
   },
 
   computed: {
-    ...mapGetters({getEditingUser: "authorizationStore/getEditingUser"}),
+    ...mapGetters({
+      getEditingUser: "authorizationStore/getEditingUser",
+      getShowPassword: "editProfileStore/getShowPassword",
+    }),
     ...mapState({
       name: (state) => state.authorizationStore.editingUser.name,
       surname: (state) => state.authorizationStore.editingUser.surname,
@@ -481,7 +461,7 @@ export default {
 }
 
 .form_register {
-  width: 100%;
+  width: 400px;
 }
 
 .wrapper_form_register_name {
@@ -528,9 +508,9 @@ export default {
   margin: 0 5px;
 }
 
-.option_form_register_date {
+/* .option_form_register_date {
 
-}
+} */
 
 .wrapper_form_register_gender {
   margin-bottom: 15px;
@@ -545,9 +525,9 @@ export default {
   width: 32%;
 }
 
-.option_form_register_gender {
+/* .option_form_register_gender {
 
-}
+} */
 
 .wrapper_form_register_btn {
   display: flex;
@@ -576,6 +556,28 @@ export default {
 .invalid {
   border: 1px solid red;
 }
+
+.wrapper_delete_profile {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.delete_profile {
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline-block;
+}
+
+/* .wrapper_change_password {
+
+} */
+
+/* .change_password_modal {
+
+} */
+
 </style>
 
 

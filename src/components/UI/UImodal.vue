@@ -2,16 +2,14 @@
   <div class="modal_fone"
        v-if="getModal">
     <div @click.stop class="modal_window">
-      <div class="close_modal"
-           @click="closeModule"
-      ></div>
+
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script>
-import {mapGetters, mapMutations, mapActions} from "vuex";
+import {mapGetters, mapMutations} from "vuex";
 
 export default {
   name: "UImodal",
@@ -21,7 +19,7 @@ export default {
     // setNotShowModalWindow: "modalStore/setNotShowModalWindow",
       setEditingUser: "authorizationStore/setEditingUser"
     }),
-    ...mapActions({closeModule: "modalStore/closeModule"})
+    // ...mapActions({closeModule: "modalStore/closeModule"})
 
   },
 
@@ -48,7 +46,7 @@ export default {
 .modal_window {
   position: relative;
   background: white;
-  width: 450px;
+  width: max-content;
   height: max-content;
   padding-bottom: 10px;
   border-radius: 5px;
