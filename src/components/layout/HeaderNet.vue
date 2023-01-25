@@ -49,7 +49,7 @@ export default {
   display: flex;
   justify-content: space-between;
   height: 100px;
-  background: cornflowerblue;
+  background: #0197d6;
   border: 1px solid black;
   position: fixed;
   width: 100%;

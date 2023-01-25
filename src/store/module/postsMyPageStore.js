@@ -4,13 +4,15 @@ import axios from "axios";
 export const postsMyPageStore = {
 
     state: () => ({
-        posts: [],      //массив постов подгружаемый из базы данных
-        countPosts: 0,  //номер массива страницы
-        limitPosts: 0,  //количество постов на одной странице
-        totalCount: 0,  //всего страниц
+        postText: "",
+        posts: [], //массив постов подгружаемый из базы данных
+        countPosts: 0, //номер массива страницы
+        limitPosts: 0, //количество постов на одной странице
+        totalCount: 0, //всего страниц
     }),
 
     getters: {
+        getPostText: state => state.postText,
         getPosts: state => state.posts,
         getUser: (state, getters, rootState, rootGetters) => {
             return rootGetters["authorizationStore/getUser"]
@@ -18,11 +20,16 @@ export const postsMyPageStore = {
     },
 
     mutations: {
+        setPostText(state, post) {
+            state.postText = post;
+        },
+
         setPosts(state, posts) {
             state.posts = posts;
         },
         setAddPosts(state, newPost) {
             state.posts.unshift(newPost);
+            state.postText = "";
         },
         setLimitPosts(state) {
             state.limitPosts = 3;
@@ -37,7 +44,7 @@ export const postsMyPageStore = {
 
     actions: {
         //загрузка постов с базы данных
-        async loadPostServer({state, commit, getters}) {
+        async loadPostServer({ state, commit, getters }) {
             try {
                 await axios.get('http://localhost:8000/dataBase.js', {
                     params: {
@@ -54,31 +61,31 @@ export const postsMyPageStore = {
         },
 
         // добавление нового поста на мою страницу
-        async addPost({commit, dispatch, getters}, body) {
+        async addPost({ commit, dispatch, getters }, postText) {
             const newPost = {
                 userID: getters.getUser.userID,
                 ava: '/img/ava_1.776f687c.jpg',
                 name: getters.getUser.name,
                 surname: getters.getUser.surname,
-                body: body.trim(),
+                postText: postText.trim(),
                 flag: '1',
                 nameBtnEdit: "Редактировать",
             }
             newPost.date = await dispatch("newDate"),
 
                 await axios.post('http://localhost:8000/dataBase.js', newPost)
-                    .then(function (response) {
-                        newPost.id = response.data.insertId;
-                        commit("setAddPosts", newPost);
-                    })
-                    .catch(function (error) {
-                        console.log("Ошибка при добавлении поста: " + error);
-                    });
+                .then(function(response) {
+                    newPost.id = response.data.insertId;
+                    commit("setAddPosts", newPost);
+                })
+                .catch(function(error) {
+                    console.log("Ошибка при добавлении поста: " + error);
+                });
 
         },
 
         // изменение поста
-        async editPost({state, dispatch}, id) {
+        async editPost({ state, dispatch }, id) {
             const date = await dispatch("newDate");
             const [post] = state.posts.filter(post => post.id === id);
             post.flag = !post.flag;
@@ -88,27 +95,27 @@ export const postsMyPageStore = {
             } else {
                 post.nameBtnEdit = "Сохранить";
             }
-                await axios.put('http://localhost:8000/dataBase.js', {
-                    body: post.body,
+            await axios.put('http://localhost:8000/dataBase.js', {
+                    postText: post.postText,
                     date: date,
                     id: post.id,
                 })
-                    .then(function (response) {
-                        console.log(response)
-                    })
-                    .catch(function (error) {
-                        console.log("Ошибка при редактировании поста: " + error)
-                    })
+                .then(function(response) {
+                    console.log(response)
+                })
+                .catch(function(error) {
+                    console.log("Ошибка при редактировании поста: " + error)
+                })
         },
 
         //удаление поста
-        async removePost({commit}, id) {
+        async removePost({ commit }, id) {
             commit("setRemovePost", id);
             await axios.delete('http://localhost:8000/dataBase.js?id=' + id)
-                .then(function (response) {
+                .then(function(response) {
                     console.log(response)
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.log(error)
                 })
         },

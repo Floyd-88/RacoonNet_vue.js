@@ -179,7 +179,7 @@ router.post('/login', loginValidate, function(req, res) {
 })
 
 //редактирование профиля пользователя
-router.put('/register', updateUserValidate, function(req, res) {
+router.put('/editProfile', updateUserValidate, function(req, res) {
 
     //валидация заполнения полей
     const errors = validationResult(req);
@@ -290,7 +290,7 @@ router.post('/dataBase.js', postValidate, function(req, res) {
         req.body.name,
         req.body.surname,
         req.body.date,
-        req.body.body,
+        req.body.postText,
         req.body.flag,
         req.body.nameBtnEdit,
         req.body.userID
@@ -311,7 +311,7 @@ router.put('/dataBase.js', postValidate, function(req, res) {
         });
     }
     posts.edit_post_DB([
-        req.body.body,
+        req.body.postText,
         req.body.date,
         req.body.id
     ], (err) => {

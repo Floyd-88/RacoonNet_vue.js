@@ -3,62 +3,57 @@ import axios from "axios"
 export const editProfileStore = {
 
     state: () => ({
-        showPassword: false,
-        new_password: "",
-        new_password_confirmation: "",
-        old_password: "",
-        double_password: false,
+        editingUser: JSON.parse(localStorage.getItem('user')) || {}, //получаем данные юзера для внесения изменений в профиль (данные изменения не влияют на информацию о пользователе до того как юзер не нажмет кнопку сохранить изменения)
+
     }),
     getters: {
-
-        getShowPassword(state) {
-            return state.showPassword
-        },
-        getNew_password(state) {
-            return state.new_password
-        },
-        getNew_password_confirmation(state) {
-            return state.new_password_confirmation
-        },
-        getOld_password(state) {
-            return state.old_password
-        },
-        getDouble_password(state) {
-            return state.double_password
-        },
-
-        getUserEmail(state, _, rootState) {
-            return rootState.authorizationStore.user.email;
-        },
-        getUserID(state, _, rootState) {
-            return rootState.authorizationStore.user.userID;
-        },
+        getEditingUser: (state) => state.editingUser,
+        getUserID: (state, _, rootState) => rootState.authorizationStore.user.userID,
     },
 
     mutations: {
-        setOpenChangePassword(state) {
-            state.showPassword = true;
+        //записываем в state данные при авторизации или регистрации для возможно манипулировать этими при редкатировании профиля
+        setEditingUser(state, user) {
+            state.editingUser.name = user.name
+            state.editingUser.surname = user.surname
+            state.editingUser.country = user.country
+            state.editingUser.email = user.email
+            state.editingUser.city = user.city
+            state.editingUser.year_user = user.year_user
+            state.editingUser.month_user = user.month_user
+            state.editingUser.day_user = user.day_user
+            state.editingUser.selectedGender = user.selectedGender
         },
-        setCloseChangePassword(state) {
-            state.showPassword = false;
-            state.new_password = "",
-                state.new_password_confirmation = "",
-                state.old_password = "",
-                state.double_password = false
-        },
-        setCheckPassword(state) {
-            state.double_password = state.new_password !== state.new_password_confirmation;
 
+        // редактирование профиля пользователя
+        setName(state, name) {
+            state.editingUser.name = name;
         },
-        setOld_password(state, password) {
-            state.old_password = password
+        setSurname(state, surname) {
+            state.editingUser.surname = surname;
         },
-        setNew_password(state, password) {
-            state.new_password = password
+        setCountry(state, country) {
+            state.editingUser.country = country;
         },
-        setNew_password_confirmation(state, password) {
-            state.new_password_confirmation = password
+        setEmail(state, email) {
+            state.editingUser.email = email;
         },
+        setCity(state, city) {
+            state.editingUser.city = city;
+        },
+        setYear(state, year) {
+            state.editingUser.year_user = year;
+        },
+        setMonth(state, month) {
+            state.editingUser.month_user = month;
+        },
+        setDay(state, day) {
+            state.editingUser.day_user = day;
+        },
+        setGender(state, gender) {
+            state.editingUser.selectedGender = gender;
+        },
+
     },
 
     actions: {
@@ -66,10 +61,14 @@ export const editProfileStore = {
         updateProfile({ getters }, user) {
             return new Promise((resolve, reject) => {
 
-                let url = "http://localhost:8000/register";
+                let url = "http://localhost:8000/editProfile";
                 user.id = getters.getUserID;
 
-                axios({ url: url, data: user, method: 'PUT' })
+                axios({
+                        url: url,
+                        data: user,
+                        method: 'PUT'
+                    })
                     .then(resp => {
                         const user = resp.data.user;
                         if (user !== null) {
@@ -84,28 +83,7 @@ export const editProfileStore = {
             })
         },
 
-        //обновление пароля
-        updatePasword({ getters }, user) {
-            return new Promise((resolve, reject) => {
-                let url = "http://localhost:8000/password";
-
-                user.email = getters.getUserEmail
-                user.userID = getters.getUserID
-
-                axios({ url: url, data: user, method: 'PUT' })
-                    .then((resp) => {
-                        console.log(resp);
-                        resolve(resp);
-                    })
-                    .catch((err) => {
-                        reject(err.response.data)
-                    })
-            })
-        },
-
     },
-
-
 
     namespaced: true,
 }

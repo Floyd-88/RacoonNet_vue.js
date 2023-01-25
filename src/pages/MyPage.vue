@@ -10,7 +10,7 @@
         <PhotoMyPage/>
         <div class="wrapper_posts">
 
-          <AddPost @addPost="addPost"/>
+          <AddPost/>
           <PostMyPage
               @editPost="editPost"
               @removePost="removePost"/>
@@ -58,7 +58,7 @@ export default {
 
   methods: {
     ...mapActions({
-      addPost: "postsMyPageStore/addPost",
+      // addPost: "postsMyPageStore/addPost",
       loadPostServer: "postsMyPageStore/loadPostServer",
       removePost: "postsMyPageStore/removePost",
       editPost: "postsMyPageStore/editPost"

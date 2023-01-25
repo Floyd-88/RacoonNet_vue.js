@@ -27,7 +27,7 @@
                  type="text"
                  placeholder="Имя"
                  autofocus
-                 v-model="v$.name.$model"
+                 v-model="registerName"
                  :class="{invalid: (v$.name.$error)}"
           >
         </div>
@@ -46,7 +46,7 @@
                  id="surname"
                  type="text"
                  placeholder="Фамилия"
-                 v-model="v$.surname.$model"
+                 v-model="registerSurname"
                  :class="{invalid: (v$.surname.$error)}">
         </div>
       </div>
@@ -61,14 +61,15 @@
             Некорректный адрес электронной почты
           </div>
         </div>
-        <div class="error-msg" v-if="double_email">
+        <div class="error-msg" v-if="getDouble_email">
           Пользователь с такой почтой уже зарегистрирован
         </div>
         <input class="form_register_input"
                id="email"
                type="email"
                placeholder="Электронная почта"
-               v-model="v$.email.$model"
+               @input="setDouble_email(false)"
+               v-model="registerEmail"
                :class="{invalid: (v$.email.$error)}"
         >
       </div>
@@ -86,23 +87,23 @@
                id="password"
                type="password"
                placeholder="Пароль"
-               v-model="v$.password.$model"
+               v-model="registerPassword"
                :class="{invalid: (v$.password.$error)}"
-               @change="checkPassword"
+               @change="setCheckPassword"
                >
       </div>
 
       <!--продублировать пароль-->
       <div class="wrapper_form_register_input">
         <div class="input-errors">
-          <div class="error-msg" v-if="double_password">Пароли не свопадают</div>
+          <div class="error-msg" v-if="getDouble_password">Пароли не свопадают</div>
         </div>
         <input class="form_register_input"
                id="password-confirm"
                type="password"
                placeholder="Подтвердите пароль"
-               @change="checkPassword"
-               v-model="v$.password_confirmation.$model"
+               @input="setCheckPassword"
+               v-model="registerPasswordConfirmation"
                :class="{invalid: (v$.password_confirmation.$error)}"
         >
       </div>
@@ -121,7 +122,7 @@
                id="country"
                type="text"
                placeholder="Страна"
-               v-model="v$.country.$model"
+               v-model="registerCountry"
                :class="{invalid: (v$.country.$error)}"
         >
       </div>
@@ -140,19 +141,19 @@
                id="city"
                type="text"
                placeholder="Населенный пункт"
-               v-model="v$.city.$model"
+               v-model="registerCity"
                :class="{invalid: (v$.city.$error)}"
         >
       </div>
 
-      <!--указать дату родения-->
+      <!--указать дату рождения-->
       <label class="form_label_register" for="date_birth">Дата рождения</label>
       <div class="wrapper_form_register_date">
         <div class="form_register_date">
 
           <!--день-->
           <select class="select_form_register_date"
-                  v-model="selectedDay">
+                  v-model="registerSelectedDay">
             <option class="option_form_register_date"
                     disabled
                     value="">
@@ -167,17 +168,17 @@
           </select>
         </div>
 
+         <!--месяц-->
         <div class="form_register_date form_register_date_month">
-          <!--месяц-->
           <select class="select_form_register_date"
-                  v-model="selectedMonth">
+                  v-model="registerSelectedMonth">
             <option class="option_form_register_date"
                     disabled
                     value="">
               месяц
             </option>
             <option class="option_form_register_date"
-                    v-for="(month, index) in arrMonth"
+                    v-for="(month, index) in getArrMonth"
                     :key="month"
                     :value="index"
             >{{month}}
@@ -185,10 +186,10 @@
           </select>
         </div>
 
+        <!--год-->
         <div class="form_register_date">
-          <!--год-->
           <select class="select_form_register_date"
-                  v-model="selectedYear">
+                  v-model="registerSelectedYear">
             <option class="option_form_register_date"
                     disabled
                     value="">
@@ -213,7 +214,7 @@
         <div class="form_register_gender">
 
           <select class="select_form_register_gender"
-                  v-model="selectedGender">
+                  v-model="registerSelectedGender">
             <option class="option_form_register_gender"
                     value=""
                     disabled
@@ -237,7 +238,7 @@
       <div class="wrapper_form_register_btn">
         <button class="form_register_btn"
                 type="submit"
-                :disabled="v$.$invalid && !double_password && selectedDay && selectedMonth && selectedYear && selectedGender">
+                :disabled="v$.$invalid && !getDouble_password && getUserRegister.selectedDay && getUserRegister.selectedMonth && getUserRegister.selectedYear && getUserRegister.selectedGender">
           Зарегистрироваться
         </button>
       </div>
@@ -248,7 +249,7 @@
 <script>
 import {useVuelidate} from "@vuelidate/core";
 import {required, email, minLength} from "@vuelidate/validators";
-import {mapActions, mapMutations} from "vuex";
+import {mapActions, mapMutations, mapGetters, mapState} from "vuex";
 import CloseModal from "@/components/UI/CloseModal";
 
 //функция для валидации имяни и фамилии
@@ -267,23 +268,7 @@ export default {
   },
 
   data() {
-    return {
-      name: "",
-      surname: "",
-      email: "",
-      password: "",
-      password_confirmation: "",
-      country: "",
-      city: "",
-      is_admin: null,
-      selectedDay: "",
-      selectedMonth: "",
-      selectedYear: "",
-      selectedGender: "",
-      arrMonth: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-      double_password: false,
-      double_email: false,
-    }
+    return {}
   },
 
   validations() {
@@ -323,23 +308,47 @@ export default {
   },
 
   methods: {
-    ...mapActions({register: "authorizationStore/register"}),
-    ...mapMutations({setNotShowModalWindow: "modalStore/setNotShowModalWindow"}),
+    ...mapActions({register: "registrationStore/register"}),
 
+    ...mapMutations({
+      //закрыть модальное окно с регистрацией
+      setNotShowModalWindow: "modalStore/setNotShowModalWindow",
+
+      //проверка почты на существование такого пользователя
+      setDouble_email: "registrationStore/setDouble_email",
+
+      //проверка дублирующего пароля
+      setCheckPassword: "registrationStore/setCheckPassword",
+
+      //двухстроннее связывание v-model
+      setUserRegisterName: "registrationStore/setUserRegisterName",
+      setUserRegisterSurname: "registrationStore/setUserRegisterSurname",
+      setUserRegisterEmail: "registrationStore/setUserRegisterEmail",
+      setUserRegisterCountry: "registrationStore/setUserRegisterCountry",
+      setUserRegisterPassword: "registrationStore/setUserRegisterPassword",
+      setUserRegisterPasswordConfirmation: "registrationStore/setUserRegisterPasswordConfirmation",
+      setUserRegisterCity: "registrationStore/setUserRegisterCity",
+      setUserRegisterYear: "registrationStore/setUserRegisterYear",
+      setUserRegisterMonth: "registrationStore/setUserRegisterMonth",
+      setUserRegisterDay: "registrationStore/setUserRegisterDay",
+      setUserRegisterGender: "registrationStore/setUserRegisterGender",
+    }),
+
+    //регистрация пользователя
     handleSubmit() {
-      if (this.password === this.password_confirmation && this.password.length >= 8) {
+      if (this.getUserRegister.password === this.getUserRegister.password_confirmation && this.getUserRegister.password.length >= 8) {
         let user = {
-          name: this.name.charAt(0).toUpperCase() + this.name.slice(1),
-          surname: this.surname.charAt(0).toUpperCase() + this.surname.slice(1),
-          email: this.email,
-          password: this.password,
-          year: this.selectedYear,
-          month: this.selectedMonth,
-          day: this.selectedDay,
-          selectedGender: this.selectedGender,
-          country: this.country.charAt(0).toUpperCase() + this.country.slice(1),
-          city: this.city.charAt(0).toUpperCase() + this.city.slice(1),
-          is_admin: this.is_admin
+          name: this.getUserRegister.name.charAt(0).toUpperCase() + this.getUserRegister.name.slice(1),
+          surname: this.getUserRegister.surname.charAt(0).toUpperCase() + this.getUserRegister.surname.slice(1),
+          email: this.getUserRegister.email,
+          password: this.getUserRegister.password,
+          year: this.getUserRegister.selectedYear,
+          month: this.getUserRegister.selectedMonth,
+          day: this.getUserRegister.selectedDay,
+          selectedGender: this.getUserRegister.selectedGender,
+          country: this.getUserRegister.country.charAt(0).toUpperCase() + this.getUserRegister.country.slice(1),
+          city: this.getUserRegister.city.charAt(0).toUpperCase() + this.getUserRegister.city.slice(1),
+          is_admin: this.getUserRegister.is_admin
         }
         this.register(user)
             .then(() => {
@@ -348,37 +357,139 @@ export default {
             })
             .catch((err) => {
               if(err === "Пользователь с такой почтой уже зарегистрирован") {
-                this.double_email = true;
+                this.setDouble_email(true);
               }
               console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err));
             })
       } else {
-        this.password = ""
-        this.password_confirmation = ""
+        this.setUserRegisterPassword("");
+        this.setUserRegisterPasswordConfirmation("")
         return console.log('Повторный пароль не совпадает или менее 8 символов');
       }
     },
-
-    //проверка пароля и второго пароля на свопадение
-    checkPassword() {
-      this.double_password = this.password !== this.password_confirmation;
-    }
   },
 
   computed: {
-    //в поле option доступны годы от 1900 до текущего
-    years() {
-      const year = new Date().getFullYear()
-      return Array.from({length: year - 1900}, (value, index) => year - index)
-    }
-  },
+    ...mapGetters({
+      getUserRegister: "registrationStore/getUserRegister",
+      getDouble_email: "registrationStore/getDouble_email",
+      getDouble_password: "registrationStore/getDouble_password",
+      getArrMonth: "registrationStore/getArrMonth",
+      years: "registrationStore/years"
+    
+    }),
 
-  watch: {
-    //при вводе в поле email сбрасывается ошибка "такой пользователь уже существует"
-  email() {
-    this.double_email = false;
-  }
-  }
+    ...mapState({
+      name: (state) => state.registrationStore.userRegister.name,
+      surname: (state) => state.registrationStore.userRegister.surname,
+      email: (state) => state.registrationStore.userRegister.email,
+      password: (state) => state.registrationStore.userRegister.password,
+      password_confirmation: (state) => state.registrationStore.userRegister.password_confirmation,
+      country: (state) => state.registrationStore.userRegister.country,
+      city: (state) => state.registrationStore.userRegister.city,
+      selectedYear: (state) => state.registrationStore.userRegister.selectedYear,
+      selectedMonth: (state) => state.registrationStore.userRegister.selectedMonth,
+      selectedDay: (state) => state.registrationStore.userRegister.selectedDay,
+      selectedGender: (state) => state.registrationStore.userRegister.selectedGender
+    }),
+
+    //двухстороннее связывние со store
+    registerName: {
+      get() {
+        return this.getUserRegister.name
+      },
+      set(value) {
+        this.setUserRegisterName(value)
+        this.v$.name.$touch()
+      }
+    },
+    registerSurname: {
+      get() {
+        return this.getUserRegister.surname
+      },
+      set(value) {
+        this.setUserRegisterSurname(value)
+        this.v$.surname.$touch()
+      }
+    },
+    registerEmail: {
+      get() {
+        return this.getUserRegister.email
+      },
+      set(value) {
+        this.setUserRegisterEmail(value)
+        this.v$.email.$touch()
+      }
+    },
+    registerPassword: {
+      get() {
+        return this.getUserRegister.password
+      },
+      set(value) {
+        this.setUserRegisterPassword(value)
+        this.v$.password.$touch()
+      }
+    },
+    registerPasswordConfirmation: {
+      get() {
+        return this.getUserRegister.password_confirmation
+      },
+      set(value) {
+        this.setUserRegisterPasswordConfirmation(value)
+        this.v$.password_confirmation.$touch()
+      }
+    },
+    registerCountry: {
+      get() {
+        return this.getUserRegister.country
+      },
+      set(value) {
+        this.setUserRegisterCountry(value)
+        this.v$.country.$touch()
+      }
+    },
+    registerCity: {
+      get() {
+        return this.getUserRegister.city
+      },
+      set(value) {
+        this.setUserRegisterCity(value)
+        this.v$.city.$touch()
+      }
+    },
+    registerSelectedDay: {
+      get() {
+        return this.getUserRegister.selectedDay
+      },
+      set(value) {
+        this.setUserRegisterDay(value)
+      }
+    },
+    registerSelectedMonth: {
+      get() {
+        return this.getUserRegister.selectedMonth
+      },
+      set(value) {
+        this.setUserRegisterMonth(value)
+      }
+    },
+    registerSelectedYear: {
+      get() {
+        return this.getUserRegister.selectedYear
+      },
+      set(value) {
+        this.setUserRegisterYear(value)
+      }
+    },
+    registerSelectedGender: {
+      get() {
+        return this.getUserRegister.selectedGender
+      },
+      set(value) {
+        this.setUserRegisterGender(value)
+      }
+    },
+  },
 }
 </script>
 

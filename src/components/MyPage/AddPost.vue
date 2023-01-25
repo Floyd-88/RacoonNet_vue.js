@@ -5,15 +5,15 @@
       <textarea
           class="text_new_post"
           placeholder="Введите текст поста"
-          v-model="body"
+          v-model="postText"
       ></textarea>
 
     </div>
 
     <div class="wrapper_btn_addPost">
       <UIbtn class="btn_addPost"
-             @click="addPost"
-             :disabled="body.length < 1"
+             @click="addPost(postText)"
+             :disabled="postText.length < 1"
       >
         Добавить
       </UIbtn>
@@ -22,19 +22,29 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 export default {
   name: "AddPost",
-  emits: ["addPost"],
   data() {
     return {
-      body: "",
     }
   },
 
   methods: {
-    addPost() {
-      this.$emit('addPost', this.body);
-      this.body = "";
+...mapMutations({setPostText: "postsMyPageStore/setPostText"}),
+...mapActions({addPost: "postsMyPageStore/addPost"})
+  },
+
+  computed: {
+...mapGetters({getPostText: "postsMyPageStore/getPostText"}),
+
+postText: {
+      get() {
+        return this.getPostText;
+      },
+      set(value) {
+        this.setPostText(value);
+      }
     },
   }
 
@@ -63,7 +73,7 @@ export default {
   height: 40px;
   font-size: 19px;
   font-family: fantasy;
-  background: cornflowerblue;
+  background: #00adef;
 }
 .btn_addPost:hover {
   filter: brightness(80%);

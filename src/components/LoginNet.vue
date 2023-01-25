@@ -42,8 +42,8 @@
         >
       </div>
       <div class="wrapper_error_login"
-           v-if="errorLogin">
-        <p class="error_login">{{ errorLogin }}</p>
+           v-if="getErrorLogin">
+        <p class="error_login">{{ getErrorLogin }}</p>
       </div>
 
       <div class="wrapper_form_login_btn">
@@ -75,7 +75,7 @@
 <script>
 import {useVuelidate} from '@vuelidate/core'
 import {required, email} from '@vuelidate/validators'
-import {mapActions, mapMutations} from "vuex"
+import {mapActions, mapMutations, mapGetters} from "vuex"
 
 
 export default {
@@ -89,7 +89,7 @@ export default {
     return {
       email: '',
       password: '',
-      errorLogin: '',
+      // errorLogin: '',
     }
   },
 
@@ -102,7 +102,10 @@ export default {
 
   methods: {
     ...mapActions({login: "authorizationStore/login"}),
-    ...mapMutations({showModalTrue: "modalStore/showModalTrue"}),
+    ...mapMutations({
+      showModalTrue: "modalStore/showModalTrue",
+      setErrorLogin: "authorizationStore/setErrorLogin"
+    }),
 
     handleSubmit() {
       if (this.password.length > 0) {
@@ -119,12 +122,16 @@ export default {
             })
             .catch((err) => {
               if (err.err) {
-                this.errorLogin = JSON.stringify(err.err).slice(1, -1)
+                this.setErrorLogin(JSON.stringify(err.err).slice(1, -1))
               }
               console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(err))
             })
       }
     }
+  },
+
+  computed: {
+...mapGetters({getErrorLogin: "authorizationStore/getErrorLogin"})
   }
 }
 </script>

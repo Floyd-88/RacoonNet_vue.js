@@ -21,9 +21,9 @@ export const modalStore = {
     },
 
     actions: {
-       async closeModule({commit, getters}) {
+        async closeModule({ commit, getters }) {
             commit("setNotShowModalWindow");
-            commit('authorizationStore/setEditingUser', getters.getUser, {root:true});
+            commit('editProfileStore/setEditingUser', getters.getUser, { root: true });
         }
     },
 

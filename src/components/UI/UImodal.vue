@@ -9,18 +9,12 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from "vuex";
+import {mapGetters} from "vuex";
 
 export default {
   name: "UImodal",
 
   methods: {
-    ...mapMutations({
-    // setNotShowModalWindow: "modalStore/setNotShowModalWindow",
-      setEditingUser: "authorizationStore/setEditingUser"
-    }),
-    // ...mapActions({closeModule: "modalStore/closeModule"})
-
   },
 
   computed: {

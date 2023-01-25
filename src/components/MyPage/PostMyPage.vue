@@ -1,5 +1,4 @@
 <template>
-
   <div class="post"
        v-for="post of getPost"
        :key="post.id">
@@ -22,7 +21,7 @@
         <template v-if="post.flag">
           <div class="wrapper_text_post">
             <p class="text_post">
-              {{ post.body }}
+              {{ post.postText }}
             </p>
           </div>
         </template>
@@ -30,7 +29,7 @@
         <template v-else>
           <div class="wrapper_edit_text_body">
             <textarea class="edit_text_body"
-                      v-model="post.body"
+                      v-model="post.postText"
             ></textarea>
           </div>
 
@@ -41,14 +40,14 @@
 
     <div class="btn_post">
       <UIbtn class="redaction_post_btn"
-          @click="this.$emit('editPost', post.id)"
-             :disabled="post.body.length < 1"
+          @click="editPost(post.id)"
+             :disabled="post.postText.length < 1"
       >
         {{ post.nameBtnEdit }}
       </UIbtn>
 
       <UIbtn class="delete_post_btn"
-          @click="this.$emit('removePost', post.id)">
+          @click="removePost(post.id)">
         Удалить
       </UIbtn>
     </div>
@@ -67,6 +66,16 @@ export default {
     "removePost",
     "editPost",
   ],
+
+ methods: {
+  removePost(id) {
+    this.$emit('removePost', id);
+  }, 
+
+  editPost(id) {
+    this.$emit('editPost', id)
+  }
+ },
 
   computed: {...mapGetters({getPost: "postsMyPageStore/getPosts"})}
 }

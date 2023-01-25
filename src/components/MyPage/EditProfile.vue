@@ -57,7 +57,7 @@
             Некорректный адрес электронной почты
           </div>
         </div>
-        <div class="error-msg" v-if="double_email">
+        <div class="error-msg" v-if="getDouble_email">
           Пользователь с такой почтой уже зарегистрирован
         </div>
         <input class="form_register_input"
@@ -139,7 +139,7 @@
               месяц
             </option>
             <option class="option_form_register_date"
-                    v-for="(month, index) in arrMonth"
+                    v-for="(month, index) in getArrMonth"
                     :key="month"
                     :value="index"
             >{{ month }}
@@ -243,11 +243,7 @@ export default {
   },
 
   data() {
-    return {
-      is_admin: null,
-      arrMonth: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-      double_email: false, //можно перенести в стор
-    }
+    return {}
   },
 
   validations: {
@@ -266,8 +262,6 @@ export default {
       }
     },
     email: {required, email},
-    // new_password: {required, min: minLength(8)},
-    // new_password_confirmation: {required},
     country: {
       required, min: minLength(2), name_validation: {
         $validator: validName,
@@ -291,39 +285,38 @@ export default {
       updateProfile: "editProfileStore/updateProfile",
     }),
     ...mapMutations({
-      setName: "authorizationStore/setName",
-      setSurname: "authorizationStore/setSurname",
-      setEmail: "authorizationStore/setEmail",
-      setCountry: "authorizationStore/setCountry",
-      setCity: "authorizationStore/setCity",
-      setYear: "authorizationStore/setYear",
-      setMonth: "authorizationStore/setMonth",
-      setDay: "authorizationStore/setDay",
-      setGender: "authorizationStore/setGender",
+      setName: "editProfileStore/setName",
+      setSurname: "editProfileStore/setSurname",
+      setEmail: "editProfileStore/setEmail",
+      setCountry: "editProfileStore/setCountry",
+      setCity: "editProfileStore/setCity",
+      setYear: "editProfileStore/setYear",
+      setMonth: "editProfileStore/setMonth",
+      setDay: "editProfileStore/setDay",
+      setGender: "editProfileStore/setGender",
 
-      // setUser: "authorizationStore/setUser",
-      setOpenChangePassword: "editProfileStore/setOpenChangePassword"
+      setOpenChangePassword: "updatePasswordStore/setOpenChangePassword",
+      setDouble_email: "registrationStore/setDouble_email",
     }),
 
+    //изменение данных пользователя
     handleSubmit() {
       let user = {
         name: this.getEditingUser.name.charAt(0).toUpperCase() + this.name.slice(1),
         surname: this.getEditingUser.surname.charAt(0).toUpperCase() + this.surname.slice(1),
         email: this.getEditingUser.email,
-
         day: this.getEditingUser.day_user,
         month: this.getEditingUser.month_user,
         year: this.getEditingUser.year_user,
         selectedGender: this.selectedGender,
         country: this.getEditingUser.country.charAt(0).toUpperCase() + this.country.slice(1),
         city: this.getEditingUser.city.charAt(0).toUpperCase() + this.city.slice(1),
-        // is_admin: this.is_admin
       }
       this.updateProfile(user)
           .then(() => {})
           .catch((err) => {
             if (err === "Пользователь с такой почтой уже зарегистрирован") {
-              this.double_email = true;
+              this.setDouble_email(true);
             }
             console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err));
           })
@@ -333,21 +326,25 @@ export default {
 
   computed: {
     ...mapGetters({
-      getEditingUser: "authorizationStore/getEditingUser",
-      getShowPassword: "editProfileStore/getShowPassword",
+      getEditingUser: "editProfileStore/getEditingUser",
+      getShowPassword: "updatePasswordStore/getShowPassword",
+      getDouble_email: "registrationStore/getDouble_email",
+      getArrMonth: "registrationStore/getArrMonth",
+      years: "registrationStore/years"
     }),
     ...mapState({
-      name: (state) => state.authorizationStore.editingUser.name,
-      surname: (state) => state.authorizationStore.editingUser.surname,
-      email: (state) => state.authorizationStore.editingUser.email,
-      country: (state) => state.authorizationStore.editingUser.country,
-      city: (state) => state.authorizationStore.editingUser.city,
-      selectedYear: (state) => state.authorizationStore.editingUser.year_user,
-      selectedMonth: (state) => state.authorizationStore.editingUser.month_user,
-      selectedDay: (state) => state.authorizationStore.editingUser.day_user,
-      selectedGender: (state) => state.authorizationStore.editingUser.selectedGender
+      name: (state) => state.editProfileStore.editingUser.name,
+      surname: (state) => state.editProfileStore.editingUser.surname,
+      email: (state) => state.editProfileStore.editingUser.email,
+      country: (state) => state.editProfileStore.editingUser.country,
+      city: (state) => state.editProfileStore.editingUser.city,
+      selectedYear: (state) => state.editProfileStore.editingUser.year_user,
+      selectedMonth: (state) => state.editProfileStore.editingUser.month_user,
+      selectedDay: (state) => state.editProfileStore.editingUser.day_user,
+      selectedGender: (state) => state.editProfileStore.editingUser.selectedGender
     }),
 
+    //двухстороннее связывание + валидация
     changeName: {
       get() {
         return this.getEditingUser.name
@@ -427,17 +424,13 @@ export default {
     },
 
 
-    //в поле option доступны годы от 1900 до текущего
-    years() {
-      const year = new Date().getFullYear()
-      return Array.from({length: year - 1900}, (value, index) => year - index)
-    },
+
   },
 
   watch: {
     //при вводе в поле email сбрасывается ошибка "такой пользователь уже существует"
     email() {
-      this.double_email = false;
+      this.setDouble_email(false);
     },
 
   }

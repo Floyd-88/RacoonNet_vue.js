@@ -7,8 +7,8 @@
           Введите пароль указанный при регистрации
         </div>
       </div>
-      <div class="wrapper_error_login" v-if="errorPassword">
-        <p class="error_password">{{ errorPassword }}</p>
+      <div class="wrapper_error_login" v-if="getErrorPassword">
+        <p class="error_password">{{ getErrorPassword }}</p>
       </div>
       <div class="wrapper_form_change_password">
         <div class="wrapper_form_change_password_label">
@@ -35,7 +35,7 @@
         </div>
         <div class="wrapper_form_change_password_input">
           <input class="form_register_input" id="new_password" type="password" placeholder="Укажите новый пароль"
-            @change="setCheckPassword" v-model="check_new_password" :class="{ invalid: (v$.new_password.$error) }">
+            @change="setCheckNewPassword" v-model="check_new_password" :class="{ invalid: (v$.new_password.$error) }">
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
     <!-- повторный новый пароль -->
     <div class="wrapper_form_register_input">
       <div class="input-errors">
-        <div class="error-msg" v-if="getDouble_password">Пароли не свопадают</div>
+        <div class="error-msg" v-if="getDouble_new_password">Пароли не свопадают</div>
       </div>
 
       <div class="wrapper_form_change_password">
@@ -53,7 +53,7 @@
 
         <div class="wrapper_form_change_password_input">
           <input class="form_register_input" id="new_password_confirmation" type="password"
-            placeholder="Повторите новый пароль" @input="setCheckPassword" v-model="check_new_password_confirmation">
+            placeholder="Повторите новый пароль" @input="setCheckNewPassword" v-model="check_new_password_confirmation">
         </div>
       </div>
     </div>
@@ -88,7 +88,6 @@ export default {
 
   data() {
     return {
-      errorPassword: ""     //перенсти в стор
     }
   },
 
@@ -100,17 +99,18 @@ export default {
 
   methods: {
     ...mapMutations({
-      setCloseChangePassword: "editProfileStore/setCloseChangePassword",
-      setOld_password: "editProfileStore/setOld_password",
-      setNew_password: "editProfileStore/setNew_password",
-      setNew_password_confirmation: "editProfileStore/setNew_password_confirmation",
-      setCheckPassword: "editProfileStore/setCheckPassword",
+      setCloseChangePassword: "updatePasswordStore/setCloseChangePassword",
+      setOld_password: "updatePasswordStore/setOld_password",
+      setNew_password: "updatePasswordStore/setNew_password",
+      setNew_password_confirmation: "updatePasswordStore/setNew_password_confirmation",
+      setCheckNewPassword: "updatePasswordStore/setCheckNewPassword",
+      setErrorPassword: "updatePasswordStore/setErrorPassword"
 
     }),
-    ...mapActions({updatePasword: "editProfileStore/updatePasword"}),
+    ...mapActions({updatePasword: "updatePasswordStore/updatePasword"}),
 
     save_new_password() {
-      if (!this.getDouble_password) {
+      if (!this.getDouble_new_password) {
 
         let user = {
           old_password: this.getOld_password,
@@ -123,7 +123,7 @@ export default {
             })
             .catch((err) => {
               if (err.err) {
-                this.errorPassword = JSON.stringify(err.err).slice(1, -1);
+                this.setErrorPassword(JSON.stringify(err.err).slice(1, -1));
               }
               this.setOld_password("");
               this.setNew_password("");
@@ -137,16 +137,17 @@ export default {
 
   computed: {
     ...mapGetters({
-      getDouble_password: "editProfileStore/getDouble_password",
-      getNew_password: "editProfileStore/getNew_password",
-      getNew_password_confirmation: "editProfileStore/getNew_password_confirmation",
-      getOld_password: "editProfileStore/getOld_password",
+      getDouble_new_password: "updatePasswordStore/getDouble_new_password",
+      getNew_password: "updatePasswordStore/getNew_password",
+      getNew_password_confirmation: "updatePasswordStore/getNew_password_confirmation",
+      getOld_password: "updatePasswordStore/getOld_password",
+      getErrorPassword: "updatePasswordStore/getErrorPassword"
     }),
 
     ...mapState({
-      old_password: (state) => state.editProfileStore.old_password,
-      new_password: (state) => state.editProfileStore.new_password,
-      new_password_confirmation: (state) => state.editProfileStore.new_password_confirmation,
+      old_password: (state) => state.updatePasswordStore.old_password,
+      new_password: (state) => state.updatePasswordStore.new_password,
+      new_password_confirmation: (state) => state.updatePasswordStore.new_password_confirmation,
     }),
 
     check_old_password: {
@@ -155,7 +156,7 @@ export default {
       },
       set(value) {
         this.setOld_password(value);
-        this.v$.old_password.$touch()
+        this.v$.old_password.$touch();
       }
     },
     check_new_password: {
@@ -226,6 +227,7 @@ export default {
 }
 
 .error-msg {
+  margin-left: 5px;
   color: red;
   font-size: 14px;
 }
@@ -244,5 +246,6 @@ export default {
 .error_password {
   color: red;
   margin: 5px;
+  font-size: 14px;
 }
 </style>
