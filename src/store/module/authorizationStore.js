@@ -2,15 +2,22 @@ import axios from "axios";
 
 export const authorizationStore = {
     state: () => ({
+        email: '',
+        password: '',
         status: '',
         token: localStorage.getItem('token') || '', //получаем токен создаваемый при авторизации
         user: JSON.parse(localStorage.getItem('user')) || {}, //получаем данные юзера при авторизаци
-        errorLogin: "", //ошибка возникающая при вводе неверного старого пароля
+        errorLogin: "", //ошибка возникающая при вводе неверного пароля или почты
     }),
 
     getters: {
-        isLoggedIn: state => !!state.token, //показываем кнопку выход в header
+        getEmail: (state) => state.email,
+        getPassword: (state) => state.password,
+
+        isLoggedIn: (state) => !!state.token, //показываем кнопку выход в header
+
         getUser: (state) => state.user,
+
         getErrorLogin: (state) => state.errorLogin,
 
         //вычисляет возраст пользователя
@@ -37,10 +44,11 @@ export const authorizationStore = {
             state.token = token;
             state.user = user;
         },
-
         auth_error(state) {
             state.status = 'error';
         },
+
+        //при выходе обнуляем
         logout(state) {
             state.status = '';
             state.token = '';
@@ -49,6 +57,14 @@ export const authorizationStore = {
         setErrorLogin(state, error) {
             state.errorLogin = error
         },
+
+        //двухстороннее связывание
+        setEmail(state, email) {
+            state.email = email;
+        },
+        setPassword(state, password) {
+            state.password = password;
+        }
 
     },
 
