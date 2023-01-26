@@ -1,6 +1,6 @@
 <template>
   <!-- старый пароль -->
-  <form class="form_password" @submit.prevent="save_new_password">
+  <form class="form_password" v-if="getModalSave" @submit.prevent="save_new_password">
     <div class="wrapper_form_register_input">
       <div class="input-errors" v-for="(error, index) of v$.old_password.$errors" :key="index">
         <div class="error-msg" v-if="error.$message === 'Value is required'">
@@ -59,9 +59,7 @@
     </div>
 
     <div class="wrapper_save_password_btn">
-      <UIbtn class="save_password_btn" 
-      type="submit" 
-      :disabled="v$.$invalid">
+      <UIbtn class="save_password_btn" type="submit" :disabled="v$.$invalid">
         Сохранить пароль
       </UIbtn>
 
@@ -72,31 +70,37 @@
 
 
   </form>
+  <div v-else class="wrapper_save_password">
+    <div>
+      <p class="save_password">Ваш был пароль изменен!</p>
+    </div>
+    <div>
+      <UIbtn class="btn_save_password" @click.prevent = "setCloseChangePassword">OK</UIbtn>
+    </div>
+  </div>
 </template>
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import { mapMutations, mapGetters, mapState, mapActions } from "vuex";
+import UIbtn from "../UI/UIbtn.vue";
 
 export default {
   name: "ChangePassword",
-
   setup() {
-    return { v$: useVuelidate() }
+    return { v$: useVuelidate() };
   },
-
   data() {
     return {
-    }
+      modalSave: false,
+    };
   },
-
   validations: {
     old_password: { required },
     new_password: { required, min: minLength(8) },
     new_password_confirmation: { required },
   },
-
   methods: {
     ...mapMutations({
       setCloseChangePassword: "updatePasswordStore/setCloseChangePassword",
@@ -104,56 +108,53 @@ export default {
       setNew_password: "updatePasswordStore/setNew_password",
       setNew_password_confirmation: "updatePasswordStore/setNew_password_confirmation",
       setCheckNewPassword: "updatePasswordStore/setCheckNewPassword",
-      setErrorPassword: "updatePasswordStore/setErrorPassword"
+      setErrorPassword: "updatePasswordStore/setErrorPassword",
 
+      setModalSave: "updatePasswordStore/setModalSave"
     }),
-    ...mapActions({updatePasword: "updatePasswordStore/updatePasword"}),
+    ...mapActions({ updatePasword: "updatePasswordStore/updatePasword" }),
 
+    //изменение старого пароля
     save_new_password() {
       if (!this.getDouble_new_password) {
-
         let user = {
           old_password: this.getOld_password,
           new_password: this.getNew_password
-        }
-        
+        };
         this.updatePasword(user)
-            .then( () => {
-              this.setCloseChangePassword();
-              this.setErrorPassword("")
-            })
-            .catch((err) => {
-              if (err.err) {
-                this.setErrorPassword(JSON.stringify(err.err).slice(1, -1));
-              }
-              this.setOld_password("");
-              this.setNew_password("");
-              this.setNew_password_confirmation("");
-              console.log("Изменение пароля завершилось с ошибкой: " + JSON.stringify(err));
-            })
+          .then(() => {
+            this.setModalSave(false);          
+          })
+          .catch((err) => {
+            if (err.err) {
+              this.setErrorPassword(JSON.stringify(err.err).slice(1, -1));
+            }
+            this.setOld_password("");
+            this.setNew_password("");
+            this.setNew_password_confirmation("");
+            console.log("Изменение пароля завершилось с ошибкой: " + JSON.stringify(err));
+          });
       }
     },
-
   },
-
   computed: {
     ...mapGetters({
       getDouble_new_password: "updatePasswordStore/getDouble_new_password",
       getNew_password: "updatePasswordStore/getNew_password",
       getNew_password_confirmation: "updatePasswordStore/getNew_password_confirmation",
       getOld_password: "updatePasswordStore/getOld_password",
-      getErrorPassword: "updatePasswordStore/getErrorPassword"
-    }),
+      getErrorPassword: "updatePasswordStore/getErrorPassword",
 
+      getModalSave: "updatePasswordStore/getModalSave"
+    }),
     ...mapState({
       old_password: (state) => state.updatePasswordStore.old_password,
       new_password: (state) => state.updatePasswordStore.new_password,
       new_password_confirmation: (state) => state.updatePasswordStore.new_password_confirmation,
     }),
-
     check_old_password: {
       get() {
-        return this.getOld_password
+        return this.getOld_password;
       },
       set(value) {
         this.setOld_password(value);
@@ -162,7 +163,7 @@ export default {
     },
     check_new_password: {
       get() {
-        return this.getNew_password
+        return this.getNew_password;
       },
       set(value) {
         this.setNew_password(value);
@@ -171,15 +172,15 @@ export default {
     },
     check_new_password_confirmation: {
       get() {
-        return this.getNew_password_confirmation
+        return this.getNew_password_confirmation;
       },
       set(value) {
         this.setNew_password_confirmation(value);
         this.v$.new_password_confirmation.$touch();
       }
     },
-
-  }
+  },
+  components: { UIbtn }
 }
 </script>
 
@@ -244,9 +245,28 @@ export default {
   display: flex;
   justify-content: center;
 }
+
 .error_password {
   color: red;
   margin: 5px;
   font-size: 14px;
+}
+
+.wrapper_save_password {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.save_password {
+  font-size: 18px;
+  margin: 10px;
+}
+
+.btn_save_password {
+  width: 100px;
+  height: 35px;
+  margin-top: 10px;
 }
 </style>

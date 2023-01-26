@@ -9,6 +9,7 @@ export const updatePasswordStore = {
         new_password_confirmation: "",
         double_new_password: false, //проверка на идентичность нового пароля и new_password_confirmation
         errorPassword: "", //ошибка возникающая при вводе неверного старого пароля
+        modalSave: true //информационное окошко после сохранения пароля
     }),
 
     getters: {
@@ -19,7 +20,8 @@ export const updatePasswordStore = {
         getDouble_new_password: (state) => state.double_new_password,
         getUserEmail: (state, _, rootState) => rootState.authorizationStore.user.email,
         getUserID: (state, _, rootState) => rootState.authorizationStore.user.userID,
-        getErrorPassword: (state) => state.errorPassword
+        getErrorPassword: (state) => state.errorPassword,
+        getModalSave: (state) => state.modalSave
     },
 
     mutations: {
@@ -31,7 +33,9 @@ export const updatePasswordStore = {
             state.new_password = "",
                 state.new_password_confirmation = "",
                 state.old_password = "",
-                state.double_password = false
+                state.double_password = false,
+                state.errorPassword = "",
+                state.modalSave = true
         },
         setCheckNewPassword(state) {
             state.double_new_password = state.new_password !== state.new_password_confirmation;
@@ -48,6 +52,10 @@ export const updatePasswordStore = {
         setErrorPassword(state, error) {
             state.errorPassword = error
         },
+
+        setModalSave(state, bool) {
+            state.modalSave = bool
+        }
     },
 
     actions: {
