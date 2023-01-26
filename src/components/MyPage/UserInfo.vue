@@ -56,8 +56,8 @@ export default {
   background: #f8f8f9;
   box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
 }
-.wrapper_ava_user {
-}
+/* .wrapper_ava_user {
+} */
 .ava_user {
   width: 200px;
   border-radius: 100%;
@@ -70,8 +70,8 @@ export default {
   flex-direction: column;
   margin: 20px;
 }
-.wrapper_name_user {
-}
+/* .wrapper_name_user {
+} */
 .name_user {
   font-size: 20px;
   font-family: fantasy;

@@ -120,6 +120,7 @@ export default {
         this.updatePasword(user)
             .then( () => {
               this.setCloseChangePassword();
+              this.setErrorPassword("")
             })
             .catch((err) => {
               if (err.err) {

@@ -196,7 +196,7 @@
       </div>
 
 <!--      Окно с вводом нового пароля-->
-      <template v-if="getShowPassword">
+      <template v-if="getModulePassword">
         <UImodal class="change_password_modal">
           <ChangePassword/>
         </UImodal>
@@ -212,7 +212,16 @@
       </div>
 
       <div class="wrapper_delete_profile">
-        <p class="delete_profile">Удалить профиль</p>
+        <button class="delete_profile"
+        @click.prevent="setModuleDelete(true)"
+        >
+          Удалить профиль
+        </button>
+        <template v-if="getModuleDelete">
+        <UImodal class="change_password_modal">
+          <DeleteUser/>
+        </UImodal>
+      </template>
       </div>
 
     </form>
@@ -297,6 +306,8 @@ export default {
 
       setOpenChangePassword: "updatePasswordStore/setOpenChangePassword",
       setDouble_email: "registrationStore/setDouble_email",
+
+      setModuleDelete: "removeUserStore/setModuleDelete"
     }),
 
     //изменение данных пользователя
@@ -327,10 +338,12 @@ export default {
   computed: {
     ...mapGetters({
       getEditingUser: "editProfileStore/getEditingUser",
-      getShowPassword: "updatePasswordStore/getShowPassword",
+      getModulePassword: "updatePasswordStore/getModulePassword",
       getDouble_email: "registrationStore/getDouble_email",
       getArrMonth: "registrationStore/getArrMonth",
-      years: "registrationStore/years"
+      years: "registrationStore/years",
+
+      getModuleDelete: "removeUserStore/getModuleDelete"
     }),
     ...mapState({
       name: (state) => state.editProfileStore.editingUser.name,
@@ -557,10 +570,13 @@ export default {
 }
 
 .delete_profile {
-  font-size: 15px;
-  text-decoration: underline;
-  cursor: pointer;
-  display: inline-block;
+  font-family: emoji;
+    font-size: 15px;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block;
+    background: none;
+    border: none;
 }
 
 /* .wrapper_change_password {

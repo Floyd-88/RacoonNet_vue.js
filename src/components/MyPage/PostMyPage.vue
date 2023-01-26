@@ -6,7 +6,7 @@
     <div class="wrapper_post">
 
       <div class="wrapper_ava_posts">
-        <img class="ava_posts" :src=post.ava alt="ava">
+        <img class="ava_posts" src=@/assets/ava/ava_1.jpg  alt="ava">
       </div>
 
       <div class="wrapper_post_user">
@@ -66,6 +66,11 @@ export default {
     "removePost",
     "editPost",
   ],
+
+  data() {
+    return {
+    }
+  },
 
  methods: {
   removePost(id) {

@@ -12,6 +12,7 @@ import MyFriends from "@/components/MyPage/MyFriends";
 import EditProfile from "@/components/MyPage/EditProfile";
 import ChangePassword from "@/components/MyPage/ChangePassword";
 import CloseModal from "@/components/UI/CloseModal";
+import DeleteUser from "@/components/MyPage/DeleteUser";
 
 export default [
     UserInfo,
@@ -27,5 +28,6 @@ export default [
     MyFriends,
     EditProfile,
     ChangePassword,
-    CloseModal
+    CloseModal,
+    DeleteUser
 ]

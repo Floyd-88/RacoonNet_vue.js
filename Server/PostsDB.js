@@ -9,7 +9,8 @@ class PostsDB {
 
     //создаем таблицу БД с постами
     createTablePosts() {
-        const sql = `CREATE TABLE IF NOT EXISTS posts (id integer PRIMARY KEY AUTO_INCREMENT, ava varchar(100),  name varchar(30), surname varchar(30), date varchar(50), postText text, flag integer, nameBtnEdit varchar(30), userID integer, FOREIGN KEY (userID) REFERENCES users(userID))`;
+        const sql = `CREATE TABLE IF NOT EXISTS posts (id integer PRIMARY KEY AUTO_INCREMENT, ava varchar(100),  name varchar(30), surname varchar(30), date varchar(50), postText text, flag integer, nameBtnEdit varchar(30), userID integer, 
+        CONSTRAINT FK_Posts_Users FOREIGN KEY (userID)  REFERENCES users (userID) ON DELETE CASCADE)`;
         this.connection.execute(sql);
     }
 

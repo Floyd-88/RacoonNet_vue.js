@@ -23,6 +23,8 @@ const registerValidate = require('./validate/registerValidate')
 const postValidate = require('./validate/postValidate')
 const updateUserValidate = require('./validate/updateUserValidate')
 const passwordValidate = require('./validate/passwordValidate')
+const passwordDelValidate = require('./validate/passwordDelValidate')
+
 
 
 const app = express();
@@ -259,6 +261,35 @@ router.put('/password', passwordValidate, function(req, res) {
 
                 res.status(200).send("Пароль успешно обновлен");
             })
+
+    })
+})
+
+//удаление профиля пользователя
+router.delete('/delete_user', passwordDelValidate, function(req, res) {
+
+    //валидация полей
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+
+    if (!req.body.password) return res.status(500).send("Поле с паролем не заполнено");
+
+    authorization.selectByEmail(req.body.email, (err, user) => {
+        if (err) return res.status(500).send("Ошибка на сервере");
+
+        let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
+        if (!passwordIsValid) return res.status(401).send({
+            err: 'Пароль не действителен'
+        });
+
+        authorization.deleteUserDB([req.body.userID], (err) => {
+            if (err) return res.status(500).send("При удалении пользователя возникли проблемы");
+            res.status(200).send("Пользователь успешно удален");
+        })
 
     })
 })

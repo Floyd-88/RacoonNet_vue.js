@@ -3,7 +3,7 @@ import axios from "axios";
 export const updatePasswordStore = {
 
     state: () => ({
-        showPassword: false, //показывать/не показывать окно с изменение пароля
+        modulePassword: false, //показывать/не показывать окно с изменение пароля
         old_password: "",
         new_password: "",
         new_password_confirmation: "",
@@ -12,7 +12,7 @@ export const updatePasswordStore = {
     }),
 
     getters: {
-        getShowPassword: (state) => state.showPassword,
+        getModulePassword: (state) => state.modulePassword,
         getNew_password: (state) => state.new_password,
         getNew_password_confirmation: (state) => state.new_password_confirmation,
         getOld_password: (state) => state.old_password,
@@ -24,10 +24,10 @@ export const updatePasswordStore = {
 
     mutations: {
         setOpenChangePassword(state) {
-            state.showPassword = true;
+            state.modulePassword = true;
         },
         setCloseChangePassword(state) {
-            state.showPassword = false;
+            state.modulePassword = false;
             state.new_password = "",
                 state.new_password_confirmation = "",
                 state.old_password = "",
@@ -67,7 +67,6 @@ export const updatePasswordStore = {
                         method: 'PUT'
                     })
                     .then((resp) => {
-                        console.log(resp);
                         resolve(resp);
                     })
                     .catch((err) => {

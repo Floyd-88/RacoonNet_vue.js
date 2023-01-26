@@ -57,6 +57,12 @@ class AuthorizationUserDB {
         });
     }
 
+    deleteUserDB(id, callback) {
+        return this.connection.execute('DELETE FROM `users` WHERE userID = ?', id, (err) => {
+            callback(err);
+        })
+    }
+
 }
 
 

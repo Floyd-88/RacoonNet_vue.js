@@ -5,6 +5,7 @@ import { modalStore } from "@/store/module/modalStore"
 import { editProfileStore } from "@/store/module/editProfileStore"
 import { updatePasswordStore } from "@/store/module/updatePasswordStore"
 import { registrationStore } from "@/store/module/registrationStore"
+import { removeUserStore } from "@/store/module/removeUserStore"
 
 export default createStore({
     modules: {
@@ -14,5 +15,6 @@ export default createStore({
         editProfileStore,
         updatePasswordStore,
         registrationStore,
+        removeUserStore,
     }
 });
