@@ -41,7 +41,7 @@
       </div>
 
       <div class="wrapper_form_login_btn">
-        <button class="form_register_btn" @click.prevent="showModalTrue">
+        <button class="form_register_btn" @click.prevent="setModulRegister">
           Создать новый аккаунт
         </button>
       </div>
@@ -77,7 +77,7 @@ export default {
   methods: {
     ...mapActions({ login: "authorizationStore/login" }),
     ...mapMutations({
-      showModalTrue: "modalStore/showModalTrue",
+      setModulRegister: "registrationStore/setModulRegister",
       setErrorLogin: "authorizationStore/setErrorLogin",
       setEmail: "authorizationStore/setEmail",
       setPassword: "authorizationStore/setPassword",

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <UImodal> <RegisterNet/> </UImodal>
+    <template v-if="getModulRegister">
+      <UImodal> <RegisterNet/> </UImodal>
+    </template>
+   
 
     <div class="wrapper_mainPage">
       <div class="wrapper_title">
@@ -17,12 +20,16 @@
 </template>
 
 <script>
-
+import { mapGetters } from 'vuex';
 export default {
   name: "MainPage",
   data() {
     return {}
   },
+computed: {
+  ...mapGetters({getModulRegister: "registrationStore/getModulRegister"})
+}
+  
 
 }
 </script>

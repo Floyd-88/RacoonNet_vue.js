@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const registrationStore = {
+    modulRegister: false,
     state: () => ({
         userRegister: {
             name: "",
@@ -23,6 +24,8 @@ export const registrationStore = {
     }),
 
     getters: {
+        getModulRegister: (state) => state.modulRegister,
+
         getUserRegister: (state) => state.userRegister,
         getDouble_email: (state) => state.double_email,
         getDouble_password: (state) => state.double_password,
@@ -36,6 +39,11 @@ export const registrationStore = {
     },
 
     mutations: {
+
+        setModulRegister(state, bool) {
+            state.modulRegister = bool
+        },
+
         //проверка задублирование эл. почты
         setDouble_email(state, bool) {
             state.double_email = bool

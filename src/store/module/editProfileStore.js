@@ -4,14 +4,20 @@ export const editProfileStore = {
 
     state: () => ({
         editingUser: JSON.parse(localStorage.getItem('user')) || {}, //получаем данные юзера для внесения изменений в профиль (данные изменения не влияют на информацию о пользователе до того как юзер не нажмет кнопку сохранить изменения)
-
+        modulEditProfile: false,
     }),
     getters: {
         getEditingUser: (state) => state.editingUser,
         getUserID: (state, _, rootState) => rootState.authorizationStore.user.userID,
+        getModulEditProfile: (state) => state.modulEditProfile,
     },
 
     mutations: {
+
+        setModulEditProfile(state, bool) {
+            state.modulEditProfile = bool;
+        },
+
         //записываем в state данные при авторизации или регистрации для возможно манипулировать этими при редкатировании профиля
         setEditingUser(state, user) {
             state.editingUser.name = user.name
@@ -57,6 +63,15 @@ export const editProfileStore = {
     },
 
     actions: {
+
+        // showModalEditProfile({ commit }) {
+        //     commit("setModulEditProfile", true);
+        //     // commit("modalStore/showModalTrue", null, { root: true });
+
+        // },
+
+
+
         //редактирование профиля
         updateProfile({ getters }, user) {
             return new Promise((resolve, reject) => {

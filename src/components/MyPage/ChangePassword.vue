@@ -92,9 +92,7 @@ export default {
     return { v$: useVuelidate() };
   },
   data() {
-    return {
-      modalSave: false,
-    };
+    return {};
   },
   validations: {
     old_password: { required },

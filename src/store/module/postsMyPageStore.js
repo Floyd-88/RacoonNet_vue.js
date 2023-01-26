@@ -5,6 +5,12 @@ export const postsMyPageStore = {
 
     state: () => ({
         postText: "",
+
+
+        id: "",
+        beforePostText: "",
+        modulePost: false,
+        isSave: "",
         posts: [], //массив постов подгружаемый из базы данных
         countPosts: 0, //номер массива страницы
         limitPosts: 0, //количество постов на одной странице
@@ -13,15 +19,35 @@ export const postsMyPageStore = {
 
     getters: {
         getPostText: state => state.postText,
+        getBeforePostText: state => state.beforePostText,
+        getModulePost: (state) => state.modulePost,
         getPosts: state => state.posts,
         getUser: (state, getters, rootState, rootGetters) => {
             return rootGetters["authorizationStore/getUser"]
-        }
+        },
     },
 
     mutations: {
+        //открытие-закрытие подтверждающего окна при редактировании поста
+        setModulePost(state, { id, text }) {
+            state.modulePost = true;
+            state.id = id;
+            state.beforePostText = text; //при нажатии на кнопк редакт. сохраняем текст поста в state beforePostText
+        },
+        setCloseModulePost(state) {
+            state.modulePost = false;
+        },
+
+        saveTextPost(state) {
+            state.isSave = true;
+            state.modulePost = false;
+        },
+
         setPostText(state, post) {
             state.postText = post;
+        },
+        setBeforePostText(state, text) {
+            state.beforePostText = text
         },
 
         setPosts(state, posts) {
@@ -81,20 +107,16 @@ export const postsMyPageStore = {
                 .catch(function(error) {
                     console.log("Ошибка при добавлении поста: " + error);
                 });
-
         },
 
+
         // изменение поста
-        async editPost({ state, dispatch }, id) {
+        async editPost({ state, dispatch, commit }) {
             const date = await dispatch("newDate");
-            const [post] = state.posts.filter(post => post.id === id);
-            post.flag = !post.flag;
-            if (post.flag) {
-                post.nameBtnEdit = "Редактировать"
-                post.date = "Изменено: " + date;
-            } else {
-                post.nameBtnEdit = "Сохранить";
-            }
+            const [post] = state.posts.filter(post => post.id === state.id);
+            post.date = "Изменено: " + date;
+            commit("setCloseModulePost");
+            post.postText = state.beforePostText; //при нажатии на кнопку сохранить, перезаписываем postText
             await axios.put('http://localhost:8000/dataBase.js', {
                     postText: post.postText,
                     date: date,

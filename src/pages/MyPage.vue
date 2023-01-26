@@ -1,8 +1,11 @@
 <template>
   <div class="main">
-    <UImodal>
+    <template v-if="getModulEditProfile">
+      <UImodal>
       <EditProfile/>
     </UImodal>
+    </template>
+    
 
     <UserInfo/>
     <div class="wrapper_myPage">
@@ -14,6 +17,8 @@
           <PostMyPage
               @editPost="editPost"
               @removePost="removePost"/>
+
+             
 
           <div class="wrapper_not_posts"
                v-if="getPosts.length === 0">
@@ -58,7 +63,6 @@ export default {
 
   methods: {
     ...mapActions({
-      // addPost: "postsMyPageStore/addPost",
       loadPostServer: "postsMyPageStore/loadPostServer",
       removePost: "postsMyPageStore/removePost",
       editPost: "postsMyPageStore/editPost"
@@ -72,6 +76,7 @@ export default {
   computed: {
     ...mapGetters({
       getPosts: "postsMyPageStore/getPosts",
+      getModulEditProfile: "editProfileStore/getModulEditProfile"
     }),
   }
 

@@ -1,6 +1,5 @@
 <template>
-  <div class="modal_fone"
-       v-if="getModal">
+  <div class="modal_fone">
     <div @click.stop class="modal_window">
 
       <slot></slot>

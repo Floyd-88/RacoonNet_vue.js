@@ -22,7 +22,7 @@
 
     <div class="wrapper_btn">
       <UIbtn class="redaction_profile_btn"
-      @click="showModalTrue"
+      @click="setModulEditProfile(true)"
       >Редактировать профиль</UIbtn>
     </div>
 
@@ -35,7 +35,10 @@ export default {
   name: "UserInfo",
 
   methods: {
-    ...mapMutations({showModalTrue: "modalStore/showModalTrue"})
+    ...mapMutations({showModalTrue: "modalStore/showModalTrue",
+    setModulEditProfile: "editProfileStore/setModulEditProfile"
+  }),
+
   },
 
   computed: {
@@ -43,6 +46,9 @@ export default {
       getUser: "authorizationStore/getUser",
       age: "authorizationStore/age"
     }),
+    // ...mapActions({
+    //   showModalEditProfile: "editProfileStore/showModalEditProfile"
+    // })
   }
 }
 </script>

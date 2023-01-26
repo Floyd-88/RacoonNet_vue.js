@@ -1,12 +1,10 @@
 <template>
-  <div class="post"
-       v-for="post of getPost"
-       :key="post.id">
+  <div class="post" v-for="post of getPost" :key="post.id">
 
     <div class="wrapper_post">
 
       <div class="wrapper_ava_posts">
-        <img class="ava_posts" src=@/assets/ava/ava_1.jpg  alt="ava">
+        <img class="ava_posts" src=@/assets/ava/ava_1.jpg alt="ava">
       </div>
 
       <div class="wrapper_post_user">
@@ -26,39 +24,59 @@
           </div>
         </template>
 
-        <template v-else>
+        <!-- <template v-else>
           <div class="wrapper_edit_text_body">
-            <textarea class="edit_text_body"
-                      v-model="post.postText"
-            ></textarea>
+            <textarea class="edit_text_body" v-model="beforeModelPostText"></textarea>
           </div>
 
-        </template>
+        </template> -->
       </div>
 
     </div>
 
     <div class="btn_post">
-      <UIbtn class="redaction_post_btn"
-          @click="editPost(post.id)"
-             :disabled="post.postText.length < 1"
-      >
-        {{ post.nameBtnEdit }}
+      <UIbtn class="redaction_post_btn" @click="setModulePost({id: post.id, text: post.postText})" :disabled="post.postText.length < 1">
+        Редактировать
       </UIbtn>
 
-      <UIbtn class="delete_post_btn"
-          @click="removePost(post.id)">
+      <UIbtn class="delete_post_btn" @click="removePost(post.id)">
         Удалить
       </UIbtn>
     </div>
 
   </div>
 
+  <template v-if="getModulePost">
+      <UImodal>
+        <div class="wrapper_save_editPost">
+          <div class="save_editPost_title">
+
+
+            <div class="wrapper_edit_text_body">
+              <textarea class="edit_text_body" v-model="beforeModelPostText"></textarea>
+            </div>
+
+
+          </div>
+          <div class="wrapper_save_editPost_btn">
+            <UIbtn class="save_editPost_btn" type="submit" @click="editPost">
+              OK
+            </UIbtn>
+
+            <UIbtn class="save_editPost_btn" @click="setCloseModulePost">
+              Отменить
+            </UIbtn>
+          </div>
+        </div>
+
+      </UImodal>
+    </template>
+
 
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "PostMyPage",
@@ -69,20 +87,48 @@ export default {
 
   data() {
     return {
+      // getModulePost: false
     }
   },
 
- methods: {
-  removePost(id) {
-    this.$emit('removePost', id);
-  }, 
+  methods: {
+    ...mapMutations({
+      setBeforePostText: "postsMyPageStore/setBeforePostText",
+      setModulePost: "postsMyPageStore/setModulePost",
+      setCloseModulePost: "postsMyPageStore/setCloseModulePost"
+      // showModalTrue: "modalStore/showModalTrue"
+    }),
+    ...mapActions({editPost: "postsMyPageStore/editPost"}),
 
-  editPost(id) {
-    this.$emit('editPost', id)
+    removePost(id) {
+      this.$emit('removePost', id);
+    },
+
+    // editPost(id) {
+    //   this.showModalTrue()
+    //   this.getModulePost = true,
+
+    //     this.$emit('editPost', id)
+    // }
+  },
+
+  computed: {
+    ...mapGetters({
+      getPost: "postsMyPageStore/getPosts",
+      getBeforePostText: "postsMyPageStore/getBeforePostText",
+      getModulePost: "postsMyPageStore/getModulePost"
+    }),
+
+    beforeModelPostText: {
+      get() {
+        return this.getBeforePostText;
+      },
+      set(value) {
+        this.setBeforePostText(value);
+      }
+    }
+
   }
- },
-
-  computed: {...mapGetters({getPost: "postsMyPageStore/getPosts"})}
 }
 </script>
 
@@ -136,7 +182,7 @@ export default {
 }
 
 .wrapper_text_post {
-  padding-right: 5px;
+  padding-right: 6px;
 }
 
 .text_post {
@@ -150,7 +196,7 @@ export default {
   margin: 5px;
 }
 
-.redaction_post_btn{
+.redaction_post_btn {
   width: 100px;
   font-size: 13px;
   margin-right: 5px;
@@ -167,10 +213,27 @@ export default {
 }
 
 .edit_text_body {
-  width: 100%;
   resize: none;
-  height: 70px;
+    height: 150px;
+    width: 250px;
 }
 
+.wrapper_save_editPost {
+  display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+}
+.save_editPost_title {
+  margin: 10px;
+    font-size: 17px;
+}
+.wrapper_save_editPost_btn {
+}
+.save_editPost_btn {
+      width: 70px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
 
 </style>
