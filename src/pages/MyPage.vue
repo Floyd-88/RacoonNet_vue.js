@@ -14,12 +14,8 @@
         <div class="wrapper_posts">
 
           <AddPost/>
-          <PostMyPage
-              @editPost="editPost"
-              @removePost="removePost"/>
-
-             
-
+          <PostMyPage/>
+            
           <div class="wrapper_not_posts"
                v-if="getPosts.length === 0">
             <p class="not_posts">Посты не найдены!!!</p>
@@ -64,8 +60,6 @@ export default {
   methods: {
     ...mapActions({
       loadPostServer: "postsMyPageStore/loadPostServer",
-      removePost: "postsMyPageStore/removePost",
-      editPost: "postsMyPageStore/editPost"
     }),
     ...mapMutations({
       setCountPosts: "postsMyPageStore/setCountPosts",

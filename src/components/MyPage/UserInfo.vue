@@ -14,7 +14,7 @@
         <div class="wrapper_city_user">
           <p class="city_user">Страна: {{getUser.country}}</p>
           <p class="city_user">Город: {{getUser.city}}</p>
-          <p class="city_user">Возраст: {{age}}</p>
+          <p @click="func" class="city_user">Возраст: {{age}}</p>
         </div>
       </div>
 
@@ -34,6 +34,10 @@ import {mapGetters, mapMutations} from "vuex"
 export default {
   name: "UserInfo",
 
+  data() {
+    return { }
+  },
+
   methods: {
     ...mapMutations({showModalTrue: "modalStore/showModalTrue",
     setModulEditProfile: "editProfileStore/setModulEditProfile"
@@ -46,9 +50,6 @@ export default {
       getUser: "authorizationStore/getUser",
       age: "authorizationStore/age"
     }),
-    // ...mapActions({
-    //   showModalEditProfile: "editProfileStore/showModalEditProfile"
-    // })
   }
 }
 </script>

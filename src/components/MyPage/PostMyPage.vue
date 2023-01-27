@@ -16,61 +16,77 @@
           <p class="data_post">{{ post.date }}</p>
         </div>
 
-        <template v-if="post.flag">
           <div class="wrapper_text_post">
             <p class="text_post">
               {{ post.postText }}
             </p>
           </div>
-        </template>
-
-        <!-- <template v-else>
-          <div class="wrapper_edit_text_body">
-            <textarea class="edit_text_body" v-model="beforeModelPostText"></textarea>
-          </div>
-
-        </template> -->
+      
       </div>
 
     </div>
 
     <div class="btn_post">
-      <UIbtn class="redaction_post_btn" @click="setModulePost({id: post.id, text: post.postText})" :disabled="post.postText.length < 1">
+      <UIbtn class="redaction_post_btn" @click="setModulePost({task: 'edit', id: post.id, text: post.postText })">
         Редактировать
       </UIbtn>
 
-      <UIbtn class="delete_post_btn" @click="removePost(post.id)">
+      <UIbtn class="delete_post_btn" @click="setModulePost({task: 'remove', id: post.id})">
         Удалить
       </UIbtn>
     </div>
 
   </div>
 
-  <template v-if="getModulePost">
-      <UImodal>
-        <div class="wrapper_save_editPost">
-          <div class="save_editPost_title">
-
-
-            <div class="wrapper_edit_text_body">
-              <textarea class="edit_text_body" v-model="beforeModelPostText"></textarea>
-            </div>
-
-
-          </div>
-          <div class="wrapper_save_editPost_btn">
-            <UIbtn class="save_editPost_btn" type="submit" @click="editPost">
-              OK
-            </UIbtn>
-
-            <UIbtn class="save_editPost_btn" @click="setCloseModulePost">
-              Отменить
-            </UIbtn>
+  <template v-if="getModulePost === 'edit'">
+    <UImodal>
+      <div class="wrapper_save_editPost">
+        <div class="save_editPost_title">
+          <div class="wrapper_edit_text_body">
+            <textarea class="edit_text_body" v-model="beforeModelPostText"></textarea>
           </div>
         </div>
 
-      </UImodal>
-    </template>
+        <div class="wrapper_save_editPost_btn">
+          <UIbtn class="save_editPost_btn" 
+          type="submit" 
+          :disabled="getBeforePostText.length < 1"
+          @click="editPost">
+            Сохранить
+          </UIbtn>
+
+          <UIbtn class="save_editPost_btn" @click="setCloseModulePost">
+            Отменить
+          </UIbtn>
+
+        </div>
+      </div>
+    </UImodal>
+  </template>
+
+  <template v-if="getModulePost === 'remove'">
+    <UImodal>
+      <div class="wrapper_save_editPost">
+        <div class="wrapper_title_text">
+          <p>Вы уверены что хотите удалить этот пост?</p>
+        </div>
+
+        <div class="wrapper_save_editPost_btn">
+          <UIbtn class="save_editPost_btn" 
+          type="submit" 
+          @click="removePost">
+            Удалить
+          </UIbtn>
+
+          <UIbtn class="save_editPost_btn" @click="setCloseModulePost">
+            Отменить
+          </UIbtn>
+
+        </div>
+      </div>
+    </UImodal>
+  </template>
+  
 
 
 </template>
@@ -85,31 +101,16 @@ export default {
     "editPost",
   ],
 
-  data() {
-    return {
-      // getModulePost: false
-    }
-  },
-
   methods: {
     ...mapMutations({
       setBeforePostText: "postsMyPageStore/setBeforePostText",
       setModulePost: "postsMyPageStore/setModulePost",
       setCloseModulePost: "postsMyPageStore/setCloseModulePost"
-      // showModalTrue: "modalStore/showModalTrue"
     }),
-    ...mapActions({editPost: "postsMyPageStore/editPost"}),
-
-    removePost(id) {
-      this.$emit('removePost', id);
-    },
-
-    // editPost(id) {
-    //   this.showModalTrue()
-    //   this.getModulePost = true,
-
-    //     this.$emit('editPost', id)
-    // }
+    ...mapActions({ 
+      editPost: "postsMyPageStore/editPost",
+      removePost: "postsMyPageStore/removePost"
+    }),
   },
 
   computed: {
@@ -214,26 +215,32 @@ export default {
 
 .edit_text_body {
   resize: none;
-    height: 150px;
-    width: 250px;
+  height: 150px;
+  width: 250px;
 }
 
 .wrapper_save_editPost {
   display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 15px;
-}
-.save_editPost_title {
-  margin: 10px;
-    font-size: 17px;
-}
-.wrapper_save_editPost_btn {
-}
-.save_editPost_btn {
-      width: 70px;
-    margin-left: 5px;
-    margin-right: 5px;
+  flex-direction: column;
+  align-items: center;
+  margin: 15px;
 }
 
+.save_editPost_title {
+  margin: 10px;
+  font-size: 17px;
+}
+
+/* .wrapper_save_editPost_btn {} */
+
+.save_editPost_btn {
+  width: 70px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.wrapper_title_text {
+  margin: 15px 10px;
+  font-size: 17px;
+}
 </style>

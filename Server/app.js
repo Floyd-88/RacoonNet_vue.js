@@ -322,8 +322,6 @@ router.post('/dataBase.js', postValidate, function(req, res) {
         req.body.surname,
         req.body.date,
         req.body.postText,
-        req.body.flag,
-        req.body.nameBtnEdit,
         req.body.userID
     ], (err, post) => {
         if (err) return res.status(500).send('Error on the server.');

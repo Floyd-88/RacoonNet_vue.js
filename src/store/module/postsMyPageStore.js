@@ -1,16 +1,12 @@
 import axios from "axios";
 
-
 export const postsMyPageStore = {
 
     state: () => ({
-        postText: "",
-
-
-        id: "",
-        beforePostText: "",
-        modulePost: false,
-        isSave: "",
+        postText: "", //текст который отображается на странице
+        id: "", //id конкретного поста
+        beforePostText: "", //копия текста отображаемого на странице с которым мы работаем при редактировании
+        modulePost: false, //отображение модального окна
         posts: [], //массив постов подгружаемый из базы данных
         countPosts: 0, //номер массива страницы
         limitPosts: 0, //количество постов на одной странице
@@ -22,24 +18,20 @@ export const postsMyPageStore = {
         getBeforePostText: state => state.beforePostText,
         getModulePost: (state) => state.modulePost,
         getPosts: state => state.posts,
-        getUser: (state, getters, rootState, rootGetters) => {
+        getUser: (state, getters, rootState, rootGetters) => { //получаем ID авторизованного юзера
             return rootGetters["authorizationStore/getUser"]
         },
     },
 
     mutations: {
-        //открытие-закрытие подтверждающего окна при редактировании поста
-        setModulePost(state, { id, text }) {
-            state.modulePost = true;
+        //при открытии модального окна сохраняем в state его id и текст поста
+        setModulePost(state, { task, id, text }) {
+            state.modulePost = task;
             state.id = id;
-            state.beforePostText = text; //при нажатии на кнопк редакт. сохраняем текст поста в state beforePostText
+            state.beforePostText = text;
         },
+        //закрытие модального окна
         setCloseModulePost(state) {
-            state.modulePost = false;
-        },
-
-        saveTextPost(state) {
-            state.isSave = true;
             state.modulePost = false;
         },
 
@@ -94,8 +86,8 @@ export const postsMyPageStore = {
                 name: getters.getUser.name,
                 surname: getters.getUser.surname,
                 postText: postText.trim(),
-                flag: '1',
-                nameBtnEdit: "Редактировать",
+                // flag: '1',
+                // nameBtnEdit: "Редактировать",
             }
             newPost.date = await dispatch("newDate"),
 
@@ -131,9 +123,10 @@ export const postsMyPageStore = {
         },
 
         //удаление поста
-        async removePost({ commit }, id) {
-            commit("setRemovePost", id);
-            await axios.delete('http://localhost:8000/dataBase.js?id=' + id)
+        async removePost({ commit, state }) {
+            commit("setRemovePost", state.id);
+            commit("setCloseModulePost");
+            await axios.delete('http://localhost:8000/dataBase.js?id=' + state.id)
                 .then(function(response) {
                     console.log(response)
                 })
