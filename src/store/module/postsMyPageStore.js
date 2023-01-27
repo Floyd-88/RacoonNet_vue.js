@@ -111,7 +111,7 @@ export const postsMyPageStore = {
             post.postText = state.beforePostText; //при нажатии на кнопку сохранить, перезаписываем postText
             await axios.put('http://localhost:8000/dataBase.js', {
                     postText: post.postText,
-                    date: date,
+                    date: "Изменено: " + date,
                     id: post.id,
                 })
                 .then(function(response) {
@@ -138,7 +138,17 @@ export const postsMyPageStore = {
         //функция устанавливает отредактированный формат даты и времени
         newDate() {
             const date = new Date();
-            return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+            const result = date.toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            })
+
+            return result
         },
     },
 

@@ -24,5 +24,6 @@ export default {
 .btn:hover {
   filter: brightness(80%);
   transition: 0.3s;
+  z-index: 1;
 }
 </style>

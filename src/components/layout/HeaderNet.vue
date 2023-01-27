@@ -53,6 +53,7 @@ export default {
   border: 1px solid black;
   position: fixed;
   width: 100%;
+  z-index: 2;
 }
 .header_wrapper_logo_title {
   display: flex;
