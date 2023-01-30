@@ -13,6 +13,7 @@ import EditProfile from "@/components/MyPage/EditProfile";
 import ChangePassword from "@/components/MyPage/ChangePassword";
 import CloseModal from "@/components/UI/CloseModal";
 import DeleteUser from "@/components/MyPage/DeleteUser";
+import FileUpload from "@/components/UI/FileUpload"
 
 export default [
     UserInfo,
@@ -29,5 +30,6 @@ export default [
     EditProfile,
     ChangePassword,
     CloseModal,
-    DeleteUser
+    DeleteUser,
+    FileUpload
 ]

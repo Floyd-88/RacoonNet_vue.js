@@ -2,9 +2,9 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
-const {
-    validationResult
-} = require('express-validator');
+// const multer = require('multer')
+const fileUpload = require('express-fileupload');
+const { validationResult } = require('express-validator');
 
 //подключаем серкретный ключ для токена
 const tokenKey = require('./tokenKey');
@@ -44,6 +44,11 @@ const allowCrossDomain = function(req, res, next) {
 }
 app.use(allowCrossDomain);
 
+
+app.use(express.static('public'));
+app.use(fileUpload());
+
+
 // регистрируем обычного пользователя
 router.post('/register', registerValidate, function(req, res) {
     const errors = validationResult(req);
@@ -52,7 +57,6 @@ router.post('/register', registerValidate, function(req, res) {
             errors: errors.array()
         });
     }
-
     if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
 
     authorization.insert([
@@ -70,7 +74,6 @@ router.post('/register', registerValidate, function(req, res) {
         if (err !== null) {
             if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
         }
-
         if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err);
 
         authorization.selectByEmail(req.body.email, (err, user) => {
@@ -103,7 +106,6 @@ router.post('/register-admin', registerValidate, function(req, res) {
             errors: errors.array()
         });
     }
-
     if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
 
     authorization.insertAdmin([
@@ -355,6 +357,40 @@ router.delete('/dataBase.js', function(req, res) {
         if (err) return res.status(500).send('Error on the server.');
         res.status(200);
     });
+});
+
+//загружаем фото
+app.post('/upload_photo', (req, res) => {
+    //допустимые форматы
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+    //проверка на наличией файла
+    if (!req.files) {
+        return res.status(500).send({ msg: "Файлы не отправлены" })
+    }
+
+    for (let file in req.files) {
+        const myFile = req.files[file];
+
+        //проверка загруженных файлов
+        if (!allowedTypes.includes(myFile.mimetype)) {
+            return res.status(422).send({ error: 'Формат выбранного файла не поддерживается' });
+        }
+        if (file.size > 5000000) {
+            return res.status(422).send({ error: 'Размер фотографии слишком большой' });
+        }
+
+        //загрузка в папку на сервере
+        myFile.mv(`${__dirname}/uploads/${myFile.name}`,
+            function(err) {
+                if (err) {
+                    console.log(err)
+                    return res.status(500).send({ msg: "Ошибка при загрузке файлов" });
+                }
+            }
+        );
+    }
+    return res.status(200).send({ msg: "Фото успешно загрузились на сервер" });
 });
 
 app.use(router)

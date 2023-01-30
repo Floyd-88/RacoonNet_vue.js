@@ -82,7 +82,7 @@ export const postsMyPageStore = {
         async addPost({ commit, dispatch, getters }, postText) {
             const newPost = {
                 userID: getters.getUser.userID,
-                ava: '/img/ava_1.776f687c.jpg',
+                ava: 'ava_1.jpg',
                 name: getters.getUser.name,
                 surname: getters.getUser.surname,
                 postText: postText.trim(),
