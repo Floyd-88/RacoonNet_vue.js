@@ -1,8 +1,8 @@
 <template>
   <div class="wrapper_contents_myPhoto">
     <div class="wrapper_preview_myPhoto">
-      <div class="preview_myPhoto" id="preview_myPhoto">
-        <!-- <img class="myPhoto" :src="require('../../../Server/uploads' + this.photo)" alt="photo"> -->
+      <div class="preview_myPhoto" id="preview_myPhoto" v-for="(photo, index) in myPhotos" :key="index">
+        <img class="myPhoto" :src="require(`../../assets/photo/${photo.photo_name }`)" :alt="photo.photo_name ">
       </div>
     </div>
 
@@ -26,10 +26,16 @@
 export default {
   name: "PhotoMyPage",
 
+  props: {
+    myPhotos: {
+      type: Array,
+      required: true
+    }
+  },
+
   data() {
     return {
       isModalPhoto: false,
-      photo: "",
     }
 
   },
@@ -38,8 +44,10 @@ export default {
     showModalPhoto: function(bool) {
       this.isModalPhoto = bool;
     },
-    photoAdd(page) {
-      this.photo = page
+    
+    showPhotos: function() {
+      // this.photos = res
+      // console.log(this.photos)
       // let div = document.querySelector("#preview_myPhoto");
       // let img = document.createElement("img")
       // img.src = require('../../../Server/uploads' + page);

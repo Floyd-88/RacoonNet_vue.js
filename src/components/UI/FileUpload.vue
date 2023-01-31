@@ -37,6 +37,7 @@
 import axios from 'axios';
 import CloseModal from './CloseModal.vue';
 import UIbtn from './UIbtn.vue';
+import { mapGetters} from 'vuex';
 
 
 export default {
@@ -57,11 +58,18 @@ export default {
         //закрытие окна с загрузкой картинок
         closeModalPhoto: function (bool) {
             this.$emit("showModalPhoto", bool)
+
         },
 
         //при клике на кнопку срабатывае инпут
         addFiles() {
+            this.$refs.files.value = null;
+
+            //сбрасываем загрузчик что бы можно было выбрать тот же файл еще раз
             this.$refs.files.click();
+
+            //обнуляем сообщение об ошибке
+            this.message = "";
         },
 
         onSelect() {
@@ -73,10 +81,10 @@ export default {
                 return
             }
 
-
-
             //трансформируем выбранные картинки в массив
             this.files = Array.from(this.$refs.files.files);
+
+            
 
             //переберам массив выбранных картинок
             this.files.forEach(file => {
@@ -87,7 +95,7 @@ export default {
                     this.files = [];
                     return
                 }
-                if (file.size > 5000000) {
+                if (file.size > 10000000) {
                     this.message = 'Размер фотографии слишком большой'
                     this.files = [];
                     return
@@ -116,21 +124,23 @@ export default {
                 let file = this.files[i];
                 formData.append('files[' + i + ']', file);
             }
-
+            formData.append('id', this.getUser.userID)
             axios.post(
                 'http://localhost:8000/upload_photo',
                 formData,
                 { headers: { 'Content-Type': 'multipart/form-data' } }
             ).then((res) => {
                 console.log(res.data);
-                this.message = "Фото загрузились!"
-                this.closeModalPhoto(false)
+                this.message = res.data
                 this.files = [];
                 this.urls = [];
+                this.closeModalPhoto(false)
             })
                 .catch((err) => {
-                    console.log(err);
-                    this.message = "При загрузке фото произошла ошибка, попробуйте еще раз"
+                    console.log(err.response.data);
+                    this.files = [];
+                    this.urls = [];
+                    this.message = err.response.data;
                 })
         },
 
@@ -143,6 +153,10 @@ export default {
             const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
             return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i]
         }
+    },
+
+    computed: {
+        ...mapGetters({getUser: "authorizationStore/getUser",})
     }
 }
 

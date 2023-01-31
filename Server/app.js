@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 // const multer = require('multer')
+// const path = require('path')
 const fileUpload = require('express-fileupload');
 const { validationResult } = require('express-validator');
 
@@ -12,10 +13,12 @@ const tokenKey = require('./tokenKey');
 //подключаем экземпляры классов
 const AuthorizationUserDB = require('./AuthorizationUserDB');
 const PostsDB = require('./PostsDB');
+const PhotosDB = require('./PhotosDB');
 
 //создаем объекты на основе экземпляров классов
 const authorization = new AuthorizationUserDB();
 const posts = new PostsDB();
+const photos = new PhotosDB();
 
 //подключаем массивы с валидацией
 const loginValidate = require('./validate/loginValidate')
@@ -47,6 +50,25 @@ app.use(allowCrossDomain);
 
 app.use(express.static('public'));
 app.use(fileUpload());
+
+
+
+
+
+// let storage = multer.diskStorage({
+//     destination: (req, file, callBack) => {
+//         callBack(null, './public/images/') // './public/images/' directory name where save the file
+//     },
+//     filename: (req, file, callBack) => {
+//         callBack(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+//     }
+// })
+
+// var upload = multer({
+//     storage: storage
+// });
+
+
 
 
 // регистрируем обычного пользователя
@@ -160,7 +182,7 @@ router.post('/login', loginValidate, function(req, res) {
             err: 'Такого пользователя не существует'
         });
 
-        let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass); //???????????????????????????????
+        let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
         if (!passwordIsValid) return res.status(401).send({
             auth: false,
             token: null,
@@ -360,38 +382,72 @@ router.delete('/dataBase.js', function(req, res) {
 });
 
 //загружаем фото
-app.post('/upload_photo', (req, res) => {
+router.post('/upload_photo', (req, res) => {
     //допустимые форматы
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
-
     //проверка на наличией файла
     if (!req.files) {
         return res.status(500).send({ msg: "Файлы не отправлены" })
     }
 
+    //перебераме массив фотографий
     for (let file in req.files) {
         const myFile = req.files[file];
 
         //проверка загруженных файлов
         if (!allowedTypes.includes(myFile.mimetype)) {
-            return res.status(422).send({ error: 'Формат выбранного файла не поддерживается' });
+            return res.status(422).send('Формат выбранного файла не поддерживается');
         }
-        if (file.size > 5000000) {
-            return res.status(422).send({ error: 'Размер фотографии слишком большой' });
+        if (myFile.size > 10000000) {
+            return res.status(422).send('Размер фотографии слишком большой');
         }
-
         //загрузка в папку на сервере
-        myFile.mv(`${__dirname}/uploads/${myFile.name}`,
+        let updateName = Date.now() + myFile.name;
+        myFile.mv(`../src/assets/photo/${updateName}`,
             function(err) {
                 if (err) {
                     console.log(err)
-                    return res.status(500).send({ msg: "Ошибка при загрузке файлов" });
+                    return res.status(500).send("Ошибка при загрузке файлов");
                 }
             }
         );
+        //загрузка в БД
+        photos.add_photo_DB([updateName, req.body.id], (err) => {
+            if (err) return res.status(500).send('Error on the server.');
+        })
     }
-    return res.status(200).send({ msg: "Фото успешно загрузились на сервер" });
+    res.status(200).send("Фото успешно загрузились на сервер");
 });
+
+//получаем фотографии из БД
+router.get('/upload_photo', function(req, res) {
+    photos.load_photos_DB([
+        req.query.userID,
+        // req.query._count,
+        // req.query._limit
+    ], (err, allPhotos) => {
+        if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились');
+        if (!allPhotos) return res.status(404).send('Фотографии не найдены');
+        res.json(allPhotos);
+        // res.status(200).send("Фотографии получены");;
+    })
+})
+
+
+
+// app.post("/upload_photo", upload.array('myFiles', 12), (req, res) => {
+//     const files = req.files
+//     if (!files) {
+//         const error = new Error('Please choose files')
+//         error.httpStatusCode = 400
+//         return next(error)
+//     }
+//     consolelog(files)
+//     res.send(files)
+// });
+
+
+
 
 app.use(router)
 

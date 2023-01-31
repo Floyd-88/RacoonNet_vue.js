@@ -10,7 +10,9 @@
     <UserInfo/>
     <div class="wrapper_myPage">
       <div class="wrapper_contents">
-        <PhotoMyPage/>
+        <PhotoMyPage
+        :myPhotos = "myPhotos"
+        />
         <div class="wrapper_posts">
 
           <AddPost/>
@@ -34,12 +36,23 @@
 <script>
 import {mapGetters, mapActions, mapMutations} from "vuex";
 import EditProfile from "@/components/MyPage/EditProfile";
+import axios from "axios";
 
 
 export default {
   name: "MyPage",
   components: {EditProfile},
+
+  data() {
+    return {
+      myPhotos: [],
+    }
+  },
+
   mounted() {
+
+    this.loadPhotos(this.getUser.userID)
+
     // обсервер срабатывает каждый раз когда докручиваем страницу донизу
     const options = {
       rootMargin: '0px',
@@ -54,8 +67,9 @@ export default {
     };
     const observer = new IntersectionObserver(callback, options);
     observer.observe(this.$refs.observer);
-  },
 
+
+  },
 
   methods: {
     ...mapActions({
@@ -65,12 +79,32 @@ export default {
       setCountPosts: "postsMyPageStore/setCountPosts",
       setLimitPosts: "postsMyPageStore/setLimitPosts",
     }),
+
+        async loadPhotos(id) {
+            try {
+                await axios.get('http://localhost:8000/upload_photo', {
+                    params: {
+                        // _count: state.countPosts,
+                        // _limit: state.limitPosts,
+                        userID: id
+                    }
+                }).then((response) => {
+                  console.log(response.data)
+                  this.myPhotos = response.data
+                    // commit("setPosts", [...state.posts, ...response.data]);
+                });
+            } catch (err) {
+                console.error(err.response.data);
+            }
+        },
+
   },
 
   computed: {
     ...mapGetters({
       getPosts: "postsMyPageStore/getPosts",
-      getModulEditProfile: "editProfileStore/getModulEditProfile"
+      getModulEditProfile: "editProfileStore/getModulEditProfile",
+      getUser: "authorizationStore/getUser"
     }),
   }
 
