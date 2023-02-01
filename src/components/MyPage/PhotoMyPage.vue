@@ -11,6 +11,7 @@
 
     <UIbtn class="show_more_photo_btn" 
            id="load_photo_btn" 
+           v-if="getMyPhotosMyPage.length >= 8"
            @click="loadAllPhotos()">
       Показать больше
     </UIbtn>
@@ -20,15 +21,17 @@
            Загрузить фото
     </UIbtn>
 
-    <UImodal class="modal_fone" 
-             v-if="getIsModalLoadPhoto">
+    <UImodal class="modal_fone" v-if="getIsModalLoadPhoto">
       <FileUpload/>
     </UImodal>
 
-    <UImodal class="modal_fone"   
+    <div @click="setIsModalAllPhotos(false)">
+      <UImodal class="modal_fone"   
              v-if="getIsModalAllPhotos">
       <AllPhotos/>
     </UImodal>
+    </div>
+  
 
   </div>
 </template>
@@ -69,8 +72,19 @@ export default {
 </script>
 
 <style>
+
 .modal_fone {
   background-color: aliceblue;
+}
+
+.closeModalAllPhoto {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    cursor: auto;
+    /* opacity: 0; */
 }
 
 .wrapper_contents_myPhoto {

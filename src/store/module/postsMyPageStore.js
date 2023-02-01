@@ -29,10 +29,12 @@ export const postsMyPageStore = {
             state.modulePost = task;
             state.id = id;
             state.beforePostText = text;
+            document.body.style.overflow = "hidden"
         },
         //закрытие модального окна
         setCloseModulePost(state) {
             state.modulePost = false;
+            document.body.style.overflow = "auto"
         },
 
         setPostText(state, post) {

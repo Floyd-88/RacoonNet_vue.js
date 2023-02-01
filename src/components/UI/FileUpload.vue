@@ -1,16 +1,20 @@
 <template>
-    <CloseModal @click="closeModalPhoto(false)" />
+    <CloseModal @click="setIsModalLoadPhoto(false)" />
 
     <form class="form_load_photo">
 
         <div class="wrapper_load_photo">
-            <input class="load_photo" type="file" ref="files" @change="onSelect" multiple>
+            <input class="load_photo" type="file" ref="files" @change="choosePhotoInput" multiple>
         </div>
-        {{ message }}
-
+        <div class="wrapper_message_error">
+            <p class="message_error">
+                {{ getMessageLoadPhoto }}
+            </p>
+        </div>
+        
         <div class="wrapper_preview_photos">
-            <div class="preview_image" v-for="(url, index) in urls" :key="index">
-                <div class="preview_remove" @click="removeFile(url.name)">&times;</div>
+            <div class="preview_image" v-for="(url, index) in getUrlsImages" :key="index">
+                <div class="preview_remove" @click="removePreviewImage(url.name)">&times;</div>
                 <img class="preview_photo" :src="url.url" :alt="url.name">
                 <div class="preview_info">
                     <span>{{ url.name }}</span>
@@ -20,12 +24,12 @@
         </div>
 
         <div class="wrapper_add_photo">
-            <UIbtn v-if="!files.length" @click.prevent="addFiles()">
-                Открыть фотографии
+            <UIbtn v-if="!getArrayLoadImage.length" @click.prevent="choosePhoto()">
+                Выбрать фотографии
             </UIbtn>
 
-            <UIbtn v-if="files.length > 0" @click.prevent="onSubmit" :disabled="files.length < 1">
-                Загрузить фотографии
+            <UIbtn v-if="getArrayLoadImage.length > 0" @click.prevent="addPhotoServer" :disabled="getArrayLoadImage.length < 1">
+                Добавить фотографии
             </UIbtn>
         </div>
 
@@ -34,45 +38,43 @@
 </template>
 
 <script>
-import axios from 'axios';
 import CloseModal from './CloseModal.vue';
 import UIbtn from './UIbtn.vue';
-import { mapGetters} from 'vuex';
+import { mapActions, mapGetters, mapMutations} from 'vuex';
 
 
 export default {
-
     components: { CloseModal, UIbtn },
-
     name: "FileUpload",
-    emits: ["showModalPhoto"],
 
     data() {
         return {
-            message: "",
-            files: [],
-            urls: [],
         };
     },
+
     methods: {
-        //закрытие окна с загрузкой картинок
-        closeModalPhoto: function (bool) {
-            this.$emit("showModalPhoto", bool)
+        ...mapMutations({
+            setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
+            setArrayLoadImage: "loadPhotoStore/setArrayLoadImage",
+            setMessageLoadPhoto: "loadPhotoStore/setMessageLoadPhoto",
+            setUrlsImages: "loadPhotoStore/setUrlsImages"
+        }),
+        
+        ...mapActions({
+            removePreviewImage: "loadPhotoStore/removePreviewImage",
+            addPhotoServer: "loadPhotoStore/addPhotoServer"
+        }),
 
-        },
-
-        //при клике на кнопку срабатывае инпут
-        addFiles() {
+        choosePhoto() {
+            //сбрасываем загрузчик что бы можно было выбрать тот же файл еще раз
             this.$refs.files.value = null;
 
-            //сбрасываем загрузчик что бы можно было выбрать тот же файл еще раз
+            //при клике на кнопку срабатывает инпут
             this.$refs.files.click();
-
-            //обнуляем сообщение об ошибке
-            this.message = "";
+            this.setMessageLoadPhoto("");
         },
 
-        onSelect() {
+        choosePhotoInput() {
             //указываем допустимые форматы картинки
             const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
 
@@ -82,66 +84,30 @@ export default {
             }
 
             //трансформируем выбранные картинки в массив
-            this.files = Array.from(this.$refs.files.files);
-
-            
+            this.setArrayLoadImage(Array.from(this.$refs.files.files))          
 
             //переберам массив выбранных картинок
-            this.files.forEach(file => {
+            this.getArrayLoadImage.forEach(file => {
 
                 //если картинка не соответствует формату или размеру показываем сообщение
                 if (!allowedTypes.includes(file.type)) {
-                    this.message = "Формат выбранного файла не поддерживается"
-                    this.files = [];
+                    this.setMessageLoadPhoto("Формат выбранного файла не поддерживается, попробуйте выбрать другой файл");
+                    this.setArrayLoadImage([]);
                     return
                 }
                 if (file.size > 10000000) {
-                    this.message = 'Размер фотографии слишком большой'
-                    this.files = [];
+                    this.setMessageLoadPhoto("Размер загружаемого файла слишком большой, попробуйте выбрать другой файл");
+                    this.setArrayLoadImage([]);
                     return
                 }
 
                 //получаем исходный код по выбранным картинкам
                 const reader = new FileReader;
                 reader.onload = ev => {
-                    this.urls.push({ url: ev.target.result, name: file.name, size: file.size })
+                    this.setUrlsImages({ url: ev.target.result, name: file.name, size: file.size })
                 }
                 reader.readAsDataURL(file)
             })
-        },
-
-        //удаление картинок на предпросмотре
-        removeFile(name) {
-            this.files = this.files.filter(i => i.name != name);
-            this.urls = this.urls.filter(i => i.name != name);
-        },
-
-        //загрузка картинок на сервер
-        onSubmit: function () {
-            const formData = new FormData();
-
-            for (let i = 0; i < this.files.length; i++) {
-                let file = this.files[i];
-                formData.append('files[' + i + ']', file);
-            }
-            formData.append('id', this.getUser.userID)
-            axios.post(
-                'http://localhost:8000/upload_photo',
-                formData,
-                { headers: { 'Content-Type': 'multipart/form-data' } }
-            ).then((res) => {
-                console.log(res.data);
-                this.message = res.data
-                this.files = [];
-                this.urls = [];
-                this.closeModalPhoto(false)
-            })
-                .catch((err) => {
-                    console.log(err.response.data);
-                    this.files = [];
-                    this.urls = [];
-                    this.message = err.response.data;
-                })
         },
 
         //конвертирует байты
@@ -156,10 +122,14 @@ export default {
     },
 
     computed: {
-        ...mapGetters({getUser: "authorizationStore/getUser",})
+        ...mapGetters({
+            getUser: "authorizationStore/getUser",
+            getMessageLoadPhoto: "loadPhotoStore/getMessageLoadPhoto",
+            getArrayLoadImage: "loadPhotoStore/getArrayLoadImage",
+            getUrlsImages: "loadPhotoStore/getUrlsImages",
+    })
     }
 }
-
 </script>
 
 <style>
@@ -255,6 +225,16 @@ export default {
     align-items: center;
     justify-content: center;
     transition: width .22s;
+}
+
+.wrapper_message_error {
+    margin: 0 10px 10px;
+    font-family: emoji;
+    font-size: 14px;
+    color: red;
+}
+
+.message_error {
 }
 </style>
 

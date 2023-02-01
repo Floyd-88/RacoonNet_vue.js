@@ -16,6 +16,11 @@ export const editProfileStore = {
 
         setModulEditProfile(state, bool) {
             state.modulEditProfile = bool;
+            document.body.style.overflow = "hidden"
+
+            if (bool === false) {
+                document.body.style.overflow = "auto"
+            }
         },
 
         //записываем в state данные при авторизации или регистрации для возможно манипулировать этими при редкатировании профиля

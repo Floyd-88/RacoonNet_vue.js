@@ -386,9 +386,10 @@ router.delete('/dataBase.js', function(req, res) {
 router.post('/upload_photo', (req, res) => {
     //допустимые форматы
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+
     //проверка на наличией файла
     if (!req.files) {
-        return res.status(500).send({ msg: "Файлы не отправлены" })
+        return res.status(500).send("Файлы не отправлены")
     }
 
     //перебераме массив фотографий
@@ -439,7 +440,6 @@ router.get('/upload_photo', function(req, res) {
             try {
                 //синхронный метод проверки файла ??????????????
                 if (fs.existsSync(`${path + element.photo_name}`)) {
-                    // console.log(element)
                     arr.push(element)
                 }
             } catch (err) {
@@ -460,22 +460,6 @@ router.get('/upload_photo', function(req, res) {
         // res.status(200).send("Фотографии получены");;
     })
 })
-
-
-
-// app.post("/upload_photo", upload.array('myFiles', 12), (req, res) => {
-//     const files = req.files
-//     if (!files) {
-//         const error = new Error('Please choose files')
-//         error.httpStatusCode = 400
-//         return next(error)
-//     }
-//     consolelog(files)
-//     res.send(files)
-// });
-
-
-
 
 app.use(router)
 

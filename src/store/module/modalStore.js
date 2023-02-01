@@ -24,7 +24,7 @@ export const modalStore = {
         async closeModule({ commit, getters }) {
             commit("setNotShowModalWindow");
             commit('editProfileStore/setEditingUser', getters.getUser, { root: true });
-            commit('editProfileStore/setModulEditProfile', false, { root: true });
+            // commit('editProfileStore/setModulEditProfile', false, { root: true });
             commit('registrationStore/setModulRegister', false, { root: true });
         }
     },

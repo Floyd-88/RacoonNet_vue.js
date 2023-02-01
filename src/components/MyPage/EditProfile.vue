@@ -1,6 +1,6 @@
 <template>
 <!--  Закрыть модальное окно-->
-  <CloseModal/>
+  <CloseModal @click="setModulEditProfile(false)"/>
 
   <h4 class="form_register_title">Изменить личные данные</h4>
 
@@ -307,7 +307,9 @@ export default {
       setOpenChangePassword: "updatePasswordStore/setOpenChangePassword",
       setDouble_email: "registrationStore/setDouble_email",
 
-      setModuleDelete: "removeUserStore/setModuleDelete"
+      setModuleDelete: "removeUserStore/setModuleDelete",
+
+      setModulEditProfile: "editProfileStore/setModulEditProfile"
     }),
 
     //изменение данных пользователя

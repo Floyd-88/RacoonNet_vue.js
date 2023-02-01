@@ -23,7 +23,8 @@
     <div class="wrapper_btn">
       <UIbtn class="redaction_profile_btn"
       @click="setModulEditProfile(true)"
-      >Редактировать профиль</UIbtn>
+      >Редактировать профиль
+    </UIbtn>
     </div>
 
   </div>

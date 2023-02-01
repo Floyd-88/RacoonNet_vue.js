@@ -1,6 +1,6 @@
 <template>
-    <CloseModal @click="setIsModalAllPhotos(false)" />
-
+    <!-- <CloseModal @click="setIsModalAllPhotos(false)"/> -->
+    <h2 class="title_pthoto_name">Фотографии {{getUser.name + " " + getUser.surname}}</h2>
     <div class="wrapper_contents_allPhotos">
         <div class="wrapper_preview_allPhotos">
             <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage" :key="index">
@@ -21,11 +21,11 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import CloseModal from '../UI/CloseModal.vue';
+// import CloseModal from '../UI/CloseModal.vue';
 
 
 export default {
-    components: { CloseModal },
+    // components: { CloseModal },
     name: "AllPhotos",
 
     data() {
@@ -37,7 +37,7 @@ export default {
         // обсервер срабатывает каждый раз когда докручиваем страницу донизу
         const options = {
             rootMargin: '0px',
-            threshold: 1.0
+            threshold: 0.1
         };
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
@@ -73,6 +73,7 @@ export default {
     computed: {
         ...mapGetters({
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
+            getUser: "authorizationStore/getUser",
         }),
     },
 }
@@ -80,10 +81,16 @@ export default {
 </script>
 
 <style scoped>
+.title_pthoto_name {
+    margin-top: 10px;
+    margin-left: 40px;
+    font-family: fantasy;
+    font-size: 20px;
+}
 .wrapper_contents_allPhotos {
     width: 740px;
     display: flex;
-    padding: 40px 20px;
+    padding: 20px;
 }
 
 .wrapper_preview_allPhotos {
@@ -115,6 +122,16 @@ export default {
     border: 1px solid;
     height: 1px;
     background: black;
+    opacity: 0;
+}
+
+.closeModalAllPhoto {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    cursor: auto;
 }
 </style>
 

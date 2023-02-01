@@ -7,22 +7,24 @@ export const loadPhotoStore = {
         allPhotos: [],
         countPhoto: 0,
         limitPhoto: 0,
+        isModalAllPhotos: false,
 
         isModalLoadPhoto: false,
-        isModalAllPhotos: false,
+        messageLoadPhoto: "",
+        arrayLoadImage: [],
+        urlsImages: [],
     }),
 
     getters: {
         getUserID: (state, _, rootState) => rootState.authorizationStore.user.userID,
         getMyPhotosMyPage: (state) => state.myPhotosMyPage,
-
         getAllPhotosMyPage: (state) => state.allPhotos,
-
-
-        getIsModalLoadPhoto: (state) => state.isModalLoadPhoto,
         getIsModalAllPhotos: (state) => state.isModalAllPhotos,
 
-
+        getIsModalLoadPhoto: (state) => state.isModalLoadPhoto,
+        getMessageLoadPhoto: (state) => state.messageLoadPhoto,
+        getArrayLoadImage: (state) => state.arrayLoadImage,
+        getUrlsImages: (state) => state.urlsImages,
     },
 
     mutations: {
@@ -36,6 +38,12 @@ export const loadPhotoStore = {
 
         setIsModalLoadPhoto: function(state, bool) {
             state.isModalLoadPhoto = bool;
+            document.body.style.overflow = "hidden"
+
+            if (bool === false) {
+                state.messageLoadPhoto = "";
+                document.body.style.overflow = "auto"
+            }
         },
 
         setIsModalAllPhotos: function(state, bool) {
@@ -43,6 +51,7 @@ export const loadPhotoStore = {
             if (bool === false) {
                 state.limitPhoto = 0;
                 state.allPhotos = [];
+                document.body.style.overflow = "auto"
             }
         },
 
@@ -53,6 +62,30 @@ export const loadPhotoStore = {
         setLimitPhoto: function(state) {
             state.limitPhoto = 16;
         },
+
+        setArrayLoadImage(state, value) {
+            state.arrayLoadImage = value;
+        },
+
+        removeArrayLoadImage(state, name) {
+            state.arrayLoadImage = state.arrayLoadImage.filter(elem => elem.name != name);
+        },
+
+        setMessageLoadPhoto(state, value) {
+            state.messageLoadPhoto = value;
+        },
+
+        setUrlsImages(state, value) {
+            state.urlsImages.push(value);
+        },
+
+        removeUrlsImages(state, name) {
+            state.urlsImages = state.urlsImages.filter(elem => elem.name != name);
+
+        },
+
+
+
     },
 
     actions: {
@@ -83,6 +116,7 @@ export const loadPhotoStore = {
             getters,
             commit
         }) {
+            document.body.style.overflow = "hidden"
             commit("setIsModalAllPhotos", true);
             try {
                 await axios.get('http://localhost:8000/upload_photo', {
@@ -98,7 +132,45 @@ export const loadPhotoStore = {
                 console.log(err);
             }
         },
+
+        //удаление картинки на предпросмотре перед загрузкой
+        removePreviewImage({ commit }, name) {
+            console.log(1111)
+
+            commit("removeArrayLoadImage", name);
+            commit("removeUrlsImages", name);
+        },
+
+        //загрузка картинок на сервер
+        addPhotoServer: function({ getters, commit }) {
+            const formData = new FormData();
+
+            for (let i = 0; i < getters.getArrayLoadImage.length; i++) {
+                let file = getters.getArrayLoadImage[i];
+                formData.append('files[' + i + ']', file);
+            }
+            formData.append('id', getters.getUserID);
+
+            axios.post(
+                    'http://localhost:8000/upload_photo',
+                    formData, { headers: { 'Content-Type': 'multipart/form-data' } }
+                ).then((res) => {
+                    console.log(res.data);
+                    commit("setArrayLoadImage", []);
+                    commit("setUrlsImages", []);
+                    commit("setIsModalLoadPhoto", false);
+                    window.location.href = '/';
+                })
+                .catch((err) => {
+                    console.log(err.response.data);
+                    commit("setArrayLoadImage", []);
+                    commit("setUrlsImages", []);
+                    commit("setMessageLoadPhoto", err.response.data);
+                })
+        },
     },
+
+
 
     namespaced: true
 }
