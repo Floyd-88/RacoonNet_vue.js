@@ -1,61 +1,68 @@
 <template>
   <div class="wrapper_contents_myPhoto">
     <div class="wrapper_preview_myPhoto">
-      <div class="preview_myPhoto" id="preview_myPhoto" v-for="(photo, index) in myPhotos" :key="index">
-        <img class="myPhoto" :src="require(`../../assets/photo/${photo.photo_name }`)" :alt="photo.photo_name ">
+      <div class="preview_myPhoto" 
+           id="preview_myPhoto" 
+           v-for="(photo, index) in getMyPhotosMyPage" 
+           :key="index">
+          <img class="myPhoto" :src="require(`../../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name">     
       </div>
     </div>
 
-    <UIbtn class="show_more_photo_btn"> Показать больше </UIbtn>
-    <UIbtn class="show_more_photo_btn"
-      @click="showModalPhoto(true)"
-      > Загрузить фото
+    <UIbtn class="show_more_photo_btn" 
+           id="load_photo_btn" 
+           @click="loadAllPhotos()">
+      Показать больше
     </UIbtn>
 
-    <UImodal class="modal_fone" v-if="isModalPhoto">
-      <FileUpload 
-      @showModalPhoto="showModalPhoto"
-      />
+    <UIbtn class="show_more_photo_btn" 
+           @click="setIsModalLoadPhoto(true)"> 
+           Загрузить фото
+    </UIbtn>
+
+    <UImodal class="modal_fone" 
+             v-if="getIsModalLoadPhoto">
+      <FileUpload/>
+    </UImodal>
+
+    <UImodal class="modal_fone"   
+             v-if="getIsModalAllPhotos">
+      <AllPhotos/>
     </UImodal>
 
   </div>
 </template>
 
 <script>
+import {mapGetters, mapMutations, mapActions} from "vuex";
 
 export default {
   name: "PhotoMyPage",
 
-  props: {
-    myPhotos: {
-      type: Array,
-      required: true
-    }
-  },
-
   data() {
     return {
-      isModalPhoto: false,
     }
-
   },
 
   methods: {
-    showModalPhoto: function(bool) {
-      this.isModalPhoto = bool;
-    },
-    
-    showPhotos: function() {
-      // this.photos = res
-      // console.log(this.photos)
-      // let div = document.querySelector("#preview_myPhoto");
-      // let img = document.createElement("img")
-      // img.src = require('../../../Server/uploads' + page);
-      // img.alt="photo"
-     
-      // div.append(img);
-      // img.classList.add("myPhoto")
-    }
+    ...mapMutations({
+      setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
+      setIsModalAllPhotos: "loadPhotoStore/setIsModalAllPhotos",
+    }),
+
+    ...mapActions({
+      loadAllPhotos: "loadPhotoStore/loadAllPhotos"
+    })
+  },
+
+  computed: {
+  ...mapGetters({
+      getMyPhotosMyPage: "loadPhotoStore/getMyPhotosMyPage",
+
+      getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
+      getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",
+
+    }),
   }
 
 }
@@ -65,6 +72,7 @@ export default {
 .modal_fone {
   background-color: aliceblue;
 }
+
 .wrapper_contents_myPhoto {
   margin-right: 20px;
   margin-bottom: 20px;
@@ -84,16 +92,27 @@ export default {
 }
 
 .show_more_photo_btn {
-  width: 70%;
+  width: 150px;
   margin: 10px;
 }
 
+#load_photo_btn {
+  background: #3fc3f6;
+}
+
 .preview_myPhoto {
-  display: flex;
+  width: 150px;
+  height: 150px;
   margin: 5px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .myPhoto {
-  width: 150px;
+  height: 100%;
+  min-width: 100%;
+  left: 50%;
+  position: relative;
+  transform: translateX(-50%);
 }
 </style>

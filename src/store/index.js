@@ -6,6 +6,8 @@ import { editProfileStore } from "@/store/module/editProfileStore"
 import { updatePasswordStore } from "@/store/module/updatePasswordStore"
 import { registrationStore } from "@/store/module/registrationStore"
 import { removeUserStore } from "@/store/module/removeUserStore"
+import { loadPhotoStore } from "@/store/module/loadPhotoStore"
+
 
 export default createStore({
     modules: {
@@ -16,5 +18,6 @@ export default createStore({
         updatePasswordStore,
         registrationStore,
         removeUserStore,
+        loadPhotoStore
     }
 });

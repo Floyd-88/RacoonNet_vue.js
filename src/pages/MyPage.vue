@@ -10,11 +10,9 @@
     <UserInfo/>
     <div class="wrapper_myPage">
       <div class="wrapper_contents">
-        <PhotoMyPage
-        :myPhotos = "myPhotos"
-        />
-        <div class="wrapper_posts">
+        <PhotoMyPage/>
 
+        <div class="wrapper_posts">
           <AddPost/>
           <PostMyPage/>
             
@@ -36,7 +34,7 @@
 <script>
 import {mapGetters, mapActions, mapMutations} from "vuex";
 import EditProfile from "@/components/MyPage/EditProfile";
-import axios from "axios";
+// import axios from "axios";
 
 
 export default {
@@ -45,13 +43,13 @@ export default {
 
   data() {
     return {
-      myPhotos: [],
+      // myPhotosMyPage: [],
     }
   },
 
   mounted() {
 
-    this.loadPhotos(this.getUser.userID)
+    this.loadPhotos();
 
     // обсервер срабатывает каждый раз когда докручиваем страницу донизу
     const options = {
@@ -74,29 +72,31 @@ export default {
   methods: {
     ...mapActions({
       loadPostServer: "postsMyPageStore/loadPostServer",
+      loadPhotos: "loadPhotoStore/loadPhotos",
     }),
     ...mapMutations({
       setCountPosts: "postsMyPageStore/setCountPosts",
       setLimitPosts: "postsMyPageStore/setLimitPosts",
     }),
 
-        async loadPhotos(id) {
-            try {
-                await axios.get('http://localhost:8000/upload_photo', {
-                    params: {
-                        // _count: state.countPosts,
-                        // _limit: state.limitPosts,
-                        userID: id
-                    }
-                }).then((response) => {
-                  console.log(response.data)
-                  this.myPhotos = response.data
-                    // commit("setPosts", [...state.posts, ...response.data]);
-                });
-            } catch (err) {
-                console.error(err.response.data);
-            }
-        },
+        // async loadPhotos(id) {
+        //     try {
+        //         await axios.get('http://localhost:8000/upload_photo', {
+        //             params: {
+        //                 _count: 0,
+        //                 _limit: 8,
+        //                 userID: id
+        //             }
+        //         }).then((response) => {
+        //           // console.log(response.data)
+
+        //           this.myPhotosMyPage = response.data
+        //             // commit("setPosts", [...state.posts, ...response.data]);
+        //         });
+        //     } catch (err) {
+        //         console.error(err.response.data);
+        //     }
+        // },
 
   },
 
@@ -104,7 +104,7 @@ export default {
     ...mapGetters({
       getPosts: "postsMyPageStore/getPosts",
       getModulEditProfile: "editProfileStore/getModulEditProfile",
-      getUser: "authorizationStore/getUser"
+      // getUser: "authorizationStore/getUser"
     }),
   }
 

@@ -2,8 +2,9 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
-// const multer = require('multer')
-// const path = require('path')
+const fs = require('fs')
+    // const multer = require('multer')
+    // const path = require('path')
 const fileUpload = require('express-fileupload');
 const { validationResult } = require('express-validator');
 
@@ -423,12 +424,39 @@ router.post('/upload_photo', (req, res) => {
 router.get('/upload_photo', function(req, res) {
     photos.load_photos_DB([
         req.query.userID,
-        // req.query._count,
-        // req.query._limit
+        req.query._count,
+        req.query._limit
     ], (err, allPhotos) => {
         if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились');
         if (!allPhotos) return res.status(404).send('Фотографии не найдены');
-        res.json(allPhotos);
+
+        //массив с названиями фотографий
+        let arr = [];
+        //путь к папке где лежат фотографии
+        let path = "../src/assets/photo/";
+        //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
+        allPhotos.forEach(element => {
+            try {
+                //синхронный метод проверки файла ??????????????
+                if (fs.existsSync(`${path + element.photo_name}`)) {
+                    // console.log(element)
+                    arr.push(element)
+                }
+            } catch (err) {
+                console.error(err)
+            }
+
+            // fs.access(`${path + element.photo_name}`, fs.F_OK, (err) => {
+            //     if (!err) {
+            //         console.log(element)
+            //         arr.push(element)
+            //     } else {
+            //         // console.log('not files')
+            //     }
+            // })
+        });
+        res.json(arr);
+
         // res.status(200).send("Фотографии получены");;
     })
 })

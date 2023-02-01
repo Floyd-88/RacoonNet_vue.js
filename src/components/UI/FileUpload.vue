@@ -177,7 +177,7 @@ export default {
     margin: 5px 10px
 }
 
-.load_photo {}
+/* .load_photo {} */
 
 .wrapper_preview_photos {
     display: flex;

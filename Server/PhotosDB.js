@@ -23,7 +23,7 @@ class PhotosDB {
 
     // // загрузка фото из базы данны
     load_photos_DB(params, callback) {
-        return this.connection.execute(`SELECT photo_name FROM photos WHERE userID = ? ORDER BY id DESC`, params, (err, row) => {
+        return this.connection.execute(`SELECT photo_name FROM photos WHERE userID = ? ORDER BY id DESC limit ?, ?`, params, (err, row) => {
             callback(err, row)
         });
     }
