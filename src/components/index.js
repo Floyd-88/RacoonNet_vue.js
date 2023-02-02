@@ -15,6 +15,7 @@ import CloseModal from "@/components/UI/CloseModal";
 import DeleteUser from "@/components/MyPage/DeleteUser";
 import FileUpload from "@/components/UI/FileUpload";
 import AllPhotos from "@/components/MyPage/AllPhotos"
+import SliderPhoto from "@/components/UI/SliderPhoto"
 
 export default [
     UserInfo,
@@ -33,5 +34,6 @@ export default [
     CloseModal,
     DeleteUser,
     FileUpload,
-    AllPhotos
+    AllPhotos,
+    SliderPhoto
 ]

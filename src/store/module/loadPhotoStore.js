@@ -102,6 +102,7 @@ export const loadPhotoStore = {
                         userID: getters.getUserID
                     }
                 }).then((response) => {
+                    // console.log(response.data)
                     commit("setMyPhotosMyPage", response.data)
                 });
             } catch (err) {
@@ -135,8 +136,6 @@ export const loadPhotoStore = {
 
         //удаление картинки на предпросмотре перед загрузкой
         removePreviewImage({ commit }, name) {
-            console.log(1111)
-
             commit("removeArrayLoadImage", name);
             commit("removeUrlsImages", name);
         },

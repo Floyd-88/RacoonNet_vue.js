@@ -21,26 +21,20 @@ class PhotosDB {
             })
     }
 
-    // // загрузка фото из базы данны
+    // загрузка фото из базы данны
     load_photos_DB(params, callback) {
         return this.connection.execute(`SELECT photo_name FROM photos WHERE userID = ? ORDER BY id DESC limit ?, ?`, params, (err, row) => {
             callback(err, row)
         });
     }
 
-    // //добавление поста в базу данных
-    // add_post_DB(body, callback) {
-    //     return this.connection.execute(`INSERT INTO posts(ava, name, surname, date, postText, userID) VALUES (?,?,?,?,?,?)`, body, (err, row) => {
-    //         callback(err, row);
-    //     });
-    // }
+    //загрузка всех фото из базы данных
+    load_all_photos_DB(params, callback) {
+        return this.connection.execute(`SELECT id, photo_name FROM photos WHERE userID = ? ORDER BY id DESC`, params, (err, row) => {
+            callback(err, row)
+        });
+    }
 
-    // // редактирование поста
-    // edit_post_DB(body, callback) {
-    //     return this.connection.execute(`UPDATE posts SET postText=?, date=? WHERE id =?`, body, (err) => {
-    //         callback(err);
-    //     });
-    // }
 
     // // удаление поста
     // remove_post_DB(id, callback) {
@@ -49,12 +43,7 @@ class PhotosDB {
     //     });
     // }
 
-    // //обновление имени и фамилии в постах при редактировании профиля
-    // updateTitlePosts(name, callback) {
-    //     return this.connection.execute(`UPDATE posts SET name=?, surname=? WHERE userID =?`, name, (err) => {
-    //         callback(err);
-    //     })
-    // }
+
 
 }
 module.exports = PhotosDB;

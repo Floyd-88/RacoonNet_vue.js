@@ -5,7 +5,7 @@
            id="preview_myPhoto" 
            v-for="(photo, index) in getMyPhotosMyPage" 
            :key="index">
-          <img class="myPhoto" :src="require(`../../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name">     
+          <img class="myPhoto" :src="require(`../../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name" @click="fullSizePhoto({'bool': true, 'elem': index})">     
       </div>
     </div>
 
@@ -31,6 +31,12 @@
       <AllPhotos/>
     </UImodal>
     </div>
+
+    <div @click="setIsModalFullSize(false)">
+      <UImodal v-if="getIsModalFullSize">
+        <SliderPhoto/>
+      </UImodal>
+    </div>
   
 
   </div>
@@ -39,7 +45,10 @@
 <script>
 import {mapGetters, mapMutations, mapActions} from "vuex";
 
+
 export default {
+
+
   name: "PhotoMyPage",
 
   data() {
@@ -51,11 +60,16 @@ export default {
     ...mapMutations({
       setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
       setIsModalAllPhotos: "loadPhotoStore/setIsModalAllPhotos",
+
+      setIsModalFullSize: "showFullPhotoStore/setIsModalFullSize"
     }),
 
     ...mapActions({
-      loadAllPhotos: "loadPhotoStore/loadAllPhotos"
-    })
+      loadAllPhotos: "loadPhotoStore/loadAllPhotos",
+
+      fullSizePhoto: "showFullPhotoStore/fullSizePhoto"
+    }),
+
   },
 
   computed: {
@@ -64,6 +78,9 @@ export default {
 
       getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
       getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",
+
+      getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
+
 
     }),
   }
@@ -123,10 +140,16 @@ export default {
 }
 
 .myPhoto {
-  height: 100%;
-  min-width: 100%;
-  left: 50%;
-  position: relative;
-  transform: translateX(-50%);
+  width: 100%;
+    min-height: -webkit-fill-available;
+    cursor: pointer;
+}
+
+.full_size_photo_modal {
+  width: 600px;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    background: black;
 }
 </style>

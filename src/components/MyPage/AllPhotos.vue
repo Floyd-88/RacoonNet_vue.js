@@ -5,7 +5,10 @@
         <div class="wrapper_preview_allPhotos">
             <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage" :key="index">
 
-                <img class="photo" :src="require(`../../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name">
+                <img class="photo" 
+                :src="require(`../../assets/photo/${photo.photo_name}`)" 
+                :alt="photo.photo_name"
+                @click="fullSizePhoto({bool: true, elem: index})">
 
             </div>
 
@@ -21,11 +24,8 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-// import CloseModal from '../UI/CloseModal.vue';
-
 
 export default {
-    // components: { CloseModal },
     name: "AllPhotos",
 
     data() {
@@ -67,6 +67,7 @@ export default {
         }),
         ...mapActions({
             loadAllPhotos: "loadPhotoStore/loadAllPhotos",
+            fullSizePhoto: "showFullPhotoStore/fullSizePhoto"
         }),
     },
 
@@ -109,11 +110,9 @@ export default {
 }
 
 .photo {
-    height: 100%;
-    min-width: 100%;
-    left: 50%;
-    position: relative;
-    transform: translateX(-50%);
+    width: 100%;
+    min-height: -webkit-fill-available;
+    cursor: pointer;
 }
 
 .observer {

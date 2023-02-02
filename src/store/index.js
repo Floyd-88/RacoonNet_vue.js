@@ -7,6 +7,7 @@ import { updatePasswordStore } from "@/store/module/updatePasswordStore"
 import { registrationStore } from "@/store/module/registrationStore"
 import { removeUserStore } from "@/store/module/removeUserStore"
 import { loadPhotoStore } from "@/store/module/loadPhotoStore"
+import { showFullPhotoStore } from "@/store/module/showFullPhotoStore"
 
 
 export default createStore({
@@ -18,6 +19,7 @@ export default createStore({
         updatePasswordStore,
         registrationStore,
         removeUserStore,
-        loadPhotoStore
+        loadPhotoStore,
+        showFullPhotoStore
     }
 });

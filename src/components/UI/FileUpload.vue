@@ -234,7 +234,7 @@ export default {
     color: red;
 }
 
-.message_error {
-}
+/* .message_error {
+} */
 </style>
 
