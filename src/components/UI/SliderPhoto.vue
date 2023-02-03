@@ -1,12 +1,21 @@
 <template>
-    <div>
+    <div class="wrapper_block_full_size">
         <!-- <transition-group name='fade' tag='div'> -->
-        <div class="wrapper_full_size_img">
-            <img class="full_size_img" :src="require(`../../assets/photo/${currentImg.photo_name}`)" alt="currentImg" />
+        <div class="wrapper_block_full_size_img">
+            <div class="wrapper_full_size_img">
+                <img class="full_size_img" :src="require(`../../assets/photo/${currentImg.photo_name}`)"
+                    alt="currentImg" />
+                
+            </div>
+            <!-- </transition-group> -->
+            <a class="prev" @click="setPrevIndexPhoto" href='#'>&#10094;</a>
+            <a class="next" @click="setNextIndexPhoto" href='#'>&#10095;</a>
         </div>
-        <!-- </transition-group> -->
-        <a class="prev" @click="setPrevIndexPhoto" href='#'>&#10094;</a>
-        <a class="next" @click="setNextIndexPhoto" href='#'>&#10095;</a>
+
+        <div class="wrapper_block_comments">
+            comments
+        </div>
+
     </div>
 
 
@@ -29,14 +38,14 @@ export default {
         }),
     },
     computed: {
-        ...mapGetters({ 
+        ...mapGetters({
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
             getIndexPhoto: "showFullPhotoStore/getIndexPhoto"
-    }),
+        }),
         currentImg: function () {
-            if(this.getIndexPhoto === -1) {
+            if (this.getIndexPhoto === -1) {
                 this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
-            } 
+            }
             return this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length];
         }
     }
@@ -52,23 +61,46 @@ export default {
   transform: translateX(30px);
 } */
 
+.wrapper_block_full_size {
+    display: flex;
+    width: 1000px;
+    height: 90vh;
+    flex-direction: row;
+    overflow: hidden;
+
+}
+
+
+.wrapper_block_full_size_img {
+    width: 70%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: black;
+    justify-content: center;
+}
 
 .wrapper_full_size_img {
-    display: flex;
-    height: 90vh;
-    width: auto;
+    width: 100%;
+    height: -webkit-fill-available;
 }
 
 .full_size_img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
+}
+
+.wrapper_block_comments {
+    width: 30%;
+    background: gainsboro;
 }
 
 .prev,
 .next {
     cursor: pointer;
     position: absolute;
-    top: 40%;
+    top: 45%;
     width: auto;
     padding: 16px;
     color: white;
@@ -89,14 +121,17 @@ export default {
 .prev {
     left: 0;
 }
-.next:hover, .prev:hover {
+
+.next:hover,
+.prev:hover {
     opacity: 1;
 }
 
-.wrapper_full_size_img:hover~.prev{
+.wrapper_full_size_img:hover~.prev {
     opacity: 1;
 }
-.wrapper_full_size_img:hover~.next{
+
+.wrapper_full_size_img:hover~.next {
     opacity: 1;
 }
 </style>

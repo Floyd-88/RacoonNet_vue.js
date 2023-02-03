@@ -52,7 +52,7 @@ export const loadPhotoStore = {
 
             if (bool === false) {
                 state.limitPhoto = 0;
-                state.allPhotos = [];
+                // state.allPhotos = [];
                 document.body.style.overflow = "auto"
             }
         },
