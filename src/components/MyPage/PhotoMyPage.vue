@@ -3,7 +3,7 @@
     <div class="wrapper_preview_myPhoto">
       <div class="preview_myPhoto" 
            id="preview_myPhoto" 
-           v-for="(photo, index) in getMyPhotosMyPage" 
+           v-for="(photo, index) in getMyPhotosMyPage.slice(0, 8) " 
            :key="index">
           <img class="myPhoto" :src="require(`../../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name" @click="fullSizePhoto({'bool': true, 'elem': index})">     
       </div>
@@ -12,7 +12,7 @@
     <UIbtn class="show_more_photo_btn" 
            id="load_photo_btn" 
            v-if="getMyPhotosMyPage.length >= 8"
-           @click="loadAllPhotos()">
+           @click="setIsModalAllPhotos(true)">
       Показать больше
     </UIbtn>
 
@@ -74,7 +74,7 @@ export default {
 
   computed: {
   ...mapGetters({
-      getMyPhotosMyPage: "loadPhotoStore/getMyPhotosMyPage",
+    getMyPhotosMyPage: "loadPhotoStore/getMyPhotosMyPage",
 
       getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
       getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",

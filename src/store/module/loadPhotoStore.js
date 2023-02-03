@@ -5,8 +5,8 @@ export const loadPhotoStore = {
     state: () => ({
         myPhotosMyPage: [],
         allPhotos: [],
-        countPhoto: 0,
-        limitPhoto: 0,
+        // countPhoto: 0,
+        // limitPhoto: 8,
         isModalAllPhotos: false,
 
         isModalLoadPhoto: false,
@@ -48,6 +48,8 @@ export const loadPhotoStore = {
 
         setIsModalAllPhotos: function(state, bool) {
             state.isModalAllPhotos = bool;
+            document.body.style.overflow = "hidden"
+
             if (bool === false) {
                 state.limitPhoto = 0;
                 state.allPhotos = [];
@@ -55,13 +57,13 @@ export const loadPhotoStore = {
             }
         },
 
-        setCountPhoto: function(state) {
-            state.countPhoto = state.allPhotos.length;
-        },
+        // setCountPhoto: function(state) {
+        //     state.countPhoto = state.allPhotos.length;
+        // },
 
-        setLimitPhoto: function(state) {
-            state.limitPhoto = 16;
-        },
+        // setLimitPhoto: function(state) {
+        //     state.limitPhoto = 16;
+        // },
 
         setArrayLoadImage(state, value) {
             state.arrayLoadImage = value;
@@ -89,45 +91,23 @@ export const loadPhotoStore = {
     },
 
     actions: {
-        //получить последнии фотографии на главное странице
-        async loadPhotos({
-            getters,
-            commit
-        }) {
-            try {
-                await axios.get('http://localhost:8000/upload_photo', {
-                    params: {
-                        _count: 0,
-                        _limit: 8,
-                        userID: getters.getUserID
-                    }
-                }).then((response) => {
-                    // console.log(response.data)
-                    commit("setMyPhotosMyPage", response.data)
-                });
-            } catch (err) {
-                console.log(err);
-            }
-        },
-
-
         //получить все фотографии в модальном окне
         async loadAllPhotos({
-            state,
             getters,
             commit
         }) {
-            document.body.style.overflow = "hidden"
-            commit("setIsModalAllPhotos", true);
+            // document.body.style.overflow = "hidden"
+            // commit("setIsModalAllPhotos", true);
             try {
-                await axios.get('http://localhost:8000/upload_photo', {
+                await axios.get('http://localhost:8000/upload_all_photo', {
                     params: {
-                        _count: state.countPhoto,
-                        _limit: state.limitPhoto,
+                        // _count: state.countPhoto,
+                        // _limit: state.limitPhoto,
                         userID: getters.getUserID
                     }
                 }).then((response) => {
-                    commit("setAllMyPhotosMyPage", [...state.allPhotos, ...response.data]);
+                    commit("setMyPhotosMyPage", response.data);
+                    commit("setAllMyPhotosMyPage", response.data);
                 });
             } catch (err) {
                 console.log(err);
@@ -139,6 +119,7 @@ export const loadPhotoStore = {
             commit("removeArrayLoadImage", name);
             commit("removeUrlsImages", name);
         },
+
 
         //загрузка картинок на сервер
         addPhotoServer: function({ getters, commit }) {

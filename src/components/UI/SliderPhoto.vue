@@ -14,36 +14,32 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-
 export default {
     name: 'SliderPhoto',
-
     data() {
         return {
         }
     },
-
     methods: {
         ...mapMutations({
+            setIndexPhoto: "showFullPhotoStore/setIndexPhoto",
+
             setNextIndexPhoto: "showFullPhotoStore/setNextIndexPhoto",
             setPrevIndexPhoto: "showFullPhotoStore/setPrevIndexPhoto"
         }),
     },
-
     computed: {
         ...mapGetters({ 
-            getArrayAllPhoto: "showFullPhotoStore/getArrayAllPhoto",
+            getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
             getIndexPhoto: "showFullPhotoStore/getIndexPhoto"
     }),
-
         currentImg: function () {
-            console.log(this.getArrayAllPhoto[this.getIndexPhoto])
-            console.log(Math.abs(this.getIndexPhoto) % this.getArrayAllPhoto.length)
-
-            return this.getArrayAllPhoto[Math.abs(this.getIndexPhoto) % this.getArrayAllPhoto.length];
+            if(this.getIndexPhoto === -1) {
+                this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
+            } 
+            return this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length];
         }
     }
-
 }
 </script>
 

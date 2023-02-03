@@ -382,7 +382,7 @@ router.delete('/dataBase.js', function(req, res) {
     });
 });
 
-//загружаем фото
+//загружаем фото в БД
 router.post('/upload_photo', (req, res) => {
     //допустимые форматы
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
@@ -421,85 +421,85 @@ router.post('/upload_photo', (req, res) => {
     res.status(200).send("Фото успешно загрузились на сервер");
 });
 
-//получаем фотографии из БД
-router.get('/upload_photo', function(req, res) {
-        photos.load_photos_DB([
-            req.query.userID,
-            req.query._count,
-            req.query._limit
-        ], (err, allPhotos) => {
-            if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились');
-            if (!allPhotos) return res.status(404).send('Фотографии не найдены');
+//получаем порционно фотографии из БД
+// router.get('/upload_photo', function(req, res) {
+//         photos.load_photos_DB([
+//             req.query.userID,
+//             req.query._count,
+//             req.query._limit
+//         ], (err, allPhotos) => {
+//             if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились');
+//             if (!allPhotos) return res.status(404).send('Фотографии не найдены');
 
-            //массив с названиями фотографий
-            let arr = [];
-            //путь к папке где лежат фотографии
-            let path = "../src/assets/photo/";
-            //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
-            allPhotos.forEach(element => {
-                try {
-                    //синхронный метод проверки файла ??????????????
-                    if (fs.existsSync(`${path + element.photo_name}`)) {
-                        arr.push(element)
-                    }
-                } catch (err) {
-                    console.error(err)
+//             //массив с названиями фотографий
+//             let arr = [];
+//             //путь к папке где лежат фотографии
+//             let path = "../src/assets/photo/";
+//             //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
+//             allPhotos.forEach(element => {
+//                 try {
+//                     //синхронный метод проверки файла ??????????????
+//                     if (fs.existsSync(`${path + element.photo_name}`)) {
+//                         arr.push(element)
+//                     }
+//                 } catch (err) {
+//                     console.error(err)
+//                 }
+
+//                 // fs.access(`${path + element.photo_name}`, fs.F_OK, (err) => {
+//                 //     if (!err) {
+//                 //         console.log(element)
+//                 //         arr.push(element)
+//                 //     } else {
+//                 //         // console.log('not files')
+//                 //     }
+//                 // })
+//             });
+//             res.json(arr);
+
+//             // res.status(200).send("Фотографии получены");;
+//         })
+//     }),
+
+
+
+//получаем все фотографии
+router.get('/upload_all_photo', function(req, res) {
+    photos.load_all_photos_DB([
+        req.query.userID,
+    ], (err, allPhotos) => {
+        if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились');
+        if (!allPhotos) return res.status(404).send('Фотографии не найдены');
+
+        //массив с названиями фотографий
+        let arr = [];
+        //путь к папке где лежат фотографии
+        let path = "../src/assets/photo/";
+        //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
+        allPhotos.forEach(element => {
+            try {
+                //синхронный метод проверки файла ??????????????
+                if (fs.existsSync(`${path + element.photo_name}`)) {
+                    arr.push(element)
                 }
+            } catch (err) {
+                console.error(err)
+            }
 
-                // fs.access(`${path + element.photo_name}`, fs.F_OK, (err) => {
-                //     if (!err) {
-                //         console.log(element)
-                //         arr.push(element)
-                //     } else {
-                //         // console.log('not files')
-                //     }
-                // })
-            });
-            res.json(arr);
+            // fs.access(`${path + element.photo_name}`, fs.F_OK, (err) => {
+            //     if (!err) {
+            //         console.log(element)
+            //         arr.push(element)
+            //     } else {
+            //         // console.log('not files')
+            //     }
+            // })
+        });
+        res.json(arr);
 
-            // res.status(200).send("Фотографии получены");;
-        })
-    }),
-
-
-
-
-    router.get('/upload_all_photo', function(req, res) {
-        photos.load_all_photos_DB([
-            req.query.userID,
-        ], (err, allPhotos) => {
-            if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились');
-            if (!allPhotos) return res.status(404).send('Фотографии не найдены');
-
-            //массив с названиями фотографий
-            let arr = [];
-            //путь к папке где лежат фотографии
-            let path = "../src/assets/photo/";
-            //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
-            allPhotos.forEach(element => {
-                try {
-                    //синхронный метод проверки файла ??????????????
-                    if (fs.existsSync(`${path + element.photo_name}`)) {
-                        arr.push(element)
-                    }
-                } catch (err) {
-                    console.error(err)
-                }
-
-                // fs.access(`${path + element.photo_name}`, fs.F_OK, (err) => {
-                //     if (!err) {
-                //         console.log(element)
-                //         arr.push(element)
-                //     } else {
-                //         // console.log('not files')
-                //     }
-                // })
-            });
-            res.json(arr);
-
-            // res.status(200).send("Фотографии получены");;
-        })
+        // res.status(200).send("Фотографии получены");;
     })
+})
 
 
 

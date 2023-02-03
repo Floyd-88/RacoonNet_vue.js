@@ -3,7 +3,7 @@
     <h2 class="title_pthoto_name">Фотографии {{getUser.name + " " + getUser.surname}}</h2>
     <div class="wrapper_contents_allPhotos">
         <div class="wrapper_preview_allPhotos">
-            <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage" :key="index">
+            <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage.slice(0, limitPhoto)" :key="index">
 
                 <img class="photo" 
                 :src="require(`../../assets/photo/${photo.photo_name}`)" 
@@ -30,6 +30,7 @@ export default {
 
     data() {
         return {
+            limitPhoto: 8,
         };
     },
 
@@ -41,8 +42,7 @@ export default {
         };
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
-                this.setLimitPhoto();
-                this.setCountPhoto();
+                this.limitPhoto += 8;
                 this.loadAllPhotos();
 
             }

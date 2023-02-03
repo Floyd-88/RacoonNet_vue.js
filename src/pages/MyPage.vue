@@ -49,7 +49,7 @@ export default {
 
   mounted() {
 
-    this.loadPhotos();
+    this.loadAllPhotos();
 
     // обсервер срабатывает каждый раз когда докручиваем страницу донизу
     const options = {
@@ -72,31 +72,12 @@ export default {
   methods: {
     ...mapActions({
       loadPostServer: "postsMyPageStore/loadPostServer",
-      loadPhotos: "loadPhotoStore/loadPhotos",
+      loadAllPhotos: "loadPhotoStore/loadAllPhotos",
     }),
     ...mapMutations({
       setCountPosts: "postsMyPageStore/setCountPosts",
       setLimitPosts: "postsMyPageStore/setLimitPosts",
     }),
-
-        // async loadPhotos(id) {
-        //     try {
-        //         await axios.get('http://localhost:8000/upload_photo', {
-        //             params: {
-        //                 _count: 0,
-        //                 _limit: 8,
-        //                 userID: id
-        //             }
-        //         }).then((response) => {
-        //           // console.log(response.data)
-
-        //           this.myPhotosMyPage = response.data
-        //             // commit("setPosts", [...state.posts, ...response.data]);
-        //         });
-        //     } catch (err) {
-        //         console.error(err.response.data);
-        //     }
-        // },
 
   },
 
@@ -104,7 +85,6 @@ export default {
     ...mapGetters({
       getPosts: "postsMyPageStore/getPosts",
       getModulEditProfile: "editProfileStore/getModulEditProfile",
-      // getUser: "authorizationStore/getUser"
     }),
   }
 
