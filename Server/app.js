@@ -459,7 +459,13 @@ router.get('/upload_all_photo', function(req, res) {
     })
 })
 
+//удаление фотографии
 router.delete('/remove_photo', function(req, res) {
+    fs.unlink(`../src/assets/photo/${req.query.namePhoto}`, (err) => {
+        if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее');;
+        console.log('Deleted');
+    });
+
     photos.remove_photo([
         req.query.id,
         req.query.userID,

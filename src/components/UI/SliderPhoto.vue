@@ -58,7 +58,7 @@
         <div class="wrapper_save_editPost_btn">
           <UIbtn class="save_editPost_btn" 
           type="submit" 
-          @click="removePhoto">
+          @click="removePhoto(currentImg.photo_name)">
             Удалить
           </UIbtn>
 
@@ -109,7 +109,7 @@ export default {
             if (this.getIndexPhoto === -1) {
                 this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
             }
-            let photo = this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length]
+            let photo = this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length];
             this.setPhotoId(photo.id)
             return photo;
             }

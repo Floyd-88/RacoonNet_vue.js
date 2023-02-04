@@ -150,7 +150,7 @@ export const loadPhotoStore = {
         },
 
         //удаление картинки
-        async removePhoto({ commit, state, getters }) {
+        async removePhoto({ commit, state, getters }, name) {
             commit("setModulePhotoRemove", false)
 
             if (state.allPhotos.length <= 1) {
@@ -162,7 +162,8 @@ export const loadPhotoStore = {
                 await axios.delete('http://localhost:8000/remove_photo', {
                     params: {
                         id: getters.getIdPhoto,
-                        userID: getters.getUserID
+                        userID: getters.getUserID,
+                        namePhoto: name,
                     }
                 }).then((response) => {
                     commit("removeAllPhotos", getters.getIdPhoto);
