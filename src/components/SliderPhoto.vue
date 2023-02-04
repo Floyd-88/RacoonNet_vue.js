@@ -3,7 +3,7 @@
         <!-- <transition-group name='fade' tag='div'> -->
         <div class="wrapper_block_full_size_img">
             <div class="wrapper_full_size_img">
-                <img class="full_size_img" v-if="currentImg.photo_name" :src="require(`../../assets/photo/${currentImg.photo_name}`)"
+                <img class="full_size_img" v-if="currentImg.photo_name" :src="require(`../assets/photo/${currentImg.photo_name}`)"
                     alt="currentImg" />
 
             </div>
@@ -23,28 +23,9 @@
             </div>
         </div>
 
-        <div class="wrapper_block_comments">
-            <div class="wrapper_block_comments_name">
-                <p class="block_comments_name">Илья Сазонов</p>
-            </div>
-            <div class="wrapper_block_comments_date">
-                <p class="block_comments_date">2010-02-23</p>
-            </div>
-            <div class="wrapper_block_comments_item">
-                <div class="wrapper_block_comments_item_like">
-                    like
-                </div>
-                <div class="wrapper_block_comments_dislike">
-                    dislike
-                </div>
-            </div>
-            <div class="wrapper_block_comments_comment">
-                <p class="block_comments_comment">Lorem ipsum dolor sit amet.</p>
-            </div>
-            <div class="wrapper_block_comments_comment">
-                <p class="block_comments_comment">Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam, id.</p>
-            </div>
-        </div>
+        <!-- блок комментариев -->
+        <CommentsPhoto/>
+        
 
     </div>
 
@@ -77,10 +58,9 @@
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
-    name: 'SliderPhoto',
+    name: "SliderPhoto",
     data() {
-        return {
-        }
+        return {};
     },
     methods: {
         ...mapMutations({
@@ -90,7 +70,6 @@ export default {
             setModulePhotoRemove: "loadPhotoStore/setModulePhotoRemove",
             setPhotoId: "loadPhotoStore/setPhotoId"
         }),
-
         ...mapActions({
             removePhoto: "loadPhotoStore/removePhoto"
         })
@@ -102,21 +81,18 @@ export default {
             getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
             getIdPhoto: "loadPhotoStore/getIdPhoto"
         }),
-
         currentImg: function () {
-
-            if(this.getAllPhotosMyPage.length > 0) {             
-            if (this.getIndexPhoto === -1) {
-                this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
-            }
-            let photo = this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length];
-            this.setPhotoId(photo.id)
-            return photo;
+            if (this.getAllPhotosMyPage.length > 0) {
+                if (this.getIndexPhoto === -1) {
+                    this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
+                }
+                let photo = this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length];
+                this.setPhotoId(photo.id);
+                return photo;
             }
             return [];
         }
-           
-    }
+    },
 }
 </script>
 
@@ -158,29 +134,6 @@ export default {
     width: 100%;
     height: 100%;
     object-fit: contain;
-}
-
-.wrapper_block_comments {
-    width: 30%;
-    background: width;
-}
-.wrapper_block_comments_name {
-}
-.block_comments_name {
-}
-.wrapper_block_comments_date {
-}
-.block_comments_date {
-}
-.wrapper_block_comments_item {
-}
-.wrapper_block_comments_item_like {
-}
-.wrapper_block_comments_dislike {
-}
-.wrapper_block_comments_comment {
-}
-.block_comments_comment {
 }
 
 .prev,

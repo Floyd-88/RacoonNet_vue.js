@@ -41,7 +41,7 @@
       </div>
 
       <div class="wrapper_form_login_btn">
-        <button class="form_register_btn" @click.prevent="setModulRegister">
+        <button class="form_register_btn" @click.prevent="setModulRegister(true)">
           Создать новый аккаунт
         </button>
       </div>

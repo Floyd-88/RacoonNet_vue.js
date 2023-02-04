@@ -6,9 +6,9 @@ export const modalStore = {
 
     getters: {
         getModal: (state) => state.modal,
-        getUser: (state, getters, rootState, rootGetters) => {
-            return rootGetters["authorizationStore/getUser"]
-        }
+        // getUser: (state, getters, rootState, rootGetters) => {
+        //     return rootGetters["authorizationStore/getUser"]
+        // }
     },
 
     mutations: {
@@ -21,12 +21,10 @@ export const modalStore = {
     },
 
     actions: {
-        async closeModule({ commit, getters }) {
-            commit("setNotShowModalWindow");
-            commit('editProfileStore/setEditingUser', getters.getUser, { root: true });
-            // commit('editProfileStore/setModulEditProfile', false, { root: true });
-            commit('registrationStore/setModulRegister', false, { root: true });
-        }
+        // async closeModule({ }) {
+        // commit("setNotShowModalWindow");
+        // commit('editProfileStore/setEditingUser', getters.getUser, { root: true }); //если изменения небыли внесены возвращаем полям старые значения при закрытии окна
+        // }
     },
 
     namespaced: true,

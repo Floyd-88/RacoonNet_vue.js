@@ -15,6 +15,8 @@ export const loadPhotoStore = {
 
         isModulePhotoRemove: false, //показывать-скрывать модальное окно с подтвержением удаления фото
 
+        limitAllPhoto: 8, //количествофотографий отображаемых каждый раз при прокрутке вниз
+
     }),
 
     getters: {
@@ -27,7 +29,8 @@ export const loadPhotoStore = {
         getArrayLoadImage: (state) => state.arrayLoadImage,
         getUrlsImages: (state) => state.urlsImages,
         getIdPhoto: (state) => state.idPhoto,
-        getModulePhotoRemove: (state) => state.isModulePhotoRemove
+        getModulePhotoRemove: (state) => state.isModulePhotoRemove,
+        getLimitAllPhoto: (state) => state.limitAllPhoto,
     },
 
     mutations: {
@@ -54,7 +57,7 @@ export const loadPhotoStore = {
             document.body.style.overflow = "hidden"
 
             if (bool === false) {
-                state.limitPhoto = 0;
+                state.limitAllPhoto = 8;
                 document.body.style.overflow = "auto"
             }
         },
@@ -93,6 +96,10 @@ export const loadPhotoStore = {
         setModulePhotoRemove(state, bool) {
             state.isModulePhotoRemove = bool;
         },
+
+        setLimitAllPhoto(state, count) {
+            state.limitAllPhoto += count
+        }
     },
 
     actions: {

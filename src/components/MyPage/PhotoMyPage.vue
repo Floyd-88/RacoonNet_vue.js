@@ -3,7 +3,7 @@
     <div class="wrapper_preview_myPhoto">
       <div class="preview_myPhoto" 
            id="preview_myPhoto" 
-           v-for="(photo, index) in getMyPhotosMyPage.slice(0, 8) " 
+           v-for="(photo, index) in getMyPhotosMyPage.slice(0, 8)" 
            :key="index">
           <img class="myPhoto" :src="require(`../../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name" @click="fullSizePhoto({'bool': true, 'elem': index, id: photo.id})">     
       </div>
@@ -47,8 +47,6 @@ import {mapGetters, mapMutations, mapActions} from "vuex";
 
 
 export default {
-
-
   name: "PhotoMyPage",
 
   data() {

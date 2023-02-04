@@ -12,9 +12,9 @@ const { validationResult } = require('express-validator');
 const tokenKey = require('./tokenKey');
 
 //подключаем экземпляры классов
-const AuthorizationUserDB = require('./AuthorizationUserDB');
-const PostsDB = require('./PostsDB');
-const PhotosDB = require('./PhotosDB');
+const AuthorizationUserDB = require('./DB/AuthorizationUserDB');
+const PostsDB = require('./DB/PostsDB');
+const PhotosDB = require('./DB/PhotosDB');
 
 //создаем объекты на основе экземпляров классов
 const authorization = new AuthorizationUserDB();
@@ -311,11 +311,18 @@ router.delete('/delete_user', passwordDelValidate, function(req, res) {
             err: 'Пароль не действителен'
         });
 
+        //удаление всех фотографий пользователя
+        req.body.allPhoto.forEach((photo) => {
+            fs.unlink(`../src/assets/photo/${photo.photo_name}`, (err) => {
+                if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее');
+            });
+        })
+
+        //удаление пользователя
         authorization.deleteUserDB([req.body.userID], (err) => {
             if (err) return res.status(500).send("При удалении пользователя возникли проблемы");
             res.status(200).send("Пользователь успешно удален");
         })
-
     })
 })
 

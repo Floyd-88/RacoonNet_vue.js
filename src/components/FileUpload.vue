@@ -38,8 +38,8 @@
 </template>
 
 <script>
-import CloseModal from './CloseModal.vue';
-import UIbtn from './UIbtn.vue';
+import CloseModal from './UI/CloseModal.vue';
+import UIbtn from './UI/UIbtn.vue';
 import { mapActions, mapGetters, mapMutations} from 'vuex';
 
 

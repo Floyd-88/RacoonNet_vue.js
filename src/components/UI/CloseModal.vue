@@ -1,17 +1,15 @@
 <template>
-  <div class="close_modal"
-       @click="closeModule">
-  </div>
+  <div class="close_modal"></div>
 </template>
 
 <script>
-import {mapActions} from "vuex";
+// import {mapActions} from "vuex";
 
 export default {
   name: "closeModal",
 
   methods: {
-    ...mapActions({ closeModule: "modalStore/closeModule"})
+    // ...mapActions({ closeModule: "modalStore/closeModule"})
   }
 }
 </script>

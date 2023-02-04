@@ -1,11 +1,12 @@
 <template>
-    <!-- <CloseModal @click="setIsModalAllPhotos(false)"/> -->
+    <CloseModal @click="setIsModalAllPhotos(false)"/>
+
     <h2 class="title_pthoto_name">Фотографии {{getUser.name + " " + getUser.surname}}</h2>
     <div class="wrapper_contents_allPhotos">
         <div class="wrapper_preview_allPhotos">
-            <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage.slice(0, limitPhoto)" :key="index">
+            <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage.slice(0, getLimitAllPhoto)" :key="index">
                 <img class="photo" 
-                :src="require(`../../assets/photo/${photo.photo_name}`)" 
+                :src="require(`../assets/photo/${photo.photo_name}`)" 
                 :alt="photo.photo_name"
                 @click="fullSizePhoto({bool: true, elem: index, id: photo.id})">
 
@@ -23,59 +24,48 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
+import CloseModal from './UI/CloseModal.vue';
 
 export default {
     name: "AllPhotos",
-
+    components: { CloseModal },
     data() {
-        return {
-            limitPhoto: 8,
-        };
+        return {};
     },
-
     mounted() {
         // обсервер срабатывает каждый раз когда докручиваем страницу донизу
         const options = {
-            rootMargin: '0px',
+            rootMargin: "0px",
             threshold: 0.1
         };
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
-                this.limitPhoto += 8;
+                this.setLimitAllPhoto(8)
                 this.loadAllPhotos();
-
             }
         };
         const observer = new IntersectionObserver(callback, options);
         observer.observe(this.$refs.observer);
     },
-
-
     methods: {
-
-        observe() {
-            console.log(111)
-        },
-
-        //закрытие окна с загрузкой картинок
         ...mapMutations({
             setIsModalAllPhotos: "loadPhotoStore/setIsModalAllPhotos",
             setCountPhoto: "loadPhotoStore/setCountPhoto",
-            setLimitPhoto: "loadPhotoStore/setLimitPhoto",
-
+            setLimitAllPhoto: "loadPhotoStore/setLimitAllPhoto",
         }),
         ...mapActions({
             loadAllPhotos: "loadPhotoStore/loadAllPhotos",
             fullSizePhoto: "showFullPhotoStore/fullSizePhoto"
         }),
     },
-
     computed: {
         ...mapGetters({
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
             getUser: "authorizationStore/getUser",
+            getLimitAllPhoto: "loadPhotoStore/getLimitAllPhoto"
         }),
     },
+    
 }
 
 </script>

@@ -8,7 +8,7 @@ export const editProfileStore = {
     }),
     getters: {
         getEditingUser: (state) => state.editingUser,
-        getUserID: (state, _, rootState) => rootState.authorizationStore.user.userID,
+        getUser: (state, _, rootState) => rootState.authorizationStore.user,
         getModulEditProfile: (state) => state.modulEditProfile,
     },
 
@@ -23,7 +23,7 @@ export const editProfileStore = {
             }
         },
 
-        //записываем в state данные при авторизации или регистрации для возможно манипулировать этими при редкатировании профиля
+        //записываем в state данные при авторизации или регистрации для возможности манипулировать этим при редкатировании профиля
         setEditingUser(state, user) {
             state.editingUser.name = user.name
             state.editingUser.surname = user.surname
@@ -69,20 +69,17 @@ export const editProfileStore = {
 
     actions: {
 
-        // showModalEditProfile({ commit }) {
-        //     commit("setModulEditProfile", true);
-        //     // commit("modalStore/showModalTrue", null, { root: true });
-
-        // },
-
-
+        closeModalEditProfile({ commit, getters }) {
+            commit("setModulEditProfile", false);
+            commit('setEditingUser', getters.getUser); //если изменения небыли внесены возвращаем полям старые значения при закрытии окна
+        },
 
         //редактирование профиля
         updateProfile({ getters }, user) {
             return new Promise((resolve, reject) => {
 
                 let url = "http://localhost:8000/editProfile";
-                user.id = getters.getUserID;
+                user.id = getters.getUser.userID;
 
                 axios({
                         url: url,

@@ -5,16 +5,14 @@
       <textarea
           class="text_new_post"
           placeholder="Введите текст поста"
-          v-model="postText"
-      ></textarea>
-
+          v-model="postText">
+        </textarea>
     </div>
 
     <div class="wrapper_btn_addPost">
       <UIbtn class="btn_addPost"
              @click="addPost(postText)"
-             :disabled="postText.length < 1"
-      >
+             :disabled="postText.length < 1">
         Добавить
       </UIbtn>
     </div>

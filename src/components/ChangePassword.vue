@@ -84,10 +84,12 @@
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import { mapMutations, mapGetters, mapState, mapActions } from "vuex";
-import UIbtn from "../UI/UIbtn.vue";
+import UIbtn from "./UI/UIbtn.vue";
 
 export default {
   name: "ChangePassword",
+  components: { UIbtn },
+
   setup() {
     return { v$: useVuelidate() };
   },
@@ -114,7 +116,7 @@ export default {
 
     //изменение старого пароля
     save_new_password() {
-      if (!this.getDouble_new_password) {
+      if (!this.getDouble_new_password) { //если пароли совпадают
         let user = {
           old_password: this.getOld_password,
           new_password: this.getNew_password
@@ -178,7 +180,6 @@ export default {
       }
     },
   },
-  components: { UIbtn }
 }
 </script>
 

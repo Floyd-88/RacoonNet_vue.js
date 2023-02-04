@@ -10,6 +10,7 @@ export const removeUserStore = {
         getPassword: (state) => state.password,
         getUserEmail: (state, _, rootState) => rootState.authorizationStore.user.email,
         getUserID: (state, _, rootState) => rootState.authorizationStore.user.userID,
+        allPhoto: (state, _, rootState) => rootState.loadPhotoStore.allPhotos,
 
     },
     mutations: {
@@ -31,6 +32,8 @@ export const removeUserStore = {
 
                 user.email = getters.getUserEmail;
                 user.userID = getters.getUserID;
+                user.allPhoto = getters.allPhoto;
+
                 axios({
                         url: url,
                         data: user,

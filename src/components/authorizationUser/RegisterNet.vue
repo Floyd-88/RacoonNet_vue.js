@@ -1,6 +1,6 @@
 <template>
   <!--  Закрыть модальное окно-->
-  <CloseModal/>
+  <CloseModal @click="setModulRegister(false)"/>
 
   <h4 class="form_register_title">Регистрация</h4>
 
@@ -312,7 +312,7 @@ export default {
 
     ...mapMutations({
       //закрыть модальное окно с регистрацией
-      setNotShowModalWindow: "modalStore/setNotShowModalWindow",
+      setModulRegister: "registrationStore/setModulRegister",
 
       //проверка почты на существование такого пользователя
       setDouble_email: "registrationStore/setDouble_email",
@@ -352,8 +352,8 @@ export default {
         }
         this.register(user)
             .then(() => {
+              this.setModulRegister(false)
               this.$router.push('mypage');
-              this.setNotShowModalWindow();
             })
             .catch((err) => {
               if(err === "Пользователь с такой почтой уже зарегистрирован") {

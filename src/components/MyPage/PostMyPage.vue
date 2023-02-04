@@ -96,10 +96,6 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "PostMyPage",
-  emits: [
-    "removePost",
-    "editPost",
-  ],
 
   methods: {
     ...mapMutations({
@@ -240,7 +236,7 @@ export default {
 }
 
 .wrapper_title_text {
-  margin: 15px 10px;
+  margin: 0px 10px 10px;
   font-size: 17px;
 }
 </style>

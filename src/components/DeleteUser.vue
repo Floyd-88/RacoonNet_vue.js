@@ -86,13 +86,13 @@ export default {
           })
       }
     },
+
   },
 
   computed: {
     ...mapGetters({
-      // getOld_password: "updatePasswordStore/getOld_password",
       getErrorPassword: "updatePasswordStore/getErrorPassword",
-      getPassword: "removeUserStore/getPassword"
+      getPassword: "removeUserStore/getPassword",
     }),
 
     ...mapState({

@@ -4,18 +4,20 @@ import HeaderNet from "@/components/layout/HeaderNet";
 import PostMyPage from "@/components/MyPage/PostMyPage";
 import UIbtn from "@/components/UI/UIbtn";
 import AddPost from "@/components/MyPage/AddPost";
-import LoginNet from "@/components/LoginNet";
-import RegisterNet from "@/components/RegisterNet";
+import LoginNet from "@/components/authorizationUser/LoginNet";
+import RegisterNet from "@/components/authorizationUser/RegisterNet";
 import UImodal from "@/components/UI/UImodal";
 import PhotoMyPage from "@/components/MyPage/PhotoMyPage";
 import MyFriends from "@/components/MyPage/MyFriends";
 import EditProfile from "@/components/MyPage/EditProfile";
-import ChangePassword from "@/components/MyPage/ChangePassword";
+import ChangePassword from "@/components/ChangePassword";
 import CloseModal from "@/components/UI/CloseModal";
-import DeleteUser from "@/components/MyPage/DeleteUser";
-import FileUpload from "@/components/UI/FileUpload";
-import AllPhotos from "@/components/MyPage/AllPhotos"
-import SliderPhoto from "@/components/UI/SliderPhoto"
+import DeleteUser from "@/components/DeleteUser";
+import FileUpload from "@/components/FileUpload";
+import AllPhotos from "@/components/AllPhotos";
+import SliderPhoto from "@/components/SliderPhoto";
+import CommentsPhoto from "@/components/CommentsPhoto";
+
 
 export default [
     UserInfo,
@@ -35,5 +37,6 @@ export default [
     DeleteUser,
     FileUpload,
     AllPhotos,
-    SliderPhoto
+    SliderPhoto,
+    CommentsPhoto
 ]

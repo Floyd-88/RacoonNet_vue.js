@@ -1,6 +1,6 @@
 <template>
 <!--  Закрыть модальное окно-->
-  <CloseModal @click="setModulEditProfile(false)"/>
+  <CloseModal @click="closeModalEditProfile(false)"/>
 
   <h4 class="form_register_title">Изменить личные данные</h4>
 
@@ -245,7 +245,6 @@ export function validName(first_name) {
 export default {
   name: "editProfile",
   components: {CloseModal},
-  props: ["nextUrl"],
 
   setup() {
     return {v$: useVuelidate()}
@@ -292,6 +291,7 @@ export default {
   methods: {
     ...mapActions({
       updateProfile: "editProfileStore/updateProfile",
+      closeModalEditProfile: "editProfileStore/closeModalEditProfile"
     }),
     ...mapMutations({
       setName: "editProfileStore/setName",
@@ -309,7 +309,7 @@ export default {
 
       setModuleDelete: "removeUserStore/setModuleDelete",
 
-      setModulEditProfile: "editProfileStore/setModulEditProfile"
+      // setModulEditProfile: "editProfileStore/setModulEditProfile",
     }),
 
     //изменение данных пользователя
