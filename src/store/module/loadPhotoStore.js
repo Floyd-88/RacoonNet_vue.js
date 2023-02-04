@@ -3,16 +3,18 @@ import axios from "axios";
 export const loadPhotoStore = {
 
     state: () => ({
-        myPhotosMyPage: [],
-        allPhotos: [],
-        // countPhoto: 0,
-        // limitPhoto: 8,
-        isModalAllPhotos: false,
+        myPhotosMyPage: [], //фото которые показаны при загрузки страницы
+        allPhotos: [], //все фото юзера
+        isModalAllPhotos: false, //показывать-скрывать модальное окно со всеми фото
+        isModalLoadPhoto: false, //показывать-скрывать модальное окно с загрузкой фото
+        messageLoadPhoto: "", //сообщение возникающее при ошибки загрузки фото
+        arrayLoadImage: [], //фотографии выбранные в окне загрузки
+        urlsImages: [], //массив с исходными кодами картинок для их отображения в превью блоке
 
-        isModalLoadPhoto: false,
-        messageLoadPhoto: "",
-        arrayLoadImage: [],
-        urlsImages: [],
+        idPhoto: "", //id фото из базы данных
+
+        isModulePhotoRemove: false, //показывать-скрывать модальное окно с подтвержением удаления фото
+
     }),
 
     getters: {
@@ -20,11 +22,12 @@ export const loadPhotoStore = {
         getMyPhotosMyPage: (state) => state.myPhotosMyPage,
         getAllPhotosMyPage: (state) => state.allPhotos,
         getIsModalAllPhotos: (state) => state.isModalAllPhotos,
-
         getIsModalLoadPhoto: (state) => state.isModalLoadPhoto,
         getMessageLoadPhoto: (state) => state.messageLoadPhoto,
         getArrayLoadImage: (state) => state.arrayLoadImage,
         getUrlsImages: (state) => state.urlsImages,
+        getIdPhoto: (state) => state.idPhoto,
+        getModulePhotoRemove: (state) => state.isModulePhotoRemove
     },
 
     mutations: {
@@ -52,18 +55,9 @@ export const loadPhotoStore = {
 
             if (bool === false) {
                 state.limitPhoto = 0;
-                // state.allPhotos = [];
                 document.body.style.overflow = "auto"
             }
         },
-
-        // setCountPhoto: function(state) {
-        //     state.countPhoto = state.allPhotos.length;
-        // },
-
-        // setLimitPhoto: function(state) {
-        //     state.limitPhoto = 16;
-        // },
 
         setArrayLoadImage(state, value) {
             state.arrayLoadImage = value;
@@ -71,10 +65,6 @@ export const loadPhotoStore = {
 
         removeArrayLoadImage(state, name) {
             state.arrayLoadImage = state.arrayLoadImage.filter(elem => elem.name != name);
-        },
-
-        setMessageLoadPhoto(state, value) {
-            state.messageLoadPhoto = value;
         },
 
         setUrlsImages(state, value) {
@@ -86,41 +76,26 @@ export const loadPhotoStore = {
 
         },
 
+        setMessageLoadPhoto(state, value) {
+            state.messageLoadPhoto = value;
+        },
 
+        //удаление картинки из массива
+        removeAllPhotos(state, id) {
+            state.allPhotos = state.allPhotos.filter(photo => photo.id !== id);
+            state.myPhotosMyPage = state.myPhotosMyPage.filter(photo => photo.id !== id);
+        },
 
+        setPhotoId(state, id) {
+            state.idPhoto = id;
+        },
+
+        setModulePhotoRemove(state, bool) {
+            state.isModulePhotoRemove = bool;
+        },
     },
 
     actions: {
-        //получить все фотографии в модальном окне
-        async loadAllPhotos({
-            getters,
-            commit
-        }) {
-            // document.body.style.overflow = "hidden"
-            // commit("setIsModalAllPhotos", true);
-            try {
-                await axios.get('http://localhost:8000/upload_all_photo', {
-                    params: {
-                        // _count: state.countPhoto,
-                        // _limit: state.limitPhoto,
-                        userID: getters.getUserID
-                    }
-                }).then((response) => {
-                    commit("setMyPhotosMyPage", response.data);
-                    commit("setAllMyPhotosMyPage", response.data);
-                });
-            } catch (err) {
-                console.log(err);
-            }
-        },
-
-        //удаление картинки на предпросмотре перед загрузкой
-        removePreviewImage({ commit }, name) {
-            commit("removeArrayLoadImage", name);
-            commit("removeUrlsImages", name);
-        },
-
-
         //загрузка картинок на сервер
         addPhotoServer: function({ getters, commit }) {
             const formData = new FormData();
@@ -148,9 +123,55 @@ export const loadPhotoStore = {
                     commit("setMessageLoadPhoto", err.response.data);
                 })
         },
+
+        //удаление картинки на предпросмотре перед загрузкой
+        removePreviewImage({ commit }, name) {
+            commit("removeArrayLoadImage", name);
+            commit("removeUrlsImages", name);
+        },
+
+        //получить все фотографии в модальном окне
+        async loadAllPhotos({
+            getters,
+            commit
+        }) {
+            try {
+                await axios.get('http://localhost:8000/upload_all_photo', {
+                    params: {
+                        userID: getters.getUserID
+                    }
+                }).then((response) => {
+                    commit("setMyPhotosMyPage", response.data);
+                    commit("setAllMyPhotosMyPage", response.data);
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        },
+
+        //удаление картинки
+        async removePhoto({ commit, state, getters }) {
+            commit("setModulePhotoRemove", false)
+
+            if (state.allPhotos.length <= 1) {
+                await commit("showFullPhotoStore/setIsModalFullSize", false, { root: true });
+                await commit("setIsModalAllPhotos", false);
+            }
+
+            try {
+                await axios.delete('http://localhost:8000/remove_photo', {
+                    params: {
+                        id: getters.getIdPhoto,
+                        userID: getters.getUserID
+                    }
+                }).then((response) => {
+                    commit("removeAllPhotos", getters.getIdPhoto);
+                    console.log(response.data)
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        }
     },
-
-
-
     namespaced: true
 }

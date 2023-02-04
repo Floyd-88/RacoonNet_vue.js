@@ -3,26 +3,79 @@
         <!-- <transition-group name='fade' tag='div'> -->
         <div class="wrapper_block_full_size_img">
             <div class="wrapper_full_size_img">
-                <img class="full_size_img" :src="require(`../../assets/photo/${currentImg.photo_name}`)"
+                <img class="full_size_img" v-if="currentImg.photo_name" :src="require(`../../assets/photo/${currentImg.photo_name}`)"
                     alt="currentImg" />
-                
+
             </div>
             <!-- </transition-group> -->
             <a class="prev" @click="setPrevIndexPhoto" href='#'>&#10094;</a>
             <a class="next" @click="setNextIndexPhoto" href='#'>&#10095;</a>
+
+            <div class="wrapper_block_info_photo">
+                <div class="wrapper_block_info_name_count_photo">
+                    <div class="wrapper_block_info_name">
+                        <p>Фотографии: 1 из 28</p>
+                    </div>
+                </div>
+                <div class="wrapper_block_info_remove_photo">
+                    <button class="remove_photo" @click="setModulePhotoRemove(true)">Удалить</button>
+                </div>
+            </div>
         </div>
 
         <div class="wrapper_block_comments">
-            comments
+            <div class="wrapper_block_comments_name">
+                <p class="block_comments_name">Илья Сазонов</p>
+            </div>
+            <div class="wrapper_block_comments_date">
+                <p class="block_comments_date">2010-02-23</p>
+            </div>
+            <div class="wrapper_block_comments_item">
+                <div class="wrapper_block_comments_item_like">
+                    like
+                </div>
+                <div class="wrapper_block_comments_dislike">
+                    dislike
+                </div>
+            </div>
+            <div class="wrapper_block_comments_comment">
+                <p class="block_comments_comment">Lorem ipsum dolor sit amet.</p>
+            </div>
+            <div class="wrapper_block_comments_comment">
+                <p class="block_comments_comment">Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam, id.</p>
+            </div>
         </div>
 
     </div>
+
+    <template v-if="getModulePhotoRemove">
+    <UImodal>
+      <div class="wrapper_save_editPost">
+        <div class="wrapper_title_text">
+          <p>Вы уверены что хотите удалить эту фотографию?</p>
+        </div>
+
+        <div class="wrapper_save_editPost_btn">
+          <UIbtn class="save_editPost_btn" 
+          type="submit" 
+          @click="removePhoto">
+            Удалить
+          </UIbtn>
+
+          <UIbtn class="save_editPost_btn" @click="setModulePhotoRemove(false)">
+            Отменить
+          </UIbtn>
+
+        </div>
+      </div>
+    </UImodal>
+  </template>
 
 
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
     name: 'SliderPhoto',
     data() {
@@ -32,22 +85,37 @@ export default {
     methods: {
         ...mapMutations({
             setIndexPhoto: "showFullPhotoStore/setIndexPhoto",
-
             setNextIndexPhoto: "showFullPhotoStore/setNextIndexPhoto",
-            setPrevIndexPhoto: "showFullPhotoStore/setPrevIndexPhoto"
+            setPrevIndexPhoto: "showFullPhotoStore/setPrevIndexPhoto",
+            setModulePhotoRemove: "loadPhotoStore/setModulePhotoRemove",
+            setPhotoId: "loadPhotoStore/setPhotoId"
         }),
+
+        ...mapActions({
+            removePhoto: "loadPhotoStore/removePhoto"
+        })
     },
     computed: {
         ...mapGetters({
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
-            getIndexPhoto: "showFullPhotoStore/getIndexPhoto"
+            getIndexPhoto: "showFullPhotoStore/getIndexPhoto",
+            getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
+            getIdPhoto: "loadPhotoStore/getIdPhoto"
         }),
+
         currentImg: function () {
+
+            if(this.getAllPhotosMyPage.length > 0) {             
             if (this.getIndexPhoto === -1) {
                 this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
             }
-            return this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length];
+            let photo = this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length]
+            this.setPhotoId(photo.id)
+            return photo;
+            }
+            return [];
         }
+           
     }
 }
 </script>
@@ -75,6 +143,7 @@ export default {
     width: 70%;
     position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
     background: black;
     justify-content: center;
@@ -93,7 +162,25 @@ export default {
 
 .wrapper_block_comments {
     width: 30%;
-    background: gainsboro;
+    background: width;
+}
+.wrapper_block_comments_name {
+}
+.block_comments_name {
+}
+.wrapper_block_comments_date {
+}
+.block_comments_date {
+}
+.wrapper_block_comments_item {
+}
+.wrapper_block_comments_item_like {
+}
+.wrapper_block_comments_dislike {
+}
+.wrapper_block_comments_comment {
+}
+.block_comments_comment {
 }
 
 .prev,
@@ -134,4 +221,62 @@ export default {
 .wrapper_full_size_img:hover~.next {
     opacity: 1;
 }
+
+.wrapper_block_info_photo {
+    display: flex;
+    background: black;
+    width: 100%;
+    justify-content: space-between;
+    padding: 6px 30px;
+    position: absolute;
+    bottom: 0;
+    color: white;
+}
+.wrapper_block_info_name_count_photo {
+    display: flex;
+}
+.wrapper_block_info_name {
+font-family: fantasy;
+}
+.wrapper_block_info_count {
+}
+.wrapper_block_info_remove_photo {
+}
+.remove_photo {
+    border: none;
+    background: repeat;
+    color: white;
+    font-family: fantasy;
+    font-size: 15px;
+}
+.remove_photo:hover {
+    filter: brightness(80%);
+    cursor: pointer;
+}
+
+.wrapper_save_editPost {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 15px;
+  margin-bottom: 10px;
+}
+
+.wrapper_title_text {
+    margin-bottom: 15px;
+}
+
+.save_editPost_title {
+  margin: 10px;
+  font-size: 17px;
+}
+
+/* .wrapper_save_editPost_btn {} */
+
+.save_editPost_btn {
+  width: 70px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 </style>

@@ -4,14 +4,13 @@ axios
 export const showFullPhotoStore = {
 
     state: () => ({
-        isModalFullSize: false,
-        indexPhoto: 0,
+        isModalFullSize: false, //открытие модального окна с фото по клику на фото
+        indexPhoto: 0, //ключ массива с фото для слайдера
     }),
 
     getters: {
         getIsModalFullSize: (state) => state.isModalFullSize,
         getIndexPhoto: (state) => state.indexPhoto,
-
     },
 
     mutations: {
@@ -36,7 +35,8 @@ export const showFullPhotoStore = {
         //преход на одну картинку назад
         setPrevIndexPhoto(state) {
             state.indexPhoto -= 1;
-        }
+        },
+
     },
 
     actions: {
@@ -44,9 +44,12 @@ export const showFullPhotoStore = {
         async fullSizePhoto({ commit }, body) {
             const bool = body.bool;
             const index = body.elem;
+            const id = body.id;
 
             commit("setIsModalFullSize", bool);
             commit("setIndexPhoto", index);
+            commit('loadPhotoStore/setPhotoId', id, { root: true });
+
             document.body.style.overflow = "hidden";
         },
 

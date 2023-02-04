@@ -36,12 +36,12 @@ class PhotosDB {
     }
 
 
-    // // удаление поста
-    // remove_post_DB(id, callback) {
-    //     return this.connection.execute(`DELETE from posts WHERE id = ?`, [id], (err) => {
-    //         callback(err);
-    //     });
-    // }
+    // удаление поста
+    remove_photo(photo, callback) {
+        return this.connection.execute(`DELETE from photos WHERE id = ? and userID = ?`, photo, (err) => {
+            callback(err);
+        });
+    }
 
 
 

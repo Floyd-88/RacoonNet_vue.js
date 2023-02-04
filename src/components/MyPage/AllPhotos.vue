@@ -4,11 +4,10 @@
     <div class="wrapper_contents_allPhotos">
         <div class="wrapper_preview_allPhotos">
             <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage.slice(0, limitPhoto)" :key="index">
-
                 <img class="photo" 
                 :src="require(`../../assets/photo/${photo.photo_name}`)" 
                 :alt="photo.photo_name"
-                @click="fullSizePhoto({bool: true, elem: index})">
+                @click="fullSizePhoto({bool: true, elem: index, id: photo.id})">
 
             </div>
 

@@ -392,7 +392,7 @@ router.post('/upload_photo', (req, res) => {
         return res.status(500).send("Файлы не отправлены")
     }
 
-    //перебераме массив фотографий
+    //переберем массив фотографий
     for (let file in req.files) {
         const myFile = req.files[file];
 
@@ -420,48 +420,6 @@ router.post('/upload_photo', (req, res) => {
     }
     res.status(200).send("Фото успешно загрузились на сервер");
 });
-
-//получаем порционно фотографии из БД
-// router.get('/upload_photo', function(req, res) {
-//         photos.load_photos_DB([
-//             req.query.userID,
-//             req.query._count,
-//             req.query._limit
-//         ], (err, allPhotos) => {
-//             if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились');
-//             if (!allPhotos) return res.status(404).send('Фотографии не найдены');
-
-//             //массив с названиями фотографий
-//             let arr = [];
-//             //путь к папке где лежат фотографии
-//             let path = "../src/assets/photo/";
-//             //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
-//             allPhotos.forEach(element => {
-//                 try {
-//                     //синхронный метод проверки файла ??????????????
-//                     if (fs.existsSync(`${path + element.photo_name}`)) {
-//                         arr.push(element)
-//                     }
-//                 } catch (err) {
-//                     console.error(err)
-//                 }
-
-//                 // fs.access(`${path + element.photo_name}`, fs.F_OK, (err) => {
-//                 //     if (!err) {
-//                 //         console.log(element)
-//                 //         arr.push(element)
-//                 //     } else {
-//                 //         // console.log('not files')
-//                 //     }
-//                 // })
-//             });
-//             res.json(arr);
-
-//             // res.status(200).send("Фотографии получены");;
-//         })
-//     }),
-
-
 
 //получаем все фотографии
 router.get('/upload_all_photo', function(req, res) {
@@ -498,6 +456,17 @@ router.get('/upload_all_photo', function(req, res) {
         res.json(arr);
 
         // res.status(200).send("Фотографии получены");;
+    })
+})
+
+router.delete('/remove_photo', function(req, res) {
+    photos.remove_photo([
+        req.query.id,
+        req.query.userID,
+    ], (err) => {
+        if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась');
+
+        res.status(200).send("Фотография удалена");;
     })
 })
 
