@@ -32,7 +32,7 @@
     </UImodal>
     </div>
 
-    <div @click="setIsModalFullSize(false)">
+    <div @click="closeModalFullSize(false)">
       <UImodal v-if="getIsModalFullSize">
         <SliderPhoto/>
       </UImodal>
@@ -59,13 +59,15 @@ export default {
       setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
       setIsModalAllPhotos: "loadPhotoStore/setIsModalAllPhotos",
 
-      setIsModalFullSize: "showFullPhotoStore/setIsModalFullSize"
+      // setIsModalFullSize: "showFullPhotoStore/setIsModalFullSize"
     }),
 
     ...mapActions({
       loadAllPhotos: "loadPhotoStore/loadAllPhotos",
 
-      fullSizePhoto: "showFullPhotoStore/fullSizePhoto"
+      fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
+
+      closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
     }),
 
   },

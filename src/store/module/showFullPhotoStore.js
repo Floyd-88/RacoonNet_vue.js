@@ -11,15 +11,16 @@ export const showFullPhotoStore = {
     getters: {
         getIsModalFullSize: (state) => state.isModalFullSize,
         getIndexPhoto: (state) => state.indexPhoto,
+        getAllPhotosMyPage: (state, _, rootState) => rootState.loadPhotoStore.isModalAllPhotos,
     },
 
     mutations: {
         //открытие-закрытие модального окна
         setIsModalFullSize(state, bool) {
             state.isModalFullSize = bool;
-            if (bool === false) {
-                document.body.style.overflow = "auto";
-            }
+            // if (bool === false) {
+            //     document.body.style.overflow = "auto";
+            // }
         },
 
         //получение картинки по которой кликнули
@@ -53,7 +54,17 @@ export const showFullPhotoStore = {
             document.body.style.overflow = "hidden";
         },
 
+        //закрытие картинки по которой кликнули
+        closeModalFullSize({ commit, getters }, bool) {
+            commit("setIsModalFullSize", bool);
+            if (bool === false && getters.getAllPhotosMyPage === false) {
+                document.body.style.overflow = "auto";
+            }
+        },
+
     },
+
+
 
     namespaced: true
 }

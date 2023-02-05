@@ -411,7 +411,7 @@ router.post('/upload_photo', (req, res) => {
             return res.status(422).send('Размер фотографии слишком большой');
         }
         //загрузка в папку на сервере
-        let updateName = Date.now() + myFile.name;
+        let updateName = Date.now() + myFile.name.toLowerCase();
         myFile.mv(`../src/assets/photo/${updateName}`,
             function(err) {
                 if (err) {

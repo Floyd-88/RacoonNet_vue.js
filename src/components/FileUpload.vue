@@ -88,7 +88,6 @@ export default {
 
             //переберам массив выбранных картинок
             this.getArrayLoadImage.forEach(file => {
-
                 //если картинка не соответствует формату или размеру показываем сообщение
                 if (!allowedTypes.includes(file.type)) {
                     this.setMessageLoadPhoto("Формат выбранного файла не поддерживается, попробуйте выбрать другой файл");
@@ -104,7 +103,7 @@ export default {
                 //получаем исходный код по выбранным картинкам
                 const reader = new FileReader;
                 reader.onload = ev => {
-                    this.setUrlsImages({ url: ev.target.result, name: file.name, size: file.size })
+                    this.setUrlsImages({ url: ev.target.result, name: file.name.toLowerCase(), size: file.size })
                 }
                 reader.readAsDataURL(file)
             })

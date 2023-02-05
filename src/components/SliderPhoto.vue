@@ -8,8 +8,9 @@
 
             </div>
             <!-- </transition-group> -->
+            <!-- <button class="prev" v-on:click.left="setPrevIndexPhoto" >&#10094;</button> -->
             <a class="prev" @click="setPrevIndexPhoto" href='#'>&#10094;</a>
-            <a class="next" @click="setNextIndexPhoto" href='#'>&#10095;</a>
+            <a class="next"  @click="setNextIndexPhoto" href='#'>&#10095;</a>
 
             <div class="wrapper_block_info_photo">
                 <div class="wrapper_block_info_name_count_photo">
@@ -62,6 +63,21 @@ export default {
     data() {
         return {};
     },
+
+    created() {
+        //перелистывание фото стрелками клавиатуры
+        document.onkeydown = (e) => {
+    switch (e.keyCode) {
+        case 37:
+            this.setPrevIndexPhoto()
+            break;
+        case 39:
+            this.setNextIndexPhoto()
+            break;
+    }
+};
+    },
+
     methods: {
         ...mapMutations({
             setIndexPhoto: "showFullPhotoStore/setIndexPhoto",

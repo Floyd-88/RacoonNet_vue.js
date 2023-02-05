@@ -108,6 +108,7 @@ export const loadPhotoStore = {
             const formData = new FormData();
 
             for (let i = 0; i < getters.getArrayLoadImage.length; i++) {
+
                 let file = getters.getArrayLoadImage[i];
                 formData.append('files[' + i + ']', file);
             }
