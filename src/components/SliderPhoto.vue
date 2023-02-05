@@ -74,6 +74,9 @@ export default {
         case 39:
             this.setNextIndexPhoto()
             break;
+        case 27:
+            this.closeModalFullSize(false)
+            break;
     }
 };
     },
@@ -87,7 +90,8 @@ export default {
             setPhotoId: "loadPhotoStore/setPhotoId"
         }),
         ...mapActions({
-            removePhoto: "loadPhotoStore/removePhoto"
+            removePhoto: "loadPhotoStore/removePhoto",
+            closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
         })
     },
     computed: {

@@ -6,7 +6,9 @@ const fs = require('fs')
     // const multer = require('multer')
     // const path = require('path')
 const fileUpload = require('express-fileupload');
-const { validationResult } = require('express-validator');
+const {
+    validationResult
+} = require('express-validator');
 
 //подключаем серкретный ключ для токена
 const tokenKey = require('./tokenKey');
@@ -114,7 +116,19 @@ router.post('/register', registerValidate, function(req, res) {
             res.status(200).send({
                 auth: true,
                 token: token,
-                user: user
+                user: {
+                    userID: user.userID,
+                    name: user.name,
+                    email: user.email,
+                    surname: user.surname,
+                    year_user: user.year_user,
+                    month_user: user.month_user,
+                    day_user: user.day_user,
+                    selectedGender: user.selectedGender,
+                    country: user.country,
+                    city: user.city,
+                    is_admin: user.is_admin
+                }
             });
         });
     });
@@ -162,7 +176,19 @@ router.post('/register-admin', registerValidate, function(req, res) {
             res.status(200).send({
                 auth: true,
                 token: token,
-                user: user
+                user: {
+                    userID: user.userID,
+                    name: user.name,
+                    email: user.email,
+                    surname: user.surname,
+                    year_user: user.year_user,
+                    month_user: user.month_user,
+                    day_user: user.day_user,
+                    selectedGender: user.selectedGender,
+                    country: user.country,
+                    city: user.city,
+                    is_admin: user.is_admin
+                }
             });
         });
     });
@@ -200,7 +226,19 @@ router.post('/login', loginValidate, function(req, res) {
         res.status(200).send({
             auth: true,
             token: token,
-            user: user
+            user: {
+                userID: user.userID,
+                name: user.name,
+                email: user.email,
+                surname: user.surname,
+                year_user: user.year_user,
+                month_user: user.month_user,
+                day_user: user.day_user,
+                selectedGender: user.selectedGender,
+                country: user.country,
+                city: user.city,
+                is_admin: user.is_admin
+            }
         });
     });
 })
@@ -244,7 +282,19 @@ router.put('/editProfile', updateUserValidate, function(req, res) {
                 if (err) return res.status(500).send("Ошибка на сервере.");
                 res.status(200).send({
                     auth: true,
-                    user: user
+                    user: {
+                        userID: user.userID,
+                        name: user.name,
+                        email: user.email,
+                        surname: user.surname,
+                        year_user: user.year_user,
+                        month_user: user.month_user,
+                        day_user: user.day_user,
+                        selectedGender: user.selectedGender,
+                        country: user.country,
+                        city: user.city,
+                        is_admin: user.is_admin
+                    }
                 });
             })
         });

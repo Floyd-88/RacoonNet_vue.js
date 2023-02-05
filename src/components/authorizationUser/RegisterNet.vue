@@ -353,7 +353,8 @@ export default {
         this.register(user)
             .then(() => {
               this.setModulRegister(false)
-              this.$router.push('mypage');
+              window.location.href = '/';
+              // this.$router.push('mypage');
             })
             .catch((err) => {
               if(err === "Пользователь с такой почтой уже зарегистрирован") {
@@ -583,7 +584,7 @@ export default {
   display: flex;
   justify-content: center;
   height: 45px;
-  margin: 20px 5px 5px 5px;
+  margin: 20px 5px 15px 5px;
 }
 
 .form_register_btn {

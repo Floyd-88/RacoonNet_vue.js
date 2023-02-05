@@ -93,7 +93,8 @@ export default {
             if (resp.data.user.is_admin === 1) {
               this.$router.push('admin')
             } else {
-              this.$router.push('mypage')
+              window.location.href = '/';
+              // this.$router.push('mypage')
             }
           })
           .catch((err) => {

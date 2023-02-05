@@ -112,8 +112,8 @@ export const registrationStore = {
 
                             axios.defaults.headers.common['Authorization'] = token; //???????????????????????
 
-                            commit('authorizationStore/auth_success', { user, token }, { root: true });
-                            commit('editProfileStore/setEditingUser', user, { root: true });
+                            // commit('authorizationStore/auth_success', { user, token }, { root: true });
+                            // commit('editProfileStore/setEditingUser', user, { root: true });
                             resolve(resp);
                         }
                     })
