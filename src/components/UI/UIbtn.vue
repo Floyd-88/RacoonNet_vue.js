@@ -22,7 +22,7 @@ export default {
   box-shadow: 0px 1px 0px 0px rgb(0 0 0 / 40%);
 }
 .btn:hover {
-  filter: brightness(80%);
+  filter: brightness(90%);
   transition: 0.3s;
   z-index: 1;
 }

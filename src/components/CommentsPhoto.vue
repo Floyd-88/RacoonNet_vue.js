@@ -33,7 +33,7 @@ export default {
 <style scoped>
 .wrapper_block_comments {
     width: 30%;
-    background: width;
+    background: whitesmoke;
 }
 .wrapper_block_comments_name {
 }

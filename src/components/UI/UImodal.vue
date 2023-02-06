@@ -37,12 +37,11 @@ export default {
 }
 .modal_window {
   position: relative;
-  background: white;
   width: max-content;
   height: max-content;
   /* padding-bottom: 10px; */
   border-radius: 5px;
-  background: white;
+  background: whitesmoke;
   box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 70%);
   overflow: auto;
 }

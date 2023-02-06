@@ -9,7 +9,7 @@ class AuthorizationUserDB {
 
     // создаем таблицу с зарегистрированными пользователями
     createTableUsers() {
-        const sql = `CREATE TABLE IF NOT EXISTS users (userID integer PRIMARY KEY AUTO_INCREMENT, name varchar(50) NOT NULL, surname varchar(50) NOT NULL, email varchar(50) UNIQUE NOT NULL, user_pass text NOT NULL, year_user integer NOT NULL, month_user integer NOT NULL, day_user integer NOT NULL, selectedGender varchar(20) NOT NULL, country varchar(50), city varchar(50),  is_admin integer)`;
+        const sql = `CREATE TABLE IF NOT EXISTS users (userID integer PRIMARY KEY AUTO_INCREMENT, ava varchar(100) DEFAULT 'ava_1.jpg', name varchar(50) NOT NULL, surname varchar(50) NOT NULL, email varchar(50) UNIQUE NOT NULL, user_pass text NOT NULL, year_user integer NOT NULL, month_user integer NOT NULL, day_user integer NOT NULL, selectedGender varchar(20) NOT NULL, country varchar(50), city varchar(50),  is_admin integer)`;
         this.connection.execute(sql);
     }
 
@@ -51,17 +51,27 @@ class AuthorizationUserDB {
         });
     }
 
+    //обновление пароля
     updateUserPassword(body, callback) {
         return this.connection.execute(`UPDATE users SET user_pass=? WHERE userID =?`, body, (err) => {
             callback(err);
         });
     }
 
+    //удаление пользователя
     deleteUserDB(id, callback) {
         return this.connection.execute('DELETE FROM `users` WHERE userID = ?', id, (err) => {
             callback(err);
         })
     }
+
+    // меняем аватарку пользователя
+    updateAva(ava, callback) {
+        return this.connection.execute(`UPDATE users SET ava=? WHERE userID =?`, ava, (err) => {
+            callback(err);
+        });
+    }
+
 
 }
 

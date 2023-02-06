@@ -4,7 +4,8 @@
     <form class="form_load_photo">
 
         <div class="wrapper_load_photo">
-            <input class="load_photo" type="file" ref="files" @change="choosePhotoInput" multiple>
+            <input class="load_photo" v-if="getFlagPhotos === 'photos'"  type="file" ref="files" @change="choosePhotoInput" multiple>
+            <input class="load_photo" v-if="getFlagPhotos === 'ava'" type="file" ref="files" @change="choosePhotoInput">
         </div>
         <div class="wrapper_message_error">
             <p class="message_error">
@@ -24,11 +25,11 @@
         </div>
 
         <div class="wrapper_add_photo">
-            <UIbtn v-if="!getArrayLoadImage.length" @click.prevent="choosePhoto()">
+            <UIbtn v-if="!getUrlsImages.length" @click.prevent="choosePhoto()">
                 Выбрать фотографии
             </UIbtn>
 
-            <UIbtn v-if="getArrayLoadImage.length > 0" @click.prevent="addPhotoServer" :disabled="getArrayLoadImage.length < 1">
+            <UIbtn v-if="getUrlsImages.length > 0" @click.prevent="addPhotoServer" :disabled="getArrayLoadImage.length < 1">
                 Добавить фотографии
             </UIbtn>
         </div>
@@ -84,7 +85,7 @@ export default {
             }
 
             //трансформируем выбранные картинки в массив
-            this.setArrayLoadImage(Array.from(this.$refs.files.files))          
+            this.setArrayLoadImage(Array.from(this.$refs.files.files));          
 
             //переберам массив выбранных картинок
             this.getArrayLoadImage.forEach(file => {
@@ -122,10 +123,10 @@ export default {
 
     computed: {
         ...mapGetters({
-            getUser: "authorizationStore/getUser",
             getMessageLoadPhoto: "loadPhotoStore/getMessageLoadPhoto",
             getArrayLoadImage: "loadPhotoStore/getArrayLoadImage",
             getUrlsImages: "loadPhotoStore/getUrlsImages",
+            getFlagPhotos: "loadPhotoStore/getFlagPhotos",
     })
     }
 }

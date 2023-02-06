@@ -17,10 +17,14 @@ export const loadPhotoStore = {
 
         limitAllPhoto: 8, //количествофотографий отображаемых каждый раз при прокрутке вниз
 
+        // avaPhoto: [],
+
+        //что загружаем аватарку или простые фотографии
+        isFlagPhotos: "",
     }),
 
     getters: {
-        getUserID: (state, _, rootState) => rootState.authorizationStore.user.userID,
+        getUser: (state, _, rootState) => rootState.authorizationStore.user,
         getMyPhotosMyPage: (state) => state.myPhotosMyPage,
         getAllPhotosMyPage: (state) => state.allPhotos,
         getIsModalAllPhotos: (state) => state.isModalAllPhotos,
@@ -31,6 +35,10 @@ export const loadPhotoStore = {
         getIdPhoto: (state) => state.idPhoto,
         getModulePhotoRemove: (state) => state.isModulePhotoRemove,
         getLimitAllPhoto: (state) => state.limitAllPhoto,
+        // getAvaPhoto: (state) => state.avaPhoto,
+        // getModalAvaPhoto: (state) => state.isModalAvaPhoto,
+        getFlagPhotos: (state) => state.isFlagPhotos
+
     },
 
     mutations: {
@@ -48,6 +56,7 @@ export const loadPhotoStore = {
 
             if (bool === false) {
                 state.messageLoadPhoto = "";
+                state.urlsImages = [];
                 document.body.style.overflow = "auto"
             }
         },
@@ -99,41 +108,78 @@ export const loadPhotoStore = {
 
         setLimitAllPhoto(state, count) {
             state.limitAllPhoto += count
+        },
+
+        // setAvaPhoto(state, value) {
+        //     state.avaPhoto = value
+        // },
+        // setModalAvaPhoto(state, bool) {
+        //     state.isModalAvaPhoto = bool
+        // },
+
+        setFlagPhotos(state, value) {
+            state.isFlagPhotos = value;
         }
     },
 
     actions: {
+        //определение через какую кнопку открыли загрузчик
+        modalLoadPhoto({
+            commit
+        }, value) {
+            commit("setIsModalLoadPhoto", true);
+            commit("setFlagPhotos", value)
+        },
+
         //загрузка картинок на сервер
-        addPhotoServer: function({ getters, commit }) {
+        addPhotoServer: function({
+            getters,
+            commit
+        }) {
             const formData = new FormData();
 
             for (let i = 0; i < getters.getArrayLoadImage.length; i++) {
-
                 let file = getters.getArrayLoadImage[i];
                 formData.append('files[' + i + ']', file);
             }
-            formData.append('id', getters.getUserID);
+            formData.append('id', getters.getUser.userID);
+            formData.append('flag', getters.getFlagPhotos);
+            formData.append('email', getters.getUser.email);
+
 
             axios.post(
                     'http://localhost:8000/upload_photo',
-                    formData, { headers: { 'Content-Type': 'multipart/form-data' } }
+                    formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }
                 ).then((res) => {
-                    console.log(res.data);
                     commit("setArrayLoadImage", []);
                     commit("setUrlsImages", []);
                     commit("setIsModalLoadPhoto", false);
+
+                    if (getters.getFlagPhotos === "ava") {
+                        // console.log(res.data.user)
+                        localStorage.setItem('user', JSON.stringify(res.data.user))
+                    }
+                    console.log(res.data)
                     window.location.href = '/';
                 })
                 .catch((err) => {
                     console.log(err.response.data);
                     commit("setArrayLoadImage", []);
                     commit("setUrlsImages", []);
+
+                    // commit("setAvaPhoto", []);
                     commit("setMessageLoadPhoto", err.response.data);
                 })
         },
 
         //удаление картинки на предпросмотре перед загрузкой
-        removePreviewImage({ commit }, name) {
+        removePreviewImage({
+            commit
+        }, name) {
             commit("removeArrayLoadImage", name);
             commit("removeUrlsImages", name);
         },
@@ -146,7 +192,7 @@ export const loadPhotoStore = {
             try {
                 await axios.get('http://localhost:8000/upload_all_photo', {
                     params: {
-                        userID: getters.getUserID
+                        userID: getters.getUser.userID
                     }
                 }).then((response) => {
                     commit("setMyPhotosMyPage", response.data);
@@ -158,11 +204,17 @@ export const loadPhotoStore = {
         },
 
         //удаление картинки
-        async removePhoto({ commit, state, getters }, name) {
+        async removePhoto({
+            commit,
+            state,
+            getters
+        }, name) {
             commit("setModulePhotoRemove", false)
 
             if (state.allPhotos.length <= 1) {
-                await commit("showFullPhotoStore/setIsModalFullSize", false, { root: true });
+                await commit("showFullPhotoStore/setIsModalFullSize", false, {
+                    root: true
+                });
                 await commit("setIsModalAllPhotos", false);
             }
 
@@ -170,7 +222,7 @@ export const loadPhotoStore = {
                 await axios.delete('http://localhost:8000/remove_photo', {
                     params: {
                         id: getters.getIdPhoto,
-                        userID: getters.getUserID,
+                        userID: getters.getUser.userID,
                         namePhoto: name,
                     }
                 }).then((response) => {

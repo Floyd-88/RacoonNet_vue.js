@@ -17,7 +17,7 @@
     </UIbtn>
 
     <UIbtn class="show_more_photo_btn" 
-           @click="setIsModalLoadPhoto(true)"> 
+           @click="modalLoadPhoto('photos')"> 
            Загрузить фото
     </UIbtn>
 
@@ -63,6 +63,8 @@ export default {
     }),
 
     ...mapActions({
+      modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
+
       loadAllPhotos: "loadPhotoStore/loadAllPhotos",
 
       fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
@@ -140,9 +142,11 @@ export default {
 }
 
 .myPhoto {
-  width: 100%;
-    min-height: -webkit-fill-available;
-    cursor: pointer;
+  width: inherit;
+  height: inherit;
+  object-fit: cover;
+  cursor: pointer;
+
 }
 
 .full_size_photo_modal {

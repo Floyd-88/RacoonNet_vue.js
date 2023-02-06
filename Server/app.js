@@ -118,6 +118,7 @@ router.post('/register', registerValidate, function(req, res) {
                 token: token,
                 user: {
                     userID: user.userID,
+                    ava: user.ava,
                     name: user.name,
                     email: user.email,
                     surname: user.surname,
@@ -178,6 +179,7 @@ router.post('/register-admin', registerValidate, function(req, res) {
                 token: token,
                 user: {
                     userID: user.userID,
+                    ava: user.ava,
                     name: user.name,
                     email: user.email,
                     surname: user.surname,
@@ -228,6 +230,7 @@ router.post('/login', loginValidate, function(req, res) {
             token: token,
             user: {
                 userID: user.userID,
+                ava: user.ava,
                 name: user.name,
                 email: user.email,
                 surname: user.surname,
@@ -284,6 +287,7 @@ router.put('/editProfile', updateUserValidate, function(req, res) {
                     auth: true,
                     user: {
                         userID: user.userID,
+                        ava: user.ava,
                         name: user.name,
                         email: user.email,
                         surname: user.surname,
@@ -399,7 +403,6 @@ router.post('/dataBase.js', postValidate, function(req, res) {
         });
     }
     posts.add_post_DB([
-        req.body.ava,
         req.body.name,
         req.body.surname,
         req.body.date,
@@ -439,6 +442,7 @@ router.delete('/dataBase.js', function(req, res) {
     });
 });
 
+
 //загружаем фото в БД
 router.post('/upload_photo', (req, res) => {
     //допустимые форматы
@@ -448,10 +452,12 @@ router.post('/upload_photo', (req, res) => {
     if (!req.files) {
         return res.status(500).send("Файлы не отправлены")
     }
+    //обновление аватарки
+    if (req.body.flag === "ava") {
 
-    //переберем массив фотографий
-    for (let file in req.files) {
-        const myFile = req.files[file];
+        const myFile = req.files['files[0]'];
+
+        // console.log(req.files['files[0]'].size)
 
         //проверка загруженных файлов
         if (!allowedTypes.includes(myFile.mimetype)) {
@@ -470,13 +476,62 @@ router.post('/upload_photo', (req, res) => {
                 }
             }
         );
-        //загрузка в БД
-        photos.add_photo_DB([updateName, req.body.id], (err) => {
-            if (err) return res.status(500).send('Error on the server.');
-        })
+        authorization.updateAva([updateName, req.body.id], (err) => {
+            if (err) return res.status(500).send('Аватар пользователь не сменился');
+
+            authorization.selectByEmail(req.body.email, (err, user) => {
+                if (err) return res.status(500).send("Ошибка на сервере.");
+                res.status(200).send({
+                    // auth: true,
+                    user: {
+                        userID: user.userID,
+                        ava: user.ava,
+                        name: user.name,
+                        email: user.email,
+                        surname: user.surname,
+                        year_user: user.year_user,
+                        month_user: user.month_user,
+                        day_user: user.day_user,
+                        selectedGender: user.selectedGender,
+                        country: user.country,
+                        city: user.city,
+                        is_admin: user.is_admin
+                    }
+                });
+            })
+        });
+    } else if (req.body.flag === "photos") {
+
+        //переберем массив фотографий
+        for (let file in req.files) {
+            const myFile = req.files[file];
+
+            //проверка загруженных файлов
+            if (!allowedTypes.includes(myFile.mimetype)) {
+                return res.status(422).send('Формат выбранного файла не поддерживается');
+            }
+            if (myFile.size > 10000000) {
+                return res.status(422).send('Размер фотографии слишком большой');
+            }
+            //загрузка в папку на сервере
+            let updateName = Date.now() + myFile.name.toLowerCase();
+            myFile.mv(`../src/assets/photo/${updateName}`,
+                function(err) {
+                    if (err) {
+                        console.log(err)
+                        return res.status(500).send("Ошибка при загрузке файлов");
+                    }
+                }
+            );
+            //загрузка в БД
+            photos.add_photo_DB([updateName, req.body.id], (err) => {
+                if (err) return res.status(500).send('Error on the server.');
+            })
+        }
+        res.status(200).send("Фото успешно загрузились на сервер");
     }
-    res.status(200).send("Фото успешно загрузились на сервер");
 });
+
 
 //получаем все фотографии
 router.get('/upload_all_photo', function(req, res) {

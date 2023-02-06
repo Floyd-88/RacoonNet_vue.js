@@ -99,8 +99,9 @@ export default {
 }
 
 .photo {
-    width: 100%;
-    min-height: -webkit-fill-available;
+    width: inherit;
+    height: inherit;
+    object-fit: cover;
     cursor: pointer;
 }
 
