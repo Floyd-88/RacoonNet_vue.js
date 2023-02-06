@@ -29,7 +29,8 @@ const registerValidate = require('./validate/registerValidate')
 const postValidate = require('./validate/postValidate')
 const updateUserValidate = require('./validate/updateUserValidate')
 const passwordValidate = require('./validate/passwordValidate')
-const passwordDelValidate = require('./validate/passwordDelValidate')
+const passwordDelValidate = require('./validate/passwordDelValidate');
+const { name } = require('file-loader');
 
 
 
@@ -452,12 +453,10 @@ router.post('/upload_photo', (req, res) => {
     if (!req.files) {
         return res.status(500).send("Файлы не отправлены")
     }
-    //обновление аватарки
-    if (req.body.flag === "ava") {
+
+    if (req.body.flag === "ava") { //загрузка аватарки
 
         const myFile = req.files['files[0]'];
-
-        // console.log(req.files['files[0]'].size)
 
         //проверка загруженных файлов
         if (!allowedTypes.includes(myFile.mimetype)) {
@@ -482,7 +481,6 @@ router.post('/upload_photo', (req, res) => {
             authorization.selectByEmail(req.body.email, (err, user) => {
                 if (err) return res.status(500).send("Ошибка на сервере.");
                 res.status(200).send({
-                    // auth: true,
                     user: {
                         userID: user.userID,
                         ava: user.ava,
@@ -500,7 +498,9 @@ router.post('/upload_photo', (req, res) => {
                 });
             })
         });
-    } else if (req.body.flag === "photos") {
+    } else if (req.body.flag === "photos") { //простая загрузка фото
+
+        let arrayPhotos = [];
 
         //переберем массив фотографий
         for (let file in req.files) {
@@ -508,26 +508,28 @@ router.post('/upload_photo', (req, res) => {
 
             //проверка загруженных файлов
             if (!allowedTypes.includes(myFile.mimetype)) {
-                return res.status(422).send('Формат выбранного файла не поддерживается');
+                res.status(422).send('Формат выбранного файла не поддерживается');
             }
-            if (myFile.size > 10000000) {
-                return res.status(422).send('Размер фотографии слишком большой');
+            if (myFile.size > 5000000) {
+                // return error_load = 'Размер фотографии слишком большой'
+                return res.status(422).send('Размер фотографии слишком большой, попробуйте сжать фотографию в фоторедакторе');
             }
             //загрузка в папку на сервере
             let updateName = Date.now() + myFile.name.toLowerCase();
             myFile.mv(`../src/assets/photo/${updateName}`,
                 function(err) {
                     if (err) {
-                        console.log(err)
                         return res.status(500).send("Ошибка при загрузке файлов");
                     }
                 }
             );
-            //загрузка в БД
-            photos.add_photo_DB([updateName, req.body.id], (err) => {
-                if (err) return res.status(500).send('Error on the server.');
-            })
+            //добавляем в массив название фото и id юзера
+            arrayPhotos.push([updateName, req.body.id]);
         }
+        //загрузка в БД
+        photos.add_photo_DB(arrayPhotos, (err) => {
+            if (err) return res.status(500).send('Error on the server.');
+        })
         res.status(200).send("Фото успешно загрузились на сервер");
     }
 });

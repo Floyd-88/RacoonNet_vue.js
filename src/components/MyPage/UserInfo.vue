@@ -5,7 +5,7 @@
 
       <div class="wrapper_ava_user" @mouseenter="active_btn = true" @mouseleave="active_btn = false">
         <div>
-          <img class="ava_user" :src=" require('../../assets/photo/' + getUser.ava)" alt="ava">
+          <img class="ava_user" :src="pathAva" alt="ava">
         </div>
         <div class="wrapper_btn_main_photo">
 
@@ -55,6 +55,7 @@ export default {
     data() {
         return {
           active_btn: false,
+          
         };
     },
     methods: {
@@ -63,12 +64,18 @@ export default {
           setModulEditProfile: "editProfileStore/setModulEditProfile",
           setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto"
         }),
+        ...mapActions({modalLoadPhoto: "loadPhotoStore/modalLoadPhoto"}),
+
 
         show_btn_photo() {
           this.active_btn = !this.active_btn
         },
 
-        ...mapActions({modalLoadPhoto: "loadPhotoStore/modalLoadPhoto"})
+        // setUserAva(event) {
+        //   console.log(event.target.src)
+        //   event.target.src = "../../assets/photo/ava_1.jpg";
+        // },
+
     },
     computed: {
         ...mapGetters({
@@ -76,6 +83,15 @@ export default {
             age: "authorizationStore/age",
             getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto"
         }),
+
+        pathAva() {
+          try{
+            return require(`../../assets/photo/${this.getUser.ava}`);
+          } catch {
+            return require(`../../assets/ava/ava_1.jpg`);
+          }
+
+        }
     },
     components: { UIbtn}
 }

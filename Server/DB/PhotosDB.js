@@ -14,9 +14,9 @@ class PhotosDB {
     }
 
     // добавление фото в базу данных
-    add_photo_DB(photo, callback) {
-        return this.connection.execute(
-            'INSERT INTO photos (photo_name, userID) VALUES (?, ?)', photo, (err) => {
+    add_photo_DB(arrayPhotos, callback) {
+        return this.connection.query(
+            'INSERT INTO photos (photo_name, userID) VALUES ?', [arrayPhotos], (err) => {
                 callback(err);
             })
     }

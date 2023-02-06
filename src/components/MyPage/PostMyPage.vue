@@ -4,7 +4,7 @@
     <div class="wrapper_post">
 
       <div class="wrapper_ava_posts">
-        <img class="ava_posts" :src=" require('../../assets/photo/' + getUser.ava) " alt="ava">
+        <img class="ava_posts" :src="pathAva" alt="ava">
       </div>
 
       <div class="wrapper_post_user">
@@ -124,7 +124,16 @@ export default {
       set(value) {
         this.setBeforePostText(value);
       }
-    }
+    },
+
+    pathAva() {
+          try{
+            return require(`../../assets/photo/${this.getUser.ava}`)
+          } catch {
+            return require(`../../assets/ava/ava_1.jpg`);
+          }
+
+        }
 
   }
 }

@@ -58,7 +58,8 @@ export default {
             setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
             setArrayLoadImage: "loadPhotoStore/setArrayLoadImage",
             setMessageLoadPhoto: "loadPhotoStore/setMessageLoadPhoto",
-            setUrlsImages: "loadPhotoStore/setUrlsImages"
+            setUrlsImages: "loadPhotoStore/setUrlsImages",
+            removeArrayLoadImage: "loadPhotoStore/removeArrayLoadImage"
         }),
         
         ...mapActions({
@@ -91,13 +92,13 @@ export default {
             this.getArrayLoadImage.forEach(file => {
                 //если картинка не соответствует формату или размеру показываем сообщение
                 if (!allowedTypes.includes(file.type)) {
-                    this.setMessageLoadPhoto("Формат выбранного файла не поддерживается, попробуйте выбрать другой файл");
-                    this.setArrayLoadImage([]);
-                    return
+                    this.setMessageLoadPhoto("Формат одного из выбранных файлов не поддерживается, он не будет загружен");
+                    this.removeArrayLoadImage(file.name);
+                    return   
                 }
-                if (file.size > 10000000) {
-                    this.setMessageLoadPhoto("Размер загружаемого файла слишком большой, попробуйте выбрать другой файл");
-                    this.setArrayLoadImage([]);
+                if (file.size > 5000000) {
+                    this.setMessageLoadPhoto("Размер одной из фоторгафий превышает допустимый, она не будет загружена");
+                    this.removeArrayLoadImage(file.name);
                     return
                 }
 

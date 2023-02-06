@@ -75,6 +75,10 @@ export const loadPhotoStore = {
             state.arrayLoadImage = value;
         },
 
+        // filterArrayLoadImage(state, file) {
+        //     state.arrayLoadImage = state.arrayLoadImage.filter(elem => elem.name != name);
+        // },
+
         removeArrayLoadImage(state, name) {
             state.arrayLoadImage = state.arrayLoadImage.filter(elem => elem.name != name);
         },
@@ -155,21 +159,20 @@ export const loadPhotoStore = {
                         }
                     }
                 ).then((res) => {
-                    commit("setArrayLoadImage", []);
-                    commit("setUrlsImages", []);
+                    // commit("setArrayLoadImage", []);
+                    // commit("setUrlsImages", []);
                     commit("setIsModalLoadPhoto", false);
 
                     if (getters.getFlagPhotos === "ava") {
-                        // console.log(res.data.user)
                         localStorage.setItem('user', JSON.stringify(res.data.user))
                     }
-                    console.log(res.data)
+                    // console.log(res.data)
                     window.location.href = '/';
                 })
                 .catch((err) => {
                     console.log(err.response.data);
-                    commit("setArrayLoadImage", []);
-                    commit("setUrlsImages", []);
+                    // commit("setArrayLoadImage", []);
+                    // commit("setUrlsImages", []);
 
                     // commit("setAvaPhoto", []);
                     commit("setMessageLoadPhoto", err.response.data);
