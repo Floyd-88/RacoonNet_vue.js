@@ -6,12 +6,14 @@ export const showFullPhotoStore = {
     state: () => ({
         isModalFullSize: false, //открытие модального окна с фото по клику на фото
         indexPhoto: 0, //ключ массива с фото для слайдера
+        isShowFullAvaPhoto: false //открытие модального окна для редактирования автарки
     }),
 
     getters: {
         getIsModalFullSize: (state) => state.isModalFullSize,
         getIndexPhoto: (state) => state.indexPhoto,
         getAllPhotosMyPage: (state, _, rootState) => rootState.loadPhotoStore.isModalAllPhotos,
+        getShowFullAvaPhoto: (state) => state.isShowFullAvaPhoto
     },
 
     mutations: {
@@ -37,6 +39,10 @@ export const showFullPhotoStore = {
         setPrevIndexPhoto(state) {
             state.indexPhoto -= 1;
         },
+
+        setShowFullAvaPhoto(state, bool) {
+            state.isShowFullAvaPhoto = bool
+        }
 
     },
 

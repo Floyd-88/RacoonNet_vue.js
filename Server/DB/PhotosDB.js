@@ -35,15 +35,12 @@ class PhotosDB {
         });
     }
 
-
-    // удаление поста
+    // удаление фотографии
     remove_photo(photo, callback) {
         return this.connection.execute(`DELETE from photos WHERE id = ? and userID = ?`, photo, (err) => {
             callback(err);
         });
     }
-
-
 
 }
 module.exports = PhotosDB;

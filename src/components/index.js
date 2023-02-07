@@ -17,7 +17,7 @@ import FileUpload from "@/components/FileUpload";
 import AllPhotos from "@/components/AllPhotos";
 import SliderPhoto from "@/components/SliderPhoto";
 import CommentsPhoto from "@/components/CommentsPhoto";
-// import AvaUpload from "@/components/AvaUpload";
+import MainPhoto from "@/components/MainPhoto";
 
 
 
@@ -41,5 +41,5 @@ export default [
     AllPhotos,
     SliderPhoto,
     CommentsPhoto,
-    // AvaUpload
+    MainPhoto
 ]

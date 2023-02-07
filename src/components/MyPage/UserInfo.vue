@@ -3,23 +3,34 @@
 
     <div class="wrapper_info">
 
-      <div class="wrapper_ava_user" @mouseenter="active_btn = true" @mouseleave="active_btn = false">
-        <div>
-          <img class="ava_user" :src="pathAva" alt="ava">
+      <div class="wrapper_ava_user" @mouseenter="show_btn_photo " @mouseleave="active_btn = false">
+        <div class="block_ava_user">
+          <img class="ava_user" 
+          :src="pathAva" alt="ava" ref="ava">
         </div>
         <div class="wrapper_btn_main_photo">
 
-          <transition name="mainPhoto">
-            <button class="btn_main_photo" v-show="active_btn" @click="modalLoadPhoto('ava')">Загрузить главное фото</button>
+          <transition v-if="text_btn==='Загрузить главное фото'" name="mainPhoto">
+            <button class="btn_main_photo" v-show="active_btn" @click="modalLoadPhoto('ava')">{{text_btn}}</button>
+          </transition>
+
+          <transition v-else name="mainPhoto">
+            <button class="btn_main_photo" v-show="active_btn" @click="setShowFullAvaPhoto(true)">{{text_btn}}</button>
           </transition>
 
         </div>
       </div>
-
+      
       <!-- загрузчик аватарки -->
     <UImodal class="modal_fone" v-if="getIsModalLoadPhoto">
       <FileUpload/>
     </UImodal>
+
+    <div @click="setShowFullAvaPhoto(false)">
+      <UImodal v-if="getShowFullAvaPhoto">
+        <MainPhoto/>
+      </UImodal>
+    </div>
   
       
       
@@ -49,39 +60,59 @@
 <script>
 import {mapGetters, mapMutations, mapActions} from "vuex"
 import UIbtn from "../UI/UIbtn.vue";
-// import AvaUpload from "../AvaUpload.vue";
+
 export default {
     name: "UserInfo",
+    components: { UIbtn},
+
     data() {
         return {
           active_btn: false,
-          
+          text_btn: "", 
+          // showFullMainPhoto: false         
         };
     },
+
+    // created() {
+    //     document.onkeydown = (e) => {
+    //       if(e.keyCode === 27) {
+    //         console.log(6657)
+    //       }
+    //   }
+    // },
+
     methods: {
         ...mapMutations({ 
           showModalTrue: "modalStore/showModalTrue", 
           setModulEditProfile: "editProfileStore/setModulEditProfile",
-          setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto"
+          setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
+          setShowFullAvaPhoto: "showFullPhotoStore/setShowFullAvaPhoto"
         }),
-        ...mapActions({modalLoadPhoto: "loadPhotoStore/modalLoadPhoto"}),
-
+        ...mapActions({
+          modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
+          fullSizePhoto: "showFullPhotoStore/fullSizePhoto"
+        }),
 
         show_btn_photo() {
-          this.active_btn = !this.active_btn
+          this.active_btn = true;
+          if(this.pathAva.includes("/img/ava_1")) {
+            this.text_btn = "Загрузить главное фото";
+          } else {
+            this.text_btn = "Редактировать фото";
+          }
         },
 
-        // setUserAva(event) {
-        //   console.log(event.target.src)
-        //   event.target.src = "../../assets/photo/ava_1.jpg";
-        // },
+        // editMainPhoto(bool) {
+        //   this.showFullMainPhoto = bool
+        // }
 
     },
     computed: {
         ...mapGetters({
             getUser: "authorizationStore/getUser",
             age: "authorizationStore/age",
-            getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto"
+            getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
+            getShowFullAvaPhoto: "showFullPhotoStore/getShowFullAvaPhoto"
         }),
 
         pathAva() {
@@ -91,9 +122,17 @@ export default {
             return require(`../../assets/ava/ava_1.jpg`);
           }
 
-        }
+        }, 
+
+        // text_btn() {
+        //   if(this.$refs.src == "http://localhost:8080/img/ava_1.jpg") {
+        //     return 1111
+        //   } else {
+        //     return this.$refs.src
+        //   }
+        // }
     },
-    components: { UIbtn}
+
 }
 </script>
 
@@ -128,10 +167,6 @@ export default {
 }
 /* .wrapper_ava_user {
 } */
-.ava_user {
-  width: 200px;
-  border-radius: 100%;
-}
 .wrapper_info {
   display: flex;
 }
@@ -143,6 +178,17 @@ export default {
 
 .wrapper_ava_user {
   position: relative;
+}
+
+.block_ava_user {
+  width: 200px;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 100%;
+}
+.ava_user {
+  width: 100%;
+  height: auto;
 }
 
 .wrapper_btn_main_photo{

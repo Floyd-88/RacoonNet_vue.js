@@ -454,6 +454,8 @@ router.post('/upload_photo', (req, res) => {
         return res.status(500).send("Файлы не отправлены")
     }
 
+    let arrayPhotos = [];
+
     if (req.body.flag === "ava") { //загрузка аватарки
 
         const myFile = req.files['files[0]'];
@@ -475,32 +477,42 @@ router.post('/upload_photo', (req, res) => {
                 }
             }
         );
+        arrayPhotos.push([updateName, req.body.id]);
+
+        //добавление картинки в таблицу Users
         authorization.updateAva([updateName, req.body.id], (err) => {
             if (err) return res.status(500).send('Аватар пользователь не сменился');
 
-            authorization.selectByEmail(req.body.email, (err, user) => {
-                if (err) return res.status(500).send("Ошибка на сервере.");
-                res.status(200).send({
-                    user: {
-                        userID: user.userID,
-                        ava: user.ava,
-                        name: user.name,
-                        email: user.email,
-                        surname: user.surname,
-                        year_user: user.year_user,
-                        month_user: user.month_user,
-                        day_user: user.day_user,
-                        selectedGender: user.selectedGender,
-                        country: user.country,
-                        city: user.city,
-                        is_admin: user.is_admin
-                    }
-                });
-            })
+            //добавление картинки в общий альбом
+            photos.add_photo_DB(arrayPhotos, (err) => {
+                if (err) return res.status(500).send('Неудалось добавить фото в общий альбом');
+
+                //получение обновленного профиля после загрузки аватарки
+                authorization.selectByEmail(req.body.email, (err, user) => {
+                    if (err) return res.status(500).send("Не удалось получить фотографии с сервера");
+                    res.status(200).send({
+                        user: {
+                            userID: user.userID,
+                            ava: user.ava,
+                            name: user.name,
+                            email: user.email,
+                            surname: user.surname,
+                            year_user: user.year_user,
+                            month_user: user.month_user,
+                            day_user: user.day_user,
+                            selectedGender: user.selectedGender,
+                            country: user.country,
+                            city: user.city,
+                            is_admin: user.is_admin
+                        }
+                    });
+                })
+
+            });
         });
     } else if (req.body.flag === "photos") { //простая загрузка фото
 
-        let arrayPhotos = [];
+        // let arrayPhotos = [];
 
         //переберем массив фотографий
         for (let file in req.files) {
@@ -587,6 +599,37 @@ router.delete('/remove_photo', function(req, res) {
         if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась');
 
         res.status(200).send("Фотография удалена");;
+    })
+})
+
+//удаление аватарки
+router.put('/remove_ava_photo', function(req, res) {
+    authorization.updateAva([
+        "ava_1.jpg",
+        req.body.userID
+    ], (err) => {
+        if (err) return res.status(500).send('Ошибка на сервере. Аватарка не удалилась');
+
+        //получение обновленного профиля после удаления аватарки
+        authorization.selectByEmail(req.body.email, (err, user) => {
+            if (err) return res.status(500).send("Не удалось получить фотографии с сервера");
+            res.status(200).send({
+                user: {
+                    userID: user.userID,
+                    ava: user.ava,
+                    name: user.name,
+                    email: user.email,
+                    surname: user.surname,
+                    year_user: user.year_user,
+                    month_user: user.month_user,
+                    day_user: user.day_user,
+                    selectedGender: user.selectedGender,
+                    country: user.country,
+                    city: user.city,
+                    is_admin: user.is_admin
+                }
+            });
+        })
     })
 })
 

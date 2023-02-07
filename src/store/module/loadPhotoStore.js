@@ -38,7 +38,6 @@ export const loadPhotoStore = {
         // getAvaPhoto: (state) => state.avaPhoto,
         // getModalAvaPhoto: (state) => state.isModalAvaPhoto,
         getFlagPhotos: (state) => state.isFlagPhotos
-
     },
 
     mutations: {
@@ -74,10 +73,6 @@ export const loadPhotoStore = {
         setArrayLoadImage(state, value) {
             state.arrayLoadImage = value;
         },
-
-        // filterArrayLoadImage(state, file) {
-        //     state.arrayLoadImage = state.arrayLoadImage.filter(elem => elem.name != name);
-        // },
 
         removeArrayLoadImage(state, name) {
             state.arrayLoadImage = state.arrayLoadImage.filter(elem => elem.name != name);
@@ -194,9 +189,7 @@ export const loadPhotoStore = {
         }) {
             try {
                 await axios.get('http://localhost:8000/upload_all_photo', {
-                    params: {
-                        userID: getters.getUser.userID
-                    }
+                    params: { userID: getters.getUser.userID }
                 }).then((response) => {
                     commit("setMyPhotosMyPage", response.data);
                     commit("setAllMyPhotosMyPage", response.data);
@@ -230,7 +223,27 @@ export const loadPhotoStore = {
                     }
                 }).then((response) => {
                     commit("removeAllPhotos", getters.getIdPhoto);
+                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                        root: true
+                    });
                     console.log(response.data)
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        },
+
+        //удаление аватрки
+        async removeAvaPhoto({ getters, commit }) {
+            try {
+                await axios.put('http://localhost:8000/remove_ava_photo', {
+                    userID: getters.getUser.userID,
+                    email: getters.getUser.email
+                }).then((res) => {
+                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                        root: true
+                    });
+                    localStorage.setItem('user', JSON.stringify(res.data.user))
                 });
             } catch (err) {
                 console.log(err);
