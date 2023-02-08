@@ -22,9 +22,6 @@ export const showFullPhotoStore = {
         //открытие-закрытие модального окна
         setIsModalFullSize(state, bool) {
             state.isModalFullSize = bool;
-            // if (bool === false) {
-            //     document.body.style.overflow = "auto";
-            // }
         },
 
         //получение картинки по которой кликнули
@@ -81,8 +78,6 @@ export const showFullPhotoStore = {
         },
 
     },
-
-
 
     namespaced: true
 }

@@ -8,8 +8,7 @@ export const removeUserStore = {
     getters: {
         getModuleDelete: (state) => state.moduleDelete,
         getPassword: (state) => state.password,
-        getUserEmail: (state, _, rootState) => rootState.authorizationStore.user.email,
-        getUserID: (state, _, rootState) => rootState.authorizationStore.user.userID,
+        getUser: (state, _, rootState) => rootState.authorizationStore.user,
         allPhoto: (state, _, rootState) => rootState.loadPhotoStore.allPhotos,
 
     },
@@ -30,9 +29,10 @@ export const removeUserStore = {
             return new Promise((resolve, reject) => {
                 let url = "http://localhost:8000/delete_user";
 
-                user.email = getters.getUserEmail;
-                user.userID = getters.getUserID;
+                user.email = getters.getUser.email;
+                user.userID = getters.getUser.userID;
                 user.allPhoto = getters.allPhoto;
+                user.nameAva = getters.getUser.ava
 
                 axios({
                         url: url,

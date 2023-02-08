@@ -378,10 +378,14 @@ router.delete('/delete_user', passwordDelValidate, function(req, res) {
 
         //удаление всех фотографий пользователя
         req.body.allPhoto.forEach((photo) => {
-            fs.unlink(`../src/assets/photo/${photo.photo_name}`, (err) => {
-                if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее');
-            });
-        })
+                fs.unlink(`../src/assets/photo/${photo.photo_name}`, (err) => {
+                    if (err) console.log(err)
+                });
+            })
+            //удаление аватарки из папки на сервере
+        fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
+            if (err) console.log(err)
+        });
 
         //удаление пользователя
         authorization.deleteUserDB([req.body.userID], (err) => {
@@ -459,9 +463,7 @@ router.post('/upload_ava', (req, res) => {
     //удаление аватарки из папки на сервере при обновлении
     if (req.body.nameAva !== "ava_1.jpg") {
         fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
-            console.log(req.body.nameAva)
-            if (err) return res.status(500).send('Ава не найдена, возможно она уже удалена ранее');
-            console.log('Deleted');
+            if (err) console.log(err)
         });
     }
 
@@ -516,7 +518,6 @@ router.post('/upload_photo', (req, res) => {
     if (!req.files) {
         return res.status(500).send("Файлы не отправлены")
     }
-
     let arrayPhotos = [];
 
     //переберем массив фотографий
@@ -524,24 +525,19 @@ router.post('/upload_photo', (req, res) => {
         const myFile = req.files[file];
 
         //проверка загруженных файлов
-        if (!allowedTypes.includes(myFile.mimetype)) {
-            res.status(422).send('Формат выбранного файла не поддерживается');
-        }
-        if (myFile.size > 5000000) {
-            // return error_load = 'Размер фотографии слишком большой'
-            return res.status(422).send('Размер фотографии слишком большой, попробуйте сжать фотографию в фоторедакторе');
-        }
-        //загрузка в папку на сервере
-        let updateName = Date.now() + myFile.name.toLowerCase();
-        myFile.mv(`../src/assets/photo/${updateName}`,
-            function(err) {
-                if (err) {
-                    return res.status(500).send("Ошибка при загрузке файлов");
+        if (allowedTypes.includes(myFile.mimetype) && myFile.size < 5000000) {
+
+            let updateName = Date.now() + myFile.name.toLowerCase();
+            myFile.mv(`../src/assets/photo/${updateName}`,
+                function(err) {
+                    if (err) {
+                        return res.status(500).send("Ошибка при загрузке файлов");
+                    }
                 }
-            }
-        );
-        //добавляем в массив название фото и id юзера
-        arrayPhotos.push([updateName, req.body.id]);
+            );
+            //добавляем в массив название фото и id юзера
+            arrayPhotos.push([updateName, req.body.id]);
+        }
     }
     //загрузка в БД
     photos.add_photo_DB(arrayPhotos, (err) => {
@@ -609,10 +605,9 @@ router.delete('/remove_photo', function(req, res) {
 //удаление аватарки
 router.put('/remove_ava_photo', function(req, res) {
 
-    //удаление афатарки из папки на сервере
+    //удаление аватарки из папки на сервере
     fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
-        if (err) return res.status(500).send('Ава не найдена, возможно она уже удалена ранее');;
-        console.log('Deleted');
+        if (err) console.log(err)
     });
 
     authorization.updateAva([

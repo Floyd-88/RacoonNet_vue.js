@@ -58,17 +58,11 @@ export default {
     ...mapMutations({
       setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
       setIsModalAllPhotos: "loadPhotoStore/setIsModalAllPhotos",
-
-      // setIsModalFullSize: "showFullPhotoStore/setIsModalFullSize"
     }),
 
     ...mapActions({
       modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
-
-      loadAllPhotos: "loadPhotoStore/loadAllPhotos",
-
       fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
-
       closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
     }),
 
@@ -76,14 +70,10 @@ export default {
 
   computed: {
   ...mapGetters({
-    getMyPhotosMyPage: "loadPhotoStore/getMyPhotosMyPage",
-
+      getMyPhotosMyPage: "loadPhotoStore/getMyPhotosMyPage",
       getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
       getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",
-
       getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
-
-
     }),
   }
 

@@ -1,6 +1,5 @@
 <template>
     <div class="wrapper_block_full_size">
-        <!-- <transition-group name='fade' tag='div'> -->
         <div class="wrapper_block_full_size_img">
 
           <template v-if="getEditAva==='load'">
@@ -63,15 +62,10 @@ export default {
     methods: {
         ...mapMutations({
             setIndexPhoto: "showFullPhotoStore/setIndexPhoto",
-            setNextIndexPhoto: "showFullPhotoStore/setNextIndexPhoto",
-            setPrevIndexPhoto: "showFullPhotoStore/setPrevIndexPhoto",
             setModulePhotoRemove: "loadPhotoStore/setModulePhotoRemove",
             setPhotoId: "loadPhotoStore/setPhotoId"
         }),
         ...mapActions({
-            modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
-            removePhoto: "loadPhotoStore/removePhoto",
-            closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
             removeAvaPhoto: "loadPhotoStore/removeAvaPhoto",
             showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto"
         })
@@ -79,28 +73,13 @@ export default {
     computed: {
         ...mapGetters({
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
-            getIndexPhoto: "showFullPhotoStore/getIndexPhoto",
             getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
-            getIdPhoto: "loadPhotoStore/getIdPhoto",
             getUser: "authorizationStore/getUser",
             getEditAva: "showFullPhotoStore/getEditAva"
         }),
-        // currentImg: function () {
-        //     if (this.getAllPhotosMyPage.length > 0) {
-        //         if (this.getIndexPhoto === -1) {
-        //             this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
-        //         }
-        //         let photo = this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length];
-        //         this.setPhotoId(photo.id);
-        //         return photo;
-        //     }
-        //     return [];
-        // }
 
         pathAva() {
           try{
-            // let photo = this.getAllPhotosMyPage[0];
-            // this.setPhotoId(photo.id);
             return require(`../assets/photo/${this.getUser.ava}`);
           } catch {
             return require(`../assets/ava/ava_1.jpg`);

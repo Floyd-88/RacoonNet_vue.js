@@ -19,8 +19,6 @@ export const loadPhotoStore = {
 
         avaPhoto: "",
 
-        //что загружаем аватарку или простые фотографии
-        // isFlagPhotos: "",
     }),
 
     getters: {
@@ -36,8 +34,7 @@ export const loadPhotoStore = {
         getModulePhotoRemove: (state) => state.isModulePhotoRemove,
         getLimitAllPhoto: (state) => state.limitAllPhoto,
         getAvaPhoto: (state) => state.avaPhoto,
-        // getModalAvaPhoto: (state) => state.isModalAvaPhoto,
-        // getFlagPhotos: (state) => state.isFlagPhotos
+
     },
 
     mutations: {
@@ -112,26 +109,9 @@ export const loadPhotoStore = {
         setAvaPhoto(state, value) {
             state.avaPhoto = value
         },
-        // setModalAvaPhoto(state, bool) {
-        //     state.isModalAvaPhoto = bool
-        // },
-
-        // setFlagPhotos(state, value) {
-        //     state.isFlagPhotos = value;
-        // }
     },
 
     actions: {
-        //определение через какую кнопку открыли загрузчик
-        modalLoadPhoto() {
-            // commit("showFullPhotoStore/setShowFullAvaPhoto", true, {
-            //     root: true
-            // });
-            // commit("setIsModalLoadPhoto", true);
-            // commit("setFlagPhotos", value)
-        },
-
-
         //загрузка автарки
         addAvaServer: function({
             getters
@@ -164,7 +144,6 @@ export const loadPhotoStore = {
                 formData.append('files[' + i + ']', file);
             }
             formData.append('id', getters.getUser.userID);
-            // formData.append('flag', getters.getFlagPhotos);
             formData.append('email', getters.getUser.email);
 
             axios.post(
@@ -180,9 +159,10 @@ export const loadPhotoStore = {
                 })
                 .catch((err) => {
                     console.log(err.response.data);
-                    commit("setArrayLoadImage", []);
-                    commit("setUrlsImages", []);
-                    commit("setAvaPhoto", []);
+
+                    console.log(1111)
+                        // commit("setArrayLoadImage", []);
+                        // commit("setUrlsImages", []);
                     commit("setMessageLoadPhoto", err.response.data);
                 })
         },
