@@ -4,8 +4,8 @@
     <form class="form_load_photo">
 
         <div class="wrapper_load_photo">
-            <input class="load_photo" v-if="getFlagPhotos === 'photos'"  type="file" ref="files" @change="choosePhotoInput" multiple>
-            <input class="load_photo" v-if="getFlagPhotos === 'ava'" type="file" ref="files" @change="choosePhotoInput">
+            <input class="load_photo" type="file" ref="files" @change="choosePhotoInput" multiple>
+            <!-- <input class="load_photo" v-if="getFlagPhotos === 'ava'" type="file" ref="files" @change="choosePhotoInput"> -->
         </div>
         <div class="wrapper_message_error">
             <p class="message_error">

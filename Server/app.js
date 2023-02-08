@@ -30,7 +30,9 @@ const postValidate = require('./validate/postValidate')
 const updateUserValidate = require('./validate/updateUserValidate')
 const passwordValidate = require('./validate/passwordValidate')
 const passwordDelValidate = require('./validate/passwordDelValidate');
-const { name } = require('file-loader');
+const {
+    name
+} = require('file-loader');
 
 
 
@@ -55,6 +57,14 @@ app.use(allowCrossDomain);
 app.use(express.static('public'));
 app.use(fileUpload());
 
+
+app.use(bodyParser.json({
+    limit: '200mb'
+}));
+app.use(bodyParser.urlencoded({
+    limit: '200mb',
+    extended: true
+}));
 
 
 
@@ -443,107 +453,101 @@ router.delete('/dataBase.js', function(req, res) {
     });
 });
 
+//загружаем аватарку
+router.post('/upload_ava', (req, res) => {
 
-//загружаем фото в БД
+    //удаление аватарки из папки на сервере при обновлении
+    if (req.body.nameAva !== "ava_1.jpg") {
+        fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
+            console.log(req.body.nameAva)
+            if (err) return res.status(500).send('Ава не найдена, возможно она уже удалена ранее');
+            console.log('Deleted');
+        });
+    }
+
+    let imgData = req.body.img // получаем файл в формате base64
+    let base64Data = imgData.split(",")[1]; // оставляем непосредственно само закодированное изображение
+    let nameImg = Date.now() + "ava.jpg"; //создаем имя фотографии
+
+    //записываем в папку на сервер изображение сконвертированное из base64
+    require("fs").writeFile("../src/assets/photo/" + nameImg, base64Data, 'base64',
+        function(err) {
+            if (err) {
+                return res.status(422).send('Изображение не смогло конвертироваться из base64');
+            }
+        })
+    let arrayPhotos = [];
+    arrayPhotos.push(nameImg, req.body.userId);
+
+    //добавление картинки в таблицу Users
+    authorization.updateAva(arrayPhotos, (err) => {
+        if (err) return res.status(500).send('Аватар пользователь не сменился');
+
+        //получение обновленного профиля после загрузки аватарки
+        authorization.selectByEmail(req.body.email, (err, user) => {
+            if (err) return res.status(500).send("Не удалось получить фотографии с сервера");
+            res.status(200).send({
+                user: {
+                    userID: user.userID,
+                    ava: user.ava,
+                    name: user.name,
+                    email: user.email,
+                    surname: user.surname,
+                    year_user: user.year_user,
+                    month_user: user.month_user,
+                    day_user: user.day_user,
+                    selectedGender: user.selectedGender,
+                    country: user.country,
+                    city: user.city,
+                    is_admin: user.is_admin
+                }
+            });
+        })
+    });
+});
+
+
+//загружаем фотографии в БД
 router.post('/upload_photo', (req, res) => {
     //допустимые форматы
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
 
-    //проверка на наличией файла
+    //проверка на наличие файла
     if (!req.files) {
         return res.status(500).send("Файлы не отправлены")
     }
 
     let arrayPhotos = [];
 
-    if (req.body.flag === "ava") { //загрузка аватарки
-
-        const myFile = req.files['files[0]'];
+    //переберем массив фотографий
+    for (let file in req.files) {
+        const myFile = req.files[file];
 
         //проверка загруженных файлов
         if (!allowedTypes.includes(myFile.mimetype)) {
-            return res.status(422).send('Формат выбранного файла не поддерживается');
+            res.status(422).send('Формат выбранного файла не поддерживается');
         }
-        if (myFile.size > 10000000) {
-            return res.status(422).send('Размер фотографии слишком большой');
+        if (myFile.size > 5000000) {
+            // return error_load = 'Размер фотографии слишком большой'
+            return res.status(422).send('Размер фотографии слишком большой, попробуйте сжать фотографию в фоторедакторе');
         }
         //загрузка в папку на сервере
         let updateName = Date.now() + myFile.name.toLowerCase();
         myFile.mv(`../src/assets/photo/${updateName}`,
             function(err) {
                 if (err) {
-                    console.log(err)
                     return res.status(500).send("Ошибка при загрузке файлов");
                 }
             }
         );
+        //добавляем в массив название фото и id юзера
         arrayPhotos.push([updateName, req.body.id]);
-
-        //добавление картинки в таблицу Users
-        authorization.updateAva([updateName, req.body.id], (err) => {
-            if (err) return res.status(500).send('Аватар пользователь не сменился');
-
-            //добавление картинки в общий альбом
-            photos.add_photo_DB(arrayPhotos, (err) => {
-                if (err) return res.status(500).send('Неудалось добавить фото в общий альбом');
-
-                //получение обновленного профиля после загрузки аватарки
-                authorization.selectByEmail(req.body.email, (err, user) => {
-                    if (err) return res.status(500).send("Не удалось получить фотографии с сервера");
-                    res.status(200).send({
-                        user: {
-                            userID: user.userID,
-                            ava: user.ava,
-                            name: user.name,
-                            email: user.email,
-                            surname: user.surname,
-                            year_user: user.year_user,
-                            month_user: user.month_user,
-                            day_user: user.day_user,
-                            selectedGender: user.selectedGender,
-                            country: user.country,
-                            city: user.city,
-                            is_admin: user.is_admin
-                        }
-                    });
-                })
-
-            });
-        });
-    } else if (req.body.flag === "photos") { //простая загрузка фото
-
-        // let arrayPhotos = [];
-
-        //переберем массив фотографий
-        for (let file in req.files) {
-            const myFile = req.files[file];
-
-            //проверка загруженных файлов
-            if (!allowedTypes.includes(myFile.mimetype)) {
-                res.status(422).send('Формат выбранного файла не поддерживается');
-            }
-            if (myFile.size > 5000000) {
-                // return error_load = 'Размер фотографии слишком большой'
-                return res.status(422).send('Размер фотографии слишком большой, попробуйте сжать фотографию в фоторедакторе');
-            }
-            //загрузка в папку на сервере
-            let updateName = Date.now() + myFile.name.toLowerCase();
-            myFile.mv(`../src/assets/photo/${updateName}`,
-                function(err) {
-                    if (err) {
-                        return res.status(500).send("Ошибка при загрузке файлов");
-                    }
-                }
-            );
-            //добавляем в массив название фото и id юзера
-            arrayPhotos.push([updateName, req.body.id]);
-        }
-        //загрузка в БД
-        photos.add_photo_DB(arrayPhotos, (err) => {
-            if (err) return res.status(500).send('Error on the server.');
-        })
-        res.status(200).send("Фото успешно загрузились на сервер");
     }
+    //загрузка в БД
+    photos.add_photo_DB(arrayPhotos, (err) => {
+        if (err) return res.status(500).send('Error on the server.');
+    })
+    res.status(200).send("Фото успешно загрузились на сервер");
 });
 
 
@@ -604,6 +608,13 @@ router.delete('/remove_photo', function(req, res) {
 
 //удаление аватарки
 router.put('/remove_ava_photo', function(req, res) {
+
+    //удаление афатарки из папки на сервере
+    fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
+        if (err) return res.status(500).send('Ава не найдена, возможно она уже удалена ранее');;
+        console.log('Deleted');
+    });
+
     authorization.updateAva([
         "ava_1.jpg",
         req.body.userID

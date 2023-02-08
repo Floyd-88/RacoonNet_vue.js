@@ -11,20 +11,20 @@
         <div class="wrapper_btn_main_photo">
 
           <transition v-if="text_btn==='Загрузить главное фото'" name="mainPhoto">
-            <button class="btn_main_photo" v-show="active_btn" @click="modalLoadPhoto('ava')">{{text_btn}}</button>
+            <button class="btn_main_photo" v-show="active_btn" @click="showFullAvaPhoto({bool: true, load: 'load'})">{{text_btn}}</button>
           </transition>
 
           <transition v-else name="mainPhoto">
-            <button class="btn_main_photo" v-show="active_btn" @click="setShowFullAvaPhoto(true)">{{text_btn}}</button>
+            <button class="btn_main_photo" v-show="active_btn" @click="showFullAvaPhoto({bool: true, load: 'edit'})">{{text_btn}}</button>
           </transition>
 
         </div>
       </div>
       
       <!-- загрузчик аватарки -->
-    <UImodal class="modal_fone" v-if="getIsModalLoadPhoto">
+    <!-- <UImodal class="modal_fone" v-if="getIsModalLoadPhoto">
       <FileUpload/>
-    </UImodal>
+    </UImodal> -->
 
     <div @click="setShowFullAvaPhoto(false)">
       <UImodal v-if="getShowFullAvaPhoto">
@@ -90,7 +90,8 @@ export default {
         }),
         ...mapActions({
           modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
-          fullSizePhoto: "showFullPhotoStore/fullSizePhoto"
+          fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
+          showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto"
         }),
 
         show_btn_photo() {
@@ -112,12 +113,14 @@ export default {
             getUser: "authorizationStore/getUser",
             age: "authorizationStore/age",
             getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
-            getShowFullAvaPhoto: "showFullPhotoStore/getShowFullAvaPhoto"
+            getShowFullAvaPhoto: "showFullPhotoStore/getShowFullAvaPhoto",
+            getChangeAva: "editProfileStore/getChangeAva"
         }),
 
         pathAva() {
           try{
             return require(`../../assets/photo/${this.getUser.ava}`);
+            // return this.getChangeAva;
           } catch {
             return require(`../../assets/ava/ava_1.jpg`);
           }

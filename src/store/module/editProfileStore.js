@@ -5,11 +5,13 @@ export const editProfileStore = {
     state: () => ({
         editingUser: JSON.parse(localStorage.getItem('user')) || {}, //получаем данные юзера для внесения изменений в профиль (данные изменения не влияют на информацию о пользователе до того как юзер не нажмет кнопку сохранить изменения)
         modulEditProfile: false,
+        changeAva: ""
     }),
     getters: {
         getEditingUser: (state) => state.editingUser,
         getUser: (state, _, rootState) => rootState.authorizationStore.user,
         getModulEditProfile: (state) => state.modulEditProfile,
+        getChangeAva: (state) => state.changeAva
     },
 
     mutations: {
@@ -64,6 +66,10 @@ export const editProfileStore = {
         setGender(state, gender) {
             state.editingUser.selectedGender = gender;
         },
+
+        setChangeAva(state, img) {
+            state.changeAva = img;
+        }
 
     },
 

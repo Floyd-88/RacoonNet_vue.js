@@ -2,18 +2,26 @@
     <div class="wrapper_block_full_size">
         <!-- <transition-group name='fade' tag='div'> -->
         <div class="wrapper_block_full_size_img">
+
+          <template v-if="getEditAva==='load'">
             <div class="wrapper_full_size_img">
-                <img class="full_size_img" :src="pathAva"
+                <AvatarEditor/>
+              </div>
+          </template>
+          <template v-else>
+            <div class="wrapper_full_size_img">
+                    <img class="full_size_img" :src="pathAva"
                     :alt="this.getUser.ava"/>
             </div>
+                        
             <div class="wrapper_block_info_photo">
                 <div class="wrapper_block_info_remove_photo">
-                    <button class="remove_photo" @click="modalLoadPhoto('ava')">Поменять главное фото</button>
-                    <!-- <button class="remove_photo" @click="setModulePhotoRemove(true)">Сохранить изменения</button> -->
-
+                    <button class="remove_photo" @click="showFullAvaPhoto({bool: true, load: 'load'})">Поменять главное фото</button>
                     <button class="remove_photo" @click="setModulePhotoRemove(true)">Удалить</button>
                 </div>
             </div>
+          </template>
+            
         </div>      
 
     </div>
@@ -61,10 +69,11 @@ export default {
             setPhotoId: "loadPhotoStore/setPhotoId"
         }),
         ...mapActions({
-          modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
+            modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
             removePhoto: "loadPhotoStore/removePhoto",
             closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
-            removeAvaPhoto: "loadPhotoStore/removeAvaPhoto"
+            removeAvaPhoto: "loadPhotoStore/removeAvaPhoto",
+            showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto"
         })
     },
     computed: {
@@ -74,6 +83,7 @@ export default {
             getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
             getIdPhoto: "loadPhotoStore/getIdPhoto",
             getUser: "authorizationStore/getUser",
+            getEditAva: "showFullPhotoStore/getEditAva"
         }),
         // currentImg: function () {
         //     if (this.getAllPhotosMyPage.length > 0) {
@@ -131,7 +141,11 @@ export default {
 
 .wrapper_full_size_img {
     width: 100%;
-    height: -webkit-fill-available;
+    height: 100%;
+    background: whitesmoke;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .full_size_img {
@@ -149,6 +163,12 @@ export default {
     position: absolute;
     bottom: 0;
     color: white;
+}
+
+.wrapper_block_info_remove_photo {
+width: 100%;
+display: flex;
+justify-content: space-between;
 }
 
 .remove_photo {
@@ -190,3 +210,4 @@ export default {
 }
 
 </style>
+

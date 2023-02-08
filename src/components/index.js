@@ -18,8 +18,7 @@ import AllPhotos from "@/components/AllPhotos";
 import SliderPhoto from "@/components/SliderPhoto";
 import CommentsPhoto from "@/components/CommentsPhoto";
 import MainPhoto from "@/components/MainPhoto";
-
-
+import AvatarEditor from "@/components/AvatarEditor";
 
 export default [
     UserInfo,
@@ -41,5 +40,6 @@ export default [
     AllPhotos,
     SliderPhoto,
     CommentsPhoto,
-    MainPhoto
+    MainPhoto,
+    AvatarEditor
 ]

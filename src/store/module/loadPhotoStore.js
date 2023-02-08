@@ -17,10 +17,10 @@ export const loadPhotoStore = {
 
         limitAllPhoto: 8, //количествофотографий отображаемых каждый раз при прокрутке вниз
 
-        // avaPhoto: [],
+        avaPhoto: "",
 
         //что загружаем аватарку или простые фотографии
-        isFlagPhotos: "",
+        // isFlagPhotos: "",
     }),
 
     getters: {
@@ -35,9 +35,9 @@ export const loadPhotoStore = {
         getIdPhoto: (state) => state.idPhoto,
         getModulePhotoRemove: (state) => state.isModulePhotoRemove,
         getLimitAllPhoto: (state) => state.limitAllPhoto,
-        // getAvaPhoto: (state) => state.avaPhoto,
+        getAvaPhoto: (state) => state.avaPhoto,
         // getModalAvaPhoto: (state) => state.isModalAvaPhoto,
-        getFlagPhotos: (state) => state.isFlagPhotos
+        // getFlagPhotos: (state) => state.isFlagPhotos
     },
 
     mutations: {
@@ -109,25 +109,47 @@ export const loadPhotoStore = {
             state.limitAllPhoto += count
         },
 
-        // setAvaPhoto(state, value) {
-        //     state.avaPhoto = value
-        // },
+        setAvaPhoto(state, value) {
+            state.avaPhoto = value
+        },
         // setModalAvaPhoto(state, bool) {
         //     state.isModalAvaPhoto = bool
         // },
 
-        setFlagPhotos(state, value) {
-            state.isFlagPhotos = value;
-        }
+        // setFlagPhotos(state, value) {
+        //     state.isFlagPhotos = value;
+        // }
     },
 
     actions: {
         //определение через какую кнопку открыли загрузчик
-        modalLoadPhoto({
-            commit
-        }, value) {
-            commit("setIsModalLoadPhoto", true);
-            commit("setFlagPhotos", value)
+        modalLoadPhoto() {
+            // commit("showFullPhotoStore/setShowFullAvaPhoto", true, {
+            //     root: true
+            // });
+            // commit("setIsModalLoadPhoto", true);
+            // commit("setFlagPhotos", value)
+        },
+
+
+        //загрузка автарки
+        addAvaServer: function({
+            getters
+        }, img) {
+            axios.post(
+                    'http://localhost:8000/upload_ava', {
+                        img: img,
+                        userId: getters.getUser.userID,
+                        email: getters.getUser.email,
+                        nameAva: getters.getUser.ava
+                    }
+                ).then((res) => {
+                    localStorage.setItem('user', JSON.stringify(res.data.user))
+                    window.location.href = '/';
+                })
+                .catch((err) => {
+                    console.log(err.response.data);
+                })
         },
 
         //загрузка картинок на сервер
@@ -142,9 +164,8 @@ export const loadPhotoStore = {
                 formData.append('files[' + i + ']', file);
             }
             formData.append('id', getters.getUser.userID);
-            formData.append('flag', getters.getFlagPhotos);
+            // formData.append('flag', getters.getFlagPhotos);
             formData.append('email', getters.getUser.email);
-
 
             axios.post(
                     'http://localhost:8000/upload_photo',
@@ -153,23 +174,15 @@ export const loadPhotoStore = {
                             'Content-Type': 'multipart/form-data'
                         }
                     }
-                ).then((res) => {
-                    // commit("setArrayLoadImage", []);
-                    // commit("setUrlsImages", []);
+                ).then(() => {
                     commit("setIsModalLoadPhoto", false);
-
-                    if (getters.getFlagPhotos === "ava") {
-                        localStorage.setItem('user', JSON.stringify(res.data.user))
-                    }
-                    // console.log(res.data)
                     window.location.href = '/';
                 })
                 .catch((err) => {
                     console.log(err.response.data);
-                    // commit("setArrayLoadImage", []);
-                    // commit("setUrlsImages", []);
-
-                    // commit("setAvaPhoto", []);
+                    commit("setArrayLoadImage", []);
+                    commit("setUrlsImages", []);
+                    commit("setAvaPhoto", []);
                     commit("setMessageLoadPhoto", err.response.data);
                 })
         },
@@ -238,12 +251,15 @@ export const loadPhotoStore = {
             try {
                 await axios.put('http://localhost:8000/remove_ava_photo', {
                     userID: getters.getUser.userID,
-                    email: getters.getUser.email
+                    email: getters.getUser.email,
+                    nameAva: getters.getUser.ava
                 }).then((res) => {
                     commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                         root: true
                     });
-                    localStorage.setItem('user', JSON.stringify(res.data.user))
+                    commit("setModulePhotoRemove", false)
+                    localStorage.setItem('user', JSON.stringify(res.data.user));
+                    window.location.href = '/';
                 });
             } catch (err) {
                 console.log(err);

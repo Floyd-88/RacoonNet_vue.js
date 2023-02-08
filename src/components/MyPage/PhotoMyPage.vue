@@ -17,7 +17,7 @@
     </UIbtn>
 
     <UIbtn class="show_more_photo_btn" 
-           @click="modalLoadPhoto('photos')"> 
+           @click="setIsModalLoadPhoto(true)"> 
            Загрузить фото
     </UIbtn>
 

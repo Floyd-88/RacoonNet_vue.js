@@ -6,14 +6,16 @@ export const showFullPhotoStore = {
     state: () => ({
         isModalFullSize: false, //открытие модального окна с фото по клику на фото
         indexPhoto: 0, //ключ массива с фото для слайдера
-        isShowFullAvaPhoto: false //открытие модального окна для редактирования автарки
+        isShowFullAvaPhoto: false, //открытие модального окна для редактирования автарки
+        isEditAva: "", //загрузка аватарки или ее редактирование
     }),
 
     getters: {
         getIsModalFullSize: (state) => state.isModalFullSize,
         getIndexPhoto: (state) => state.indexPhoto,
         getAllPhotosMyPage: (state, _, rootState) => rootState.loadPhotoStore.isModalAllPhotos,
-        getShowFullAvaPhoto: (state) => state.isShowFullAvaPhoto
+        getShowFullAvaPhoto: (state) => state.isShowFullAvaPhoto,
+        getEditAva: (state) => state.isEditAva,
     },
 
     mutations: {
@@ -42,11 +44,21 @@ export const showFullPhotoStore = {
 
         setShowFullAvaPhoto(state, bool) {
             state.isShowFullAvaPhoto = bool
+        },
+
+        setEditAva(state, load) {
+            state.isEditAva = load;
         }
 
     },
 
     actions: {
+        showFullAvaPhoto({ commit }, body) {
+            commit("setShowFullAvaPhoto", body.bool);
+            commit("setEditAva", body.load)
+        },
+
+
         //открыте картинки по которой кликнули
         async fullSizePhoto({ commit }, body) {
             const bool = body.bool;
