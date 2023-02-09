@@ -6,6 +6,7 @@ const fs = require('fs')
     // const multer = require('multer')
     // const path = require('path')
 const fileUpload = require('express-fileupload');
+const sharp = require('sharp');
 const {
     validationResult
 } = require('express-validator');
@@ -471,13 +472,28 @@ router.post('/upload_ava', (req, res) => {
     let base64Data = imgData.split(",")[1]; // оставляем непосредственно само закодированное изображение
     let nameImg = Date.now() + "ava.jpg"; //создаем имя фотографии
 
+    let imgBuffer = Buffer.from(base64Data, 'base64'); //сохраняем изображение в буфер
+
     //записываем в папку на сервер изображение сконвертированное из base64
-    require("fs").writeFile("../src/assets/photo/" + nameImg, base64Data, 'base64',
-        function(err) {
+    //сжатие и сохранение изображения в папке
+    sharp(imgBuffer)
+        .toFormat('jpeg')
+        .jpeg({ quality: 30 })
+        .toFile("../src/assets/photo/" + nameImg, (err, info) => {
             if (err) {
-                return res.status(422).send('Изображение не смогло конвертироваться из base64');
+                console.error(err);
+            } else {
+                console.log(info);
             }
-        })
+        });
+
+    // require("fs").writeFile("../src/assets/photo/" + nameImg, base64Data, 'base64',
+    //     function(err) {
+    //         if (err) {
+    //             return res.status(422).send('Изображение не смогло конвертироваться из base64');
+    //         }
+    //     })
+
     let arrayPhotos = [];
     arrayPhotos.push(nameImg, req.body.userId);
 
@@ -528,13 +544,26 @@ router.post('/upload_photo', (req, res) => {
         if (allowedTypes.includes(myFile.mimetype) && myFile.size < 5000000) {
 
             let updateName = Date.now() + myFile.name.toLowerCase();
-            myFile.mv(`../src/assets/photo/${updateName}`,
-                function(err) {
+
+            //сжатие и сохранение изображения в папке
+            sharp(myFile.data)
+                .toFormat('jpeg')
+                .jpeg({ quality: 30 })
+                .toFile(`../src/assets/photo/${updateName}`, (err, info) => {
                     if (err) {
-                        return res.status(500).send("Ошибка при загрузке файлов");
+                        console.error(err);
+                    } else {
+                        console.log(info);
                     }
-                }
-            );
+                });
+            // myFile.mv(`../src/assets/photo/${updateName}`,
+            //     function(err) {
+            //         if (err) {
+            //             return res.status(500).send("Ошибка при загрузке файлов");
+            //         }
+            //     }
+            // );
+
             //добавляем в массив название фото и id юзера
             arrayPhotos.push([updateName, req.body.id]);
         }
