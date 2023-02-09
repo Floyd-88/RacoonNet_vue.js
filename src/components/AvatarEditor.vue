@@ -2,18 +2,19 @@
     <div class="wrapper_edit_ava">
         <div class="block_vue_avatar">
             <vue-avatar :width="400" :height="400" :borderRadius="borderRadius" :scale="scale" ref="vueavatar"
-                @vue-avatar-editor:image-ready="onImageReady">
+                @vue-avatar-editor:image-ready="onImageReady"
+                :image="pathAva"
+                >
             </vue-avatar>
         </div>
-
         <div class="block_scale">
             <label>
-                Zoom : {{ computedScaleNumber }}
+                Zoom : {{ computedScaleNumber }}x
                 <br>
                 <input type="range" min=1 max=3 step=0.02 v-model='computedScaleNumber' />
             </label>
         </div>
-
+<!-- <div>{{ sliderAvaEdit }}</div> -->
         <div class="block_radius">
             <label>
                 Radius : {{ computedRadiusNumber }}px
@@ -29,11 +30,9 @@
 </template>
 
 <script>
-// import Vue from 'vue'
 import { VueAvatar } from 'vue-avatar-editor-improved'
 import UIbtn from './UI/UIbtn.vue';
-import { mapMutations, mapGetters, mapActions } from "vuex";
-
+import { mapActions } from "vuex";
 
 export default {
     name: "AvatarEditor",
@@ -41,16 +40,23 @@ export default {
         VueAvatar,
         UIbtn
     },
+    props: {
+        photo_name: {
+            type: String,
+            default: "",
+        }
+    },
+
     data: function data() {
         return {
             scale: 1,
             borderRadius: 0,
             btn_save: false
+            
         };
     },
 
     methods: {
-        ...mapMutations({}),
     ...mapActions({
         addAvaServer: "loadPhotoStore/addAvaServer"
         }),
@@ -64,11 +70,19 @@ export default {
         onImageReady: function onImageReady() {
             this.scale = 1;
             this.btn_save = true;
-        }
+        },
     },
 
     computed: {
-        ...mapGetters({}),
+     
+        pathAva() {
+      try {
+        return require(`../assets/photo/${this.photo_name}`);
+      } catch {
+        return "";
+      }
+
+    },
 
         computedScaleNumber: {
             get() {
