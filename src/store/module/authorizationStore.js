@@ -6,7 +6,7 @@ export const authorizationStore = {
         // password: '',
         status: '',
         token: localStorage.getItem('token') || '', //получаем токен создаваемый при авторизации
-        user: JSON.parse(localStorage.getItem('user')) || {}, //получаем данные юзера при авторизаци
+        user: {}, //получаем данные юзера при авторизаци
         errorLogin: "", //ошибка возникающая при вводе неверного пароля или почты
     }),
 
@@ -130,7 +130,6 @@ export const authorizationStore = {
             return new Promise((resolve, reject) => {
                 commit('auth_request', 'loading')
 
-
                 axios({
                         url: 'http://localhost:8000/load_user',
                         data: id,
@@ -150,10 +149,10 @@ export const authorizationStore = {
                         }
                     })
                     .catch((err) => {
-                        // commit('auth_error');
+                        commit('auth_error');
                         // localStorage.removeItem('token');
                         // localStorage.removeItem('user');
-                        reject(err.response.data);
+                        reject(err);
                     })
             })
         }

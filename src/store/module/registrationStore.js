@@ -95,7 +95,7 @@ export const registrationStore = {
         //регистрация нового юзера
         register({ commit }, user) {
             return new Promise((resolve, reject) => {
-                commit('authorizationStore/auth_request', null, { root: true });
+                commit('authorizationStore/auth_request', 'loading', { root: true });
 
                 let url = "http://localhost:8000/register";
                 if (user.is_admin === '1') {

@@ -112,17 +112,17 @@ router.post('/register', registerValidate, function(req, res) {
                 token: token,
                 user: {
                     userID: user.userID,
-                    ava: user.ava,
                     name: user.name,
-                    email: user.email,
                     surname: user.surname,
-                    year_user: user.year_user,
-                    month_user: user.month_user,
-                    day_user: user.day_user,
-                    selectedGender: user.selectedGender,
-                    country: user.country,
-                    city: user.city,
                     is_admin: user.is_admin
+                        // ava: user.ava,
+                        // email: user.email,
+                        // year_user: user.year_user,
+                        // month_user: user.month_user,
+                        // day_user: user.day_user,
+                        // selectedGender: user.selectedGender,
+                        // country: user.country,
+                        // city: user.city,
                 }
             });
         });
@@ -178,17 +178,17 @@ router.post('/register-admin', registerValidate, function(req, res) {
                 token: token,
                 user: {
                     userID: user.userID,
-                    ava: user.ava,
                     name: user.name,
-                    email: user.email,
                     surname: user.surname,
-                    year_user: user.year_user,
-                    month_user: user.month_user,
-                    day_user: user.day_user,
-                    selectedGender: user.selectedGender,
-                    country: user.country,
-                    city: user.city,
                     is_admin: user.is_admin
+                        // ava: user.ava,
+                        // email: user.email,
+                        // year_user: user.year_user,
+                        // month_user: user.month_user,
+                        // day_user: user.day_user,
+                        // selectedGender: user.selectedGender,
+                        // country: user.country,
+                        // city: user.city,
                 }
             });
         });
@@ -218,7 +218,7 @@ router.post('/login', loginValidate, function(req, res) {
         if (!passwordIsValid) return res.status(401).send({
             auth: false,
             token: null,
-            err: 'Пароль не действителен'
+            err: 'Вы указали не правильный пароль'
         });
 
         //создаем токен для защиты своих данных
@@ -236,9 +236,39 @@ router.post('/login', loginValidate, function(req, res) {
             token: token,
             user: {
                 userID: user.userID,
+                name: user.name,
+                surname: user.surname,
+                is_admin: user.is_admin
+                    // ava: user.ava,
+                    // email: user.email,
+                    // year_user: user.year_user,
+                    // month_user: user.month_user,
+                    // day_user: user.day_user,
+                    // selectedGender: user.selectedGender,
+                    // country: user.country,
+                    // city: user.city,
+            }
+        });
+    });
+})
+
+//подгружаем данные пользователя
+router.post('/load_user', authenticateJWT, function(req, res) {
+    // console.log(req.body)
+    userID = +req.body.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    authorization.loadUser(userID, (err, user) => {
+        if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
+        if (!user) return res.status(404).send({
+            err: 'Такого пользователя не существует'
+        });
+        res.status(200).send({
+            user: {
+                userID: user.userID,
                 ava: user.ava,
                 name: user.name,
-                email: user.email,
+                // email: user.email,
                 surname: user.surname,
                 year_user: user.year_user,
                 month_user: user.month_user,
@@ -253,68 +283,6 @@ router.post('/login', loginValidate, function(req, res) {
 })
 
 
-
-//подгружаем данные пользователя
-router.post('/load_user', authenticateJWT, function(req, res) {
-    // console.log(req.body)
-    userID = +req.body.id; //id из строки запроса
-    tokenID = req.tokenID; //id из сохраненного токена 
-    console.log(userID)
-    console.log(tokenID)
-
-    if (userID === tokenID) {
-        console.log("ok")
-
-        authorization.loadUser(userID, (err, user) => {
-            if (err) return res.status(500).send('Ошибка на сервере.');
-            if (!user) return res.status(404).send({
-                err: 'Такого пользователя не существует'
-            });
-            res.status(200).send({
-                user: {
-                    userID: user.userID,
-                    ava: user.ava,
-                    name: user.name,
-                    email: user.email,
-                    surname: user.surname,
-                    year_user: user.year_user,
-                    month_user: user.month_user,
-                    day_user: user.day_user,
-                    selectedGender: user.selectedGender,
-                    country: user.country,
-                    city: user.city,
-                    is_admin: user.is_admin
-                }
-            });
-        });
-    } else {
-        console.log("not")
-        authorization.loadUser(userID, (err, user) => {
-            if (err) return res.status(500).send('Ошибка на сервере.');
-            if (!user) return res.status(404).send({
-                err: 'Такого пользователя не существует'
-            });
-            res.status(200).send({
-                user: {
-                    userID: user.userID,
-                    ava: user.ava,
-                    name: user.name,
-                    // email: user.email,
-                    surname: user.surname,
-                    year_user: user.year_user,
-                    month_user: user.month_user,
-                    day_user: user.day_user,
-                    selectedGender: user.selectedGender,
-                    country: user.country,
-                    city: user.city,
-                    // is_admin: user.is_admin
-                }
-            });
-        });
-    }
-})
-
-
 //редактирование профиля пользователя
 router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, res) {
 
@@ -322,6 +290,7 @@ router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, re
     tokenID = req.tokenID; //id из сохраненного токена 
 
     if (userID === tokenID) {
+
         //валидация заполнения полей
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -342,7 +311,6 @@ router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, re
             req.body.city,
             req.body.id
         ], (err) => {
-
             //проверка по email о дублировании пользователя
             if (err !== null) {
                 if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
@@ -354,10 +322,20 @@ router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, re
             //     if (err) return res.status(500).send("Ошибка при обновдении title в постах.");
 
             //получение данных о пользователе после обновления
-            authorization.loadUser(req.body.id, (err, user) => {
+            authorization.loadUser(tokenID, (err, user) => {
                     if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
                     res.status(200).send({
-                        user
+                        user: {
+                            userID: user.userID,
+                            name: user.name,
+                            surname: user.surname,
+                            year_user: user.year_user,
+                            month_user: user.month_user,
+                            day_user: user.day_user,
+                            selectedGender: user.selectedGender,
+                            country: user.country,
+                            city: user.city,
+                        }
                     });
                 })
                 // });
@@ -383,10 +361,9 @@ router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
         //проверка старого пароля
         if (!req.body.old_password) return res.status(500).send("Поле со старым паролем не заполнено");
 
-        authorization.selectByEmail(req.body.email, (err, user) => {
-            if (err) return res.status(500).send("Ошибка на сервере");
-
-            let passwordIsValid = bcrypt.compareSync(req.body.old_password, user.user_pass);
+        authorization.getPassword(tokenID, (err, password) => {
+            if (err) return res.status(500).send("Ошибка на сервере" + " " + err);
+            let passwordIsValid = bcrypt.compareSync(req.body.old_password, password.user_pass);
             if (!passwordIsValid) return res.status(401).send({
                 err: 'Пароль не действителен'
             });
@@ -396,7 +373,7 @@ router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
             //обновление старого пароля
             authorization.updateUserPassword([
                     bcrypt.hashSync(req.body.new_password, 8),
-                    req.body.id
+                    tokenID
                 ],
                 (err) => {
                     if (err) return res.status(500).send("При изменении пароля возникли проблемы");
@@ -407,8 +384,6 @@ router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
         })
     }
 })
-
-
 
 //удаление профиля пользователя
 router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req, res) {
@@ -424,13 +399,13 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
                 errors: errors.array()
             });
         }
-
         if (!req.body.password) return res.status(500).send("Поле с паролем не заполнено");
 
-        authorization.selectByEmail(req.body.email, (err, user) => {
-            if (err) return res.status(500).send("Ошибка на сервере");
+        //проверка старого пароля
+        authorization.getPassword(tokenID, (err, password) => {
+            if (err) return res.status(500).send("Ошибка на сервере" + " " + err);
 
-            let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
+            let passwordIsValid = bcrypt.compareSync(req.body.password, password.user_pass);
             if (!passwordIsValid) return res.status(401).send({
                 err: 'Пароль не действителен'
             });
@@ -447,7 +422,7 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
             });
 
             //удаление пользователя
-            authorization.deleteUserDB([req.body.id], (err) => {
+            authorization.deleteUserDB([tokenID], (err) => {
                 if (err) return res.status(500).send("При удалении пользователя возникли проблемы");
                 res.status(200).send("Пользователь успешно удален");
             })

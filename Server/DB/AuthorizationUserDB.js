@@ -70,6 +70,15 @@ class AuthorizationUserDB {
     //         })
     // }
 
+    //получение пароля для сверки
+    getPassword(id, callback) {
+        this.connection.execute(
+            `SELECT user_pass FROM users WHERE userID = ?`, [id],
+            function(err, row) {
+                callback(err, row[0]);
+            })
+    }
+
     //обновление пароля
     updateUserPassword(body, callback) {
         return this.connection.execute(`UPDATE users SET user_pass=? WHERE userID =?`, body, (err) => {

@@ -23,7 +23,7 @@
         </div>
       </div>
 
-      <div @click="editToken">Поменять токен</div>
+      <!-- <div @click="editToken">Поменять токен</div> -->
 
       <!-- модальное окно для загрузки-редактирования аватарки  -->
       <div @click="setShowFullAvaPhoto(false)">
@@ -35,12 +35,12 @@
       <!-- блок с информацией о пользователе -->
       <div class="wrapper_info_user">
         <div class="wrapper_name_user">
-          <p class="name_user">{{ getUser.name + " " + getUser.surname }}</p>
+          <p v-if="getUser.name" class="name_user">{{ getUser.name + " " + getUser.surname }}</p>
         </div>
         <div class="wrapper_city_user">
-          <p class="city_user">Страна: {{ getUser.country }}</p>
-          <p class="city_user">Город: {{ getUser.city }}</p>
-          <p @click="func" class="city_user">Возраст: {{ age }}</p>
+          <p v-if="getUser.country"  class="city_user">Страна: {{ getUser.country }}</p>
+          <p v-if="getUser.city"  class="city_user">Город: {{ getUser.city }}</p>
+          <p v-if="age" @click="func" class="city_user">Возраст: {{ age }}</p>
         </div>
       </div>
 
@@ -87,9 +87,9 @@ export default {
       }
     },
 
-    editToken() {
-      localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSWx5IiwiaWQiOjQsImlhdCI6MTY3NjEzMjI0OSwiZXhwIjoxNjc2MjE4NjQ5fQ.kWsqEdmYWjsShYxCy8TV2ivBk7J_wLBqNaAlilrs2VE");
-    }
+    // editToken() {
+    //   localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSWx5IiwiaWQiOjQsImlhdCI6MTY3NjEzMjI0OSwiZXhwIjoxNjc2MjE4NjQ5fQ.kWsqEdmYWjsShYxCy8TV2ivBk7J_wLBqNaAlilrs2VE");
+    // }
 
   },
 

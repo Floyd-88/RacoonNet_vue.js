@@ -1,20 +1,15 @@
 <template>
-  <HeaderNet/>
+  <HeaderNet />
   <div class="wrapper">
-    
-    <!-- <NavigationNet v-if="isLoggedIn"/> -->
 
-    <!-- <div class="wrapper_main"> -->
-      <router-view></router-view>
-    <!-- </div> -->
+    <router-view></router-view>
+
   </div>
 
 </template>
 
 <script>
-
-// import axios from "axios";
-import {mapGetters, mapActions} from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   name: 'App',
@@ -38,35 +33,25 @@ export default {
   methods: {
     ...mapActions({
       logout: "authorizationStore/logout",
-      loadPostServer: "postsMyPageStore/loadPostServer",
       loadUser: "authorizationStore/loadUser"
     }),
   },
 
-  computed: {
-    ...mapGetters({
-      // isLoggedIn: "authorizationStore/isLoggedIn",
-      // getUser: "authorizationStore/getUser"
-    }),
-  },
+  computed: {},
 
   watch: {
     $route() {
       const id = this.$route.params.id;
-      // localStorage.setItem('id', JSON.stringify(id));
-     
-     if(id) {
-      // console.log(this.$route.params.id)
-        this.loadUser({id})
-        .then(() => {
-        // console.log(resp.data.userID)
-        })
-        .catch((err) => {
-            if (err.err) {
+      if (id) {
+        this.loadUser({ id })
+          .then(() => {
+          })
+          .catch((err) => {
+            if (err) {
               this.$router.push('notFound')
             }
           })
-     }
+      }
 
     }
   }
@@ -75,17 +60,22 @@ export default {
 </script>
 
 <style>
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
   background: #f8f8f9;
 }
+
 .wrapper {
   margin: 0 10%;
 }
@@ -93,5 +83,4 @@ body {
 .wrapper_main {
   padding: 120px 20px 5px;
 }
-
 </style>
