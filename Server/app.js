@@ -1,6 +1,5 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const fs = require('fs')
     // const multer = require('multer')
@@ -11,8 +10,10 @@ const {
     validationResult
 } = require('express-validator');
 
-//подключаем серкретный ключ для токена
+//используем токен JWT
+const jwt = require('jsonwebtoken');
 const tokenKey = require('./tokenKey');
+const authenticateJWT = require('./authenticateJWT');
 
 //подключаем экземпляры классов
 const AuthorizationUserDB = require('./DB/AuthorizationUserDB');
@@ -31,10 +32,8 @@ const postValidate = require('./validate/postValidate')
 const updateUserValidate = require('./validate/updateUserValidate')
 const passwordValidate = require('./validate/passwordValidate')
 const passwordDelValidate = require('./validate/passwordDelValidate');
-const {
-    name
-} = require('file-loader');
 
+// const {name} = require('file-loader');
 
 
 const app = express();
@@ -67,35 +66,18 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-
-
-
-// let storage = multer.diskStorage({
-//     destination: (req, file, callBack) => {
-//         callBack(null, './public/images/') // './public/images/' directory name where save the file
-//     },
-//     filename: (req, file, callBack) => {
-//         callBack(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
-//     }
-// })
-
-// var upload = multer({
-//     storage: storage
-// });
-
-
-
-
 // регистрируем обычного пользователя
 router.post('/register', registerValidate, function(req, res) {
+    //валидайия полей
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({
             errors: errors.array()
         });
     }
-    if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
-
+    if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city) {
+        return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля)")
+    }
     authorization.insert([
         req.body.name,
         req.body.surname,
@@ -116,71 +98,10 @@ router.post('/register', registerValidate, function(req, res) {
         authorization.selectByEmail(req.body.email, (err, user) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
 
-            let token = jwt.sign( //???????????????????????????????????????????????????
-                {
-                    id: user.id
-                }, //????????????????????????????????????????????
-                tokenKey.secret, //??????????????????????????????????????????????????????
-                {
-                    expiresIn: 86400
-                } // expires in 24 hours  //???????????????????????????????/
-            );
-            res.status(200).send({
-                auth: true,
-                token: token,
-                user: {
-                    userID: user.userID,
-                    ava: user.ava,
-                    name: user.name,
-                    email: user.email,
-                    surname: user.surname,
-                    year_user: user.year_user,
-                    month_user: user.month_user,
-                    day_user: user.day_user,
-                    selectedGender: user.selectedGender,
-                    country: user.country,
-                    city: user.city,
-                    is_admin: user.is_admin
-                }
-            });
-        });
-    });
-});
-
-//регистрируем пользователя с правми администротора
-router.post('/register-admin', registerValidate, function(req, res) {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({
-            errors: errors.array()
-        });
-    }
-    if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city) return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля).");
-
-    authorization.insertAdmin([
-        req.body.name,
-        req.body.surname,
-        req.body.email,
-        bcrypt.hashSync(req.body.password, 8),
-        req.body.year,
-        req.body.month,
-        req.body.day,
-        req.body.selectedGender,
-        req.body.country,
-        req.body.city,
-        req.body.is_admin
-    ], (err) => {
-        if (err !== null) {
-            if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
-        }
-        if (err) return res.status(500).send("При регистрации пользователя возникли проблемы.")
-
-        authorization.selectByEmail(req.body.email, (err, user) => {
-            if (err) return res.status(500).send("Ошибка на сервере.")
-
+            //создаем токен для защиты своих данных
             let token = jwt.sign({
-                    id: user.id
+                    name: user.name,
+                    id: user.userID,
                 },
                 tokenKey.secret, {
                     expiresIn: 86400
@@ -208,8 +129,75 @@ router.post('/register-admin', registerValidate, function(req, res) {
     });
 });
 
+//регистрируем пользователя с правми администротора
+router.post('/register-admin', registerValidate, function(req, res) {
+    //валидация полей
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+    if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city || !req.body.is_admin) {
+        return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля)")
+    };
+
+    authorization.insertAdmin([
+        req.body.name,
+        req.body.surname,
+        req.body.email,
+        bcrypt.hashSync(req.body.password, 8),
+        req.body.year,
+        req.body.month,
+        req.body.day,
+        req.body.selectedGender,
+        req.body.country,
+        req.body.city,
+        req.body.is_admin
+    ], (err) => {
+        if (err !== null) {
+            if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+        }
+        if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err)
+
+        authorization.selectByEmail(req.body.email, (err, user) => {
+            if (err) return res.status(500).send("Ошибка на сервере." + " " + err)
+
+            //создаем токен для защиты своих данных
+            let token = jwt.sign({
+                    name: user.name,
+                    id: user.userID,
+                },
+                tokenKey.secret, {
+                    expiresIn: 86400
+                }, // expires in 24 hours
+            );
+
+            res.status(200).send({
+                auth: true,
+                token: token,
+                user: {
+                    userID: user.userID,
+                    ava: user.ava,
+                    name: user.name,
+                    email: user.email,
+                    surname: user.surname,
+                    year_user: user.year_user,
+                    month_user: user.month_user,
+                    day_user: user.day_user,
+                    selectedGender: user.selectedGender,
+                    country: user.country,
+                    city: user.city,
+                    is_admin: user.is_admin
+                }
+            });
+        });
+    });
+});
+
 //авторизуем пользователя при вводе логина и пароля
 router.post('/login', loginValidate, function(req, res) {
+    //валидация введенных данных
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors)
@@ -217,12 +205,15 @@ router.post('/login', loginValidate, function(req, res) {
             errors: errors.array()
         });
     }
+
+    //проверка на существование пользователя
     authorization.selectByEmail(req.body.email, (err, user) => {
-        if (err) return res.status(500).send('Ошибка на сервере.');
+        if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
         if (!user) return res.status(404).send({
             err: 'Такого пользователя не существует'
         });
 
+        //проверка пароля
         let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
         if (!passwordIsValid) return res.status(401).send({
             auth: false,
@@ -230,13 +221,16 @@ router.post('/login', loginValidate, function(req, res) {
             err: 'Пароль не действителен'
         });
 
+        //создаем токен для защиты своих данных
         let token = jwt.sign({
-                id: user.id
+                name: user.name,
+                id: user.userID,
             },
             tokenKey.secret, {
                 expiresIn: 86400
             }, // expires in 24 hours
         );
+
         res.status(200).send({
             auth: true,
             token: token,
@@ -258,151 +252,217 @@ router.post('/login', loginValidate, function(req, res) {
     });
 })
 
-//редактирование профиля пользователя
-router.put('/editProfile', updateUserValidate, function(req, res) {
 
-    //валидация заполнения полей
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({
-            errors: errors.array()
+
+//подгружаем данные пользователя
+router.post('/load_user', authenticateJWT, function(req, res) {
+    // console.log(req.body)
+    userID = +req.body.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
+    console.log(userID)
+    console.log(tokenID)
+
+    if (userID === tokenID) {
+        console.log("ok")
+
+        authorization.loadUser(userID, (err, user) => {
+            if (err) return res.status(500).send('Ошибка на сервере.');
+            if (!user) return res.status(404).send({
+                err: 'Такого пользователя не существует'
+            });
+            res.status(200).send({
+                user: {
+                    userID: user.userID,
+                    ava: user.ava,
+                    name: user.name,
+                    email: user.email,
+                    surname: user.surname,
+                    year_user: user.year_user,
+                    month_user: user.month_user,
+                    day_user: user.day_user,
+                    selectedGender: user.selectedGender,
+                    country: user.country,
+                    city: user.city,
+                    is_admin: user.is_admin
+                }
+            });
+        });
+    } else {
+        console.log("not")
+        authorization.loadUser(userID, (err, user) => {
+            if (err) return res.status(500).send('Ошибка на сервере.');
+            if (!user) return res.status(404).send({
+                err: 'Такого пользователя не существует'
+            });
+            res.status(200).send({
+                user: {
+                    userID: user.userID,
+                    ava: user.ava,
+                    name: user.name,
+                    // email: user.email,
+                    surname: user.surname,
+                    year_user: user.year_user,
+                    month_user: user.month_user,
+                    day_user: user.day_user,
+                    selectedGender: user.selectedGender,
+                    country: user.country,
+                    city: user.city,
+                    // is_admin: user.is_admin
+                }
+            });
         });
     }
-    //обновление информации о пользователе
-    authorization.updateUser([
-        req.body.name,
-        req.body.surname,
-        req.body.email,
-        req.body.year,
-        req.body.month,
-        req.body.day,
-        req.body.selectedGender,
-        req.body.country,
-        req.body.city,
-        req.body.id
-    ], (err) => {
+})
 
-        //проверка по email о дублировании пользователя
-        if (err !== null) {
-            if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+
+//редактирование профиля пользователя
+router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, res) {
+
+    userID = +req.body.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    if (userID === tokenID) {
+        //валидация заполнения полей
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({
+                errors: errors.array()
+            });
         }
-        if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы");
+        //обновление информации о пользователе
+        authorization.updateUser([
+            req.body.name,
+            req.body.surname,
+            req.body.email,
+            req.body.year,
+            req.body.month,
+            req.body.day,
+            req.body.selectedGender,
+            req.body.country,
+            req.body.city,
+            req.body.id
+        ], (err) => {
 
-        //обновление имени и фамилии пользователя в постах при редактировании профиля
-        posts.updateTitlePosts([req.body.name, req.body.surname, req.body.id], (err) => {
-            if (err) return res.status(500).send("Ошибка при обновдении title в постах.");
+            //проверка по email о дублировании пользователя
+            if (err !== null) {
+                if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+            }
+            if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы");
+
+            //обновление имени и фамилии пользователя в постах при редактировании профиля
+            // posts.updateTitlePosts([req.body.name, req.body.surname, req.body.id], (err) => {
+            //     if (err) return res.status(500).send("Ошибка при обновдении title в постах.");
 
             //получение данных о пользователе после обновления
-            authorization.selectByEmail(req.body.email, (err, user) => {
-                if (err) return res.status(500).send("Ошибка на сервере.");
-                res.status(200).send({
-                    auth: true,
-                    user: {
-                        userID: user.userID,
-                        ava: user.ava,
-                        name: user.name,
-                        email: user.email,
-                        surname: user.surname,
-                        year_user: user.year_user,
-                        month_user: user.month_user,
-                        day_user: user.day_user,
-                        selectedGender: user.selectedGender,
-                        country: user.country,
-                        city: user.city,
-                        is_admin: user.is_admin
-                    }
-                });
-            })
+            authorization.loadUser(req.body.id, (err, user) => {
+                    if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
+                    res.status(200).send({
+                        user
+                    });
+                })
+                // });
         });
-    });
+    }
 })
 
 //изменение старого пароля
-router.put('/password', passwordValidate, function(req, res) {
+router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
 
-    //валидация полей
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        console.log(errors)
-        return res.status(422).json({
-            errors: errors.array()
-        });
+    userID = +req.body.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    if (userID === tokenID) {
+        //валидация полей
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            console.log(errors)
+            return res.status(422).json({
+                errors: errors.array()
+            });
+        }
+        //проверка старого пароля
+        if (!req.body.old_password) return res.status(500).send("Поле со старым паролем не заполнено");
+
+        authorization.selectByEmail(req.body.email, (err, user) => {
+            if (err) return res.status(500).send("Ошибка на сервере");
+
+            let passwordIsValid = bcrypt.compareSync(req.body.old_password, user.user_pass);
+            if (!passwordIsValid) return res.status(401).send({
+                err: 'Пароль не действителен'
+            });
+
+            if (!req.body.new_password) return res.status(500).send("Поле с новым паролем не заполнено");
+
+            //обновление старого пароля
+            authorization.updateUserPassword([
+                    bcrypt.hashSync(req.body.new_password, 8),
+                    req.body.id
+                ],
+                (err) => {
+                    if (err) return res.status(500).send("При изменении пароля возникли проблемы");
+
+                    res.status(200).send("Пароль успешно обновлен");
+                })
+
+        })
     }
-
-    //проверка старого пароля
-    if (!req.body.old_password) return res.status(500).send("Поле со старым паролем не заполнено");
-
-    authorization.selectByEmail(req.body.email, (err, user) => {
-        if (err) return res.status(500).send("Ошибка на сервере");
-
-        let passwordIsValid = bcrypt.compareSync(req.body.old_password, user.user_pass);
-        if (!passwordIsValid) return res.status(401).send({
-            err: 'Пароль не действителен'
-        });
-
-        if (!req.body.new_password) return res.status(500).send("Поле с новым паролем не заполнено");
-
-        //обновление старого пароля
-        authorization.updateUserPassword([
-                bcrypt.hashSync(req.body.new_password, 8),
-                req.body.userID
-            ],
-            (err) => {
-                if (err) return res.status(500).send("При изменении пароля возникли проблемы");
-
-                res.status(200).send("Пароль успешно обновлен");
-            })
-
-    })
 })
 
+
+
 //удаление профиля пользователя
-router.delete('/delete_user', passwordDelValidate, function(req, res) {
+router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req, res) {
 
-    //валидация полей
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({
-            errors: errors.array()
-        });
-    }
+    userID = +req.body.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
 
-    if (!req.body.password) return res.status(500).send("Поле с паролем не заполнено");
+    if (userID === tokenID) {
+        //валидация полей
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({
+                errors: errors.array()
+            });
+        }
 
-    authorization.selectByEmail(req.body.email, (err, user) => {
-        if (err) return res.status(500).send("Ошибка на сервере");
+        if (!req.body.password) return res.status(500).send("Поле с паролем не заполнено");
 
-        let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
-        if (!passwordIsValid) return res.status(401).send({
-            err: 'Пароль не действителен'
-        });
+        authorization.selectByEmail(req.body.email, (err, user) => {
+            if (err) return res.status(500).send("Ошибка на сервере");
 
-        //удаление всех фотографий пользователя
-        req.body.allPhoto.forEach((photo) => {
-                fs.unlink(`../src/assets/photo/${photo.photo_name}`, (err) => {
-                    if (err) console.log(err)
-                });
+            let passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
+            if (!passwordIsValid) return res.status(401).send({
+                err: 'Пароль не действителен'
+            });
+
+            //удаление всех фотографий пользователя
+            req.body.allPhoto.forEach((photo) => {
+                    fs.unlink(`../src/assets/photo/${photo.photo_name}`, (err) => {
+                        if (err) console.log(err)
+                    });
+                })
+                //удаление аватарки из папки на сервере
+            fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
+                if (err) console.log(err)
+            });
+
+            //удаление пользователя
+            authorization.deleteUserDB([req.body.id], (err) => {
+                if (err) return res.status(500).send("При удалении пользователя возникли проблемы");
+                res.status(200).send("Пользователь успешно удален");
             })
-            //удаление аватарки из папки на сервере
-        fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
-            if (err) console.log(err)
-        });
-
-        //удаление пользователя
-        authorization.deleteUserDB([req.body.userID], (err) => {
-            if (err) return res.status(500).send("При удалении пользователя возникли проблемы");
-            res.status(200).send("Пользователь успешно удален");
         })
-    })
+    }
 })
 
 //подгружаем посты пользователя при посещении 'Моей страницы'
-router.get('/dataBase.js', function(req, res) {
+router.get('/dataBase.js', authenticateJWT, function(req, res) {
     posts.load_posts_DB([
         req.query.userID,
         req.query._count,
         req.query._limit
     ], (err, allPosts) => {
+        console.log(err)
         if (err) return res.status(500).send('Error on the server.');
         if (!allPosts) return res.status(404).send('No posts found.');
         res.json(allPosts);
@@ -411,23 +471,37 @@ router.get('/dataBase.js', function(req, res) {
 });
 
 //добавляем новый пост
-router.post('/dataBase.js', postValidate, function(req, res) {
+router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
+    //валидация поста
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({
             errors: errors.array()
         });
     }
+    userID = +req.body.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
+
     posts.add_post_DB([
-        req.body.name,
-        req.body.surname,
         req.body.date,
         req.body.postText,
-        req.body.userID
+        req.body.id,
+        req.tokenID
     ], (err, post) => {
         if (err) return res.status(500).send('Error on the server.');
-        res.json(post);
-        res.status(200);
+        console.log(post)
+        const postID = post.insertId
+        authorization.loadUser(tokenID, (err, user) => {
+            res.status(200).send({
+                user: {
+                    postID: postID,
+                    userID: user.userID,
+                    ava: user.ava,
+                    name: user.name,
+                    surname: user.surname,
+                }
+            });
+        });
     });
 });
 
@@ -478,7 +552,9 @@ router.post('/upload_ava', (req, res) => {
     //сжатие и сохранение изображения в папке
     sharp(imgBuffer)
         .toFormat('jpeg')
-        .jpeg({ quality: 30 })
+        .jpeg({
+            quality: 30
+        })
         .toFile("../src/assets/photo/" + nameImg, (err, info) => {
             if (err) {
                 console.error(err);
@@ -548,7 +624,9 @@ router.post('/upload_photo', (req, res) => {
             //сжатие и сохранение изображения в папке
             sharp(myFile.data)
                 .toFormat('jpeg')
-                .jpeg({ quality: 30 })
+                .jpeg({
+                    quality: 30
+                })
                 .toFile(`../src/assets/photo/${updateName}`, (err, info) => {
                     if (err) {
                         console.error(err);

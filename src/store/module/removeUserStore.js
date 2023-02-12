@@ -30,7 +30,7 @@ export const removeUserStore = {
                 let url = "http://localhost:8000/delete_user";
 
                 user.email = getters.getUser.email;
-                user.userID = getters.getUser.userID;
+                user.id = getters.getUser.userID;
                 user.allPhoto = getters.allPhoto;
                 user.nameAva = getters.getUser.ava
 

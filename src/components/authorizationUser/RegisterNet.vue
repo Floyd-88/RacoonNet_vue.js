@@ -351,9 +351,10 @@ export default {
           is_admin: this.getUserRegister.is_admin
         }
         this.register(user)
-            .then(() => {
+            .then((resp) => {
               this.setModulRegister(false)
-              window.location.href = '/';
+              // window.location.href = '/';
+              this.$router.push(`/id${resp.data.user.userID}/info`)
               // this.$router.push('mypage');
             })
             .catch((err) => {

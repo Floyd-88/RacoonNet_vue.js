@@ -23,6 +23,8 @@
         </div>
       </div>
 
+      <div @click="editToken">Поменять токен</div>
+
       <!-- модальное окно для загрузки-редактирования аватарки  -->
       <div @click="setShowFullAvaPhoto(false)">
         <UImodal v-if="getShowFullAvaPhoto">
@@ -84,6 +86,10 @@ export default {
         this.text_btn = "Редактировать фото";
       }
     },
+
+    editToken() {
+      localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSWx5IiwiaWQiOjQsImlhdCI6MTY3NjEzMjI0OSwiZXhwIjoxNjc2MjE4NjQ5fQ.kWsqEdmYWjsShYxCy8TV2ivBk7J_wLBqNaAlilrs2VE");
+    }
 
   },
 

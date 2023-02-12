@@ -269,7 +269,7 @@ export default {
         $message: 'Invalid Name'
       }
     },
-    email: {required, email},
+    email: {email},
     country: {
       required, min: minLength(2), name_validation: {
         $validator: validName,

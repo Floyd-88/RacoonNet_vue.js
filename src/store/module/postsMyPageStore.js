@@ -83,16 +83,22 @@ export const postsMyPageStore = {
         // добавление нового поста на мою страницу
         async addPost({ commit, dispatch, getters }, postText) {
             const newPost = {
-                userID: getters.getUser.userID,
-                name: getters.getUser.name,
-                surname: getters.getUser.surname,
+                id: getters.getUser.userID,
                 postText: postText.trim(),
             }
             newPost.date = await dispatch("newDate"),
 
                 await axios.post('http://localhost:8000/dataBase.js', newPost)
                 .then(function(response) {
-                    newPost.id = response.data.insertId;
+                    // const user = JSON.parse(localStorage.getItem('user'));
+
+                    console.log(response.data.user)
+                    newPost.id = response.data.user.postID;
+                    newPost.name = response.data.user.name;
+                    newPost.surname = response.data.user.surname;
+                    newPost.ava = response.data.user.ava
+
+                    console.log(getters.getPosts)
                     commit("setAddPosts", newPost);
                 })
                 .catch(function(error) {

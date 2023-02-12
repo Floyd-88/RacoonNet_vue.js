@@ -110,9 +110,9 @@ export const registrationStore = {
                             localStorage.setItem('token', token);
                             localStorage.setItem('user', JSON.stringify(user));
 
-                            axios.defaults.headers.common['Authorization'] = token; //???????????????????????
+                            axios.defaults.headers.common['Authorization'] = token;
 
-                            // commit('authorizationStore/auth_success', { user, token }, { root: true });
+                            commit('authorizationStore/auth_success', { user, token }, { root: true });
                             // commit('editProfileStore/setEditingUser', user, { root: true });
                             resolve(resp);
                         }
@@ -120,6 +120,7 @@ export const registrationStore = {
                     .catch(err => {
                         commit('editProfileStore/auth_error', err, { root: true });
                         localStorage.removeItem('token')
+                        localStorage.removeItem('user');
                         reject(err.response.data);
                     })
             })

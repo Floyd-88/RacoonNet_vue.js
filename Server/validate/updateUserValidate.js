@@ -17,7 +17,12 @@ let updateUserValidate = [
     .escape(),
 
     //Check Email
-    loginValidate[0],
+    check('email')
+    .isEmail() //проверяет адрес электронной почты
+    .withMessage('Некорректный адрес электронной почты')
+    .trim() //уберает пробелы в начале и конце строки
+    .escape() //превращает спецсимволы в код html
+    .normalizeEmail(), //преводи адрес почты к стандартному формату
 
     // Check Country
     check('country')

@@ -2,8 +2,8 @@ import axios from "axios";
 
 export const authorizationStore = {
     state: () => ({
-        email: '',
-        password: '',
+        // email: '',
+        // password: '',
         status: '',
         token: localStorage.getItem('token') || '', //получаем токен создаваемый при авторизации
         user: JSON.parse(localStorage.getItem('user')) || {}, //получаем данные юзера при авторизаци
@@ -36,10 +36,13 @@ export const authorizationStore = {
     },
 
     mutations: {
-        auth_request(state) {
-            state.status = 'loading';
+        auth_request(state, status) {
+            state.status = status;
         },
-        auth_success(state, { user, token }) {
+        auth_success(state, {
+            user,
+            token
+        }) {
             state.status = 'success';
             state.token = token;
             state.user = user;
@@ -64,27 +67,38 @@ export const authorizationStore = {
         },
         setPassword(state, password) {
             state.password = password;
+        },
+
+        setUser(state, user) {
+            state.user = user
         }
 
     },
 
     actions: {
         //авторизация зарегистрированого юзера
-        login({ commit }, user) {
+        login({
+            commit
+        }, user) {
             return new Promise((resolve, reject) => {
-                commit('auth_request')
-                axios({ url: 'http://localhost:8000/login', data: user, method: 'POST' })
+                commit('auth_request', 'loading')
+                axios({
+                        url: 'http://localhost:8000/login',
+                        data: user,
+                        method: 'POST'
+                    })
                     .then(resp => {
                         const token = resp.data.token;
                         const user = resp.data.user;
 
                         if (token !== null && user !== null) {
+                            // if (token !== null) {
+
                             localStorage.setItem('token', token);
                             localStorage.setItem('user', JSON.stringify(user));
 
-                            axios.defaults.headers.common['Authorization'] = token //?????????????????
-
-                            // commit('auth_success', { user, token });
+                            axios.defaults.headers.common['Authorization'] = token;
+                            commit('auth_success', { user, token });
                             // commit('editProfileStore/setEditingUser', user, { root: true });
                             resolve(resp);
                         }
@@ -99,7 +113,9 @@ export const authorizationStore = {
         },
 
         //выход из профиля
-        logout({ commit }) {
+        logout({
+            commit
+        }) {
             return new Promise((resolve) => {
                 commit('logout');
                 localStorage.removeItem('token');
@@ -108,6 +124,39 @@ export const authorizationStore = {
                 resolve();
             })
         },
+
+        //получение данных по пользователю
+        loadUser({ commit }, id) {
+            return new Promise((resolve, reject) => {
+                commit('auth_request', 'loading')
+
+
+                axios({
+                        url: 'http://localhost:8000/load_user',
+                        data: id,
+                        method: 'POST'
+                    })
+                    .then(resp => {
+                        console.log(resp.data.user)
+                        const user = resp.data.user;
+                        commit("setUser", user)
+
+                        if (user !== null) {
+                            // localStorage.setItem('user', JSON.stringify(user));
+                            commit('auth_request', 'success')
+
+                            // commit('editProfileStore/setEditingUser', user, { root: true });
+                            resolve(resp);
+                        }
+                    })
+                    .catch((err) => {
+                        // commit('auth_error');
+                        // localStorage.removeItem('token');
+                        // localStorage.removeItem('user');
+                        reject(err.response.data);
+                    })
+            })
+        }
 
     },
 

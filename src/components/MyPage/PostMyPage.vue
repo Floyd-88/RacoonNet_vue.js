@@ -4,7 +4,11 @@
     <div class="wrapper_post">
 
       <div class="wrapper_ava_posts">
-        <img class="ava_posts" :src="pathAva" alt="ava">
+      
+   
+          <img class="ava_posts" ref="img" @error="onImgLoad" :src="loadAva(post.ava)"  alt="ava">
+      
+        <!-- <img class="ava_posts" v-else :src="require(`../../assets/ava/ava_1.jpg`)" alt="ava"> -->
       </div>
 
       <div class="wrapper_post_user">
@@ -97,6 +101,13 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   name: "PostMyPage",
 
+  data(){
+    return {
+      // isLoaded: false,
+      // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
+    }
+  },
+
   methods: {
     ...mapMutations({
       setBeforePostText: "postsMyPageStore/setBeforePostText",
@@ -107,6 +118,22 @@ export default {
       editPost: "postsMyPageStore/editPost",
       removePost: "postsMyPageStore/removePost"
     }),
+
+    // onImgLoad() {
+    //   console.log(this.$refs)
+    //   // return this.isLoaded = false
+    // },
+    // loadAva() {
+    //   require(`../../assets/photo/${post.ava}`)
+    // }
+    loadAva(ava) {
+          try{
+            return require(`../../assets/photo/${ava}`)
+          } catch {
+            return require(`../../assets/ava/ava_1.jpg`);
+          }
+
+        }
   },
 
   computed: {
@@ -126,14 +153,7 @@ export default {
       }
     },
 
-    pathAva() {
-          try{
-            return require(`../../assets/photo/${this.getUser.ava}`)
-          } catch {
-            return require(`../../assets/ava/ava_1.jpg`);
-          }
-
-        }
+    
 
   }
 }

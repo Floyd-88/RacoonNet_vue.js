@@ -81,7 +81,7 @@ export const editProfileStore = {
         },
 
         //редактирование профиля
-        updateProfile({ getters }, user) {
+        updateProfile({ commit, getters }, user) {
             return new Promise((resolve, reject) => {
 
                 let url = "http://localhost:8000/editProfile";
@@ -96,7 +96,8 @@ export const editProfileStore = {
                         const user = resp.data.user;
                         if (user !== null) {
                             localStorage.setItem('user', JSON.stringify(user));
-                            window.location.href = '/';
+                            commit("setModulEditProfile", false)
+                                // window.location.href = '/';
                         }
                     })
                     .catch(err => {

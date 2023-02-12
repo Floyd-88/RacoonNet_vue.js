@@ -32,11 +32,21 @@ class AuthorizationUserDB {
 
     //возвращаем список всех зарегестрированных пользователей
     selectAll(callback) {
-            return this.connection.execute(`SELECT * FROM users`, function(err, rows) {
-                callback(err, rows);
+        return this.connection.execute(`SELECT * FROM users`, function(err, rows) {
+            callback(err, rows);
+        })
+    }
+
+    //возвращаем информацию по пользователю
+    loadUser(id, callback) {
+        return this.connection.execute(
+            `SELECT userID,ava,email, name,surname,year_user,month_user,day_user,selectedGender,country,city FROM users WHERE userID = ?`, [id],
+            function(err, row) {
+                callback(err, row[0]);
             })
-        }
-        // добавляем пользователя в базу данных без метки админ
+    }
+
+    // добавляем пользователя в базу данных без метки админ
     insert(user, callback) {
         return this.connection.execute(
             'INSERT INTO users (name,surname,email,user_pass,year_user,month_user,day_user,selectedGender,country,city) VALUES (?,?,?,?,?,?,?,?,?,?)', user, (err) => {
@@ -46,10 +56,19 @@ class AuthorizationUserDB {
 
     //редактирование информации о пользователе
     updateUser(user, callback) {
-        return this.connection.execute(`UPDATE users SET name=?, surname=?, email=?, year_user=?, month_user=?, day_user=?, selectedGender=?, country=?, city=? WHERE userID =?`, user, (err) => {
+        return this.connection.execute(`UPDATE users SET name=?, surname=?, email=COALESCE(NULLIF(?, ''),email), year_user=?, month_user=?, day_user=?, selectedGender=?, country=?, city=? WHERE userID =?`, user, (err) => {
             callback(err);
         });
     }
+
+    // //
+    // selectByEmail(email, callback) {
+    //     this.connection.execute(
+    //         `SELECT userID, is_admin FROM users WHERE email = ?`, [email],
+    //         function(err, row) {
+    //             callback(err, row[0]);
+    //         })
+    // }
 
     //обновление пароля
     updateUserPassword(body, callback) {

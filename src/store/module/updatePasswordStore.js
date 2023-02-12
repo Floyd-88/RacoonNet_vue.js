@@ -67,7 +67,7 @@ export const updatePasswordStore = {
                 let url = "http://localhost:8000/password";
 
                 user.email = getters.getUserEmail
-                user.userID = getters.getUserID
+                user.id = getters.getUserID
 
                 axios({
                         url: url,

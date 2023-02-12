@@ -1,24 +1,35 @@
-import UserInfo from "@/components/MyPage/UserInfo";
 import NavigationNet from "@/components/layout/NavigationNet";
 import HeaderNet from "@/components/layout/HeaderNet";
-import PostMyPage from "@/components/MyPage/PostMyPage";
-import UIbtn from "@/components/UI/UIbtn";
-import AddPost from "@/components/MyPage/AddPost";
+
 import LoginNet from "@/components/authorizationUser/LoginNet";
 import RegisterNet from "@/components/authorizationUser/RegisterNet";
-import UImodal from "@/components/UI/UImodal";
+
+import UserInfo from "@/components/MyPage/UserInfo";
+import MainPhoto from "@/components/MainPhoto";
+import MyPageContent from "@/components/MyPage/MyPageContent";
 import PhotoMyPage from "@/components/MyPage/PhotoMyPage";
+import AddPost from "@/components/MyPage/AddPost";
+import PostMyPage from "@/components/MyPage/PostMyPage";
 import MyFriends from "@/components/MyPage/MyFriends";
+
+import AvatarEditor from "@/components/AvatarEditor";
 import EditProfile from "@/components/MyPage/EditProfile";
 import ChangePassword from "@/components/ChangePassword";
-import CloseModal from "@/components/UI/CloseModal";
 import DeleteUser from "@/components/DeleteUser";
+
 import FileUpload from "@/components/FileUpload";
+
+
 import AllPhotos from "@/components/AllPhotos";
 import SliderPhoto from "@/components/SliderPhoto";
 import CommentsPhoto from "@/components/CommentsPhoto";
-import MainPhoto from "@/components/MainPhoto";
-import AvatarEditor from "@/components/AvatarEditor";
+
+
+import UIbtn from "@/components/UI/UIbtn";
+import UImodal from "@/components/UI/UImodal";
+import CloseModal from "@/components/UI/CloseModal";
+import NotFound from "@/components/authorizationUser/NotFound";
+
 
 export default [
     UserInfo,
@@ -41,5 +52,7 @@ export default [
     SliderPhoto,
     CommentsPhoto,
     MainPhoto,
-    AvatarEditor
+    AvatarEditor,
+    NotFound,
+    MyPageContent
 ]

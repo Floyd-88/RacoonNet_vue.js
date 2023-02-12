@@ -12,7 +12,7 @@
           </div>
         </div>
         <input class="form_login_input" id="email" type="text" placeholder="Введите электронный адрес" autofocus
-          v-model="autorizationEmail" :class="{ invalid: (v$.email.$error) }">
+          v-model="v$.email.$model" :class="{ invalid: (v$.email.$error) }">
       </div>
 
       <div class="form_login">
@@ -22,7 +22,7 @@
           </div>
         </div>
         <input class="form_login_input" id="password" type="password" placeholder="Введите пароль"
-          v-model="autorizationPassword" :class="{ invalid: (v$.password.$error) }">
+          v-model="v$.password.$model" :class="{ invalid: (v$.password.$error) }">
       </div>
       <div class="wrapper_error_login" v-if="getErrorLogin">
         <p class="error_login">{{ getErrorLogin }}</p>
@@ -45,7 +45,6 @@
           Создать новый аккаунт
         </button>
       </div>
-
     </form>
   </div>
 </template>
@@ -64,7 +63,10 @@ export default {
   },
 
   data() {
-    return {}
+    return {
+      email: '',
+      password: '',
+    }
   },
 
   validations() {
@@ -79,8 +81,8 @@ export default {
     ...mapMutations({
       setModulRegister: "registrationStore/setModulRegister",
       setErrorLogin: "authorizationStore/setErrorLogin",
-      setEmail: "authorizationStore/setEmail",
-      setPassword: "authorizationStore/setPassword",
+      // setEmail: "authorizationStore/setEmail",
+      // setPassword: "authorizationStore/setPassword",
     }),
 
     handleSubmit() {
@@ -93,8 +95,8 @@ export default {
             if (resp.data.user.is_admin === 1) {
               this.$router.push('admin')
             } else {
-              window.location.href = '/';
-              // this.$router.push('mypage')
+              // window.location.href = `/${resp.data.user.userID}`;
+              this.$router.push(`/id${resp.data.user.userID}/info`)
             }
           })
           .catch((err) => {
@@ -110,34 +112,34 @@ export default {
   computed: {
     ...mapGetters({
       getErrorLogin: "authorizationStore/getErrorLogin",
-      getEmail: "authorizationStore/getEmail",
-      getPassword: "authorizationStore/getPassword",
+      // getEmail: "authorizationStore/getEmail",
+      // getPassword: "authorizationStore/getPassword",
     }),
 
     ...mapState({
-      email: state => state.authorizationStore.email,
-      password: state => state.authorizationStore.password,
+      // email: state => state.authorizationStore.email,
+      // password: state => state.authorizationStore.password,
     }),
 
-    autorizationEmail: {
-      get() {
-        return this.getEmail
-      },
-      set(value) {
-        this.setEmail(value);
-        this.v$.email.$touch();
-      }
-    },
+    // autorizationEmail: {
+    //   get() {
+    //     return this.getEmail
+    //   },
+    //   set(value) {
+    //     this.setEmail(value);
+    //     this.v$.email.$touch();
+    //   }
+    // },
 
-    autorizationPassword: {
-      get() {
-        return this.getPassword
-      },
-      set(value) {
-        this.setPassword(value);
-        this.v$.password.$touch();
-      }
-    }
+    // autorizationPassword: {
+    //   get() {
+    //     return this.getPassword
+    //   },
+    //   set(value) {
+    //     this.setPassword(value);
+    //     this.v$.password.$touch();
+    //   }
+    // }
   }
 }
 </script>

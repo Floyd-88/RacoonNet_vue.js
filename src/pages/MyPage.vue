@@ -1,45 +1,37 @@
 <template>
-  <div class="main">
-    <template v-if="getModulEditProfile">
-      <UImodal>
-      <EditProfile/>
-    </UImodal>
-    </template>
-    
 
-    <UserInfo/>
-    <div class="wrapper_myPage">
-      <div class="wrapper_contents">
-        <PhotoMyPage/>
+  <NavigationNet v-if="isLoggedIn" />
 
-        <div class="wrapper_posts">
-          <AddPost/>
-          <PostMyPage/>
-            
-          <div class="wrapper_not_posts"
-               v-if="getPosts.length === 0">
-            <p class="not_posts">Посты не найдены!!!</p>
-          </div>
+  <div class="wrapper_main">
+    <div class="main">
 
-          <!--при прокрутки страницы до данного элемента - подгружать следующие посты -->
-          <div ref="observer" class="observer"></div>
-        </div>
+      <template v-if="getModulEditProfile">
+        <UImodal>
+          <EditProfile />
+        </UImodal>
+      </template>
+
+      <UserInfo />
+
+      <div class="wrapper_myPage">
+        <router-view></router-view>
       </div>
-
-      <MyFriends/>
 
     </div>
   </div>
+
+
+
 </template>
 <script>
-import {mapGetters, mapActions, mapMutations} from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import EditProfile from "@/components/MyPage/EditProfile";
 // import axios from "axios";
 
 
 export default {
   name: "MyPage",
-  components: {EditProfile},
+  components: { EditProfile },
 
   data() {
     return {
@@ -49,48 +41,76 @@ export default {
 
   mounted() {
 
-    this.loadAllPhotos();
+    // this.loadAllPhotos();
 
     // обсервер срабатывает каждый раз когда докручиваем страницу донизу
-    const options = {
-      rootMargin: '0px',
-      threshold: 1.0
-    };
-    const callback = (entries) => {
-      if (entries[0].isIntersecting) {
-        this.setLimitPosts();
-        this.setCountPosts();
-        this.loadPostServer();
-      }
-    };
-    const observer = new IntersectionObserver(callback, options);
-    observer.observe(this.$refs.observer);
+    // const options = {
+    //   rootMargin: '0px',
+    //   threshold: 1.0
+    // };
+    // const callback = (entries) => {
+    //   if (entries[0].isIntersecting) {
+    //     this.setLimitPosts();
+    //     this.setCountPosts();
+    //     this.loadPostServer();
+    //   }
+    // };
+    // const observer = new IntersectionObserver(callback, options);
+    // observer.observe(this.$refs.observer);
 
 
   },
 
   methods: {
     ...mapActions({
-      loadPostServer: "postsMyPageStore/loadPostServer",
-      loadAllPhotos: "loadPhotoStore/loadAllPhotos",
+      // loadPostServer: "postsMyPageStore/loadPostServer",
+      // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
     }),
     ...mapMutations({
-      setCountPosts: "postsMyPageStore/setCountPosts",
-      setLimitPosts: "postsMyPageStore/setLimitPosts",
+      // setCountPosts: "postsMyPageStore/setCountPosts",
+      // setLimitPosts: "postsMyPageStore/setLimitPosts",
     }),
 
   },
 
   computed: {
     ...mapGetters({
-      getPosts: "postsMyPageStore/getPosts",
+      isLoggedIn: "authorizationStore/isLoggedIn",
+      // getPosts: "postsMyPageStore/getPosts",
       getModulEditProfile: "editProfileStore/getModulEditProfile",
+      // getUser: "authorizationStore/getUser"
     }),
-  }
+  },
 
+  watch: {
+    // getUser() {
+    //   this.loadAllPhotos();
+
+    //   const options = {
+    //   rootMargin: '0px',
+    //   threshold: 1.0
+    // };
+    // const callback = (entries) => {
+    //   if (entries[0].isIntersecting) {
+    //     this.setLimitPosts();
+    //     this.setCountPosts();
+    //     this.loadPostServer();
+    //   }
+    // };
+    // const observer = new IntersectionObserver(callback, options);
+    // observer.observe(this.$refs.observer);
+    // }
+
+  }
 }
+
 </script>
+
 <style scoped>
+.wrapper_main {
+  padding: 120px 20px 5px;
+}
+
 .main {
   margin-left: 180px;
 }

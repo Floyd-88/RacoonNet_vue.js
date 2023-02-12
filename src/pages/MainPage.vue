@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper_main">
     <template v-if="getModulRegister">
       <UImodal> <RegisterNet/> </UImodal>
     </template>
@@ -35,6 +35,9 @@ computed: {
 </script>
 
 <style scoped>
+.wrapper_main {
+  padding: 120px 20px 5px;
+}
 .wrapper_mainPage {
   display: flex;
   align-items: center;

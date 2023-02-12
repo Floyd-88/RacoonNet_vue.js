@@ -125,7 +125,7 @@ export const loadPhotoStore = {
                     }
                 ).then((res) => {
                     localStorage.setItem('user', JSON.stringify(res.data.user))
-                    window.location.href = '/';
+                        // window.location.href = '/';
                 })
                 .catch((err) => {
                     console.log(err.response.data);
@@ -155,14 +155,12 @@ export const loadPhotoStore = {
                     }
                 ).then(() => {
                     commit("setIsModalLoadPhoto", false);
-                    window.location.href = '/';
+                    // window.location.href = '/';
                 })
                 .catch((err) => {
                     console.log(err.response.data);
-
-                    console.log(1111)
-                        // commit("setArrayLoadImage", []);
-                        // commit("setUrlsImages", []);
+                    // commit("setArrayLoadImage", []);
+                    // commit("setUrlsImages", []);
                     commit("setMessageLoadPhoto", err.response.data);
                 })
         },
@@ -239,7 +237,7 @@ export const loadPhotoStore = {
                     });
                     commit("setModulePhotoRemove", false)
                     localStorage.setItem('user', JSON.stringify(res.data.user));
-                    window.location.href = '/';
+                    // window.location.href = '/';
                 });
             } catch (err) {
                 console.log(err);

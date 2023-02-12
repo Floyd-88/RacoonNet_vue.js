@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper_nav">
     <div class="wrapper_nav_link">
-       <button class="link" @click="$router.push('/mypage')"> Моя страница </button>
+       <button class="link" @click="$router.push(`/id1/info`)"> Моя страница </button>
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/message')">Сообщения</button>
