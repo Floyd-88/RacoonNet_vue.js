@@ -121,7 +121,7 @@ export default {
 .wrapper_full_size_img {
     width: 100%;
     height: 100%;
-    background: rgb(16 16 16);;
+    background: rgb(16 16 16);
     display: flex;
     align-items: center;
     justify-content: center;

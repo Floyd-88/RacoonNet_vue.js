@@ -5,7 +5,7 @@
             <div class="wrapper_block_full_size_img">
                 <div class="wrapper_full_size_img">
                     <img class="full_size_img" v-if="currentImg.photo_name"
-                        :src="require(`../assets/photo/${currentImg.photo_name}`)" alt="currentImg" />
+                        :src="require(`../assets/photo/${currentImg.photo_name}`)" :alt="currentImg.photo_name" />
 
                 </div>
                 <!-- </transition-group> -->
@@ -16,7 +16,7 @@
                 <div class="wrapper_block_info_photo">
                     <div class="wrapper_block_info_name_count_photo">
                         <div class="wrapper_block_info_name">
-                            <p>Фотографии: 1 из 28</p>
+                            <p>Фотографии: {{ getIndexPhoto + 1 }} из {{ getAllPhotosMyPage.length }}</p>
                         </div>
                     </div>
                     <div class="wrapper_block_info_remove_photo">
@@ -119,6 +119,12 @@ export default {
                     this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
                 }
                 let photo = this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length];
+
+                if(this.getIndexPhoto >= this.getAllPhotosMyPage.length) {
+                    this.setIndexPhoto(0);
+                } else if(this.getIndexPhoto < 0) {
+                    this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
+                }
                 this.setPhotoId(photo.id);
                 return photo;
             }
@@ -157,7 +163,7 @@ export default {
 .wrapper_full_size_img_ava {
     width: 100%;
     height: 100%;
-    background: whitesmoke;
+    background: rgb(16 16 16);
     display: flex;
     align-items: center;
     justify-content: center;

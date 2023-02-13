@@ -115,7 +115,8 @@ export const loadPhotoStore = {
     actions: {
         //загрузка автарки
         addAvaServer: function({
-            getters
+            getters,
+            commit
         }, img) {
             axios.post(
                     'http://localhost:8000/upload_ava', {
@@ -124,13 +125,13 @@ export const loadPhotoStore = {
                         id: getters.getUser.userID
 
                     }
-                ).then(() => {
-                    // commit("authorizationStore/setUserAva", res.data.ava, {
-                    //     root: true
-                    // })
-                    // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                    //     root: true
-                    // });
+                ).then((res) => {
+                    commit("authorizationStore/setUserAva", res.data.ava, {
+                        root: true
+                    })
+                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                        root: true
+                    });
                     // router.push(`/id${getters.getUser.userID}/info`)
                     // this.$router.push('/')
                     window.location.href = `/id${getters.getUser.userID}/info`;
@@ -153,7 +154,6 @@ export const loadPhotoStore = {
                 formData.append('files[' + i + ']', file);
             }
             formData.append('id', getters.getUser.userID);
-            formData.append('email', getters.getUser.email);
 
             axios.post(
                     'http://localhost:8000/upload_photo',
@@ -162,15 +162,21 @@ export const loadPhotoStore = {
                             'Content-Type': 'multipart/form-data'
                         }
                     }
-                ).then(() => {
+                ).then((res) => {
                     commit("setIsModalLoadPhoto", false);
-                    // window.location.href = '/';
+                    commit("authorizationStore/setUserAva", res.data.ava, {
+                        root: true
+                    })
+                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                        root: true
+                    });
+                    window.location.href = `/id${getters.getUser.userID}/info`;
                 })
                 .catch((err) => {
-                    console.log(err.response.data);
+                    console.log(err);
                     // commit("setArrayLoadImage", []);
                     // commit("setUrlsImages", []);
-                    commit("setMessageLoadPhoto", err.response.data);
+                    commit("setMessageLoadPhoto", err);
                 })
         },
 
@@ -190,7 +196,7 @@ export const loadPhotoStore = {
             try {
                 await axios.get('http://localhost:8000/upload_all_photo', {
                     params: {
-                        userID: getters.getUser.userID
+                        id: getters.getUser.userID
                     }
                 }).then((response) => {
                     commit("setMyPhotosMyPage", response.data);
@@ -219,8 +225,8 @@ export const loadPhotoStore = {
             try {
                 await axios.delete('http://localhost:8000/remove_photo', {
                     params: {
-                        id: getters.getIdPhoto,
-                        userID: getters.getUser.userID,
+                        idPhoto: getters.getIdPhoto,
+                        id: getters.getUser.userID,
                         namePhoto: name,
                     }
                 }).then((response) => {
@@ -242,16 +248,13 @@ export const loadPhotoStore = {
         }) {
             try {
                 await axios.put('http://localhost:8000/remove_ava_photo', {
-                    userID: getters.getUser.userID,
-                    email: getters.getUser.email,
+                    id: getters.getUser.userID,
                     nameAva: getters.getUser.ava
                 }).then((res) => {
-                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                        root: true
-                    });
+                    commit("authorizationStore/setUserAva", res.data.user.ava, { root: true })
+                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, { root: true });
                     commit("setModulePhotoRemove", false)
-                    localStorage.setItem('user', JSON.stringify(res.data.user));
-                    // window.location.href = '/';
+                        // window.location.href = '/';
                 });
             } catch (err) {
                 console.log(err);

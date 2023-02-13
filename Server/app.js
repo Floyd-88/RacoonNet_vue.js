@@ -34,7 +34,9 @@ const postValidate = require('./validate/postValidate')
 const updateUserValidate = require('./validate/updateUserValidate')
 const passwordValidate = require('./validate/passwordValidate')
 const passwordDelValidate = require('./validate/passwordDelValidate');
-const { resolve } = require('path');
+const {
+    resolve
+} = require('path');
 
 // const {name} = require('file-loader');
 
@@ -533,8 +535,6 @@ router.post('/upload_ava', authenticateJWT, (req, res) => {
     // console.log(tokenID)
 
     if (userID === tokenID) {
-        console.log('go')
-
         //удаление аватарки из папки на сервере при обновлении
         if (req.body.nameAva !== "ava_1.jpg") {
             fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
@@ -585,65 +585,70 @@ router.post('/upload_ava', authenticateJWT, (req, res) => {
 
 
 //загружаем фотографии в БД
-router.post('/upload_photo', (req, res) => {
-    //допустимые форматы
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+router.post('/upload_photo', authenticateJWT, (req, res) => {
 
-    //проверка на наличие файла
-    if (!req.files) {
-        return res.status(500).send("Файлы не отправлены")
-    }
-    let arrayPhotos = [];
+    userID = +req.body.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
 
-    //переберем массив фотографий
-    for (let file in req.files) {
-        const myFile = req.files[file];
+    if (userID === tokenID) {
+        //допустимые форматы
+        const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
 
-        //проверка загруженных файлов
-        if (allowedTypes.includes(myFile.mimetype) && myFile.size < 5000000) {
-
-            let updateName = Date.now() + myFile.name.toLowerCase();
-
-            //сжатие и сохранение изображения в папке
-            sharp(myFile.data)
-                .toFormat('jpeg')
-                .jpeg({
-                    quality: 30
-                })
-                .toFile(`../src/assets/photo/${updateName}`, (err, info) => {
-                    if (err) {
-                        console.error(err);
-                    } else {
-                        console.log(info);
-                    }
-                });
-            // myFile.mv(`../src/assets/photo/${updateName}`,
-            //     function(err) {
-            //         if (err) {
-            //             return res.status(500).send("Ошибка при загрузке файлов");
-            //         }
-            //     }
-            // );
-
-            //добавляем в массив название фото и id юзера
-            arrayPhotos.push([updateName, req.body.id]);
+        //проверка на наличие файла
+        if (!req.files) {
+            return res.status(500).send("Файлы не отправлены")
         }
+        let arrayPhotos = [];
+
+        //переберем массив фотографий
+        for (let file in req.files) {
+            const myFile = req.files[file];
+
+            //проверка загруженных файлов
+            if (allowedTypes.includes(myFile.mimetype) && myFile.size < 5000000) {
+                let updateName = Date.now() + myFile.name.toLowerCase();
+
+                //сжатие и сохранение изображения в папке
+                sharp(myFile.data)
+                    .toFormat('jpeg')
+                    .jpeg({
+                        quality: 30
+                    })
+                    .toFile(`../src/assets/photo/${updateName}`, (err, info) => {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            // console.log(info);
+                        }
+                    });
+                // myFile.mv(`../src/assets/photo/${updateName}`,
+                //     function(err) {
+                //         if (err) {
+                //             return res.status(500).send("Ошибка при загрузке файлов");
+                //         }
+                //     }
+                // );
+
+                //добавляем в массив название фото и id юзера
+                arrayPhotos.push([updateName, tokenID]);
+            }
+        }
+        //загрузка в БД
+        photos.add_photo_DB(arrayPhotos, (err) => {
+            if (err) return res.status(500).send('Error on the server' + " " + err);
+        })
+        res.status(200).send("Фото успешно загрузились на сервер");
     }
-    //загрузка в БД
-    photos.add_photo_DB(arrayPhotos, (err) => {
-        if (err) return res.status(500).send('Error on the server.');
-    })
-    res.status(200).send("Фото успешно загрузились на сервер");
 });
 
 
 //получаем все фотографии
-router.get('/upload_all_photo', function(req, res) {
+router.get('/upload_all_photo', authenticateJWT, function(req, res) {
     photos.load_all_photos_DB([
-        req.query.userID,
+        req.query.id,
     ], (err, allPhotos) => {
-        if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились');
-        if (!allPhotos) return res.status(404).send('Фотографии не найдены');
+        if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились' + " " + err);
+        if (!allPhotos) return res.status(404).send('Фотографии не найдены' + " " + err);
 
         //массив с названиями фотографий
         let arr = [];
@@ -676,57 +681,59 @@ router.get('/upload_all_photo', function(req, res) {
 })
 
 //удаление фотографии
-router.delete('/remove_photo', function(req, res) {
-    fs.unlink(`../src/assets/photo/${req.query.namePhoto}`, (err) => {
-        if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее');;
-        console.log('Deleted');
-    });
+router.delete('/remove_photo', authenticateJWT, function(req, res) {
 
-    photos.remove_photo([
-        req.query.id,
-        req.query.userID,
-    ], (err) => {
-        if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась');
+    userID = +req.query.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
 
-        res.status(200).send("Фотография удалена");;
-    })
+    if (userID === tokenID) {
+        fs.unlink(`../src/assets/photo/${req.query.namePhoto}`, (err) => {
+            if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее' + " " + err);
+        });
+
+        photos.remove_photo([
+            req.query.idPhoto,
+            tokenID,
+        ], (err) => {
+            if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err);
+
+            res.status(200).send("Фотография удалена");;
+        })
+    }
+
 })
 
 //удаление аватарки
-router.put('/remove_ava_photo', function(req, res) {
+router.put('/remove_ava_photo', authenticateJWT, function(req, res) {
 
-    //удаление аватарки из папки на сервере
-    fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
-        if (err) console.log(err)
-    });
+    userID = +req.body.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
 
-    authorization.updateAva([
-        "ava_1.jpg",
-        req.body.userID
-    ], (err) => {
-        if (err) return res.status(500).send('Ошибка на сервере. Аватарка не удалилась');
+    if (userID === tokenID) {
+        //удаление аватарки из папки на сервере
+        fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
+            if (err) console.log(err)
+        });
 
-        //получение обновленного профиля после удаления аватарки
-        authorization.selectByEmail(req.body.email, (err, user) => {
-            if (err) return res.status(500).send("Не удалось получить фотографии с сервера");
-            res.status(200).send({
-                user: {
-                    userID: user.userID,
-                    ava: user.ava,
-                    name: user.name,
-                    email: user.email,
-                    surname: user.surname,
-                    year_user: user.year_user,
-                    month_user: user.month_user,
-                    day_user: user.day_user,
-                    selectedGender: user.selectedGender,
-                    country: user.country,
-                    city: user.city,
-                    is_admin: user.is_admin
-                }
-            });
+        authorization.updateAva([
+            "ava_1.jpg",
+            tokenID
+        ], (err) => {
+            if (err) return res.status(500).send('Ошибка на сервере. Аватарка не удалилась' + " " + err);
+
+            //получение обновленного профиля после удаления аватарки
+            authorization.loadUser(tokenID, (err, user) => {
+                if (err) return res.status(500).send("Не удалось получить фотографии с сервера" + " " + err);
+                res.status(200).send({
+                    user: {
+                        ava: user.ava,
+                    }
+                });
+            })
         })
-    })
+    }
+
+
 })
 
 
