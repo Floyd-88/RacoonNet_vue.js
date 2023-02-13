@@ -1,9 +1,10 @@
 <template>
     <div class="wrapper_edit_ava">
         <div class="block_vue_avatar">
-            <vue-avatar :width="400" :height="400" :borderRadius="borderRadius" :scale="scale" ref="vueavatar"
+            <vue-avatar class="vue_avatar" :width="400" :height="400" :borderRadius="borderRadius" :scale="scale" ref="vueavatar"
                 @vue-avatar-editor:image-ready="onImageReady"
                 :image="pathAva"
+                
                 >
             </vue-avatar>
         </div>
@@ -112,12 +113,23 @@ export default {
     align-items: center;
 }
 
-.block_vue_avatar {}
+.block_vue_avatar {
+}
 
-.block_scale {}
+.vue_avatar  {
+    height: 450px;
+    background: whitesmoke;
+}
+
+.block_scale {
+    margin-top: 10px;
+    color: whitesmoke;
+}
 
 .block_radius {
     margin-bottom: 10px;
+    color: whitesmoke;
+
 }
 
 .block_btn_save_ava {}

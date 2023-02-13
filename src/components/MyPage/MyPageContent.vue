@@ -46,6 +46,7 @@ export default {
 
     watch: {
         getUser() {
+            console.log(this.getUser)
             this.loadAllPhotos();
 
             const options = {

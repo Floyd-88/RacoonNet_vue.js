@@ -1,4 +1,5 @@
 import axios from "axios";
+// import router from "@/router/router";
 
 export const loadPhotoStore = {
 
@@ -119,15 +120,23 @@ export const loadPhotoStore = {
             axios.post(
                     'http://localhost:8000/upload_ava', {
                         img: img,
-                        userId: getters.getUser.userID,
-                        email: getters.getUser.email,
-                        nameAva: getters.getUser.ava
+                        nameAva: getters.getUser.ava,
+                        id: getters.getUser.userID
+
                     }
-                ).then((res) => {
-                    localStorage.setItem('user', JSON.stringify(res.data.user))
-                        // window.location.href = '/';
+                ).then(() => {
+                    // commit("authorizationStore/setUserAva", res.data.ava, {
+                    //     root: true
+                    // })
+                    // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                    //     root: true
+                    // });
+                    // router.push(`/id${getters.getUser.userID}/info`)
+                    // this.$router.push('/')
+                    window.location.href = `/id${getters.getUser.userID}/info`;
                 })
                 .catch((err) => {
+
                     console.log(err);
                 })
         },
@@ -180,7 +189,9 @@ export const loadPhotoStore = {
         }) {
             try {
                 await axios.get('http://localhost:8000/upload_all_photo', {
-                    params: { userID: getters.getUser.userID }
+                    params: {
+                        userID: getters.getUser.userID
+                    }
                 }).then((response) => {
                     commit("setMyPhotosMyPage", response.data);
                     commit("setAllMyPhotosMyPage", response.data);
@@ -225,7 +236,10 @@ export const loadPhotoStore = {
         },
 
         //удаление аватрки
-        async removeAvaPhoto({ getters, commit }) {
+        async removeAvaPhoto({
+            getters,
+            commit
+        }) {
             try {
                 await axios.put('http://localhost:8000/remove_ava_photo', {
                     userID: getters.getUser.userID,

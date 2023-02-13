@@ -48,6 +48,7 @@ const routes = [{
         children: [{
             path: 'info',
             component: MyPageContent,
+            name: "mypagecontent",
             meta: {
                 requiresAuth: true
             },

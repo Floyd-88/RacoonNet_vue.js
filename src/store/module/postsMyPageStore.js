@@ -73,6 +73,7 @@ export const postsMyPageStore = {
                         userID: getters.getUser.userID
                     }
                 }).then((response) => {
+
                     commit("setPosts", [...state.posts, ...response.data]);
                 });
             } catch (err) {

@@ -6,7 +6,7 @@
       <div class="wrapper_ava_posts">
       
    
-          <img class="ava_posts" ref="img" @error="onImgLoad" :src="loadAva(post.ava)"  alt="ava">
+          <img class="ava_posts" ref="img" :src="loadAva(post.ava)"  alt="ava">
       
         <!-- <img class="ava_posts" v-else :src="require(`../../assets/ava/ava_1.jpg`)" alt="ava"> -->
       </div>

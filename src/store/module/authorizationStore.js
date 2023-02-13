@@ -62,15 +62,19 @@ export const authorizationStore = {
         },
 
         //двухстороннее связывание
-        setEmail(state, email) {
-            state.email = email;
-        },
-        setPassword(state, password) {
-            state.password = password;
-        },
+        // setEmail(state, email) {
+        //     state.email = email;
+        // },
+        // setPassword(state, password) {
+        //     state.password = password;
+        // },
 
         setUser(state, user) {
-            state.user = user
+            state.user = user;
+        },
+
+        setUserAva(state, ava) {
+            state.user.ava = ava;
         }
 
     },
@@ -136,7 +140,7 @@ export const authorizationStore = {
                         method: 'POST'
                     })
                     .then(resp => {
-                        console.log(resp.data.user)
+                        // console.log(resp.data.user)
                         const user = resp.data.user;
                         commit("setUser", user)
 

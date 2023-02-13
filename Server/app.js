@@ -525,71 +525,62 @@ router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
 });
 
 //загружаем аватарку
-router.post('/upload_ava', (req, res) => {
+router.post('/upload_ava', authenticateJWT, (req, res) => {
 
-    //удаление аватарки из папки на сервере при обновлении
-    if (req.body.nameAva !== "ava_1.jpg") {
-        fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
-            if (err) console.log(err)
-        });
-    }
+    userID = +req.body.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
+    // console.log(req.body)
+    // console.log(tokenID)
 
-    let imgData = req.body.img // получаем файл в формате base64
-    let base64Data = imgData.split(",")[1]; // оставляем непосредственно само закодированное изображение
-    let nameImg = Date.now() + "ava.jpg"; //создаем имя фотографии
+    if (userID === tokenID) {
+        console.log('go')
 
-    let imgBuffer = Buffer.from(base64Data, 'base64'); //сохраняем изображение в буфер
+        //удаление аватарки из папки на сервере при обновлении
+        if (req.body.nameAva !== "ava_1.jpg") {
+            fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
+                if (err) console.log(err)
+            });
+        }
 
-    //записываем в папку на сервер изображение сконвертированное из base64
-    //сжатие и сохранение изображения в папке
-    sharp(imgBuffer)
-        .toFormat('jpeg')
-        .jpeg({
-            quality: 30
-        })
-        .toFile("../src/assets/photo/" + nameImg, (err, info) => {
-            if (err) {
-                console.error(err);
-            } else {
-                console.log(info);
-            }
-        });
+        //записываем в папку на сервер изображение сконвертированное из base64
+        let imgData = req.body.img // получаем файл в формате base64
+        let base64Data = imgData.split(",")[1]; // оставляем непосредственно само закодированное изображение
+        let nameImg = Date.now() + "ava.jpg"; //создаем имя фотографии
 
-    // require("fs").writeFile("../src/assets/photo/" + nameImg, base64Data, 'base64',
-    //     function(err) {
-    //         if (err) {
-    //             return res.status(422).send('Изображение не смогло конвертироваться из base64');
-    //         }
-    //     })
+        let imgBuffer = Buffer.from(base64Data, 'base64'); //сохраняем изображение в буфер
 
-    let arrayPhotos = [];
-    arrayPhotos.push(nameImg, req.body.userId);
-
-    //добавление картинки в таблицу Users
-    authorization.updateAva(arrayPhotos, (err) => {
-        if (err) return res.status(500).send('Аватар пользователь не сменился');
-
-        //получение обновленного профиля после загрузки аватарки
-        authorization.selectByEmail(req.body.email, (err, user) => {
-            if (err) return res.status(500).send("Не удалось получить фотографии с сервера");
-            res.status(200).send({
-                user: {
-                    userID: user.userID,
-                    ava: user.ava,
-                    name: user.name,
-                    email: user.email,
-                    surname: user.surname,
-                    year_user: user.year_user,
-                    month_user: user.month_user,
-                    day_user: user.day_user,
-                    selectedGender: user.selectedGender,
-                    country: user.country,
-                    city: user.city,
-                    is_admin: user.is_admin
+        //сжатие и сохранение изображения в папке
+        sharp(imgBuffer)
+            .toFormat('jpeg')
+            .jpeg({
+                quality: 30
+            })
+            .toFile("../src/assets/photo/" + nameImg, (err, info) => {
+                if (err) {
+                    console.error(err);
+                } else {
+                    console.log(info);
                 }
             });
-        })
-    });
+
+        let arrayPhotos = [];
+        arrayPhotos.push(nameImg, tokenID);
+
+        //добавление картинки в таблицу Users
+        authorization.updateAva(arrayPhotos, (err) => {
+            if (err) return res.status(500).send('Аватар пользователь не сменился');
+
+            //получение обновленного профиля после загрузки аватарки
+            authorization.loadUser(tokenID, (err, user) => {
+                if (err) return res.status(500).send("Не удалось получить фотографии с сервера" + " " + err);
+                res.status(200).send({
+                    ava: user.ava,
+                });
+            })
+        });
+
+    }
+
 });
 
 

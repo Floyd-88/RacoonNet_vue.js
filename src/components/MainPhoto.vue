@@ -121,15 +121,16 @@ export default {
 .wrapper_full_size_img {
     width: 100%;
     height: 100%;
-    background: whitesmoke;
+    background: rgb(16 16 16);;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .full_size_img {
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
+    border-radius: 100%;
     object-fit: contain;
 }
 
