@@ -121,7 +121,7 @@ export const registrationStore = {
                         commit('editProfileStore/auth_error', err, { root: true });
                         localStorage.removeItem('token')
                         localStorage.removeItem('user');
-                        reject(err.response.data);
+                        reject(err);
                     })
             })
         },

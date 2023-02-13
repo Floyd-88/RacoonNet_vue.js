@@ -15,15 +15,17 @@ const jwt = require('jsonwebtoken');
 const tokenKey = require('./tokenKey');
 const authenticateJWT = require('./authenticateJWT');
 
+
 //подключаем экземпляры классов
 const AuthorizationUserDB = require('./DB/AuthorizationUserDB');
-const PostsDB = require('./DB/PostsDB');
-const PhotosDB = require('./DB/PhotosDB');
-
-//создаем объекты на основе экземпляров классов
 const authorization = new AuthorizationUserDB();
+
+const PostsDB = require('./DB/PostsDB');
 const posts = new PostsDB();
+
+const PhotosDB = require('./DB/PhotosDB');
 const photos = new PhotosDB();
+
 
 //подключаем массивы с валидацией
 const loginValidate = require('./validate/loginValidate')
@@ -32,6 +34,7 @@ const postValidate = require('./validate/postValidate')
 const updateUserValidate = require('./validate/updateUserValidate')
 const passwordValidate = require('./validate/passwordValidate')
 const passwordDelValidate = require('./validate/passwordDelValidate');
+const { resolve } = require('path');
 
 // const {name} = require('file-loader');
 
@@ -205,7 +208,6 @@ router.post('/login', loginValidate, function(req, res) {
             errors: errors.array()
         });
     }
-
     //проверка на существование пользователя
     authorization.selectByEmail(req.body.email, (err, user) => {
         if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
@@ -315,7 +317,7 @@ router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, re
             if (err !== null) {
                 if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
             }
-            if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы");
+            if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы" + " " + err);
 
             //обновление имени и фамилии пользователя в постах при редактировании профиля
             // posts.updateTitlePosts([req.body.name, req.body.surname, req.body.id], (err) => {
@@ -376,7 +378,7 @@ router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
                     tokenID
                 ],
                 (err) => {
-                    if (err) return res.status(500).send("При изменении пароля возникли проблемы");
+                    if (err) return res.status(500).send("При изменении пароля возникли проблемы" + " " + err);
 
                     res.status(200).send("Пароль успешно обновлен");
                 })
@@ -423,7 +425,7 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
 
             //удаление пользователя
             authorization.deleteUserDB([tokenID], (err) => {
-                if (err) return res.status(500).send("При удалении пользователя возникли проблемы");
+                if (err) return res.status(500).send("При удалении пользователя возникли проблемы" + " " + err);
                 res.status(200).send("Пользователь успешно удален");
             })
         })
@@ -438,10 +440,9 @@ router.get('/dataBase.js', authenticateJWT, function(req, res) {
         req.query._limit
     ], (err, allPosts) => {
         console.log(err)
-        if (err) return res.status(500).send('Error on the server.');
-        if (!allPosts) return res.status(404).send('No posts found.');
-        res.json(allPosts);
-        res.status(200);
+        if (err) return res.status(500).send('Error on the server.' + " " + err);
+        if (!allPosts) return res.status(404).send('No posts found.' + " " + err);
+        res.status(200).json(allPosts);
     });
 });
 
@@ -460,13 +461,15 @@ router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
     posts.add_post_DB([
         req.body.date,
         req.body.postText,
-        req.body.id,
-        req.tokenID
+        userID,
+        tokenID
     ], (err, post) => {
-        if (err) return res.status(500).send('Error on the server.');
-        console.log(post)
+        if (err) return res.status(500).send('Error on the server' + " " + err);
+
         const postID = post.insertId
+            //возвращаем обновленный пост с информацие по автору поста
         authorization.loadUser(tokenID, (err, user) => {
+            if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
             res.status(200).send({
                 user: {
                     postID: postID,
@@ -481,30 +484,44 @@ router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
 });
 
 //редактируем пост
-router.put('/dataBase.js', postValidate, function(req, res) {
+router.put('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({
-            errors: errors.array()
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    //редактировать пос может только его автор
+    if (tokenID === req.body.authorPost) {
+
+        //валидация поста
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({
+                errors: errors.array()
+            });
+        }
+        posts.edit_post_DB([
+            req.body.postText,
+            req.body.date,
+            req.body.postID
+        ], (err) => {
+            if (err) return res.status(500).send('Error on the server' + ' ' + err);
+            res.status(200);
         });
     }
-    posts.edit_post_DB([
-        req.body.postText,
-        req.body.date,
-        req.body.id
-    ], (err) => {
-        if (err) return res.status(500).send('Error on the server.');
-        res.status(200);
-    });
 });
 
 //удаляем пост
-router.delete('/dataBase.js', function(req, res) {
-    posts.remove_post_DB(req.query.id, (err) => {
-        if (err) return res.status(500).send('Error on the server.');
-        res.status(200);
-    });
+router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
+
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    //удалять посты может только автор поста или хозяин страницы
+    if (tokenID === req.body.authorPost || tokenID === req.body.pageID) {
+        console.log("ok")
+        posts.remove_post_DB(req.body.postID, (err) => {
+            if (err) return res.status(500).send('Error on the server' + " " + err);
+            res.status(200);
+        });
+    }
 });
 
 //загружаем аватарку

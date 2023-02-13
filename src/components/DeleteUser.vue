@@ -19,8 +19,13 @@
           <label class="change_password_label" for="old_password">Ваш пароль:</label>
         </div>
         <div class="wrapper_form_change_password_input">
-          <input class="form_register_input" id="old_password" type="password" placeholder="Укажите Ваш пароль"
-            v-model="check_password" :class="{ invalid: (v$.password.$error) }">
+          <input class="form_register_input" 
+          id="old_password" 
+          type="password" 
+          placeholder="Укажите Ваш пароль"
+          v-model="check_password" 
+          :class="{ invalid: (v$.password.$error) }" 
+          @input="setErrorPassword('')">
         </div>
       </div>
     </div>

@@ -90,15 +90,11 @@ export const postsMyPageStore = {
 
                 await axios.post('http://localhost:8000/dataBase.js', newPost)
                 .then(function(response) {
-                    // const user = JSON.parse(localStorage.getItem('user'));
-
-                    console.log(response.data.user)
                     newPost.id = response.data.user.postID;
                     newPost.name = response.data.user.name;
                     newPost.surname = response.data.user.surname;
                     newPost.ava = response.data.user.ava
 
-                    console.log(getters.getPosts)
                     commit("setAddPosts", newPost);
                 })
                 .catch(function(error) {
@@ -114,10 +110,12 @@ export const postsMyPageStore = {
             post.date = "Изменено: " + date;
             commit("setCloseModulePost");
             post.postText = state.beforePostText; //при нажатии на кнопку сохранить, перезаписываем postText
+
             await axios.put('http://localhost:8000/dataBase.js', {
                     postText: post.postText,
                     date: "Изменено: " + date,
-                    id: post.id,
+                    postID: post.id,
+                    authorPost: post.authorPost
                 })
                 .then(function(response) {
                     console.log(response)
@@ -128,10 +126,18 @@ export const postsMyPageStore = {
         },
 
         //удаление поста
-        async removePost({ commit, state }) {
+        async removePost({ getters, commit, state }) {
+            const [post] = state.posts.filter(post => post.id === state.id);
             commit("setRemovePost", state.id);
             commit("setCloseModulePost");
-            await axios.delete('http://localhost:8000/dataBase.js?id=' + state.id)
+            let paramsBody = {
+                postID: state.id,
+                authorPost: post.authorPost,
+                pageID: getters.getUser.userID
+            }
+            await axios.delete('http://localhost:8000/dataBase_delete', {
+                    data: paramsBody
+                })
                 .then(function(response) {
                     console.log(response)
                 })

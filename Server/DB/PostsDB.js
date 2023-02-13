@@ -27,7 +27,8 @@ class PostsDB {
         posts.date, 
         posts.postText, 
         users.name, 
-        users.surname FROM posts 
+        users.surname,
+        posts.authorPost FROM posts 
         INNER JOIN users ON posts.authorPost = users.userID 
         WHERE page_userID = ? ORDER BY posts.id DESC LIMIT ?, ?`, params, (err, row) => {
             callback(err, row)
@@ -42,18 +43,18 @@ class PostsDB {
     }
 
     // // редактирование поста
-    // edit_post_DB(body, callback) {
-    //     return this.connection.execute(`UPDATE posts SET postText=?, date=? WHERE id =?`, body, (err) => {
-    //         callback(err);
-    //     });
-    // }
+    edit_post_DB(body, callback) {
+        return this.connection.execute(`UPDATE posts SET postText=?, date=? WHERE id =?`, body, (err) => {
+            callback(err);
+        });
+    }
 
     // // удаление поста
-    // remove_post_DB(id, callback) {
-    //     return this.connection.execute(`DELETE from posts WHERE id = ?`, [id], (err) => {
-    //         callback(err);
-    //     });
-    // }
+    remove_post_DB(postID, callback) {
+        return this.connection.execute(`DELETE from posts WHERE id = ?`, [postID], (err) => {
+            callback(err);
+        });
+    }
 
     // //обновление имени и фамилии в постах при редактировании профиля
     // updateTitlePosts(name, callback) {
