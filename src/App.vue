@@ -46,11 +46,11 @@ export default {
         this.loadUser({ id })
           .then(() => {
           })
-          .catch((err) => {
-            if (err) {
-              this.$router.push('notFound')
-            }
-          })
+          // .catch((err) => {
+          //   if (err) {
+          //     this.$router.push('notFound')
+          //   }
+          // })
       }
 
     }

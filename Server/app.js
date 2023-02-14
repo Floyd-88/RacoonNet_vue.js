@@ -262,6 +262,12 @@ router.post('/load_user', authenticateJWT, function(req, res) {
     userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
 
+    //если пользователь заходит на свою страницу - отображать кнопку редактирования профиля, загрузки фото и авы
+    let is_editProfile = false
+    if (userID === tokenID) {
+        is_editProfile = true
+    }
+
     authorization.loadUser(userID, (err, user) => {
         if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
         if (!user) return res.status(404).send({
@@ -280,7 +286,9 @@ router.post('/load_user', authenticateJWT, function(req, res) {
                 selectedGender: user.selectedGender,
                 country: user.country,
                 city: user.city,
-                is_admin: user.is_admin
+                is_admin: user.is_admin,
+                is_editProfile: is_editProfile,
+                enterUser: tokenID
             }
         });
     });

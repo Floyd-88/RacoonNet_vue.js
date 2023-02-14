@@ -20,8 +20,8 @@
                         </div>
                     </div>
                     <div class="wrapper_block_info_remove_photo">
-                        <button class="remove_photo" @click="isEditAva = true">Сделать главной</button>
-                        <button class="remove_photo" @click="setModulePhotoRemove(true)">Удалить</button>
+                        <button class="remove_photo" v-if="getUser.is_editProfile" @click="isEditAva = true">Сделать главной</button>
+                        <button class="remove_photo" v-if="getUser.is_editProfile" @click="setModulePhotoRemove(true)">Удалить</button>
                     </div>
                 </div>
             </div>
@@ -108,6 +108,7 @@ export default {
     },
     computed: {
         ...mapGetters({
+            getUser: "authorizationStore/getUser",
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
             getIndexPhoto: "showFullPhotoStore/getIndexPhoto",
             getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
@@ -198,6 +199,7 @@ export default {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    padding-bottom: 30px;
 }
 
 .prev,

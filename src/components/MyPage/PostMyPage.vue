@@ -31,11 +31,15 @@
     </div>
 
     <div class="btn_post">
-      <UIbtn class="redaction_post_btn" @click="setModulePost({task: 'edit', id: post.id, text: post.postText })">
+      <UIbtn class="redaction_post_btn" 
+      v-if="getUser.enterUser == post.authorPost" 
+      @click="setModulePost({task: 'edit', id: post.id, text: post.postText })">
         Редактировать
       </UIbtn>
 
-      <UIbtn class="delete_post_btn" @click="setModulePost({task: 'remove', id: post.id})">
+      <UIbtn class="delete_post_btn" 
+      v-if="getUser.is_editProfile || getUser.enterUser == post.authorPost" 
+      @click="setModulePost({task: 'remove', id: post.id})">
         Удалить
       </UIbtn>
     </div>

@@ -6,9 +6,9 @@
       <!-- блок с аватаркой -->
       <div class="wrapper_ava_user" @mouseenter="show_btn_photo" @mouseleave="active_btn = false">
         <div class="block_ava_user">
-          <img class="ava_user" :src="pathAva" alt="ava" ref="ava">
+          <img class="ava_user" @click="editToken" :src="pathAva" alt="ava" ref="ava">
         </div>
-        <div class="wrapper_btn_main_photo">
+        <div class="wrapper_btn_main_photo" v-if="getUser.is_editProfile">
 
           <transition v-if="text_btn === 'Загрузить главное фото'" name="mainPhoto">
             <button class="btn_main_photo" v-show="active_btn"
@@ -38,7 +38,7 @@
           <p v-if="getUser.name" class="name_user">{{ getUser.name + " " + getUser.surname }}</p>
         </div>
         <div class="wrapper_city_user">
-          <p v-if="getUser.country"  class="city_user">Страна: {{ getUser.country }}</p>
+          <p v-if="getUser.country" class="city_user">Страна: {{ getUser.country }}</p>
           <p v-if="getUser.city"  class="city_user">Город: {{ getUser.city }}</p>
           <p v-if="age" @click="func" class="city_user">Возраст: {{ age }}</p>
         </div>
@@ -46,7 +46,7 @@
 
     </div>
 
-    <div class="wrapper_btn">
+    <div class="wrapper_btn" v-if="getUser.is_editProfile">
       <UIbtn class="redaction_profile_btn" @click="setModulEditProfile(true)">Редактировать профиль
       </UIbtn>
     </div>
@@ -87,9 +87,9 @@ export default {
       }
     },
 
-    // editToken() {
-    //   localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSWx5IiwiaWQiOjQsImlhdCI6MTY3NjEzMjI0OSwiZXhwIjoxNjc2MjE4NjQ5fQ.kWsqEdmYWjsShYxCy8TV2ivBk7J_wLBqNaAlilrs2VE");
-    // }
+    editToken() {
+      localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSWx5YSIsImlkIjoyLCJpYXQiOjE2NzYzMjA0NjUsImV4cCI6MTY3NjQwNjg2NX0=.kWsqEdmYWjsShYxCy8TV2ivBk7J_wLBqNaAlilrs2VE");
+    }
 
   },
 

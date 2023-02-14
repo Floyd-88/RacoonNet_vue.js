@@ -17,6 +17,7 @@
     </UIbtn>
 
     <UIbtn class="show_more_photo_btn" 
+           v-if="getUser.is_editProfile"
            @click="setIsModalLoadPhoto(true)"> 
            Загрузить фото
     </UIbtn>
@@ -70,6 +71,7 @@ export default {
 
   computed: {
   ...mapGetters({
+      getUser: "authorizationStore/getUser",
       getMyPhotosMyPage: "loadPhotoStore/getMyPhotosMyPage",
       getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
       getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",

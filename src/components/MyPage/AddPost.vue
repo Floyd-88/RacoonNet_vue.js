@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent>
+  <form v-if="getUser.enterUser" @submit.prevent>
     <div class="wrapper_text_new_post">
 
       <textarea
@@ -34,7 +34,10 @@ export default {
   },
 
   computed: {
-...mapGetters({getPostText: "postsMyPageStore/getPostText"}),
+...mapGetters({
+  getUser: "authorizationStore/getUser",
+  getPostText: "postsMyPageStore/getPostText"
+}),
 
 postText: {
       get() {

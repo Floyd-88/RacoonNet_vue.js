@@ -133,22 +133,18 @@ export const authorizationStore = {
         loadUser({ commit }, id) {
             return new Promise((resolve, reject) => {
                 commit('auth_request', 'loading')
-
                 axios({
                         url: 'http://localhost:8000/load_user',
                         data: id,
                         method: 'POST'
                     })
                     .then(resp => {
-                        // console.log(resp.data.user)
                         const user = resp.data.user;
                         commit("setUser", user)
 
                         if (user !== null) {
-                            // localStorage.setItem('user', JSON.stringify(user));
                             commit('auth_request', 'success')
-
-                            // commit('editProfileStore/setEditingUser', user, { root: true });
+                            commit('editProfileStore/setEditingUser', user, { root: true });
                             resolve(resp);
                         }
                     })
