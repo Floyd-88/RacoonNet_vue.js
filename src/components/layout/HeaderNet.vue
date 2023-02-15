@@ -7,12 +7,14 @@
         </div>
 
         <div class="header_wrapper_title">
-          <button class="btn_title" @click="$router.push('mypage')">RacсoonNet</button>
+          <button class="btn_title">RacсoonNet</button>
         </div>
       </div>
 
       <div class="header_wrapper_exit">
           <span class="header_exit" v-if="isLoggedIn"> <a @click="runLogout">Выход</a></span>
+          <span class="header_exit" v-else> <a @click="$router.push('/')">Вход</a></span>
+
       </div>
 
 
@@ -79,7 +81,6 @@ width: 100px;
   align-items: center;
   font-size: 40px;
   font-family: fantasy;
-  cursor: pointer;
 }
 .header_wrapper_exit {
   display: flex;

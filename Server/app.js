@@ -2,8 +2,6 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const fs = require('fs')
-    // const multer = require('multer')
-    // const path = require('path')
 const fileUpload = require('express-fileupload');
 const sharp = require('sharp');
 const {
@@ -38,8 +36,6 @@ const {
     resolve
 } = require('path');
 
-// const {name} = require('file-loader');
-
 
 const app = express();
 
@@ -71,9 +67,9 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-// регистрируем обычного пользователя
+// РЕГЕСТРИРУЕМ ПРОСТОГО ПОЛЬЗОВАТЕЛЯ
 router.post('/register', registerValidate, function(req, res) {
-    //валидайия полей
+    //валидация полей
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({
@@ -117,8 +113,8 @@ router.post('/register', registerValidate, function(req, res) {
                 token: token,
                 user: {
                     userID: user.userID,
-                    name: user.name,
-                    surname: user.surname,
+                    // name: user.name,
+                    // surname: user.surname,
                     is_admin: user.is_admin
                         // ava: user.ava,
                         // email: user.email,
@@ -134,7 +130,7 @@ router.post('/register', registerValidate, function(req, res) {
     });
 });
 
-//регистрируем пользователя с правми администротора
+//РЕГЕСТРИРУЕМ ПОЛЬЗОВАТЕЛЯ С ПРАВАМИ АДМИНИСТРАТОРА
 router.post('/register-admin', registerValidate, function(req, res) {
     //валидация полей
     const errors = validationResult(req);
@@ -183,8 +179,8 @@ router.post('/register-admin', registerValidate, function(req, res) {
                 token: token,
                 user: {
                     userID: user.userID,
-                    name: user.name,
-                    surname: user.surname,
+                    // name: user.name,
+                    // surname: user.surname,
                     is_admin: user.is_admin
                         // ava: user.ava,
                         // email: user.email,
@@ -200,12 +196,11 @@ router.post('/register-admin', registerValidate, function(req, res) {
     });
 });
 
-//авторизуем пользователя при вводе логина и пароля
+//АВТОРИЗУЕМ ПОЛЬЗОВАТЕЛЯ ПРИ ВВОДЕ ЛОГИНА И ПАРОЛЯ
 router.post('/login', loginValidate, function(req, res) {
     //валидация введенных данных
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log(errors)
         return res.status(422).json({
             errors: errors.array()
         });
@@ -231,8 +226,8 @@ router.post('/login', loginValidate, function(req, res) {
                 id: user.userID,
             },
             tokenKey.secret, {
-                expiresIn: 86400
-            }, // expires in 24 hours
+                expiresIn: 86400 // срок действия in 24 hours
+            },
         );
 
         res.status(200).send({
@@ -240,17 +235,7 @@ router.post('/login', loginValidate, function(req, res) {
             token: token,
             user: {
                 userID: user.userID,
-                name: user.name,
-                surname: user.surname,
-                is_admin: user.is_admin
-                    // ava: user.ava,
-                    // email: user.email,
-                    // year_user: user.year_user,
-                    // month_user: user.month_user,
-                    // day_user: user.day_user,
-                    // selectedGender: user.selectedGender,
-                    // country: user.country,
-                    // city: user.city,
+                is_admin: user.is_admin,
             }
         });
     });
@@ -258,42 +243,58 @@ router.post('/login', loginValidate, function(req, res) {
 
 //подгружаем данные пользователя
 router.post('/load_user', authenticateJWT, function(req, res) {
-    // console.log(req.body)
     userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
 
-    //если пользователь заходит на свою страницу - отображать кнопку редактирования профиля, загрузки фото и авы
-    let is_editProfile = false
-    if (userID === tokenID) {
-        is_editProfile = true
+    //если пользователь авторизован
+    if (tokenID) {
+        //если пользователь заходит на свою страницу - отображать кнопку редактирования профиля, загрузки фото и авы
+        let is_editProfile = false
+        if (userID === tokenID) {
+            is_editProfile = true
+        }
+        //возвращаем данные о пользователе
+        authorization.loadUser(userID, (err, user) => {
+            if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
+            if (!user) return res.status(404).send({
+                err: 'Такого пользователя не существует'
+            });
+            res.status(200).send({
+                user: {
+                    userID: user.userID,
+                    ava: user.ava,
+                    name: user.name,
+                    surname: user.surname,
+                    year_user: user.year_user,
+                    month_user: user.month_user,
+                    day_user: user.day_user,
+                    selectedGender: user.selectedGender,
+                    country: user.country,
+                    city: user.city,
+                    is_admin: user.is_admin,
+                    is_editProfile: is_editProfile,
+                    enterUser: tokenID //давать возможность редактироват и удалять посты если ты их автор
+                }
+            });
+        });
+    } else {
+        authorization.loadUser(userID, (err, user) => {
+            if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
+            if (!user) return res.status(404).send('Такого пользователя не существует');
+            res.status(200).send({
+                user: {
+                    ava: user.ava,
+                    name: user.name,
+                    surname: user.surname,
+                    country: user.country,
+                    city: user.city,
+                }
+            });
+        });
     }
 
-    authorization.loadUser(userID, (err, user) => {
-        if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
-        if (!user) return res.status(404).send({
-            err: 'Такого пользователя не существует'
-        });
-        res.status(200).send({
-            user: {
-                userID: user.userID,
-                ava: user.ava,
-                name: user.name,
-                // email: user.email,
-                surname: user.surname,
-                year_user: user.year_user,
-                month_user: user.month_user,
-                day_user: user.day_user,
-                selectedGender: user.selectedGender,
-                country: user.country,
-                city: user.city,
-                is_admin: user.is_admin,
-                is_editProfile: is_editProfile,
-                enterUser: tokenID
-            }
-        });
-    });
-})
 
+})
 
 //редактирование профиля пользователя
 router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, res) {

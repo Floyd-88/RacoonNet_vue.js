@@ -118,7 +118,7 @@ export const registrationStore = {
                         }
                     })
                     .catch(err => {
-                        commit('editProfileStore/auth_error', err, { root: true });
+                        commit('authorizationStore/auth_error', null, { root: true });
                         localStorage.removeItem('token')
                         localStorage.removeItem('user');
                         reject(err);

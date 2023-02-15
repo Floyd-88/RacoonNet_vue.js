@@ -11,7 +11,7 @@
             Введите электронную почту указанную при регистрации
           </div>
         </div>
-        <input class="form_login_input" id="email" type="text" placeholder="Введите электронный адрес" autofocus
+        <input class="form_login_input" id="email" type="text" placeholder="Введите электронный адрес"
           v-model="v$.email.$model" :class="{ invalid: (v$.email.$error) }">
       </div>
 
@@ -52,7 +52,7 @@
 <script>
 import { useVuelidate } from '@vuelidate/core'
 import { required, email } from '@vuelidate/validators'
-import { mapActions, mapMutations, mapGetters, mapState } from "vuex"
+import { mapActions, mapMutations, mapGetters } from "vuex"
 
 
 export default {
@@ -64,8 +64,8 @@ export default {
 
   data() {
     return {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     }
   },
 
@@ -78,11 +78,10 @@ export default {
 
   methods: {
     ...mapActions({ login: "authorizationStore/login" }),
+
     ...mapMutations({
       setModulRegister: "registrationStore/setModulRegister",
       setErrorLogin: "authorizationStore/setErrorLogin",
-      // setEmail: "authorizationStore/setEmail",
-      // setPassword: "authorizationStore/setPassword",
     }),
 
     handleSubmit() {
@@ -96,15 +95,15 @@ export default {
               this.$router.push('admin')
             } else {
               // window.location.href = `/${resp.data.user.userID}`;
-              this.$router.push(`/id${resp.data.user.userID}/info`)
+              this.$router.push(`/id${resp.data.user.userID}`)
             }
           })
           .catch((err) => {
-            if (err.err) {
-              this.setErrorLogin(JSON.stringify(err.err).slice(1, -1))
+              let messageErr = err.response.data.err;
+              this.setErrorLogin(JSON.stringify(messageErr).slice(1, -1)) 
+              console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(messageErr))
             }
-            console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(err))
-          })
+          )
       }
     }
   },
@@ -112,34 +111,8 @@ export default {
   computed: {
     ...mapGetters({
       getErrorLogin: "authorizationStore/getErrorLogin",
-      // getEmail: "authorizationStore/getEmail",
-      // getPassword: "authorizationStore/getPassword",
     }),
 
-    ...mapState({
-      // email: state => state.authorizationStore.email,
-      // password: state => state.authorizationStore.password,
-    }),
-
-    // autorizationEmail: {
-    //   get() {
-    //     return this.getEmail
-    //   },
-    //   set(value) {
-    //     this.setEmail(value);
-    //     this.v$.email.$touch();
-    //   }
-    // },
-
-    // autorizationPassword: {
-    //   get() {
-    //     return this.getPassword
-    //   },
-    //   set(value) {
-    //     this.setPassword(value);
-    //     this.v$.password.$touch();
-    //   }
-    // }
   }
 }
 </script>

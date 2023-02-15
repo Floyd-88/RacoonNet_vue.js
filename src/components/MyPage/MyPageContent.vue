@@ -23,7 +23,6 @@
 import {mapGetters, mapActions, mapMutations} from "vuex";
 export default {
     name: "MyPageContent",
-
     methods: {
         ...mapActions({
             loadPostServer: "postsMyPageStore/loadPostServer",
@@ -33,9 +32,7 @@ export default {
             setCountPosts: "postsMyPageStore/setCountPosts",
             setLimitPosts: "postsMyPageStore/setLimitPosts",
         }),
-
     },
-
     computed: {
         ...mapGetters({
             getPosts: "postsMyPageStore/getPosts",
@@ -43,11 +40,9 @@ export default {
             getUser: "authorizationStore/getUser"
         }),
     },
-
-    watch: {
-        getUser() {
+    mounted() {
+       
             this.loadAllPhotos();
-
             const options = {
                 rootMargin: '0px',
                 threshold: 1.0
@@ -61,10 +56,9 @@ export default {
             };
             const observer = new IntersectionObserver(callback, options);
             observer.observe(this.$refs.observer);
-        }
+        
     }
 }
-
 </script>
   
 <style scoped>
@@ -75,14 +69,12 @@ export default {
     flex: 0 0 70%;
     /*overflow: hidden;*/
 }
-
 .wrapper_posts {
     display: flex;
     flex-direction: column;
     white-space: normal;
     margin-right: 20px;
 }
-
 .not_posts {
     margin: 10px 0;
     font-size: 18px;

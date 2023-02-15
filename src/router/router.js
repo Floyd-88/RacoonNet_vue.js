@@ -1,8 +1,7 @@
-import { createRouter, createWebHistory } from "vue-router";
-
-// import Vue from 'vue'
-// import Router from 'vue-router'
-// import store from "@/store/store";
+import {
+    createRouter,
+    createWebHistory
+} from "vue-router";
 
 import MainPage from "@/pages/MainPage";
 import MyPage from "@/pages/MyPage";
@@ -10,23 +9,9 @@ import MessagePage from "@/pages/MessagePage";
 import FriendsPage from "@/pages/FriendsPage";
 import GalleryPage from "@/pages/GalleryPage";
 import NewsPage from "@/pages/NewsPage";
-// import LoginNet from "@/components/LoginNet";
-// import RegisterNet from "@/components/RegisterNet";
 import AdminNet from "@/components/authorizationUser/AdminNet";
 // import SecureNet from "@/components/SecureNet";
 import NotFound from "@/components/authorizationUser/NotFound";
-
-import MyPageContent from "@/components/MyPage/MyPageContent";
-
-
-// import PhotoMyPage from "@/components/MyPage/PhotoMyPage";
-// import AddPost from "@/components/MyPage/AddPost";
-// import PostMyPage from "@/components/MyPage/PostMyPage";
-// import MyFriends from "@/components/MyPage/MyFriends";
-
-
-
-// Vue.use(Router)
 
 const routes = [{
         path: "/",
@@ -36,25 +21,14 @@ const routes = [{
             guest: true
         }
     },
-
     {
         path: "/id:id",
         component: MyPage,
         name: "mypage",
         meta: {
-            guest: true
+            partGuest: true
         },
-
-        children: [{
-            path: 'info',
-            component: MyPageContent,
-            name: "mypagecontent",
-            meta: {
-                requiresAuth: true
-            },
-        }]
     },
-
     {
         path: "/message",
         component: MessagePage,
@@ -109,18 +83,9 @@ const routes = [{
         name: "notFound",
         component: NotFound,
         meta: {
-            guest: true
+            guest3: true
         }
     }
-
-    // {
-    //     path: "/:pathMatch(.*)*",
-    //     name: "mainpage",
-    //     component: MainPage,
-    //     meta: {
-    //         guest: true
-    //     }
-    // }
 ];
 
 const router = createRouter({
@@ -128,51 +93,30 @@ const router = createRouter({
     history: createWebHistory()
 });
 
-
-
-
-
-
-// router.beforeEach((to, from, next) => {
-//     if (to.matched.some(record => record.meta.requiresAuth)) {
-//         if (localStorage.getItem('token') === null) {
-//             next({
-//                 path: '/',
-//                 params: { nextUrl: to.fullPath } //???????????????????????????
-//             })
-//         } else {
-//             let user = JSON.parse(localStorage.getItem('user'))
-//             if (to.matched.some(record => record.meta.is_admin)) {
-//                 if (user.is_admin === 1) {
-//                     next()
-//                 } else {
-//                     next({ name: 'mypage' })
-//                 }
-//             } else {
-//                 next()
-//             }
-//         }
-//     } else if (to.matched.some(record => record.meta.guest)) {
-//         if (localStorage.getItem('token') === null) {
-//             next()
-//         } else {
-//             next({ name: 'mypage' })
-//         }
-//     } else {
-//         next()
-//     }
-// })
-
-// router.beforeEach((to, from, next) => {
-//     if (to.matched.some(record => record.meta.requiresAuth)) {
-//         if (localStorage.getItem('token')) {
-//             next()
-//             return
-//         }
-//         next('/')
-//     } else {
-//         next()
-//     }
-// })
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.partGuest)) {
+        if (localStorage.getItem('token')) {
+            next()
+            return
+        } else {
+            next()
+        }
+    } else if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (localStorage.getItem('token')) {
+            next()
+        } else {
+            next('/')
+        }
+    } else if (to.matched.some(record => record.meta.guest)) {
+        if (localStorage.getItem('token') === null) {
+            next()
+        } else {
+            let id = JSON.parse(localStorage.getItem('user')).userID
+            next(`/id${id}`)
+        }
+    } else {
+        next()
+    }
+})
 
 export default router;

@@ -134,7 +134,7 @@ export const loadPhotoStore = {
                     });
                     // router.push(`/id${getters.getUser.userID}/info`)
                     // this.$router.push('/')
-                    window.location.href = `/id${getters.getUser.userID}/info`;
+                    // window.location.href = `/id${getters.getUser.userID}`;
                 })
                 .catch((err) => {
 
@@ -170,7 +170,7 @@ export const loadPhotoStore = {
                     commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                         root: true
                     });
-                    window.location.href = `/id${getters.getUser.userID}/info`;
+                    window.location.href = `/id${getters.getUser.userID}`;
                 })
                 .catch((err) => {
                     console.log(err);
@@ -188,7 +188,7 @@ export const loadPhotoStore = {
             commit("removeUrlsImages", name);
         },
 
-        //получить все фотографии в модальном окне
+        //получить все фотографии
         async loadAllPhotos({
             getters,
             commit

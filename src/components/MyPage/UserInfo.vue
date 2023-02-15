@@ -6,7 +6,7 @@
       <!-- блок с аватаркой -->
       <div class="wrapper_ava_user" @mouseenter="show_btn_photo" @mouseleave="active_btn = false">
         <div class="block_ava_user">
-          <img class="ava_user" @click="editToken" :src="pathAva" alt="ava" ref="ava">
+          <img class="ava_user" :src="pathAva" alt="ava" ref="ava">
         </div>
         <div class="wrapper_btn_main_photo" v-if="getUser.is_editProfile">
 
@@ -75,7 +75,9 @@ export default {
       setShowFullAvaPhoto: "showFullPhotoStore/setShowFullAvaPhoto"
     }),
     ...mapActions({
-      showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto"
+      showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto",
+      // age: "authorizationStore/age",
+
     }),
 
     show_btn_photo() {
@@ -87,16 +89,15 @@ export default {
       }
     },
 
-    editToken() {
-      localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSWx5YSIsImlkIjoyLCJpYXQiOjE2NzYzMjA0NjUsImV4cCI6MTY3NjQwNjg2NX0=.kWsqEdmYWjsShYxCy8TV2ivBk7J_wLBqNaAlilrs2VE");
-    }
+    // editToken() {
+    //   localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSWx5YSIsImlkIjoyLCJpYXQiOjE2NzYzMjA0NjUsImV4cCI6MTY3NjQwNjg2NX0=.kWsqEdmYWjsShYxCy8TV2ivBk7J_wLBqNaAlilrs2VE");
+    // }
 
   },
 
   computed: {
     ...mapGetters({
       getUser: "authorizationStore/getUser",
-      age: "authorizationStore/age",
       getShowFullAvaPhoto: "showFullPhotoStore/getShowFullAvaPhoto",
     }),
 
@@ -106,8 +107,21 @@ export default {
       } catch {
         return require(`../../assets/ava/ava_1.jpg`);
       }
-
     },
+
+    //вычисляет возраст пользователя
+    age() {
+            const today = new Date();
+            const birthday = this.getUser.year_user + "-" + this.getUser.month_user + "-" + this.getUser.day_user;
+            const birthDate = new Date(birthday);
+            const age = today.getFullYear() - birthDate.getFullYear();
+            if (
+                today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+            ) {
+                return age - 1;
+            }
+            return age;
+        },
 
   },
 

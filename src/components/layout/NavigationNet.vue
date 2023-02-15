@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper_nav">
     <div class="wrapper_nav_link">
-       <button class="link" @click="$router.push(`/id1/info`)"> Моя страница </button>
+       <button class="link" @click="$router.push(`/id${userID}`)"> Моя страница </button>
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/message')">Сообщения</button>
@@ -19,8 +19,39 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 export default {
   name: "NavigationNet",
+  
+  data() {
+    return {
+      userID: JSON.parse(localStorage.getItem('user')).userID,
+    }
+  },
+
+  methods: {
+    ...mapActions({
+      loadUser: "authorizationStore/loadUser"
+    }),
+  },
+
+  // watch: {
+  //   $route() {
+  //     const id = this.$route.params.id;
+      
+  //     if (id) {
+  //       this.loadUser({ id })
+  //         .then(() => {
+  //         })
+  //         .catch(() => {
+  //           // if (err) {
+  //             // console.log(err.response.data)
+  //             this.$router.push('notFound')
+  //           // }
+  //         })
+  //     }
+  //   }
+  // }
 
 }
 </script>
@@ -36,9 +67,9 @@ export default {
   height: 100%;
   min-width: 150px;
 }
-.wrapper_nav_link {
+/* .wrapper_nav_link {
 
-}
+} */
 .link {
   margin: 7px 0;
   font-size: 18px;

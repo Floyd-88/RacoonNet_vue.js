@@ -2,37 +2,17 @@ import axios from "axios";
 
 export const authorizationStore = {
     state: () => ({
-        // email: '',
-        // password: '',
-        status: '',
+        status: "",
         token: localStorage.getItem('token') || '', //получаем токен создаваемый при авторизации
         user: {}, //получаем данные юзера при авторизаци
         errorLogin: "", //ошибка возникающая при вводе неверного пароля или почты
     }),
 
     getters: {
-        getEmail: (state) => state.email,
-        getPassword: (state) => state.password,
-
+        // getToken: (state) => state.token,
         isLoggedIn: (state) => !!state.token, //показываем кнопку выход в header
-
         getUser: (state) => state.user,
-
         getErrorLogin: (state) => state.errorLogin,
-
-        //вычисляет возраст пользователя
-        age: (state) => {
-            const today = new Date();
-            const birthday = state.user.year_user + "-" + state.user.month_user + "-" + state.user.day_user;
-            const birthDate = new Date(birthday);
-            const age = today.getFullYear() - birthDate.getFullYear();
-            if (
-                today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
-            ) {
-                return age - 1;
-            }
-            return age;
-        },
     },
 
     mutations: {
@@ -40,12 +20,12 @@ export const authorizationStore = {
             state.status = status;
         },
         auth_success(state, {
-            user,
-            token
+            // user,
+            token,
         }) {
             state.status = 'success';
             state.token = token;
-            state.user = user;
+            // state.user = user;
         },
         auth_error(state) {
             state.status = 'error';
@@ -55,19 +35,12 @@ export const authorizationStore = {
         logout(state) {
             state.status = '';
             state.token = '';
+            state.user = {};
         },
 
         setErrorLogin(state, error) {
             state.errorLogin = error
         },
-
-        //двухстороннее связывание
-        // setEmail(state, email) {
-        //     state.email = email;
-        // },
-        // setPassword(state, password) {
-        //     state.password = password;
-        // },
 
         setUser(state, user) {
             state.user = user;
@@ -96,14 +69,16 @@ export const authorizationStore = {
                         const user = resp.data.user;
 
                         if (token !== null && user !== null) {
-                            // if (token !== null) {
-
                             localStorage.setItem('token', token);
                             localStorage.setItem('user', JSON.stringify(user));
 
+                            //записываем токен во все заголовки отправляемые на сервер
                             axios.defaults.headers.common['Authorization'] = token;
-                            commit('auth_success', { user, token });
-                            // commit('editProfileStore/setEditingUser', user, { root: true });
+
+                            commit('auth_success', {
+                                // user,
+                                token
+                            });
                             resolve(resp);
                         }
                     })
@@ -111,7 +86,7 @@ export const authorizationStore = {
                         commit('auth_error');
                         localStorage.removeItem('token');
                         localStorage.removeItem('user');
-                        reject(err.response.data);
+                        reject(err);
                     })
             })
         },
@@ -130,7 +105,9 @@ export const authorizationStore = {
         },
 
         //получение данных по пользователю
-        loadUser({ commit }, id) {
+        loadUser({
+            commit
+        }, id) {
             return new Promise((resolve, reject) => {
                 commit('auth_request', 'loading')
                 axios({
@@ -140,11 +117,13 @@ export const authorizationStore = {
                     })
                     .then(resp => {
                         const user = resp.data.user;
-                        commit("setUser", user)
 
                         if (user !== null) {
+                            commit("setUser", user)
                             commit('auth_request', 'success')
-                            commit('editProfileStore/setEditingUser', user, { root: true });
+                            commit('editProfileStore/setEditingUser', user, {
+                                root: true
+                            });
                             resolve(resp);
                         }
                     })
@@ -155,7 +134,7 @@ export const authorizationStore = {
                         reject(err);
                     })
             })
-        }
+        },
 
     },
 

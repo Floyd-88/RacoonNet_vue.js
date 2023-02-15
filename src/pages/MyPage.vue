@@ -13,8 +13,11 @@
 
       <UserInfo />
 
-      <div class="wrapper_myPage">
-        <router-view></router-view>
+      <div v-if="getUser.enterUser" class="wrapper_myPage">
+        <MyPageContent />
+      </div>
+      <div v-if="!getUser.enterUser" class="wrapper_title_warning_auth">
+        <h2 class="title_warning_auth">Для просмотра контента страницы Вам необходимо авторизоваться</h2>
       </div>
 
     </div>
@@ -26,82 +29,30 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import EditProfile from "@/components/MyPage/EditProfile";
-// import axios from "axios";
-
+import MyPageContent from "@/components/MyPage/MyPageContent.vue";
 
 export default {
   name: "MyPage",
-  components: { EditProfile },
+  components: { EditProfile, MyPageContent },
 
   data() {
-    return {
-      // myPhotosMyPage: [],
-    }
-  },
-
-  mounted() {
-
-    // this.loadAllPhotos();
-
-    // обсервер срабатывает каждый раз когда докручиваем страницу донизу
-    // const options = {
-    //   rootMargin: '0px',
-    //   threshold: 1.0
-    // };
-    // const callback = (entries) => {
-    //   if (entries[0].isIntersecting) {
-    //     this.setLimitPosts();
-    //     this.setCountPosts();
-    //     this.loadPostServer();
-    //   }
-    // };
-    // const observer = new IntersectionObserver(callback, options);
-    // observer.observe(this.$refs.observer);
-
-
+    return {}
   },
 
   methods: {
-    ...mapActions({
-      // loadPostServer: "postsMyPageStore/loadPostServer",
-      // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
-    }),
-    ...mapMutations({
-      // setCountPosts: "postsMyPageStore/setCountPosts",
-      // setLimitPosts: "postsMyPageStore/setLimitPosts",
-    }),
+    ...mapActions({}),
 
+    ...mapMutations({}),
   },
 
   computed: {
     ...mapGetters({
       isLoggedIn: "authorizationStore/isLoggedIn",
-      // getPosts: "postsMyPageStore/getPosts",
       getModulEditProfile: "editProfileStore/getModulEditProfile",
-      // getUser: "authorizationStore/getUser"
+      getUser: "authorizationStore/getUser",
     }),
   },
 
-  watch: {
-    // getUser() {
-    //   this.loadAllPhotos();
-
-    //   const options = {
-    //   rootMargin: '0px',
-    //   threshold: 1.0
-    // };
-    // const callback = (entries) => {
-    //   if (entries[0].isIntersecting) {
-    //     this.setLimitPosts();
-    //     this.setCountPosts();
-    //     this.loadPostServer();
-    //   }
-    // };
-    // const observer = new IntersectionObserver(callback, options);
-    // observer.observe(this.$refs.observer);
-    // }
-
-  }
 }
 
 </script>
@@ -152,5 +103,18 @@ export default {
   font-size: 18px;
   font-family: cursive;
   font-weight: 600;
+}
+
+.wrapper_title_warning_auth {
+  display: block;
+  margin-top: 40px;
+  font-size: 14px;
+  border-bottom: 1px solid black;
+  padding-bottom: 10px;
+  font-family: fantasy;
+}
+
+.title_warning_auth {
+  text-align: center;
 }
 </style>

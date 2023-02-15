@@ -1,28 +1,25 @@
 <template>
   <HeaderNet />
   <div class="wrapper">
-
     <router-view></router-view>
-
   </div>
-
 </template>
 
 <script>
 import { mapActions } from "vuex";
+// import axios from "axios";
 
 export default {
   name: 'App',
 
   // created: function () {
   //       axios.interceptors.response.use(undefined, function (err) {
-  //         console.log(222)
   //         // this.logout()
   //         return new Promise(function (resolve) {
   //       if (err.status === 403 && err.config 
   //           && !err.config.__isRetryRequest 
   //       ) {
-  //         this.logout()
+  //         // this.logout()
   //         resolve()
   //       }
   //       throw err; 
@@ -37,7 +34,6 @@ export default {
     }),
   },
 
-  computed: {},
 
   watch: {
     $route() {
@@ -46,13 +42,10 @@ export default {
         this.loadUser({ id })
           .then(() => {
           })
-          // .catch((err) => {
-          //   if (err) {
-          //     this.$router.push('notFound')
-          //   }
-          // })
+          .catch(() => {
+              this.$router.push('notFound')
+          })
       }
-
     }
   }
 }

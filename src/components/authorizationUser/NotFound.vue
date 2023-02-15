@@ -2,8 +2,8 @@
 
   <div class="wrapper_main">
     <div class="main">
-      <div class="hello">
-        <h1>{{ title }}</h1>
+      <div class="wrapper_not_found">
+        <h2 class="not_found">{{ title }}</h2>
       </div>
 
     </div>
@@ -32,4 +32,29 @@ export default {
 .main {
   margin-left: 180px;
 }
+
+/* .wrapper_not_found {
+  width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 0;
+} */
+
+
+    .not_found {
+      margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    font-family: fantasy;
+    font-size: 45px;
+    } 
+
 </style>
