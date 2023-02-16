@@ -9,7 +9,7 @@ export const postsMyPageStore = {
         modulePost: false, //отображение модального окна
         posts: [], //массив постов подгружаемый из базы данных
         countPosts: 0, //номер массива страницы
-        limitPosts: 0, //количество постов на одной странице
+        limitPosts: 3, //количество постов на одной странице
         totalCount: 0, //всего страниц
     }),
 
@@ -54,8 +54,11 @@ export const postsMyPageStore = {
         setLimitPosts(state) {
             state.limitPosts = 3;
         },
-        setCountPosts(state) {
-            state.countPosts = state.posts.length;
+        setCountPosts(state, count) {
+            state.countPosts += count;
+        },
+        setCountPostsNull(state) {
+            state.countPosts = 0;
         },
         setRemovePost(state, id) {
             state.posts = state.posts.filter(post => post.id !== id);
@@ -64,16 +67,21 @@ export const postsMyPageStore = {
 
     actions: {
         //загрузка постов с базы данных
-        async loadPostServer({ state, commit, getters }) {
+        async loadPostServer({ state, commit }, id) {
             try {
                 await axios.get('http://localhost:8000/dataBase.js', {
                     params: {
                         _count: state.countPosts,
                         _limit: state.limitPosts,
-                        userID: getters.getUser.userID
+                        userID: id
                     }
                 }).then((response) => {
-                    commit("setPosts", [...state.posts, ...response.data]);
+
+                    if (response.data.length > 0) {
+                        commit("setPosts", [...state.posts, ...response.data]);
+                        commit("setCountPosts", 3)
+                    }
+
                 });
             } catch (err) {
                 console.error(err);
@@ -81,7 +89,7 @@ export const postsMyPageStore = {
         },
 
         // добавление нового поста на мою страницу
-        async addPost({ commit, dispatch, getters }, postText) {
+        async addPost({ dispatch, getters, commit }, postText) {
             const newPost = {
                 id: getters.getUser.userID,
                 postText: postText.trim(),
@@ -90,12 +98,14 @@ export const postsMyPageStore = {
 
                 await axios.post('http://localhost:8000/dataBase.js', newPost)
                 .then(function(response) {
-                    newPost.id = response.data.user.postID;
-                    newPost.name = response.data.user.name;
-                    newPost.surname = response.data.user.surname;
-                    newPost.ava = response.data.user.ava
+                    // newPost.id = response.data.user.postID;
+                    // newPost.name = response.data.user.name;
+                    // newPost.surname = response.data.user.surname;
+                    // newPost.ava = response.data.user.ava
 
-                    commit("setAddPosts", newPost);
+
+                    commit("setAddPosts", response.data);
+                    commit("setCountPosts", 1);
                 })
                 .catch(function(error) {
                     console.log("Ошибка при добавлении поста: " + error);

@@ -479,17 +479,11 @@ router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
 
         const postID = post.insertId
             //возвращаем обновленный пост с информацие по автору поста
-        authorization.loadUser(tokenID, (err, user) => {
+        posts.load_one_post_DB(postID, (err, post) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
-            res.status(200).send({
-                user: {
-                    postID: postID,
-                    userID: user.userID,
-                    ava: user.ava,
-                    name: user.name,
-                    surname: user.surname,
-                }
-            });
+            res.status(200).send(
+                post
+            );
         });
     });
 });
@@ -653,6 +647,7 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
 
 //получаем все фотографии
 router.get('/upload_all_photo', authenticateJWT, function(req, res) {
+    console.log('photo')
     photos.load_all_photos_DB([
         req.query.id,
     ], (err, allPhotos) => {

@@ -9,7 +9,7 @@ export const authorizationStore = {
     }),
 
     getters: {
-        // getToken: (state) => state.token,
+        getToken: (state) => state.token,
         isLoggedIn: (state) => !!state.token, //показываем кнопку выход в header
         getUser: (state) => state.user,
         getErrorLogin: (state) => state.errorLogin,

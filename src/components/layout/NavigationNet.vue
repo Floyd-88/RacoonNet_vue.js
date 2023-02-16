@@ -1,7 +1,10 @@
 <template>
   <div class="wrapper_nav">
     <div class="wrapper_nav_link">
-       <button class="link" @click="$router.push(`/id${userID}`)"> Моя страница </button>
+       <button class="link" @click="$router.push(`/id${userID}`)" > Моя страница </button>
+    </div>
+    <div class="wrapper_nav_link">
+      <button class="link" @click="$router.push('/news')"> Новости </button>
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/message')">Сообщения</button>
@@ -12,9 +15,7 @@
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/gallery')"> Галерея</button>
     </div>
-    <div class="wrapper_nav_link">
-      <button class="link" @click="$router.push('/news')"> Новости </button>
-    </div>
+ 
   </div>
 </template>
 

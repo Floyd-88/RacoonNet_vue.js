@@ -35,6 +35,22 @@ class PostsDB {
         });
     }
 
+    // загрузка одного пота из базы данных
+    load_one_post_DB(postID, callback) {
+        return this.connection.execute(`SELECT 
+            posts.id, 
+            users.ava, 
+            posts.date, 
+            posts.postText, 
+            users.name, 
+            users.surname,
+            posts.authorPost FROM posts 
+            INNER JOIN users ON posts.authorPost = users.userID 
+            WHERE id = ?`, [postID], (err, row) => {
+            callback(err, row[0])
+        });
+    }
+
     //добавление поста в базу данных
     add_post_DB(body, callback) {
         return this.connection.execute(`INSERT INTO posts (date, postText, page_userID, authorPost) VALUES (?,?,?,?)`, body, (err, row) => {

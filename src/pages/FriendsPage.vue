@@ -1,13 +1,41 @@
 <template>
-  Мои друзья
+  <NavigationNet v-if="isLoggedIn" />
+
+  <div class="wrapper_main">
+    <div class="main">
+
+      <p>Мои друзья</p>
+
+    </div>
+  </div>
+
+
+
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
-  name: "FriendsPage"
+  name: "FriendsPage",
+
+  computed: {
+
+    ...mapGetters({
+      isLoggedIn: "authorizationStore/isLoggedIn",
+    }),
+
+  },
 }
 </script>
 
-<style scoped>
 
+<style scoped>
+.wrapper_main {
+  padding: 120px 20px 5px;
+}
+
+.main {
+  margin-left: 180px;
+}
 </style>

@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 // import axios from "axios";
 
 export default {
@@ -28,9 +28,15 @@ export default {
   // }, 
 
   methods: {
+    ...mapMutations({
+    }),
     ...mapActions({
       logout: "authorizationStore/logout",
-      loadUser: "authorizationStore/loadUser"
+      loadUser: "authorizationStore/loadUser",
+      loadAllPhotos: "loadPhotoStore/loadAllPhotos",
+      loadPostServer: "postsMyPageStore/loadPostServer",
+
+
     }),
   },
 
@@ -41,6 +47,8 @@ export default {
       if (id) {
         this.loadUser({ id })
           .then(() => {
+              this.loadAllPhotos();
+              // this.loadPostServer(this.$route.params.id);
           })
           .catch(() => {
               this.$router.push('notFound')

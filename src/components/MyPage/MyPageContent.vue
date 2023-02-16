@@ -1,11 +1,11 @@
 <template>
     <div class="wrapper_contents">
 
-        <PhotoMyPage/>
+        <PhotoMyPage />
 
         <div class="wrapper_posts">
             <AddPost />
-            <PostMyPage />
+            <PostMyPage/>
 
             <div class="wrapper_not_posts" v-if="getPosts.length === 0">
                 <p class="not_posts">Посты не найдены!!!</p>
@@ -14,50 +14,62 @@
             <!--при прокрутки страницы до данного элемента - подгружать следующие посты -->
             <div ref="observer" class="observer"></div>
         </div>
+    <p>Загрузить еще</p>
+
     </div>
 
-    <MyFriends />
+    <MyFriends/>
 </template>
   
 <script>
-import {mapGetters, mapActions, mapMutations} from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
     name: "MyPageContent",
+
     methods: {
         ...mapActions({
             loadPostServer: "postsMyPageStore/loadPostServer",
-            loadAllPhotos: "loadPhotoStore/loadAllPhotos",
         }),
         ...mapMutations({
-            setCountPosts: "postsMyPageStore/setCountPosts",
-            setLimitPosts: "postsMyPageStore/setLimitPosts",
+            setPosts: "postsMyPageStore/setPosts",
+            setCountPostsNull: "postsMyPageStore/setCountPostsNull"
         }),
     },
+
     computed: {
         ...mapGetters({
             getPosts: "postsMyPageStore/getPosts",
             //   getModulEditProfile: "editProfileStore/getModulEditProfile",
-            getUser: "authorizationStore/getUser"
+            getUser: "authorizationStore/getUser",
+         
         }),
-    },
-    mounted() {
-       
-            this.loadAllPhotos();
-            const options = {
-                rootMargin: '0px',
-                threshold: 1.0
-            };
-            const callback = (entries) => {
-                if (entries[0].isIntersecting) {
-                    this.setLimitPosts();
-                    this.setCountPosts();
-                    this.loadPostServer();
-                }
-            };
-            const observer = new IntersectionObserver(callback, options);
-            observer.observe(this.$refs.observer);
-        
+  },
+  watch: {
+    $route() {
+        if(this.$route.params.id) {
+            window.scrollTo(0, 0);
+            this.setPosts([])
+            this.setCountPostsNull()
+            // this.loadPostServer(this.$route.params.id);
+
+        }
     }
+  },
+        mounted() {
+       const options = {
+        rootMargin: "0px",
+        threshold: 1
+       };
+       const callback = (entries) => {
+           if (entries[0].isIntersecting) {
+               this.loadPostServer(this.$route.params.id);
+           }
+       };
+       const observer = new IntersectionObserver(callback, options);
+       observer.observe(this.$refs.observer);
+   
+},
+
 }
 </script>
   
@@ -69,16 +81,22 @@ export default {
     flex: 0 0 70%;
     /*overflow: hidden;*/
 }
+
 .wrapper_posts {
     display: flex;
     flex-direction: column;
     white-space: normal;
     margin-right: 20px;
 }
+
 .not_posts {
     margin: 10px 0;
     font-size: 18px;
     font-family: cursive;
     font-weight: 600;
+}
+
+.observer {
+    border: 1px solid;
 }
 </style>

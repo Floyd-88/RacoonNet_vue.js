@@ -1,20 +1,20 @@
 <template>
-    <NavigationNet v-if="isLoggedIn" />
+  <NavigationNet v-if="isLoggedIn" />
 
-<div class="wrapper_main">
-  <div class="main">
+  <div class="wrapper_main">
+    <div class="main">
 
-    <p>Сообщения</p>
+      <p>Сообщения</p>
 
+    </div>
   </div>
-</div>
 
 
 
 </template>
 
 <script>
-import { mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "MessagePage",

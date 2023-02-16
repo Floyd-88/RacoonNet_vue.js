@@ -14,7 +14,7 @@
       <UserInfo />
 
       <div v-if="getUser.enterUser" class="wrapper_myPage">
-        <MyPageContent />
+        <MyPageContent/>
       </div>
       <div v-if="!getUser.enterUser" class="wrapper_title_warning_auth">
         <h2 class="title_warning_auth">Для просмотра контента страницы Вам необходимо авторизоваться</h2>
@@ -27,23 +27,13 @@
 
 </template>
 <script>
-import { mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters } from "vuex";
 import EditProfile from "@/components/MyPage/EditProfile";
 import MyPageContent from "@/components/MyPage/MyPageContent.vue";
 
 export default {
   name: "MyPage",
   components: { EditProfile, MyPageContent },
-
-  data() {
-    return {}
-  },
-
-  methods: {
-    ...mapActions({}),
-
-    ...mapMutations({}),
-  },
 
   computed: {
     ...mapGetters({

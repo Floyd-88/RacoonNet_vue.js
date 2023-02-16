@@ -29,7 +29,6 @@
       </div>
 
     </div>
-
     <div class="btn_post">
       <UIbtn class="redaction_post_btn" 
       v-if="getUser.enterUser == post.authorPost" 
