@@ -354,7 +354,7 @@ export default {
             .then((resp) => {
               this.setModulRegister(false)
               // window.location.href = '/';
-              this.$router.push(`/id${resp.data.user.userID}/info`)
+              this.$router.push(`/id${resp.data.user.userID}`)
               // this.$router.push('mypage');
             })
             .catch((err) => {

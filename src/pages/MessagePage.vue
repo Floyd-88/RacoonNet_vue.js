@@ -4,7 +4,7 @@
   <div class="wrapper_main">
     <div class="main">
 
-      <p>Сообщения</p>
+      <AllUsersMessages/>
 
     </div>
   </div>
@@ -14,18 +14,17 @@
 </template>
 
 <script>
+import AllUsersMessages from "@/components/MessagePage/AllUsersMessages.vue";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "MessagePage",
-
-  computed: {
-
-    ...mapGetters({
-      isLoggedIn: "authorizationStore/isLoggedIn",
-    }),
-
-  },
+    name: "MessagePage",
+    computed: {
+        ...mapGetters({
+            isLoggedIn: "authorizationStore/isLoggedIn",
+        }),
+    },
+    components: { AllUsersMessages }
 }
 </script>
 

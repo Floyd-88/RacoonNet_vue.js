@@ -59,9 +59,7 @@
         <div class="wrapper_block_full_size_ava">
         <div class="wrapper_block_full_size_img_ava">
             <div class="wrapper_full_size_img_ava">
-                <AvatarEditor 
-                :photo_name="currentImg.photo_name"
-                />
+                <AvatarEditor :photo_name="currentImg.photo_name"/>
               </div>
         </div>      
     </div>

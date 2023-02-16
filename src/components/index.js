@@ -30,6 +30,12 @@ import UImodal from "@/components/UI/UImodal";
 import CloseModal from "@/components/UI/CloseModal";
 import NotFound from "@/components/authorizationUser/NotFound";
 
+import AllUsersMessages from "@/components/MessagePage/AllUsersMessages";
+import UserMessage from "@/components/MessagePage/UserMessage";
+
+
+
+
 
 export default [
     UserInfo,
@@ -54,5 +60,7 @@ export default [
     MainPhoto,
     AvatarEditor,
     NotFound,
-    MyPageContent
+    MyPageContent,
+    AllUsersMessages,
+    UserMessage
 ]

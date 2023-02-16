@@ -97,7 +97,7 @@ export const editProfileStore = {
                         if (user !== null) {
                             localStorage.setItem('user', JSON.stringify(user));
                             commit("setModulEditProfile", false)
-                                // window.location.href = '/';
+                            window.location.href = '/';
                         }
                     })
                     .catch(err => {

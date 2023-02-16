@@ -34,7 +34,9 @@ export const registrationStore = {
         //в поле option доступны года от 1900 до текущего
         years() {
             const year = new Date().getFullYear()
-            return Array.from({ length: year - 1900 }, (value, index) => year - index)
+            return Array.from({
+                length: year - 1900
+            }, (value, index) => year - index)
         },
     },
 
@@ -93,15 +95,23 @@ export const registrationStore = {
 
     actions: {
         //регистрация нового юзера
-        register({ commit }, user) {
+        register({
+            commit
+        }, user) {
             return new Promise((resolve, reject) => {
-                commit('authorizationStore/auth_request', 'loading', { root: true });
+                commit('authorizationStore/auth_request', 'loading', {
+                    root: true
+                });
 
                 let url = "http://localhost:8000/register";
                 if (user.is_admin === '1') {
                     url = "http://localhost:8000/register-admin";
                 }
-                axios({ url: url, data: user, method: 'POST' })
+                axios({
+                        url: url,
+                        data: user,
+                        method: 'POST'
+                    })
                     .then(resp => {
                         const token = resp.data.token;
                         const user = resp.data.user;
@@ -110,15 +120,23 @@ export const registrationStore = {
                             localStorage.setItem('token', token);
                             localStorage.setItem('user', JSON.stringify(user));
 
+                            //записываем токен во все заголовки отправляемые на сервер
                             axios.defaults.headers.common['Authorization'] = token;
 
-                            commit('authorizationStore/auth_success', { user, token }, { root: true });
+                            commit('authorizationStore/auth_success', {
+                                // user,
+                                token
+                            }, {
+                                root: true
+                            });
                             // commit('editProfileStore/setEditingUser', user, { root: true });
                             resolve(resp);
                         }
                     })
                     .catch(err => {
-                        commit('authorizationStore/auth_error', null, { root: true });
+                        commit('authorizationStore/auth_error', null, {
+                            root: true
+                        });
                         localStorage.removeItem('token')
                         localStorage.removeItem('user');
                         reject(err);

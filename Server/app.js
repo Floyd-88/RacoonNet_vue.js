@@ -647,41 +647,49 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
 
 //получаем все фотографии
 router.get('/upload_all_photo', authenticateJWT, function(req, res) {
-    console.log('photo')
-    photos.load_all_photos_DB([
-        req.query.id,
-    ], (err, allPhotos) => {
-        if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились' + " " + err);
-        if (!allPhotos) return res.status(404).send('Фотографии не найдены' + " " + err);
 
-        //массив с названиями фотографий
-        let arr = [];
-        //путь к папке где лежат фотографии
-        let path = "../src/assets/photo/";
-        //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
-        allPhotos.forEach(element => {
-            try {
-                //синхронный метод проверки файла ??????????????
-                if (fs.existsSync(`${path + element.photo_name}`)) {
-                    arr.push(element)
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    if (tokenID) {
+
+        photos.load_all_photos_DB([
+            req.query.id,
+        ], (err, allPhotos) => {
+            if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились' + " " + err);
+            if (!allPhotos) return res.status(404).send('Фотографии не найдены' + " " + err);
+
+            //массив с названиями фотографий
+            let arr = [];
+            //путь к папке где лежат фотографии
+            let path = "../src/assets/photo/";
+            //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
+            allPhotos.forEach(element => {
+                try {
+                    //синхронный метод проверки файла ??????????????
+                    if (fs.existsSync(`${path + element.photo_name}`)) {
+                        arr.push(element)
+                    }
+                } catch (err) {
+                    console.error(err)
                 }
-            } catch (err) {
-                console.error(err)
-            }
 
-            // fs.access(`${path + element.photo_name}`, fs.F_OK, (err) => {
-            //     if (!err) {
-            //         console.log(element)
-            //         arr.push(element)
-            //     } else {
-            //         // console.log('not files')
-            //     }
-            // })
-        });
-        res.json(arr);
+                // fs.access(`${path + element.photo_name}`, fs.F_OK, (err) => {
+                //     if (!err) {
+                //         console.log(element)
+                //         arr.push(element)
+                //     } else {
+                //         // console.log('not files')
+                //     }
+                // })
+            });
+            res.json(arr);
 
-        // res.status(200).send("Фотографии получены");;
-    })
+            // res.status(200).send("Фотографии получены");;
+        })
+
+    }
+
+
 })
 
 //удаление фотографии

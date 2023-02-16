@@ -118,6 +118,15 @@ export const loadPhotoStore = {
             getters,
             commit
         }, img) {
+
+            commit("setIsModalLoadPhoto", false);
+            commit("showFullPhotoStore/setIsModalFullSize", false, {
+                root: true
+            });
+            commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                root: true
+            });
+
             axios.post(
                     'http://localhost:8000/upload_ava', {
                         img: img,
@@ -127,14 +136,18 @@ export const loadPhotoStore = {
                     }
                 ).then((res) => {
                     commit("authorizationStore/setUserAva", res.data.ava, {
-                        root: true
-                    })
-                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                        root: true
-                    });
-                    // router.push(`/id${getters.getUser.userID}/info`)
-                    // this.$router.push('/')
-                    // window.location.href = `/id${getters.getUser.userID}`;
+                            root: true
+                        })
+                        // commit("setIsModalLoadPhoto", false);
+                        // commit("showFullPhotoStore/setIsModalFullSize", false, {
+                        //     root: true
+                        // });
+                        // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                        //     root: true
+                        // });
+                        // router.push(`/id${getters.getUser.userID}/info`)
+                        // this.$router.push('/')
+                        // window.location.href = `/id${getters.getUser.userID}`;
                 })
                 .catch((err) => {
 
