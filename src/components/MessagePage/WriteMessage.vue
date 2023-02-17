@@ -89,13 +89,6 @@ export default {
       setModalWriteMessage: "messageStore/setModalWriteMessage",
       setMessageUser: "messageStore/setMessageUser",
     }),
-
-    // writeMessageUser() {
-    //   console.log("new message")
-      
-    // }
-
-
   },
 
   computed: {

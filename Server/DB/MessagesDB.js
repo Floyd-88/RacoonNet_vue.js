@@ -19,21 +19,20 @@ class MessagesDB {
         return this.connection.execute(sql);
     }
 
-    // загрузка постов из базы данны
-    // load_posts_DB(params, callback) {
-    //     return this.connection.execute(`SELECT 
-    //     posts.id, 
-    //     users.ava, 
-    //     posts.date, 
-    //     posts.postText, 
-    //     users.name, 
-    //     users.surname,
-    //     posts.authorPost FROM posts 
-    //     INNER JOIN users ON posts.authorPost = users.userID 
-    //     WHERE page_userID = ? ORDER BY posts.id DESC LIMIT ?, ?`, params, (err, row) => {
-    //         callback(err, row)
-    //     });
-    // }
+    // загрузка последних сообщений из всех преписок из базы данны
+    load_end_message_DB(params, callback) {
+        return this.connection.execute(`SELECT 
+        messages.id, 
+        messages.date, 
+        messages.messageText, 
+        users.name, 
+        users.surname,
+        messages.authorPost FROM messages 
+        INNER JOIN users ON messages.authorPost = users.userID 
+        WHERE page_userID = ? ORDER BY messages.id DESC`, params, (err, row) => {
+            callback(err, row)
+        });
+    }
 
     // загрузка одного сообщения из базы данных
     load_message_DB(messageID, callback) {
