@@ -8,6 +8,8 @@ import { registrationStore } from "@/store/module/registrationStore"
 import { removeUserStore } from "@/store/module/removeUserStore"
 import { loadPhotoStore } from "@/store/module/loadPhotoStore"
 import { showFullPhotoStore } from "@/store/module/showFullPhotoStore"
+import { messageStore } from "@/store/module/messageStore"
+
 
 
 export default createStore({
@@ -20,6 +22,7 @@ export default createStore({
         registrationStore,
         removeUserStore,
         loadPhotoStore,
-        showFullPhotoStore
+        showFullPhotoStore,
+        messageStore
     }
 });

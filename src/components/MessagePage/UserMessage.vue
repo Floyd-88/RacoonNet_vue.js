@@ -1,37 +1,49 @@
 <template>
 
-    <div class="wrapper_message_user">
-        <div class="wrapper_message_user_content">
+    <div class="wrapper_message_user" >
+        <div class="wrapper_message_user_content"
+            @click="openDialogUser">
             <div class="message_user_ava">
-            <img class="ava_posts" src="../../assets/ava/ava_1.jpg" alt="ava">
-        </div>
-        <div class="message_user_content">
-            <div class="message_user_name">
-                <p>Илья Сазонов</p>
+                <img class="ava_posts" src="../../assets/ava/ava_1.jpg" alt="ava">
             </div>
-            <div class="message_user_text">
-                <p>Привет как дела у тебя сегодня мне просто нужно заполнить этот блок каким то текстом?</p>
+            <div class="message_user_content">
+                <div class="message_user_name">
+                    <p>Илья Сазонов</p>
+                </div>
+                <div class="message_user_text">
+                    <p>Привет как дела у тебя сегодня мне просто нужно заполнить этот блок каким то текстом?</p>
+                </div>
             </div>
         </div>
+
+        <div class="wrapper_message_user_btn">
+            <div class="message_user_date">
+                <p>17.02.2021</p>
+            </div>
+            <div class="message_user_del">
+                <UIbtn>Удалить переписку</UIbtn>
+            </div>
         </div>
-        
-
-        <div class="message_user_date">
-            <p>17.02.2021</p>
-        </div>
-
-
-
 
     </div>
 
 </template>
 
 <script>
+import UIbtn from '../UI/UIbtn.vue';
+
 
 
 export default {
     name: "UserMessage",
+    components: { UIbtn },
+
+    methods: {
+        openDialogUser() {
+            console.log(1111)
+            this.$router.push('/message/id2')
+        }
+    }
 }
 </script>
 
@@ -43,25 +55,31 @@ export default {
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid black;
+    cursor: pointer;
 }
-.message_user_ava {
-}
+
+.message_user_ava {}
+
 .ava_posts {
     width: 90px;
-  border-radius: 100%;
+    border-radius: 100%;
 }
+
 .wrapper_message_user_content {
-display: flex;
+    display: flex;
 
 }
+
 .message_user_content {
     padding-left: 10px;
 }
+
 .message_user_name {
     margin-bottom: 10px;
     font-family: fantasy;
     font-size: 14px;
 }
+
 .message_user_text {
     border-radius: 5px;
     background: aliceblue;
@@ -69,7 +87,19 @@ display: flex;
     padding: 5px 5px 5px 5px;
     margin-bottom: 10px;
 }
+.wrapper_message_user_btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
 .message_user_date {
     font-size: 14px;
+    display: flex;
+    justify-content: flex-end;
+}
+.message_user_del {
+    width: max-content;
 }
 </style>

@@ -5,9 +5,17 @@
   <div class="wrapper_main">
     <div class="main">
 
+      <!-- модальное окно для редактирования профиля -->
       <template v-if="getModulEditProfile">
         <UImodal>
           <EditProfile />
+        </UImodal>
+      </template>
+
+      <!-- модальное окно для написания сообщения -->
+      <template v-if="getModalWriteMessage">
+        <UImodal>
+          <WriteMessage />
         </UImodal>
       </template>
 
@@ -40,6 +48,7 @@ export default {
       isLoggedIn: "authorizationStore/isLoggedIn",
       getModulEditProfile: "editProfileStore/getModulEditProfile",
       getUser: "authorizationStore/getUser",
+      getModalWriteMessage: "messageStore/getModalWriteMessage"
     }),
   },
 

@@ -1,7 +1,7 @@
 <template>
 
 <div v-for="userMessage in 10" :key="userMessage" class="wrapper_all_messages_users">
-    <UserMessage/>
+    <UserMessage />
 </div>
   
   
@@ -12,6 +12,10 @@
   
   export default {
     name: "AllUsersMessages",
+
+
+
+
   }
   </script>
   
@@ -23,5 +27,9 @@
     border-radius: 5px;
     background: #f8f8f9;
     box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
+  }
+
+  .wrapper_all_messages_users:hover {
+    filter: brightness(97%);
   }
   </style>

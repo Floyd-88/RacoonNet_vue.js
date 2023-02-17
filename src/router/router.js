@@ -12,6 +12,9 @@ import NewsPage from "@/pages/NewsPage";
 import AdminNet from "@/components/authorizationUser/AdminNet";
 // import SecureNet from "@/components/SecureNet";
 import NotFound from "@/components/authorizationUser/NotFound";
+import AllUsersMessages from "@/components/MessagePage/AllUsersMessages";
+import DialogUser from "@/components/MessagePage/DialogUser";
+
 
 const routes = [{
         path: "/",
@@ -35,7 +38,16 @@ const routes = [{
         name: "messagepage",
         meta: {
             requiresAuth: true
-        }
+        },
+        children: [{
+                path: "",
+                component: AllUsersMessages,
+            },
+            {
+                path: "id:id",
+                component: DialogUser,
+            },
+        ],
     },
     {
         path: "/friends",

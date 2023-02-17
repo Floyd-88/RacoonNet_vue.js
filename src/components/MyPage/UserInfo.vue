@@ -47,9 +47,20 @@
     </div>
 
     <div class="wrapper_btn" v-if="getUser.is_editProfile">
-      <UIbtn class="redaction_profile_btn" @click="setModulEditProfile(true)">Редактировать профиль
+      <UIbtn 
+      class="redaction_profile_btn" 
+      @click="setModulEditProfile(true)">
+      Редактировать профиль
+      </UIbtn>
+
+      <UIbtn 
+      class="redaction_profile_btn" 
+      @click="setModalWriteMessage(true)"
+      >
+      Написать сообщение
       </UIbtn>
     </div>
+      
 
   </div>
 </template>
@@ -72,7 +83,8 @@ export default {
   methods: {
     ...mapMutations({
       setModulEditProfile: "editProfileStore/setModulEditProfile",
-      setShowFullAvaPhoto: "showFullPhotoStore/setShowFullAvaPhoto"
+      setShowFullAvaPhoto: "showFullPhotoStore/setShowFullAvaPhoto",
+      setModalWriteMessage: "messageStore/setModalWriteMessage"
     }),
     ...mapActions({
       showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto",
@@ -229,10 +241,14 @@ export default {
 
 .wrapper_btn {
   margin: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .redaction_profile_btn {
   width: 155px;
   font-size: 13px;
+  margin-bottom: 15px;
 }
 </style>

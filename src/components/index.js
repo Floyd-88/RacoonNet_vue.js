@@ -32,10 +32,8 @@ import NotFound from "@/components/authorizationUser/NotFound";
 
 import AllUsersMessages from "@/components/MessagePage/AllUsersMessages";
 import UserMessage from "@/components/MessagePage/UserMessage";
-
-
-
-
+import DialogUser from "@/components/MessagePage/DialogUser";
+import WriteMessage from "@/components/MessagePage/WriteMessage";
 
 export default [
     UserInfo,
@@ -62,5 +60,7 @@ export default [
     NotFound,
     MyPageContent,
     AllUsersMessages,
-    UserMessage
+    UserMessage,
+    DialogUser,
+    WriteMessage
 ]
