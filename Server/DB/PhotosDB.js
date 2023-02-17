@@ -4,11 +4,11 @@ const config = require('./config')
 class PhotosDB {
     constructor() {
         this.connection = mysql.createConnection(config); // подключаем базу данных
-        this.createTablePosts();
+        this.createTablePhotos();
     }
 
     //создаем таблицу БД с фотографиями
-    createTablePosts() {
+    createTablePhotos() {
         const sql = `CREATE TABLE IF NOT EXISTS photos (id integer PRIMARY KEY AUTO_INCREMENT, photo_name varchar(150) not null, date timestamp not null DEFAULT CURRENT_TIMESTAMP, userID integer not null, CONSTRAINT FK_Photos_Users FOREIGN KEY (userID)  REFERENCES users (userID) ON DELETE CASCADE)`;
         this.connection.execute(sql);
     }

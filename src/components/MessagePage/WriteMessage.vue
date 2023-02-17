@@ -1,53 +1,41 @@
 <template>
-<!--  Закрыть модальное окно-->
-  <CloseModal @click="setModalWriteMessage(false)"/>
+  <!--  Закрыть модальное окно-->
+  <CloseModal @click="setModalWriteMessage(false)" />
 
   <h4 class="form_message_title">Написать сообщение</h4>
 
   <div class="wrapper_form_message">
-    <form class="form_message"
-          @submit.prevent="writeMessageUser"
-          novalidate>
+    <form class="form_message" @submit.prevent="WRITE_MESSAGE_USER(user.userID)" novalidate>
 
-        <div class="wrapper_message_user_content">
-            <div class="message_user_ava">
-                <img class="ava_posts" src="../../assets/ava/ava_1.jpg" alt="ava">
-            </div>
-            <div class="message_user_content">
-                <div class="message_user_name">
-                    <p>Илья Сазонов</p>
-                </div>
-            </div>
+      <div class="wrapper_message_user_content">
+        <div class="message_user_ava">
+          <img class="ava_message" :src="pathAva" alt="ava" ref="ava">
         </div>
+        <div class="message_user_content">
+          <div class="message_user_name">
+            <p>{{ user.name + " " + user.surname }}</p>
+          </div>
+        </div>
+      </div>
 
       <!--блок с сообщением-->
       <div class="wrapper_form_message_name">
         <div class="wrapper_form_message_input">
-          <div class="input-errors"
-               v-for="(error, index) of v$.messageUser.$errors"
-               :key="index">
-            <div class="error-msg"
-                 v-if="error.$message === 'Value is required'">
+          <div class="input-errors" v-for="(error, index) of v$.messageUser.$errors" :key="index">
+            <div class="error-msg" v-if="error.$message === 'Value is required'">
               Вы не можете отправить пустое сообщение
             </div>
           </div>
 
-          <textarea
-            class="new_message"
-            id="name"
-            placeholder="Введите сообщение"
-            v-model="changeMessage"
-            :class="{invalid: (v$.messageUser.$error)}"
-            >
+          <textarea class="new_message" id="name" placeholder="Введите сообщение" v-model="changeMessage"
+            :class="{ invalid: (v$.messageUser.$error) }">
           </textarea>
-        </div> 
+        </div>
       </div>
       <!-- ---------------- -->
 
       <div class="wrapper_form_message_btn">
-        <button class="form_message_btn"
-                type="submit"
-                :disabled="v$.$invalid">
+        <button class="form_message_btn" type="submit" :disabled="v$.$invalid">
           Отправить
         </button>
       </div>
@@ -58,18 +46,28 @@
 </template>
 
 <script>
-import {useVuelidate} from "@vuelidate/core";
-import {required, minLength} from "@vuelidate/validators";
+import { useVuelidate } from "@vuelidate/core";
+import { required, minLength } from "@vuelidate/validators";
 
-import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
+import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 import CloseModal from "@/components/UI/CloseModal";
 
 export default {
   name: "WriteMessage",
-  components: {CloseModal},
+  components: { CloseModal },
+
+  props: {
+    user: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    }
+
+  },
 
   setup() {
-    return {v$: useVuelidate()}
+    return { v$: useVuelidate() }
   },
 
   data() {
@@ -85,17 +83,17 @@ export default {
 
   methods: {
     ...mapActions({
-      // updateProfile: "editProfileStore/updateProfile",
-      // closeModalEditProfile: "editProfileStore/closeModalEditProfile"
+      WRITE_MESSAGE_USER: "messageStore/WRITE_MESSAGE_USER"
     }),
     ...mapMutations({
       setModalWriteMessage: "messageStore/setModalWriteMessage",
       setMessageUser: "messageStore/setMessageUser",
     }),
 
-    writeMessageUser() {
-      console.log("new message")
-    }
+    // writeMessageUser() {
+    //   console.log("new message")
+      
+    // }
 
 
   },
@@ -120,8 +118,16 @@ export default {
         this.v$.messageUser.$touch()
       }
     },
-  
-  },
+
+    pathAva() {
+      try {
+        return require(`../../assets/photo/${this.user.ava}`);
+      } catch {
+        return require(`../../assets/ava/ava_1.jpg`);
+      }
+
+    },
+  }
 
 }
 </script>
@@ -147,27 +153,27 @@ export default {
 }
 
 .wrapper_message_user_content {
-    display: flex;
-    margin-bottom: 10px;
+  display: flex;
+  margin-bottom: 10px;
 }
 
-.message_user_ava {}
+/* .message_user_ava {} */
 
-.ava_posts {
-    width: 40px;
-    border-radius: 100%;
+.ava_message {
+  width: 40px;
+  border-radius: 100%;
 }
 
 .message_user_content {
-    padding-left: 10px;
-    display: flex;
-    align-items: center;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .message_user_name {
-    margin-bottom: 10px;
-    font-family: fantasy;
-    font-size: 14px;
+  margin-bottom: 10px;
+  font-family: fantasy;
+  font-size: 16px;
 }
 
 .new_message {
@@ -183,26 +189,26 @@ export default {
 
 .wrapper_form_message_input {
   width: 100%;
-    margin-bottom: 0px;
+  margin-bottom: 0px;
 }
 
 .wrapper_form_message_btn {
   display: flex;
-    justify-content: flex-end;
-    height: 35px;
-    margin: 5px 0px 10px 5px;
+  justify-content: flex-end;
+  height: 35px;
+  margin: 5px 0px 10px 5px;
 }
 
 .form_message_btn {
   width: 130px;
-    height: 100%;
-    border: 1px solid;
-    border-radius: 5px;
-    background: cornflowerblue;
-    cursor: pointer;
-    font-size: 23px;
-    color: white;
-    font-family: emoji;
+  height: 100%;
+  border: 1px solid;
+  border-radius: 5px;
+  background: cornflowerblue;
+  cursor: pointer;
+  font-size: 23px;
+  color: white;
+  font-family: emoji;
 }
 
 .error-msg {

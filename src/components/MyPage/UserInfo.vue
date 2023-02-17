@@ -46,17 +46,18 @@
 
     </div>
 
-    <div class="wrapper_btn" v-if="getUser.is_editProfile">
+    <div class="wrapper_btn" >
       <UIbtn 
+      v-if="getUser.is_editProfile"
       class="redaction_profile_btn" 
       @click="setModulEditProfile(true)">
       Редактировать профиль
       </UIbtn>
 
       <UIbtn 
+      v-if="!getUser.is_editProfile"
       class="redaction_profile_btn" 
-      @click="setModalWriteMessage(true)"
-      >
+      @click="setModalWriteMessage(true)">
       Написать сообщение
       </UIbtn>
     </div>

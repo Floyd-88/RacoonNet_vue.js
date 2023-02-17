@@ -24,6 +24,9 @@ const posts = new PostsDB();
 const PhotosDB = require('./DB/PhotosDB');
 const photos = new PhotosDB();
 
+const MessagesDB = require('./DB/MessagesDB');
+const messages = new MessagesDB();
+
 
 //подключаем массивы с валидацией
 const loginValidate = require('./validate/loginValidate')
@@ -32,6 +35,8 @@ const postValidate = require('./validate/postValidate')
 const updateUserValidate = require('./validate/updateUserValidate')
 const passwordValidate = require('./validate/passwordValidate')
 const passwordDelValidate = require('./validate/passwordDelValidate');
+const messageValidate = require('./validate/messageValidate');
+
 const {
     resolve
 } = require('path');
@@ -241,7 +246,7 @@ router.post('/login', loginValidate, function(req, res) {
     });
 })
 
-//подгружаем данные пользователя
+//ПОДГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ ПРИ ПОСЕЩЕНИИ ЕГО СТРАНИЦЫ
 router.post('/load_user', authenticateJWT, function(req, res) {
     userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
@@ -296,7 +301,7 @@ router.post('/load_user', authenticateJWT, function(req, res) {
 
 })
 
-//редактирование профиля пользователя
+//РЕДАКТИРОВАНИЕ ПРОФИЛЯ ПОЛЬЗОВОТЕЛЯ
 router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, res) {
 
     userID = +req.body.id; //id из строки запроса
@@ -356,7 +361,7 @@ router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, re
     }
 })
 
-//изменение старого пароля
+//ИЗМЕНЕНИЕ ПАРОЛЯ
 router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
 
     userID = +req.body.id; //id из строки запроса
@@ -398,7 +403,7 @@ router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
     }
 })
 
-//удаление профиля пользователя
+//УДАЛЕНИЕ ПРОФИЛЯ ПОЛЬЗОВАТЕЛЯ
 router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req, res) {
 
     userID = +req.body.id; //id из строки запроса
@@ -443,7 +448,7 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
     }
 })
 
-//подгружаем посты пользователя при посещении 'Моей страницы'
+//ПОДГРУЗКА ПОСТОВ ПОЛЬЗОВАТЕЛЯ ИЗ БАЗЫ ДАННЫХ
 router.get('/dataBase.js', authenticateJWT, function(req, res) {
     posts.load_posts_DB([
         req.query.userID,
@@ -457,7 +462,7 @@ router.get('/dataBase.js', authenticateJWT, function(req, res) {
     });
 });
 
-//добавляем новый пост
+//ДОБАВЛЯЕМ НОВЫЙ ПОСТ
 router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
     //валидация поста
     const errors = validationResult(req);
@@ -488,7 +493,7 @@ router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
     });
 });
 
-//редактируем пост
+//РЕДАКТИРУЕМ ПОСТ
 router.put('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
 
     tokenID = req.tokenID; //id из сохраненного токена 
@@ -514,7 +519,7 @@ router.put('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
     }
 });
 
-//удаляем пост
+//УДАЛЯЕМ ПОСТ
 router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
 
     tokenID = req.tokenID; //id из сохраненного токена 
@@ -529,13 +534,11 @@ router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
     }
 });
 
-//загружаем аватарку
+//ДОБАВЛЯЕМ АВАТАРКУ В БАЗУ ДАННЫХ
 router.post('/upload_ava', authenticateJWT, (req, res) => {
 
     userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
-    // console.log(req.body)
-    // console.log(tokenID)
 
     if (userID === tokenID) {
         //удаление аватарки из папки на сервере при обновлении
@@ -569,7 +572,7 @@ router.post('/upload_ava', authenticateJWT, (req, res) => {
         let arrayPhotos = [];
         arrayPhotos.push(nameImg, tokenID);
 
-        //добавление картинки в таблицу Users
+        //добавление картинки в таблицу Users базы данных 
         authorization.updateAva(arrayPhotos, (err) => {
             if (err) return res.status(500).send('Аватар пользователь не сменился');
 
@@ -586,8 +589,7 @@ router.post('/upload_ava', authenticateJWT, (req, res) => {
 
 });
 
-
-//загружаем фотографии в БД
+//ОТПРАВЛЯЕМ ФОТОГРАФИИ В БАЗУ ДАННЫХ
 router.post('/upload_photo', authenticateJWT, (req, res) => {
 
     userID = +req.body.id; //id из строки запроса
@@ -644,8 +646,7 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
     }
 });
 
-
-//получаем все фотографии
+//ПОЛУЧАЕМ ФОТОГРАФИИ ИЗ БАЗЫ ДАННЫХ
 router.get('/upload_all_photo', authenticateJWT, function(req, res) {
 
     tokenID = req.tokenID; //id из сохраненного токена 
@@ -692,7 +693,7 @@ router.get('/upload_all_photo', authenticateJWT, function(req, res) {
 
 })
 
-//удаление фотографии
+//УДАЛЕНИЕ ФОТОГРАФИИ
 router.delete('/remove_photo', authenticateJWT, function(req, res) {
 
     userID = +req.query.id; //id из строки запроса
@@ -715,7 +716,7 @@ router.delete('/remove_photo', authenticateJWT, function(req, res) {
 
 })
 
-//удаление аватарки
+//УДАЛЕНИЕ АВАТАРКИ
 router.put('/remove_ava_photo', authenticateJWT, function(req, res) {
 
     userID = +req.body.id; //id из строки запроса
@@ -748,6 +749,34 @@ router.put('/remove_ava_photo', authenticateJWT, function(req, res) {
 
 })
 
+//ДОБАВЛЕНИЕ СООБЩЕНИЯ В БАЗУ ДАННЫХ
+router.post('/user_message', authenticateJWT, messageValidate, function(req, res) {
+    //валидация сообщения
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+    tokenID = req.tokenID //id из сохраненного токена   
+
+    //записываем сообщение в базу данных
+    messages.add_message_DB([
+        req.body.textMessage,
+        req.body.id, //кому мы пишем
+        tokenID //кто пишет 
+    ], (err, row) => {
+        if (err) return res.status(500).send('При записи сообщения в базу данных произошла ошибка' + ' ' + err);
+
+        //возвращаем записанное в БД сообщение
+        const messageID = row.insertId;
+        messages.load_message_DB(messageID, (err, message) => {
+            if (err) return res.send(500).send('При загрузки сообщения из базы данных произошла ошибка' + ' ' + err);
+
+            return res.status(200).send(message);
+        })
+    })
+})
 
 
 app.use(router)

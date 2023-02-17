@@ -1,5 +1,7 @@
 // import axios from "axios"
 
+import axios from "axios";
+
 export const messageStore = {
 
     state: () => ({
@@ -31,6 +33,24 @@ export const messageStore = {
     },
 
     actions: {
+        async WRITE_MESSAGE_USER({ state, commit }, userID) {
+            let message = {
+                id: userID,
+                textMessage: state.messageUser,
+            }
+            try {
+                await axios.post("http://localhost:8000/user_message", message)
+                    .then(function(resp) {
+                        console.log(resp.data)
+
+                        commit("setMessageUser", "")
+                        commit("setModalWriteMessage", false)
+                    })
+            } catch (err) {
+                console.log(err)
+            }
+        },
+
 
     },
 

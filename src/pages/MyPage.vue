@@ -15,7 +15,14 @@
       <!-- модальное окно для написания сообщения -->
       <template v-if="getModalWriteMessage">
         <UImodal>
-          <WriteMessage />
+          <WriteMessage 
+          :user="{
+            name: getUser.name, 
+            surname: getUser.surname, 
+            ava: getUser.ava, 
+            userID: getUser.userID
+            }"
+          />
         </UImodal>
       </template>
 
