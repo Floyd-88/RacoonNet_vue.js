@@ -8,10 +8,19 @@
   </template>
   
   <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+
   
   export default {
     name: "AllUsersMessages",
+
+    mounted() {
+        this.LOAD_DIALOGS()
+    },
+
+    methods: {
+        ...mapActions({LOAD_DIALOGS: "messageStore/LOAD_DIALOGS"})
+    },
 
     computed: {
         ...mapGetters({getArrayMessages: "messageStore/getArrayMessages"})

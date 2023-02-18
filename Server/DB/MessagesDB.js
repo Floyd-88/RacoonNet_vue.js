@@ -80,6 +80,31 @@ class MessagesDB {
         });
     }
 
+    //получаем диалоги пользователя
+    get_conversation_DB(tokenID, callback) {
+        return this.connection.execute(`SELECT
+    U.userID,
+    U.name,
+    U.surname,
+    C.id as convId,
+    C.sender,
+    C.unread,
+    M.message,
+    M.date 
+        FROM users U, conversation C
+        LEFT JOIN messages M ON (C.last_message_id = M.id)
+        WHERE (C.first = ${tokenID} OR C.second = ${tokenID})
+        AND CASE 
+        WHEN C.first = ${tokenID}
+            THEN C.second = U.userID AND C.first_delete = '0'
+        WHEN C.second = ${tokenID}
+            THEN C.first = U.userID AND C.second_delete = '0'
+        END
+        ORDER BY C.unread DESC`, (err, messages) => {
+            callback(err, messages)
+        })
+    }
+
     //создаем таблицу БД с сообщениями
     // createTableMessages() {
     //     const sql = `CREATE TABLE IF NOT EXISTS messages (

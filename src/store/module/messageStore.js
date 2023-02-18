@@ -35,6 +35,7 @@ export const messageStore = {
     },
 
     actions: {
+        //сохранение сообщений в базе данных
         async WRITE_MESSAGE_USER({ state, commit }, userID) {
             let message = {
                 destinationID: userID,
@@ -54,25 +55,26 @@ export const messageStore = {
             }
         },
 
-        // async LOAD_MESSAGES({ state, commit }, userID) {
-        //     // let message = {
-        //     //     destinationID: userID,
-        //     //     textMessage: state.messageUser,
-        //     // }
-        //     try {
-        //         await axios.get("http://localhost:8000/user_message")
-        //             .then(function(resp) {
+        //получение всех диалогов пользователя
+        async LOAD_DIALOGS() {
+            // let user = {
+            // destinationID: userID,
+            // textMessage: state.messageUser,
+            // }
+            try {
+                await axios.get("http://localhost:8000/user_message")
+                    .then(function(resp) {
+                        console.log(resp.data)
 
-
-        //                 // state.arrayMessages.push(resp.data)
-        //                 console.log(state.arrayMessages)
-        //                     // commit("setMessageUser", "")
-        //                     // commit("setModalWriteMessage", false)
-        //             })
-        //     } catch (err) {
-        //         console.log(err)
-        //     }
-        // },
+                        // state.arrayMessages.push(resp.data)
+                        // console.log(state.arrayMessages)
+                        // commit("setMessageUser", "")
+                        // commit("setModalWriteMessage", false)
+                    })
+            } catch (err) {
+                console.log(err)
+            }
+        },
 
 
     },

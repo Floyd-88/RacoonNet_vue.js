@@ -812,49 +812,36 @@ router.post('/user_message', authenticateJWT, messageValidate, function(req, res
                             last_conversation_id
                         ], (err) => {
                             if (err) return res.status(500).send('При обновлении таблицы диалогов произошла ошибка' + ' ' + err);
-
-
-
                         })
                         res.status(200).send("Сообщение добавлено в базу данных");
                     })
-
                 })
         })
     }
-
-
-
-
-
-    //записываем сообщение в базу данных
-    // messages.add_message_DB([
-    //     req.body.textMessage,
-    //     req.body.destinationID, //кому мы пишем
-    //     tokenID //кто пишет 
-    // ], (err, row) => {
-    //     if (err) return res.status(500).send('При записи сообщения в базу данных произошла ошибка' + ' ' + err);
-
-    //     //возвращаем записанное в БД сообщение
-    //     const messageID = row.insertId;
-    //     messages.load_message_DB(messageID, (err, message) => {
-    //         if (err) return res.send(500).send('При загрузки сообщения из базы данных произошла ошибка' + ' ' + err);
-
-    //         return res.status(200).send(message);
-    //     })
-    // })
 })
 
+//получение всех диалогов пользователя
 router.get('/user_message', authenticateJWT, messageValidate, function(req, res) {
 
     tokenID = req.tokenID //id из сохраненного токена   
 
-    //возвращаем все переписки юзера
-    messages.load_all_messages_DB(tokenID, (err, message) => {
-        if (err) return res.send(500).send('При загрузки сообщения из базы данных произошла ошибка' + ' ' + err);
+    // Вывод диалогов пользователя
+    messages.get_conversation_DB(tokenID, (err, dialogs) => {
+        if (err) return res.status(500).send('При получении диалогов из БД произошла ошибка:' + ' ' + err);
 
-        return res.status(200).send(message);
+        return res.status(200).send(dialogs)
+        console.log(dialogs)
     })
+
+
+
+
+    //возвращаем все переписки юзера
+    // messages.load_all_messages_DB(tokenID, (err, message) => {
+    //     if (err) return res.send(500).send('При загрузки сообщения из базы данных произошла ошибка' + ' ' + err);
+
+    //     return res.status(200).send(message);
+    // })
 
 })
 
