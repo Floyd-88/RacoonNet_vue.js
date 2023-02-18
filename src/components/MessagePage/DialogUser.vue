@@ -43,144 +43,6 @@
             </div>
             <!-- -- -->
 
-               <!-- message -->
-               <div class="wrapper_message_dialog_user">
-                <div class="dialog_ava_user">
-                    <img src="../../assets/ava/ava_1.jpg" alt="ava">
-                </div>
-                <div class="wrapper_block_message_user">
-                    <div class="wrapper_message_user">
-                        <div class="message_name_user">
-                            <p>Pink</p>
-                        </div>
-                        <div class="message_time">
-                            <p>12.12.2023 10:45</p>
-                        </div>
-                    </div>
-                    <div class="message_text">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicingorem ipsum dolor sit amet consectetur
-                            adipisicing elit. Fugiat, quia!orem ipsum dolor sit amet consectetur adipisicing elit.
-                            Fugiat, quia! elit. Fugiat, quia!</p>
-                    </div>
-                </div>
-            </div>
-            <!-- -- -->
-
-               <!-- message -->
-               <div class="wrapper_message_dialog_user">
-                <div class="dialog_ava_user">
-                    <img src="../../assets/ava/ava_1.jpg" alt="ava">
-                </div>
-                <div class="wrapper_block_message_user">
-                    <div class="wrapper_message_user">
-                        <div class="message_name_user">
-                            <p>Pink</p>
-                        </div>
-                        <div class="message_time">
-                            <p>12.12.2023 10:45</p>
-                        </div>
-                    </div>
-                    <div class="message_text">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicingorem ipsum dolor sit amet consectetur
-                            adipisicing elit. Fugiat, quia!orem ipsum dolor sit amet consectetur adipisicing elit.
-                            Fugiat, quia! elit. Fugiat, quia!</p>
-                    </div>
-                </div>
-            </div>
-            <!-- -- -->
-
-               <!-- message -->
-               <div class="wrapper_message_dialog_user">
-                <div class="dialog_ava_user">
-                    <img src="../../assets/ava/ava_1.jpg" alt="ava">
-                </div>
-                <div class="wrapper_block_message_user">
-                    <div class="wrapper_message_user">
-                        <div class="message_name_user">
-                            <p>Pink</p>
-                        </div>
-                        <div class="message_time">
-                            <p>12.12.2023 10:45</p>
-                        </div>
-                    </div>
-                    <div class="message_text">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicingorem ipsum dolor sit amet consectetur
-                            adipisicing elit. Fugiat, quia!orem ipsum dolor sit amet consectetur adipisicing elit.
-                            Fugiat, quia! elit. Fugiat, quia!</p>
-                    </div>
-                </div>
-            </div>
-            <!-- -- -->
-
-               <!-- message -->
-               <div class="wrapper_message_dialog_user">
-                <div class="dialog_ava_user">
-                    <img src="../../assets/ava/ava_1.jpg" alt="ava">
-                </div>
-                <div class="wrapper_block_message_user">
-                    <div class="wrapper_message_user">
-                        <div class="message_name_user">
-                            <p>Pink</p>
-                        </div>
-                        <div class="message_time">
-                            <p>12.12.2023 10:45</p>
-                        </div>
-                    </div>
-                    <div class="message_text">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicingorem ipsum dolor sit amet consectetur
-                            adipisicing elit. Fugiat, quia!orem ipsum dolor sit amet consectetur adipisicing elit.
-                            Fugiat, quia! elit. Fugiat, quia!</p>
-                    </div>
-                </div>
-            </div>
-            <!-- -- -->
-
-               <!-- message -->
-               <div class="wrapper_message_dialog_user">
-                <div class="dialog_ava_user">
-                    <img src="../../assets/ava/ava_1.jpg" alt="ava">
-                </div>
-                <div class="wrapper_block_message_user">
-                    <div class="wrapper_message_user">
-                        <div class="message_name_user">
-                            <p>Pink</p>
-                        </div>
-                        <div class="message_time">
-                            <p>12.12.2023 10:45</p>
-                        </div>
-                    </div>
-                    <div class="message_text">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicingorem ipsum dolor sit amet consectetur
-                            adipisicing elit. Fugiat, quia!orem ipsum dolor sit amet consectetur adipisicing elit.
-                            Fugiat, quia! elit. Fugiat, quia!</p>
-                    </div>
-                </div>
-            </div>
-            <!-- -- -->
-
-               <!-- message -->
-               <div class="wrapper_message_dialog_user">
-                <div class="dialog_ava_user">
-                    <img src="../../assets/ava/ava_1.jpg" alt="ava">
-                </div>
-                <div class="wrapper_block_message_user">
-                    <div class="wrapper_message_user">
-                        <div class="message_name_user">
-                            <p>Pink</p>
-                        </div>
-                        <div class="message_time">
-                            <p>12.12.2023 10:45</p>
-                        </div>
-                    </div>
-                    <div class="message_text">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicingorem ipsum dolor sit amet consectetur
-                            adipisicing elit. Fugiat, quia!orem ipsum dolor sit amet consectetur adipisicing elit.
-                            Fugiat, quia! elit. Fugiat, quia!</p>
-                    </div>
-                </div>
-            </div>
-            <!-- -- -->
-
         </div>
 
 
@@ -191,7 +53,7 @@
                 <div class="wrapper_form_message_input">
                     <div class="input-errors" v-for="(error, index) of v$.messageUser.$errors" :key="index">
                         <div class="error-msg" v-if="error.$message === 'Value is required'">
-                            Вы не можете отправить пустое сообщение
+                            <!-- Вы не можете отправить пустое сообщение -->
                         </div>
                     </div>
 
@@ -204,7 +66,10 @@
 
             <!-- button -->
             <div class="wrapper_form_message_btn">
-                <button class="form_message_btn" type="submit" :disabled="v$.$invalid">
+                <button class="form_message_btn" 
+                        type="submit"
+                         @click="WRITE_MESSAGE_USER()" 
+                         :disabled="v$.$invalid">
                     Написать
                 </button>
             </div>

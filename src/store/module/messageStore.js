@@ -6,12 +6,14 @@ export const messageStore = {
 
     state: () => ({
         modalWriteMessage: false,
-        messageUser: "",
+        messageUser: "", //текст сообщения
+        arrayMessages: []
 
     }),
     getters: {
         getModalWriteMessage: (state) => state.modalWriteMessage,
-        getMessageUser: (state) => state.messageUser
+        getMessageUser: (state) => state.messageUser,
+        getArrayMessages: (state) => state.arrayMessages
 
     },
 
@@ -35,14 +37,15 @@ export const messageStore = {
     actions: {
         async WRITE_MESSAGE_USER({ state, commit }, userID) {
             let message = {
-                id: userID,
+                destinationID: userID,
                 textMessage: state.messageUser,
             }
             try {
                 await axios.post("http://localhost:8000/user_message", message)
-                    .then(function(resp) {
-                        console.log(resp.data)
-
+                    .then(function(res) {
+                        console.log(res.data)
+                            // state.arrayMessages.push(resp.data)
+                            // console.log(state.arrayMessages)
                         commit("setMessageUser", "")
                         commit("setModalWriteMessage", false)
                     })
@@ -50,6 +53,26 @@ export const messageStore = {
                 console.log(err)
             }
         },
+
+        // async LOAD_MESSAGES({ state, commit }, userID) {
+        //     // let message = {
+        //     //     destinationID: userID,
+        //     //     textMessage: state.messageUser,
+        //     // }
+        //     try {
+        //         await axios.get("http://localhost:8000/user_message")
+        //             .then(function(resp) {
+
+
+        //                 // state.arrayMessages.push(resp.data)
+        //                 console.log(state.arrayMessages)
+        //                     // commit("setMessageUser", "")
+        //                     // commit("setModalWriteMessage", false)
+        //             })
+        //     } catch (err) {
+        //         console.log(err)
+        //     }
+        // },
 
 
     },

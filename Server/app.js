@@ -758,24 +758,104 @@ router.post('/user_message', authenticateJWT, messageValidate, function(req, res
             errors: errors.array()
         });
     }
-    tokenID = req.tokenID //id из сохраненного токена   
+
+    tokenID = req.tokenID //кто пишет 
+    destinationID = req.body.destinationID //кому мы пишем
+
+    if (tokenID != req.body.destinationID) {
+
+        //ищем диалог между пользователями
+        messages.get_conversation_id_DB([
+            tokenID,
+            destinationID,
+            destinationID,
+            tokenID
+        ], (err, row_conversation) => {
+            if (err) return res.status(500).send(err);
+
+            return new Promise((resolve) => {
+                    // Если диалог не создан ранее - создаем
+                    if (row_conversation.length === 0) {
+                        messages.add_conversation_DB([
+                            tokenID,
+                            destinationID,
+                            tokenID
+                        ], (err, last_conversation) => {
+                            if (err) return res.status(500).send(err);
+
+                            resolve(last_conversation.insertId) // ID последнего диалога
+                        })
+                    } else {
+                        resolve(row_conversation[0].id) // ID последнего диалога
+                    }
+                })
+                .then((last_conversation_id) => {
+
+                    // Добавляем сообщение
+                    messages.add_message_DB([
+                        last_conversation_id,
+                        tokenID,
+                        destinationID,
+                        req.body.textMessage
+                    ], (err, row_messages) => {
+                        if (err) return res.status(500).send('При записи сообщения в базу данных произошла ошибка' + ' ' + err);
+
+                        //получаем id последнего сообщения в диалоге
+                        let row_messages_id = row_messages.insertId
+
+                        // Обновляем таблицу с диалогом
+                        messages.update_conversation_id_DB([
+                            row_messages_id,
+                            tokenID,
+                            last_conversation_id,
+                            tokenID,
+                            last_conversation_id
+                        ], (err) => {
+                            if (err) return res.status(500).send('При обновлении таблицы диалогов произошла ошибка' + ' ' + err);
+
+
+
+                        })
+                        res.status(200).send("Сообщение добавлено в базу данных");
+                    })
+
+                })
+        })
+    }
+
+
+
+
 
     //записываем сообщение в базу данных
-    messages.add_message_DB([
-        req.body.textMessage,
-        req.body.id, //кому мы пишем
-        tokenID //кто пишет 
-    ], (err, row) => {
-        if (err) return res.status(500).send('При записи сообщения в базу данных произошла ошибка' + ' ' + err);
+    // messages.add_message_DB([
+    //     req.body.textMessage,
+    //     req.body.destinationID, //кому мы пишем
+    //     tokenID //кто пишет 
+    // ], (err, row) => {
+    //     if (err) return res.status(500).send('При записи сообщения в базу данных произошла ошибка' + ' ' + err);
 
-        //возвращаем записанное в БД сообщение
-        const messageID = row.insertId;
-        messages.load_message_DB(messageID, (err, message) => {
-            if (err) return res.send(500).send('При загрузки сообщения из базы данных произошла ошибка' + ' ' + err);
+    //     //возвращаем записанное в БД сообщение
+    //     const messageID = row.insertId;
+    //     messages.load_message_DB(messageID, (err, message) => {
+    //         if (err) return res.send(500).send('При загрузки сообщения из базы данных произошла ошибка' + ' ' + err);
 
-            return res.status(200).send(message);
-        })
+    //         return res.status(200).send(message);
+    //     })
+    // })
+})
+
+router.get('/user_message', authenticateJWT, messageValidate, function(req, res) {
+
+    tokenID = req.tokenID //id из сохраненного токена   
+
+    //возвращаем все переписки юзера
+    messages.load_all_messages_DB(tokenID, (err, message) => {
+        if (err) return res.send(500).send('При загрузки сообщения из базы данных произошла ошибка' + ' ' + err);
+
+        return res.status(200).send(message);
     })
+
 })
 
 

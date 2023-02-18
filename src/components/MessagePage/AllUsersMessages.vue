@@ -1,6 +1,6 @@
 <template>
 
-<div v-for="userMessage in 10" :key="userMessage" class="wrapper_all_messages_users">
+<div v-for="userMessage in getArrayMessages" :key="userMessage" class="wrapper_all_messages_users">
     <UserMessage />
 </div>
   
@@ -8,10 +8,14 @@
   </template>
   
   <script>
-
+import { mapGetters } from "vuex";
   
   export default {
     name: "AllUsersMessages",
+
+    computed: {
+        ...mapGetters({getArrayMessages: "messageStore/getArrayMessages"})
+    }
 
   }
   </script>
