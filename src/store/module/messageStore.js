@@ -91,6 +91,41 @@ export const messageStore = {
             } catch (err) {
                 console.log(err)
             }
+        },
+
+        //удаление сообщения
+        async DELETE_MESSAGES({ state }) {
+            try {
+                let message_params = {
+                    deleteID: 125,
+                    // userID: 1,
+                }
+                await axios.delete("http://localhost:8000/user_messages", { data: message_params })
+                    .then(function(resp) {
+                        console.log(resp)
+                    })
+
+                state.messageUser
+            } catch (err) {
+                console.log(err)
+            }
+        },
+
+        //удаление диалога
+        async DELETE_DIALOGS({ state }) {
+            try {
+                let dialogs_params = {
+                    dialogsID: 32,
+                }
+
+                await axios.put("http://localhost:8000/user_messages", dialogs_params)
+                    .then(function(resp) {
+                        console.log(resp)
+                    })
+                state.messageUser
+            } catch (err) {
+                console.log(err)
+            }
         }
 
 

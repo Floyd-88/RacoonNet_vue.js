@@ -406,7 +406,7 @@ router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
 //УДАЛЕНИЕ ПРОФИЛЯ ПОЛЬЗОВАТЕЛЯ
 router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req, res) {
 
-    userID = +req.body.id; //id из строки запроса
+
     tokenID = req.tokenID; //id из сохраненного токена 
 
     if (userID === tokenID) {
@@ -899,6 +899,76 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
         })
     }
 })
+
+//УДАЛЕНИЕ СООБЩЕНИЕ В ПЕРЕПИСКЕ
+router.delete('/user_messages', authenticateJWT, function(req, res) {
+
+    tokenID = req.tokenID //id из сохраненного токена
+        // userID = +req.body.userID; //id пользователя с которым ведется переписка
+
+    // Проверяем существование сообщения
+    messages.get_message([
+        req.body.deleteID,
+        tokenID,
+        tokenID
+    ], (err, message) => {
+        if (err) return res.status(500).send(err);
+        if (!message) {
+            return res.status(200).send("Сообщение не найдено")
+        } else {
+            //обновляем флаги удаления сообщения у пользователей
+            messages.update_message_flag_delete([
+                tokenID,
+                tokenID,
+                req.body.deleteID
+            ], (err) => {
+                if (err) return res.status(500).send("Сообщение небыло удалено" + " " + err);
+
+                return res.status(200).send("Сообщение удалено")
+            })
+        }
+    })
+})
+
+//УДАЛЕНИЕ ДИАЛОГА
+router.put('/user_messages', authenticateJWT, function(req, res) {
+
+    tokenID = req.tokenID; //id из сохраненного токена
+
+    // Проверяем существование диалога
+    messages.get_conversation([
+        req.body.dialogsID,
+        tokenID,
+        tokenID
+    ], (err, dialog) => {
+        if (err) return res.status(500).send(err);
+
+        if (!dialog) {
+            return res.status(200).send("Данный диалог не найден")
+        } else {
+            //обновляем флаги удаления сообщений у пользователей
+            messages.update_messages_flag_delete([
+                tokenID,
+                tokenID,
+                req.body.dialogsID
+            ], (err) => {
+                if (err) return res.status(500).send("Сообщениея в диалоге небыли удалены" + " " + err);
+
+                //обновляем флаги удаления диалога у пользователя
+                messages.update_conversation_flag_delete([
+                    tokenID,
+                    tokenID,
+                    req.body.dialogsID
+                ], (err) => {
+                    if (err) return res.status(500).send("Диалог небыл удален" + " " + err);
+
+                    return res.status(200).send("Диалог был удален");
+                })
+            })
+        }
+    })
+})
+
 
 
 app.use(router)

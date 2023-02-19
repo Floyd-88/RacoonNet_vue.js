@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     <div class="message_text">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicingorem ipsum dolor sit amet consectetur
+                        <p @click="DELETE_MESSAGES">Lorem ipsum dolor sit amet consectetur adipisicingorem ipsum dolor sit amet consectetur
                             adipisicing elit. Fugiat, quia!orem ipsum dolor sit amet consectetur adipisicing elit.
                             Fugiat, quia! elit. Fugiat, quia!</p>
                     </div>
@@ -113,7 +113,8 @@ export default {
     methods: {
         ...mapActions({
             WRITE_MESSAGE_USER: "messageStore/WRITE_MESSAGE_USER",
-            LOAD_MESSAGES_USER: "messageStore/LOAD_MESSAGES_USER"
+            LOAD_MESSAGES_USER: "messageStore/LOAD_MESSAGES_USER",
+            DELETE_MESSAGES: "messageStore/DELETE_MESSAGES"
         }),
         ...mapMutations({
             setModalWriteMessage: "messageStore/setModalWriteMessage",
@@ -175,7 +176,7 @@ export default {
     margin-bottom: 20px;
 }
 
-.header_btn_back {}
+/* .header_btn_back {} */
 
 .header_btn_back button {
     padding: 6px;
@@ -215,7 +216,7 @@ export default {
     margin: 0px 15px 25px 10px;
 }
 
-.dialog_ava_user {}
+/* .dialog_ava_user {} */
 
 .dialog_ava_user img {
     width: 40px;
@@ -242,8 +243,7 @@ export default {
     font-size: 15px;
 }
 
-.message_text {
-}
+/* .message_text {} */
 
 .wrapper_block_write_message {
     display: flex;

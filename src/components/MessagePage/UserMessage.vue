@@ -21,7 +21,10 @@
                 <p>17.02.2021</p>
             </div>
             <div class="message_user_del">
-                <UIbtn>Удалить переписку</UIbtn>
+            <UIbtn 
+                @click="DELETE_DIALOGS" >
+                Удалить переписку
+            </UIbtn>
             </div>
         </div>
 
@@ -30,6 +33,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import UIbtn from '../UI/UIbtn.vue';
 
 export default {
@@ -39,8 +43,10 @@ export default {
    
 
     methods: {
+
+        ...mapActions({ DELETE_DIALOGS: "messageStore/DELETE_DIALOGS"}),
+
         openDialogUser() {
-            console.log(1111)
             this.$router.push('/message/id2')
         }
     }
@@ -58,7 +64,7 @@ export default {
     cursor: pointer;
 }
 
-.message_user_ava {}
+/* .message_user_ava {} */
 
 .ava_posts {
     width: 90px;

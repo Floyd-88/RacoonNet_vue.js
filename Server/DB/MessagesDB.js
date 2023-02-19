@@ -143,6 +143,89 @@ class MessagesDB {
         })
     }
 
+    //проверяем наличие сообщения для удаления
+    get_message(params, callback) {
+        return this.connection.execute(`SELECT id FROM messages WHERE 
+            id = ? AND (sender = ? OR addressee = ?)`, params, (err, message) => {
+            callback(err, message[0])
+        })
+    }
+
+    //обновляем флаг удаления сообщения у пользователя
+    update_message_flag_delete(params, callback) {
+        return this.connection.execute(`UPDATE messages SET
+        sender_delete =
+            CASE sender
+                WHEN ?
+                    THEN '1'
+                ELSE
+                    sender_delete
+                END,
+        addressee_delete = 
+            CASE addressee
+                WHEN ?
+                    THEN '1'
+                ELSE
+                    addressee_delete
+                END
+        WHERE id = ?`, params, (err) => {
+            callback(err)
+        })
+    }
+
+    //обновляем флаги удаления для всех сообщений в диалоге у пользователя
+    update_messages_flag_delete(params, callback) {
+        return this.connection.execute(`UPDATE messages SET
+        sender_delete =
+            CASE sender
+                WHEN ?
+                    THEN '1'
+                ELSE
+                    sender_delete
+                END,
+        addressee_delete = 
+            CASE addressee
+                WHEN ?
+                    THEN '1'
+                ELSE
+                    addressee_delete
+                END
+        WHERE conv_id = ?`, params, (err) => {
+            callback(err)
+        })
+    }
+
+    //обновляем флаг удаления для диалога у пользователя что бы он не отображался
+    update_conversation_flag_delete(params, callback) {
+        return this.connection.execute(`UPDATE conversation SET
+        first_delete = 
+            CASE first
+                WHEN ?
+                    THEN '1'
+                ELSE
+                    first_delete
+                END,
+        second_delete = 
+            CASE second
+                WHEN ?
+                    THEN '1'
+                ELSE
+                    second_delete
+                END
+        WHERE id = ?`, params, (err) => {
+            callback(err)
+        })
+    }
+
+    //проверяем наличие диалога для его удаления
+    get_conversation(params, callback) {
+        return this.connection.execute(`SELECT id FROM conversation WHERE 
+            id = ? AND (first = ? OR second = ?)`, params, (err, dialog) => {
+            callback(err, dialog[0])
+        })
+    }
+
+
     //создаем таблицу БД с сообщениями
     // createTableMessages() {
     //     const sql = `CREATE TABLE IF NOT EXISTS messages (

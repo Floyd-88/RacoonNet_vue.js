@@ -1,7 +1,7 @@
 <template>
 
-<div v-for="userMessage in getArrayMessages" :key="userMessage" class="wrapper_all_messages_users">
-    <UserMessage />
+<div v-for="userMessage in 2" :key="userMessage" class="wrapper_all_messages_users">
+    <UserMessage/>
 </div>
   
   
@@ -19,7 +19,10 @@ import { mapGetters, mapActions } from "vuex";
     },
 
     methods: {
-        ...mapActions({LOAD_DIALOGS: "messageStore/LOAD_DIALOGS"})
+        ...mapActions({
+            LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
+           
+        })
     },
 
     computed: {
