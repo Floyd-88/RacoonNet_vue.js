@@ -103,11 +103,17 @@ export default {
             required,
             min: minLength(1),
         },
+    }, 
+
+    mounted() {
+        let id = this.$route.params.id;
+        this.LOAD_MESSAGES_USER(id)
     },
 
     methods: {
         ...mapActions({
-            WRITE_MESSAGE_USER: "messageStore/WRITE_MESSAGE_USER"
+            WRITE_MESSAGE_USER: "messageStore/WRITE_MESSAGE_USER",
+            LOAD_MESSAGES_USER: "messageStore/LOAD_MESSAGES_USER"
         }),
         ...mapMutations({
             setModalWriteMessage: "messageStore/setModalWriteMessage",

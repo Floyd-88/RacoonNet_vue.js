@@ -42,7 +42,7 @@ class MessagesDB {
     //получаем id диалога между пользователями если он есть 
     get_conversation_id_DB(params, callback) {
         return this.connection.execute(`SELECT
-        id FROM conversation WHERE
+        id, unread FROM conversation WHERE
         (first = ? AND second = ?)
             OR
         (first = ? AND second = ?)`, params, (err, row_conversation) => {
@@ -81,7 +81,7 @@ class MessagesDB {
     }
 
     //получаем диалоги пользователя
-    get_conversation_DB(tokenID, callback) {
+    get_all_conversation_DB(tokenID, callback) {
         return this.connection.execute(`SELECT
     U.userID,
     U.name,
@@ -100,8 +100,46 @@ class MessagesDB {
         WHEN C.second = ${tokenID}
             THEN C.first = U.userID AND C.second_delete = '0'
         END
-        ORDER BY C.unread DESC`, (err, messages) => {
-            callback(err, messages)
+        ORDER BY C.unread DESC`, (err, dialogs) => {
+            callback(err, dialogs)
+        })
+    }
+
+    //получаем переписку с конкретным пользователем
+    get_messages_user_DB(params, callback) {
+        return this.connection.execute(`SELECT
+        id,
+        date,
+        message,
+        sender FROM messages WHERE conv_id = ?
+        AND CASE
+            WHEN sender = ?
+                THEN sender_delete = '0'
+            WHEN addressee = ?
+                THEN addressee_delete = '0'
+            END ORDER BY id ASC`, params, (err, messages_user) => {
+            callback(err, messages_user)
+        })
+    }
+
+    //обновляем флаг просмотра сообщений в таблице сообщений
+    update_flag_unread_messages(id, callback) {
+        return this.connection.execute(`UPDATE LOW_PRIORITY messages
+        SET readed = '1'
+        WHERE conv_id = ? AND addressee = ?`, id, (err) => {
+            callback(err)
+        })
+    }
+
+    //обновляем флаг просмотра сообщений в таблице диалогов
+    update_flag_unread_conersation(id, callback) {
+        return this.connection.execute(`UPDATE LOW_PRIORITY conversation
+        SET unread = (SELECT COUNT(*) FROM messages M WHERE
+        M.conv_id = ? AND 
+        M.readed = '0' AND 
+        M.sender = ?) 
+        WHERE id = ?`, id, (err) => {
+            callback(err)
         })
     }
 

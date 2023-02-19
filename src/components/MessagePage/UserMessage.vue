@@ -32,11 +32,11 @@
 <script>
 import UIbtn from '../UI/UIbtn.vue';
 
-
-
 export default {
     name: "UserMessage",
     components: { UIbtn },
+
+   
 
     methods: {
         openDialogUser() {

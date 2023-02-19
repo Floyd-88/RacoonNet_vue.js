@@ -782,7 +782,6 @@ router.post('/user_message', authenticateJWT, messageValidate, function(req, res
                             tokenID
                         ], (err, last_conversation) => {
                             if (err) return res.status(500).send(err);
-
                             resolve(last_conversation.insertId) // ID последнего диалога
                         })
                     } else {
@@ -820,21 +819,17 @@ router.post('/user_message', authenticateJWT, messageValidate, function(req, res
     }
 })
 
-//получение всех диалогов пользователя
-router.get('/user_message', authenticateJWT, messageValidate, function(req, res) {
+//  ПОЛУЧЕНИЕ ВСЕХ ДИАЛОГОВ С ДРУГИМИ ПОЛЬЗОВАТЕЛЯМИ
+router.get('/user_dialogs', authenticateJWT, function(req, res) {
 
     tokenID = req.tokenID //id из сохраненного токена   
 
     // Вывод диалогов пользователя
-    messages.get_conversation_DB(tokenID, (err, dialogs) => {
+    messages.get_all_conversation_DB(tokenID, (err, dialogs) => {
         if (err) return res.status(500).send('При получении диалогов из БД произошла ошибка:' + ' ' + err);
 
         return res.status(200).send(dialogs)
-        console.log(dialogs)
     })
-
-
-
 
     //возвращаем все переписки юзера
     // messages.load_all_messages_DB(tokenID, (err, message) => {
@@ -842,7 +837,67 @@ router.get('/user_message', authenticateJWT, messageValidate, function(req, res)
 
     //     return res.status(200).send(message);
     // })
+})
 
+//ПОЛУЧЕНИЕ ПЕРЕПИСКИ С КОНКРЕТНЫМ ПОЛЬЗОВАТЕЛЕМ
+router.get('/user_messages', authenticateJWT, function(req, res) {
+
+    tokenID = req.tokenID //id из сохраненного токена
+    user_companion = req.query.user_companion //id собеседника по переписки
+
+    if (tokenID != user_companion) {
+
+        // Поиск диалога
+        messages.get_conversation_id_DB([
+            tokenID,
+            user_companion,
+            user_companion,
+            tokenID
+        ], (err, row_conversation) => {
+            if (err) return res.status(500).send('При получении id переписки из БД произошла ошибка:' + ' ' + err);
+
+            // Если диалог не создан ранее
+            if (row_conversation.length == 0) {
+                return res.status(200).send("Переписка с данным пользователем отстутствует");
+            } else {
+                //возвращаем переписку из БД
+                messages.get_messages_user_DB([
+                    row_conversation[0].id,
+                    tokenID,
+                    tokenID
+                ], (err, messages_user) => {
+                    if (err) return res.status(500).send('При получении сообщений из БД произошла ошибка:' + ' ' + err);
+
+                    if (messages_user.length === 0) {
+                        return res.status(200).send("Переписка с данным пользователем отстутствует");
+                    }
+
+                    if (row_conversation[0].unread !== 0) {
+
+                        // Обновляем флаг просмотров сообщений
+                        messages.update_flag_unread_messages([
+                            row_conversation[0].id,
+                            tokenID
+                        ], (err) => {
+                            if (err) return res.status(500).send('При обновлении флага в таблице сообщений произошла ошибка:' + ' ' + err);
+
+                            //обновляем флаг с непросчитанными сообщениями в таблице диалогов
+                            messages.update_flag_unread_conersation([
+                                row_conversation[0].id,
+                                tokenID,
+                                row_conversation[0].id
+                            ], (err) => {
+                                if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
+                            })
+                        })
+                    }
+                    return res.status(200).send(messages_user)
+                })
+
+            }
+
+        })
+    }
 })
 
 
