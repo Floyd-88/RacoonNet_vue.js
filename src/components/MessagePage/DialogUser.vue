@@ -1,43 +1,41 @@
-<template>
+<template >
 
     <div class="wrapper_dialog_user">
 
         <!-- headre -->
         <div class="wrapper_header_user">
             <div class="header_btn_back">
-                <button>Назад</button>
+                <button @click="$router.go(-1)">Назад</button>
             </div>
             <div class="wrapper_header_user_name">
                 <div class="header_ava_user">
-                    <img src="../../assets/ava/ava_1.jpg" alt="ava">
+                    <img :src="loadAva($route.query.ava)" alt="ava">
                 </div>
                 <div class="header_name_user">
-                    <p>Pink Floyd</p>
+                    <p>{{ $route.query.name + " " + $route.query.surname }}</p>
                 </div>
             </div>
             <div></div>
         </div>
         <!-- -- -->
 
-        <div class="wrapper_main_messages">
+        <div class="wrapper_main_messages" ref="scrollToMe">
             <!-- message -->
-            <div class="wrapper_message_dialog_user">
+            <div class="wrapper_message_dialog_user"  v-for="message in getArrayMessages" :key="message.id">
                 <div class="dialog_ava_user">
-                    <img src="../../assets/ava/ava_1.jpg" alt="ava">
+                    <img :src="loadAva(message.ava)" alt="ava">
                 </div>
                 <div class="wrapper_block_message_user">
                     <div class="wrapper_message_user">
                         <div class="message_name_user">
-                            <p>Pink</p>
+                            <p>{{ message.name + " " + message.surname }}</p>
                         </div>
                         <div class="message_time">
-                            <p>12.12.2023 10:45</p>
+                            <p>{{ message.date }}</p>
                         </div>
                     </div>
                     <div class="message_text">
-                        <p @click="DELETE_MESSAGES">Lorem ipsum dolor sit amet consectetur adipisicingorem ipsum dolor sit amet consectetur
-                            adipisicing elit. Fugiat, quia!orem ipsum dolor sit amet consectetur adipisicing elit.
-                            Fugiat, quia! elit. Fugiat, quia!</p>
+                        <p @click="DELETE_MESSAGES">{{ message.message }}</p>
                     </div>
                 </div>
             </div>
@@ -66,10 +64,8 @@
 
             <!-- button -->
             <div class="wrapper_form_message_btn">
-                <button class="form_message_btn" 
-                        type="submit"
-                         @click="WRITE_MESSAGE_USER()" 
-                         :disabled="v$.$invalid">
+                <button class="form_message_btn" type="submit" @click="WRITE_MESSAGE_USER($route.params.id)"
+                    :disabled="v$.$invalid">
                     Написать
                 </button>
             </div>
@@ -78,7 +74,6 @@
         </div>
 
     </div>
-
 </template>
 
 <script>
@@ -103,11 +98,12 @@ export default {
             required,
             min: minLength(1),
         },
-    }, 
+    },
 
-    mounted() {
+   async mounted() {
         let id = this.$route.params.id;
-        this.LOAD_MESSAGES_USER(id)
+        await this.LOAD_MESSAGES_USER(id);
+        this.scrollToElement();
     },
 
     methods: {
@@ -120,16 +116,32 @@ export default {
             setModalWriteMessage: "messageStore/setModalWriteMessage",
             setMessageUser: "messageStore/setMessageUser",
         }),
+
+        loadAva(ava) {
+            try {
+                return require(`../../assets/photo/${ava}`)
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
+
+        //автоматическая прокрутка сообщений вниз
+        scrollToElement() {
+            const el = this.$refs.scrollToMe;
+            if (el) {
+                el.scrollTop = el.scrollHeight;
+            }
+        }
     },
 
     computed: {
         ...mapGetters({
             getMessageUser: "messageStore/getMessageUser",
+            getArrayMessages: "messageStore/getArrayMessages"
 
         }),
         ...mapState({
             messageUser: (state) => state.messageStore.messageUser,
-
         }),
 
         //двухстороннее связывание + валидация
@@ -143,14 +155,7 @@ export default {
             }
         },
 
-        pathAva() {
-            try {
-                return require(`../../assets/photo/${this.user.ava}`);
-            } catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
 
-        },
     }
 }
 </script>
@@ -207,10 +212,12 @@ export default {
     font-family: fantasy;
     font-size: 20px;
 }
+
 .wrapper_main_messages {
     flex-grow: 1;
     overflow: auto;
 }
+
 .wrapper_message_dialog_user {
     display: flex;
     margin: 0px 15px 25px 10px;
@@ -296,6 +303,6 @@ export default {
 }
 
 .invalid {
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 </style>

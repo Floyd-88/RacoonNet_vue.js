@@ -7,13 +7,15 @@ export const messageStore = {
     state: () => ({
         modalWriteMessage: false,
         messageUser: "", //текст сообщения
-        arrayMessages: []
+        arrayDialogs: [],
+        arrayMessages: [],
 
     }),
     getters: {
         getModalWriteMessage: (state) => state.modalWriteMessage,
         getMessageUser: (state) => state.messageUser,
-        getArrayMessages: (state) => state.arrayMessages
+        getArrayDialogs: (state) => state.arrayDialogs,
+        getArrayMessages: (state) => state.arrayMessages,
 
     },
 
@@ -30,25 +32,37 @@ export const messageStore = {
 
         setMessageUser(state, value) {
             state.messageUser = value;
+        },
+
+        setArrayDialogs(state, value) {
+            state.arrayDialogs = value;
+        },
+
+        setArrayMessages(state, value) {
+            state.arrayMessages = value;
         }
 
     },
 
     actions: {
         //сохранение сообщений в базе данных
-        async WRITE_MESSAGE_USER({ state, commit }, userID) {
+        async WRITE_MESSAGE_USER({ state, commit, dispatch }, userID) {
+
+            let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
+
             let message = {
                 destinationID: userID,
                 textMessage: state.messageUser,
+                date: date
             }
             try {
                 commit("setMessageUser", "")
                 commit("setModalWriteMessage", false)
                 await axios.post("http://localhost:8000/user_message", message)
-                    .then(function(res) {
-                        console.log(res.data)
-                            // state.arrayMessages.push(resp.data)
-                            // console.log(state.arrayMessages)
+                    .then(function() {
+
+                        // state.arrayMessages.push(resp.data)
+                        // console.log(state.arrayMessages)
 
                     })
             } catch (err) {
@@ -57,7 +71,7 @@ export const messageStore = {
         },
 
         //получение всех диалогов пользователя
-        async LOAD_DIALOGS() {
+        async LOAD_DIALOGS({ commit }) {
             // let user = {
             // destinationID: userID,
             // textMessage: state.messageUser,
@@ -65,12 +79,11 @@ export const messageStore = {
             try {
                 await axios.get("http://localhost:8000/user_dialogs")
                     .then(function(resp) {
-                        console.log(resp.data)
-
-                        // state.arrayMessages.push(resp.data)
-                        // console.log(state.arrayMessages)
-                        // commit("setMessageUser", "")
-                        // commit("setModalWriteMessage", false)
+                        commit("setArrayDialogs", resp.data)
+                            // console.log(state.arrayDialogs)
+                            // console.log(state.arrayMessages)
+                            // commit("setMessageUser", "")
+                            // commit("setModalWriteMessage", false)
                     })
             } catch (err) {
                 console.log(err)
@@ -78,16 +91,14 @@ export const messageStore = {
         },
 
         //получение переписки с конкретным пользователем
-        async LOAD_MESSAGES_USER({ state }, id) {
+        async LOAD_MESSAGES_USER({ commit }, id) {
             try {
                 await axios.get("http://localhost:8000/user_messages", {
                         params: { user_companion: id }
                     })
                     .then(function(resp) {
-                        console.log(resp)
+                        commit("setArrayMessages", resp.data);
                     })
-                state.messageUser
-
             } catch (err) {
                 console.log(err)
             }

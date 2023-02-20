@@ -14,7 +14,7 @@
             <!--при прокрутки страницы до данного элемента - подгружать следующие посты -->
             <div ref="observer" class="observer"></div>
         </div>
-    <p>Загрузить еще</p>
+    <!-- <p>Загрузить еще</p> -->
 
     </div>
 
@@ -50,7 +50,7 @@ export default {
             window.scrollTo(0, 0);
             this.setPosts([])
             this.setCountPostsNull()
-            // this.loadPostServer(this.$route.params.id);
+            this.loadPostServer(this.$route.params.id);
 
         }
     }
@@ -63,6 +63,7 @@ export default {
        const callback = (entries) => {
            if (entries[0].isIntersecting) {
                this.loadPostServer(this.$route.params.id);
+              
            }
        };
        const observer = new IntersectionObserver(callback, options);

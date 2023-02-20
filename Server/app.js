@@ -795,7 +795,8 @@ router.post('/user_message', authenticateJWT, messageValidate, function(req, res
                         last_conversation_id,
                         tokenID,
                         destinationID,
-                        req.body.textMessage
+                        req.body.textMessage,
+                        req.body.date
                     ], (err, row_messages) => {
                         if (err) return res.status(500).send('При записи сообщения в базу данных произошла ошибка' + ' ' + err);
 
@@ -830,13 +831,6 @@ router.get('/user_dialogs', authenticateJWT, function(req, res) {
 
         return res.status(200).send(dialogs)
     })
-
-    //возвращаем все переписки юзера
-    // messages.load_all_messages_DB(tokenID, (err, message) => {
-    //     if (err) return res.send(500).send('При загрузки сообщения из базы данных произошла ошибка' + ' ' + err);
-
-    //     return res.status(200).send(message);
-    // })
 })
 
 //ПОЛУЧЕНИЕ ПЕРЕПИСКИ С КОНКРЕТНЫМ ПОЛЬЗОВАТЕЛЕМ

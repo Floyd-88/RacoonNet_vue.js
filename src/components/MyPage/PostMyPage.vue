@@ -17,9 +17,7 @@
         </div>
 
           <div class="wrapper_text_post">
-            <p class="text_post">
-              {{ post.postText }}
-            </p>
+            <p class="text_post">{{ postText(post.postText) }}</p>
           </div>
       
       </div>
@@ -132,7 +130,13 @@ export default {
             return require(`../../assets/ava/ava_1.jpg`);
           }
 
-        }
+        },
+
+        postText(value) {
+        let doc = new DOMParser().parseFromString(value, "text/html");
+        return doc.documentElement.textContent;
+      },
+
   },
 
   computed: {
@@ -145,7 +149,9 @@ export default {
 
     beforeModelPostText: {
       get() {
-        return this.getBeforePostText;
+        let doc = new DOMParser().parseFromString(this.getBeforePostText, "text/html");
+        return doc.documentElement.textContent;
+        // return this.getBeforePostText;
       },
       set(value) {
         this.setBeforePostText(value);

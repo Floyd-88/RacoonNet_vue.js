@@ -33,8 +33,8 @@ class MessagesDB {
             readed integer(1) NOT NULL,
             sender_delete integer(1) NOT NULL,
             addressee_delete integer(1) NOT NULL,
-            message text,
-            date timestamp not null DEFAULT CURRENT_TIMESTAMP
+            message text NOT NULL,
+            date varchar(50) NOT NULL
         )`
         return this.connection.execute(sql);
     }
@@ -61,7 +61,7 @@ class MessagesDB {
     //добавление сообщение в базу данных
     add_message_DB(params, callback) {
         return this.connection.execute(`INSERT INTO messages
-        (conv_id, sender, addressee, readed, sender_delete, addressee_delete, message) VALUES (?, ?, ?, '0', '0', '0', ?)`, params, (err, row_messages) => {
+        (conv_id, sender, addressee, readed, sender_delete, addressee_delete, message, date) VALUES (?, ?, ?, '0', '0', '0', ?, ?)`, params, (err, row_messages) => {
             callback(err, row_messages);
         });
     }
@@ -71,6 +71,8 @@ class MessagesDB {
         return this.connection.execute(`UPDATE conversation C SET
         C.last_message_id = ?,
         C.sender = ?,
+        C.first_delete = '0',
+        C.second_delete = '0',
         C.unread = (SELECT COUNT(*) FROM messages M WHERE
         M.conv_id = ? AND 
         M.readed = '0' AND 
@@ -86,6 +88,7 @@ class MessagesDB {
     U.userID,
     U.name,
     U.surname,
+    U.ava,
     C.id as convId,
     C.sender,
     C.unread,
@@ -108,10 +111,14 @@ class MessagesDB {
     //получаем переписку с конкретным пользователем
     get_messages_user_DB(params, callback) {
         return this.connection.execute(`SELECT
-        id,
-        date,
-        message,
-        sender FROM messages WHERE conv_id = ?
+        M.id,
+        M.date,
+        M.message,
+        M.sender,
+        U.name,
+        U.surname,
+        U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  
+        WHERE conv_id = ?
         AND CASE
             WHEN sender = ?
                 THEN sender_delete = '0'

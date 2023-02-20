@@ -1,24 +1,24 @@
 <template>
 
     <div class="wrapper_message_user" >
-        <div class="wrapper_message_user_content"
-            @click="openDialogUser">
+        <div class="wrapper_message_user_content">
             <div class="message_user_ava">
-                <img class="ava_posts" src="../../assets/ava/ava_1.jpg" alt="ava">
+                <img class="ava_posts" :src="loadAva(dialog.ava)"  alt="ava">
             </div>
             <div class="message_user_content">
                 <div class="message_user_name">
-                    <p>Илья Сазонов</p>
+                    <p>{{dialog.name + " " + dialog.surname}}</p>
                 </div>
-                <div class="message_user_text">
-                    <p>Привет как дела у тебя сегодня мне просто нужно заполнить этот блок каким то текстом?</p>
+                <div class="message_user_text" 
+                    @click="openDialogUser(dialog.userID)">
+                    <p>{{ dialog.message }}</p>
                 </div>
             </div>
         </div>
 
         <div class="wrapper_message_user_btn">
             <div class="message_user_date">
-                <p>17.02.2021</p>
+                <p>{{ dialog.date }}</p>
             </div>
             <div class="message_user_del">
             <UIbtn 
@@ -40,15 +40,35 @@ export default {
     name: "UserMessage",
     components: { UIbtn },
 
-   
+    props: {
+        dialog: {
+            type: Object,
+            default: ()=> {
+                return {}
+            }
+        }
+    },
 
     methods: {
 
         ...mapActions({ DELETE_DIALOGS: "messageStore/DELETE_DIALOGS"}),
 
-        openDialogUser() {
-            this.$router.push('/message/id2')
-        }
+        openDialogUser(id) {
+            this.$router.push( {path: `/message/id${id}`, query: {
+                ava: this.dialog.ava, 
+                name: this.dialog.name, 
+                surname: this.dialog.surname
+            }})
+        },
+
+        loadAva(ava) {
+          try{
+            return require(`../../assets/photo/${ava}`)
+          } catch {
+            return require(`../../assets/ava/ava_1.jpg`);
+          }
+
+        },
     }
 }
 </script>
@@ -61,7 +81,6 @@ export default {
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid black;
-    cursor: pointer;
 }
 
 /* .message_user_ava {} */
@@ -69,6 +88,8 @@ export default {
 .ava_posts {
     width: 90px;
     border-radius: 100%;
+    cursor: pointer;
+
 }
 
 .wrapper_message_user_content {
@@ -83,7 +104,9 @@ export default {
 .message_user_name {
     margin-bottom: 10px;
     font-family: fantasy;
-    font-size: 14px;
+    font-size: 18px;
+    cursor: pointer;
+
 }
 
 .message_user_text {
@@ -92,6 +115,8 @@ export default {
     box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
     padding: 5px 5px 5px 5px;
     margin-bottom: 10px;
+    cursor: pointer;
+
 }
 .wrapper_message_user_btn {
     display: flex;
