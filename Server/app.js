@@ -828,7 +828,6 @@ router.get('/user_dialogs', authenticateJWT, function(req, res) {
     // Вывод диалогов пользователя
     messages.get_all_conversation_DB(tokenID, (err, dialogs) => {
         if (err) return res.status(500).send('При получении диалогов из БД произошла ошибка:' + ' ' + err);
-
         return res.status(200).send(dialogs)
     })
 })
@@ -840,6 +839,7 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
     user_companion = req.query.user_companion //id собеседника по переписки
 
     if (tokenID != user_companion) {
+
 
         // Поиск диалога
         messages.get_conversation_id_DB([

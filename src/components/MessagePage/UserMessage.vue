@@ -118,6 +118,11 @@ export default {
     cursor: pointer;
 
 }
+.message_user_text p {
+    word-break: break-word;
+   
+
+}
 .wrapper_message_user_btn {
     display: flex;
     flex-direction: column;

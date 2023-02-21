@@ -21,7 +21,7 @@
 
         <div class="wrapper_main_messages" ref="scrollToMe">
             <!-- message -->
-            <div class="wrapper_message_dialog_user"  v-for="message in getArrayMessages" :key="message.id">
+            <div class="wrapper_message_dialog_user"  v-for="(message, index) in getArrayMessages" :key="message.id">
                 <div class="dialog_ava_user">
                     <img :src="loadAva(message.ava)" alt="ava">
                 </div>
@@ -33,9 +33,15 @@
                         <div class="message_time">
                             <p>{{ message.date }}</p>
                         </div>
+                        <div class="message_btn_delete" 
+                            v-if="message.isMesssageDel">
+                            <UIbtn @click="DELETE_MESSAGES(message.id)">Удалить</UIbtn>
+                        </div>
                     </div>
-                    <div class="message_text">
-                        <p @click="DELETE_MESSAGES">{{ message.message }}</p>
+                    <div class="message_text"
+                        ref="messageText"
+                        @click="showBtnDelete(message, index)">
+                        <p>{{ message.message }}</p>
                     </div>
                 </div>
             </div>
@@ -80,32 +86,30 @@
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
+import UIbtn from "../UI/UIbtn.vue";
 
 export default {
     name: "DialogUser",
-
-
     setup() {
-        return { v$: useVuelidate() }
+        return { v$: useVuelidate() };
     },
-
     data() {
-        return {}
+        return {
+            isBtnMessageDelete: false,
+        };
     },
-
     validations: {
         messageUser: {
             required,
             min: minLength(1),
         },
     },
-
-   async mounted() {
+    async mounted() {
+        this.scrollToElement();
         let id = this.$route.params.id;
         await this.LOAD_MESSAGES_USER(id);
         this.scrollToElement();
     },
-
     methods: {
         ...mapActions({
             WRITE_MESSAGE_USER: "messageStore/WRITE_MESSAGE_USER",
@@ -116,12 +120,22 @@ export default {
             setModalWriteMessage: "messageStore/setModalWriteMessage",
             setMessageUser: "messageStore/setMessageUser",
         }),
-
         loadAva(ava) {
             try {
-                return require(`../../assets/photo/${ava}`)
-            } catch {
+                return require(`../../assets/photo/${ava}`);
+            }
+            catch {
                 return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
+
+        showBtnDelete(message, id) {
+            message.isMesssageDel = !message.isMesssageDel
+
+            if(message.isMesssageDel) {
+                this.$refs.messageText[id].style.background = "aliceblue";
+            } else {
+                this.$refs.messageText[id].style.background = "none"
             }
         },
 
@@ -133,30 +147,26 @@ export default {
             }
         }
     },
-
     computed: {
         ...mapGetters({
             getMessageUser: "messageStore/getMessageUser",
             getArrayMessages: "messageStore/getArrayMessages"
-
         }),
         ...mapState({
             messageUser: (state) => state.messageStore.messageUser,
         }),
-
         //двухстороннее связывание + валидация
         changeMessage: {
             get() {
-                return this.getMessageUser
+                return this.getMessageUser;
             },
             set(value) {
-                this.setMessageUser(value)
-                this.v$.messageUser.$touch()
+                this.setMessageUser(value);
+                this.v$.messageUser.$touch();
             }
         },
-
-
-    }
+    },
+    components: { UIbtn }
 }
 </script>
 
@@ -232,6 +242,7 @@ export default {
 
 .wrapper_block_message_user {
     margin-left: 10px;
+    width: 100%;
 }
 
 .wrapper_message_user {
@@ -249,8 +260,20 @@ export default {
 .message_time {
     font-size: 15px;
 }
-
-/* .message_text {} */
+.message_text {
+    cursor: pointer;
+}
+.message_text p {
+    word-break: break-word;
+}
+.message_btn_delete {
+    margin-left: 10px;
+}
+.message_btn_delete button {
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
 
 .wrapper_block_write_message {
     display: flex;

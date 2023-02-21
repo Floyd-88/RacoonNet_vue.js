@@ -105,18 +105,16 @@ export const messageStore = {
         },
 
         //удаление сообщения
-        async DELETE_MESSAGES({ state }) {
+        async DELETE_MESSAGES({ state }, id) {
             try {
                 let message_params = {
-                    deleteID: 125,
-                    // userID: 1,
+                    deleteID: id,
                 }
                 await axios.delete("http://localhost:8000/user_messages", { data: message_params })
                     .then(function(resp) {
                         console.log(resp)
+                        state.arrayMessages = state.arrayMessages.filter(message => message.id !== id);
                     })
-
-                state.messageUser
             } catch (err) {
                 console.log(err)
             }

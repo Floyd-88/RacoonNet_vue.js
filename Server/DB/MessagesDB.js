@@ -85,25 +85,40 @@ class MessagesDB {
     //получаем диалоги пользователя
     get_all_conversation_DB(tokenID, callback) {
         return this.connection.execute(`SELECT
-    U.userID,
-    U.name,
-    U.surname,
-    U.ava,
-    C.id as convId,
-    C.sender,
-    C.unread,
-    M.message,
-    M.date 
-        FROM users U, conversation C
-        LEFT JOIN messages M ON (C.last_message_id = M.id)
-        WHERE (C.first = ${tokenID} OR C.second = ${tokenID})
-        AND CASE 
-        WHEN C.first = ${tokenID}
-            THEN C.second = U.userID AND C.first_delete = '0'
-        WHEN C.second = ${tokenID}
-            THEN C.first = U.userID AND C.second_delete = '0'
-        END
-        ORDER BY C.unread DESC`, (err, dialogs) => {
+        M.id,
+        U.userID,
+        U.name,
+        U.surname,
+        U.ava,
+        C.id as convId,
+        C.sender,
+        C.unread,
+        M.message,
+        M.date 
+            FROM 
+                users U, conversation C
+                LEFT JOIN messages M ON (C.id = M.conv_id)
+                    WHERE (M.sender = ${tokenID} OR M.addressee = ${tokenID})
+                        AND CASE 
+                            WHEN M.sender = ${tokenID}
+                        THEN M.sender_delete = '0' AND M.addressee = U.userID AND C.first_delete = '0'
+                            WHEN M.addressee = ${tokenID}
+                        THEN M.addressee_delete = '0' AND M.sender = U.userID AND C.second_delete = '0'
+                    END
+                    AND M.id IN (SELECT
+                        MAX(M.id) as last_message
+                            FROM users U, conversation C
+                            LEFT JOIN messages M ON (C.id = M.conv_id)
+                                WHERE (M.sender = ${tokenID} OR M.addressee = ${tokenID})
+                                AND CASE 
+                                WHEN M.sender = ${tokenID}
+                                    THEN M.sender_delete = '0' AND M.addressee = U.userID AND C.first_delete = '0'
+                                WHEN M.addressee = ${tokenID}
+                                    THEN M.addressee_delete = '0' AND M.sender = U.userID AND C.second_delete = '0'
+                                END
+                                GROUP BY U.userID
+                            ORDER BY last_message DESC) 
+                        ORDER BY M.id DESC`, (err, dialogs) => {
             callback(err, dialogs)
         })
     }

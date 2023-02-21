@@ -76,7 +76,6 @@ export const postsMyPageStore = {
                         userID: id
                     }
                 }).then((response) => {
-                    console.log(response.data)
                     if (response.data.length > 0) {
                         commit("setPosts", [...state.posts, ...response.data]);
                         commit("setCountPosts", 3)
