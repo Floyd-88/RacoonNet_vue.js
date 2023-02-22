@@ -15,21 +15,19 @@
       <!-- модальное окно для написания сообщения -->
       <template v-if="getModalWriteMessage">
         <UImodal>
-          <WriteMessage 
-          :user="{
-            name: getUser.name, 
-            surname: getUser.surname, 
-            ava: getUser.ava, 
+          <WriteMessage :user="{
+            name: getUser.name,
+            surname: getUser.surname,
+            ava: getUser.ava,
             userID: getUser.userID
-            }"
-          />
+          }" />
         </UImodal>
       </template>
 
       <UserInfo />
 
       <div v-if="getUser.enterUser" class="wrapper_myPage">
-        <MyPageContent/>
+        <MyPageContent />
       </div>
       <div v-if="!getUser.enterUser" class="wrapper_title_warning_auth">
         <h2 class="title_warning_auth">Для просмотра контента страницы Вам необходимо авторизоваться</h2>
@@ -42,13 +40,26 @@
 
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import EditProfile from "@/components/MyPage/EditProfile";
 import MyPageContent from "@/components/MyPage/MyPageContent.vue";
 
 export default {
   name: "MyPage",
   components: { EditProfile, MyPageContent },
+
+  methods: {
+    ...mapActions({
+      loadAllPhotos: "loadPhotoStore/loadAllPhotos",
+      loadPostServer: "postsMyPageStore/loadPostServer",
+    }),
+
+    ...mapMutations({
+    setPosts: "postsMyPageStore/setPosts",
+    setCountPostsNull: "postsMyPageStore/setCountPostsNull"
+  })
+
+  },
 
   computed: {
     ...mapGetters({
@@ -58,6 +69,21 @@ export default {
       getModalWriteMessage: "messageStore/getModalWriteMessage"
     }),
   },
+
+  mounted() {
+    this.loadAllPhotos(this.$route.params.id);
+
+    this.setPosts([])
+    this.setCountPostsNull()
+    this.loadPostServer(this.$route.params.id);
+  },
+
+  // watch: {
+  //   $route() {
+  //     // this.$route.params.id
+  //     this.loadAllPhotos();
+  //   }
+  // }
 
 }
 

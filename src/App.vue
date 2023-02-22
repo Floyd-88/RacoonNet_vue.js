@@ -47,7 +47,7 @@ export default {
       if (id) {
         this.loadUser({ id })
           .then(() => {
-              this.loadAllPhotos();
+              // this.loadAllPhotos();
               // this.loadPostServer(this.$route.params.id);
           })
           .catch(() => {

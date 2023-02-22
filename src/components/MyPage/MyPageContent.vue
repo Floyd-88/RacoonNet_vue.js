@@ -29,6 +29,7 @@ export default {
     methods: {
         ...mapActions({
             loadPostServer: "postsMyPageStore/loadPostServer",
+            loadAllPhotos: "loadPhotoStore/loadAllPhotos",
         }),
         ...mapMutations({
             setPosts: "postsMyPageStore/setPosts",
@@ -47,11 +48,11 @@ export default {
   watch: {
     $route() {
         if(this.$route.params.id) {
+            this.loadAllPhotos(this.$route.params.id);
             window.scrollTo(0, 0);
             this.setPosts([])
             this.setCountPostsNull()
             this.loadPostServer(this.$route.params.id);
-
         }
     }
   },
@@ -63,7 +64,6 @@ export default {
        const callback = (entries) => {
            if (entries[0].isIntersecting) {
                this.loadPostServer(this.$route.params.id);
-              
            }
        };
        const observer = new IntersectionObserver(callback, options);

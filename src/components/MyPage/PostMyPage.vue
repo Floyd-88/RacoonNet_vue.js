@@ -1,38 +1,44 @@
 <template>
-  <div class="post" v-for="post of getPost" :key="post.id">
+  <div class="post" v-for="post of getPost" :key="post.id" @mouseover="showBtnPost(post)"
+    @mouseleave="notShowBtnPost(post)">
 
     <div class="wrapper_post">
 
       <div class="wrapper_ava_posts">
-          <img class="ava_posts" ref="img" :src="loadAva(post.ava)"  alt="ava">
+        <img class="ava_posts" alt="ava" ref="img" :src="loadAva(post.ava)"
+          @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
       </div>
 
       <div class="wrapper_post_user">
         <div class="wrapper_post_name">
-          <p class="post_name">{{ post.name + " " + post.surname }}</p>
+          <p class="post_name" @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
+            {{ post.name + " " + post.surname }}
+          </p>
+          <p class="post_show_btn" v-show="post.isShowBtn" @click="btnPost(post)">
+            ...
+          </p>
         </div>
 
         <div class="wrapper_data_post">
           <p class="data_post">{{ post.date }}</p>
         </div>
 
-          <div class="wrapper_text_post">
-            <p class="text_post">{{ postText(post.postText) }}</p>
-          </div>
-      
-      </div>
+        <div class="wrapper_text_post">
+          <p class="text_post">{{ postText(post.postText) }}</p>
+        </div>
 
+      </div>
     </div>
-    <div class="btn_post">
-      <UIbtn class="redaction_post_btn" 
-      v-if="getUser.enterUser == post.authorPost" 
-      @click="setModulePost({task: 'edit', id: post.id, text: post.postText })">
+
+    <div class="btn_post"
+         v-show="post.isPostDel">
+      <UIbtn class="redaction_post_btn" v-if="getUser.enterUser == post.authorPost"
+        @click="setModulePost({ task: 'edit', id: post.id, text: post.postText })">
         Редактировать
       </UIbtn>
 
-      <UIbtn class="delete_post_btn" 
-      v-if="getUser.is_editProfile || getUser.enterUser == post.authorPost" 
-      @click="setModulePost({task: 'remove', id: post.id})">
+      <UIbtn class="delete_post_btn" v-if="getUser.is_editProfile || getUser.enterUser == post.authorPost"
+        @click="setModulePost({ task: 'remove', id: post.id })">
         Удалить
       </UIbtn>
     </div>
@@ -49,10 +55,7 @@
         </div>
 
         <div class="wrapper_save_editPost_btn">
-          <UIbtn class="save_editPost_btn" 
-          type="submit" 
-          :disabled="getBeforePostText.length < 1"
-          @click="editPost">
+          <UIbtn class="save_editPost_btn" type="submit" :disabled="getBeforePostText.length < 1" @click="editPost">
             Сохранить
           </UIbtn>
 
@@ -73,9 +76,7 @@
         </div>
 
         <div class="wrapper_save_editPost_btn">
-          <UIbtn class="save_editPost_btn" 
-          type="submit" 
-          @click="removePost">
+          <UIbtn class="save_editPost_btn" type="submit" @click="removePost">
             Удалить
           </UIbtn>
 
@@ -87,7 +88,7 @@
       </div>
     </UImodal>
   </template>
-  
+
 
 
 </template>
@@ -98,7 +99,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   name: "PostMyPage",
 
-  data(){
+  data() {
     return {
       // isLoaded: false,
       // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
@@ -111,7 +112,7 @@ export default {
       setModulePost: "postsMyPageStore/setModulePost",
       setCloseModulePost: "postsMyPageStore/setCloseModulePost"
     }),
-    ...mapActions({ 
+    ...mapActions({
       editPost: "postsMyPageStore/editPost",
       removePost: "postsMyPageStore/removePost"
     }),
@@ -124,18 +125,28 @@ export default {
     //   require(`../../assets/photo/${post.ava}`)
     // }
     loadAva(ava) {
-          try{
-            return require(`../../assets/photo/${ava}`)
-          } catch {
-            return require(`../../assets/ava/ava_1.jpg`);
-          }
+      try {
+        return require(`../../assets/photo/${ava}`)
+      } catch {
+        return require(`../../assets/ava/ava_1.jpg`);
+      }
 
-        },
+    },
 
-        postText(value) {
-        let doc = new DOMParser().parseFromString(value, "text/html");
-        return doc.documentElement.textContent;
-      },
+    postText(value) {
+      let doc = new DOMParser().parseFromString(value, "text/html");
+      return doc.documentElement.textContent;
+    },
+
+    showBtnPost(post) {
+      post.isShowBtn = true;
+    },
+    notShowBtnPost(post) {
+      post.isShowBtn = false;
+    },
+    btnPost(post) {
+      post.isPostDel = !post.isPostDel;
+    }
 
   },
 
@@ -158,7 +169,7 @@ export default {
       }
     },
 
-    
+
 
   }
 }
@@ -181,6 +192,7 @@ export default {
 
 .wrapper_ava_posts {
   margin: 5px;
+  cursor: pointer
 }
 
 .ava_posts {
@@ -196,12 +208,22 @@ export default {
 
 .wrapper_post_name {
   margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.post_show_btn {
+  margin-right: 10px;
+  font-size: 20px;
+  line-height: 17px;
+  cursor: pointer;
 }
 
 .post_name {
   font-size: 18px;
   font-family: cursive;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .wrapper_data_post {

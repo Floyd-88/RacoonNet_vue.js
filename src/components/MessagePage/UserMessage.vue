@@ -3,7 +3,7 @@
     <div @mouseover="showBtnDelete(dialog)" @mouseleave="notShowBtnDelete(dialog)" class="wrapper_message_user">
         <div class="wrapper_message_user_content">
             <div class="message_user_ava"
-                @click="$router.push({name: 'mypage', params: {id: dialog.userID}})">
+            @click="$router.push({name: 'mypage', params: {id: `${dialog.userID}`}})">
                 <img class="ava_posts" :src="loadAva(dialog.ava)" alt="ava">
             </div>
             <div class="message_user_content">
