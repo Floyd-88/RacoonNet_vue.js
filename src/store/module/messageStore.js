@@ -121,10 +121,10 @@ export const messageStore = {
         },
 
         //удаление диалога
-        async DELETE_DIALOGS({ state }) {
+        async DELETE_DIALOGS({ state }, id) {
             try {
                 let dialogs_params = {
-                    dialogsID: 32,
+                    dialogsID: id,
                 }
 
                 await axios.put("http://localhost:8000/user_messages", dialogs_params)

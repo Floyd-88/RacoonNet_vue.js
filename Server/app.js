@@ -807,6 +807,8 @@ router.post('/user_message', authenticateJWT, messageValidate, function(req, res
                         messages.update_conversation_id_DB([
                             row_messages_id,
                             tokenID,
+                            tokenID,
+                            destinationID,
                             last_conversation_id,
                             tokenID,
                             last_conversation_id
@@ -911,6 +913,7 @@ router.delete('/user_messages', authenticateJWT, function(req, res) {
             return res.status(200).send("Сообщение не найдено")
         } else {
             //обновляем флаги удаления сообщения у пользователей
+            console.log(message)
             messages.update_message_flag_delete([
                 tokenID,
                 tokenID,

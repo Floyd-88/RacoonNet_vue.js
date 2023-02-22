@@ -71,6 +71,8 @@ class MessagesDB {
         return this.connection.execute(`UPDATE conversation C SET
         C.last_message_id = ?,
         C.sender = ?,
+        C.first = ?,
+        C.second = ?,
         C.first_delete = '0',
         C.second_delete = '0',
         C.unread = (SELECT COUNT(*) FROM messages M WHERE
@@ -101,9 +103,9 @@ class MessagesDB {
                     WHERE (M.sender = ${tokenID} OR M.addressee = ${tokenID})
                         AND CASE 
                             WHEN M.sender = ${tokenID}
-                        THEN M.sender_delete = '0' AND M.addressee = U.userID AND C.first_delete = '0'
+                        THEN M.sender_delete = '0' AND M.addressee = U.userID 
                             WHEN M.addressee = ${tokenID}
-                        THEN M.addressee_delete = '0' AND M.sender = U.userID AND C.second_delete = '0'
+                        THEN M.addressee_delete = '0' AND M.sender = U.userID 
                     END
                     AND M.id IN (SELECT
                         MAX(M.id) as last_message
@@ -112,9 +114,9 @@ class MessagesDB {
                                 WHERE (M.sender = ${tokenID} OR M.addressee = ${tokenID})
                                 AND CASE 
                                 WHEN M.sender = ${tokenID}
-                                    THEN M.sender_delete = '0' AND M.addressee = U.userID AND C.first_delete = '0'
+                                    THEN M.sender_delete = '0' AND M.addressee = U.userID 
                                 WHEN M.addressee = ${tokenID}
-                                    THEN M.addressee_delete = '0' AND M.sender = U.userID AND C.second_delete = '0'
+                                    THEN M.addressee_delete = '0' AND M.sender = U.userID 
                                 END
                                 GROUP BY U.userID
                             ORDER BY last_message DESC) 

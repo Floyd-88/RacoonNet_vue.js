@@ -22,7 +22,7 @@
             </div>
             <div class="message_user_del">
             <UIbtn 
-                @click="DELETE_DIALOGS" >
+                @click="DELETE_DIALOGS(dialog.convId)" >
                 Удалить переписку
             </UIbtn>
             </div>
