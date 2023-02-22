@@ -1,16 +1,20 @@
 <template>
 
-    <div class="wrapper_message_user" >
+    <div @mouseover="showBtnDelete(dialog)" @mouseleave="notShowBtnDelete(dialog)" class="wrapper_message_user">
         <div class="wrapper_message_user_content">
             <div class="message_user_ava">
-                <img class="ava_posts" :src="loadAva(dialog.ava)"  alt="ava">
+                <img class="ava_posts" :src="loadAva(dialog.ava)" alt="ava">
             </div>
             <div class="message_user_content">
                 <div class="message_user_name">
-                    <p>{{dialog.name + " " + dialog.surname}}</p>
+                    <p>{{ dialog.name + " " + dialog.surname }}</p>
+                    <div class="message_user_del">
+                        <UIbtn v-show="dialog.isDialogDel" @click="DELETE_DIALOGS(dialog.convId)">
+                            Удалить переписку
+                        </UIbtn>
+                    </div>
                 </div>
-                <div class="message_user_text" 
-                    @click="openDialogUser(dialog.userID)">
+                <div class="message_user_text" @click="openDialogUser(dialog.userID)">
                     <p>{{ dialog.message }}</p>
                 </div>
             </div>
@@ -18,13 +22,8 @@
 
         <div class="wrapper_message_user_btn">
             <div class="message_user_date">
-                <p>{{ dialog.date }}</p>
-            </div>
-            <div class="message_user_del">
-            <UIbtn 
-                @click="DELETE_DIALOGS(dialog.convId)" >
-                Удалить переписку
-            </UIbtn>
+                <p>{{ dialog.date.slice(0, 10) }}</p>
+                <p class="show_btn_delete" v-if="dialog.isShowBtnDelete" @click="btnDialogDel(dialog)">...</p>
             </div>
         </div>
 
@@ -43,32 +42,49 @@ export default {
     props: {
         dialog: {
             type: Object,
-            default: ()=> {
+            default: () => {
                 return {}
             }
         }
     },
 
+    date() {
+        return {
+            // isDialogDel: false,
+        }
+    },
+
     methods: {
 
-        ...mapActions({ DELETE_DIALOGS: "messageStore/DELETE_DIALOGS"}),
+        ...mapActions({ DELETE_DIALOGS: "messageStore/DELETE_DIALOGS" }),
 
         openDialogUser(id) {
-            this.$router.push( {path: `/message/id${id}`, query: {
-                ava: this.dialog.ava, 
-                name: this.dialog.name, 
-                surname: this.dialog.surname
-            }})
+            this.$router.push({
+                path: `/message/id${id}`, query: {
+                    ava: this.dialog.ava,
+                    name: this.dialog.name,
+                    surname: this.dialog.surname
+                }
+            })
         },
 
         loadAva(ava) {
-          try{
-            return require(`../../assets/photo/${ava}`)
-          } catch {
-            return require(`../../assets/ava/ava_1.jpg`);
-          }
-
+            try {
+                return require(`../../assets/photo/${ava}`)
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
         },
+
+        showBtnDelete(dialog) {
+            dialog.isShowBtnDelete = true;
+        },
+        notShowBtnDelete(dialog) {
+            dialog.isShowBtnDelete = false;
+        },
+        btnDialogDel(dialog) {
+            dialog.isDialogDel = !dialog.isDialogDel;
+        }
     }
 }
 </script>
@@ -94,14 +110,19 @@ export default {
 
 .wrapper_message_user_content {
     display: flex;
+    width: 100%;
 
 }
 
 .message_user_content {
+    width: 100%;
     padding-left: 10px;
 }
 
 .message_user_name {
+    display: flex;
+    justify-content: space-between;
+    height: 25px;
     margin-bottom: 10px;
     font-family: fantasy;
     font-size: 18px;
@@ -118,11 +139,13 @@ export default {
     cursor: pointer;
 
 }
+
 .message_user_text p {
     word-break: break-word;
-   
+
 
 }
+
 .wrapper_message_user_btn {
     display: flex;
     flex-direction: column;
@@ -130,11 +153,21 @@ export default {
     margin-left: 10px;
     margin-bottom: 10px;
 }
+
 .message_user_date {
     font-size: 14px;
     display: flex;
     justify-content: flex-end;
+    flex-direction: column;
+    align-items: center;
 }
+
+.show_btn_delete {
+    font-size: 25px;
+    font-family: fantasy;
+    cursor: pointer;
+}
+
 .message_user_del {
     width: max-content;
 }
