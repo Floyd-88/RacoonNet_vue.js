@@ -39,6 +39,7 @@ const routes = [{
         meta: {
             requiresAuth: true
         },
+
         children: [{
                 path: "",
                 component: AllUsersMessages,
@@ -46,6 +47,13 @@ const routes = [{
             {
                 path: "id:id",
                 component: DialogUser,
+                name: "dialoguser",
+                props: {
+                    id: {
+                        type: [String, Number],
+                        default: null,
+                    },
+                },
             },
         ],
     },

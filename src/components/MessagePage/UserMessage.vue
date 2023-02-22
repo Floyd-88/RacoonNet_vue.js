@@ -2,12 +2,15 @@
 
     <div @mouseover="showBtnDelete(dialog)" @mouseleave="notShowBtnDelete(dialog)" class="wrapper_message_user">
         <div class="wrapper_message_user_content">
-            <div class="message_user_ava">
+            <div class="message_user_ava"
+                @click="$router.push({name: 'mypage', params: {id: dialog.userID}})">
                 <img class="ava_posts" :src="loadAva(dialog.ava)" alt="ava">
             </div>
             <div class="message_user_content">
                 <div class="message_user_name">
-                    <p>{{ dialog.name + " " + dialog.surname }}</p>
+                    <p @click="$router.push({name: 'mypage', params: {id: dialog.userID}})">
+                        {{ dialog.name + " " + dialog.surname }}
+                    </p>
                     <div class="message_user_del">
                         <UIbtn v-show="dialog.isDialogDel" @click="DELETE_DIALOGS(dialog.convId)">
                             Удалить переписку
@@ -60,10 +63,9 @@ export default {
 
         openDialogUser(id) {
             this.$router.push({
-                path: `/message/id${id}`, query: {
-                    ava: this.dialog.ava,
-                    name: this.dialog.name,
-                    surname: this.dialog.surname
+                name: `dialoguser`, 
+                params: {
+                    id: id
                 }
             })
         },
@@ -126,8 +128,9 @@ export default {
     margin-bottom: 10px;
     font-family: fantasy;
     font-size: 18px;
+}
+.message_user_content p {
     cursor: pointer;
-
 }
 
 .message_user_text {
@@ -142,8 +145,6 @@ export default {
 
 .message_user_text p {
     word-break: break-word;
-
-
 }
 
 .wrapper_message_user_btn {

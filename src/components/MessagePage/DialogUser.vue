@@ -8,11 +8,13 @@
                 <button @click="$router.go(-1)">Назад</button>
             </div>
             <div class="wrapper_header_user_name">
-                <div class="header_ava_user">
-                    <img :src="loadAva($route.query.ava)" alt="ava">
+                <div class="header_ava_user" 
+                    @click="$router.push({name: 'mypage', params: {id: getUser.userID}})">
+                    <img :src="loadAva(getUser.ava)" alt="ava">
                 </div>
-                <div class="header_name_user">
-                    <p>{{ $route.query.name + " " + $route.query.surname }}</p>
+                <div class="header_name_user"
+                    @click="$router.push({name: 'mypage', params: {id: getUser.userID}})">
+                    <p>{{ (getUser.name || "") + " " + (getUser.surname || "") }}</p>
                 </div>
             </div>
             <div></div>
@@ -22,12 +24,14 @@
         <div class="wrapper_main_messages" ref="scrollToMe">
             <!-- message -->
             <div class="wrapper_message_dialog_user"  v-for="(message, index) in getArrayMessages" :key="message.id">
-                <div class="dialog_ava_user">
+                <div class="dialog_ava_user"
+                @click="$router.push({name: 'mypage', params: {id: message.sender}})">
                     <img :src="loadAva(message.ava)" alt="ava">
                 </div>
                 <div class="wrapper_block_message_user">
                     <div class="wrapper_message_user">
-                        <div class="message_name_user">
+                        <div class="message_name_user"
+                        @click="$router.push({name: 'mypage', params: {id: message.sender}})">
                             <p>{{ message.name + " " + message.surname }}</p>
                         </div>
                         <div class="message_time">
@@ -39,7 +43,7 @@
                         </div>
                     </div>
                     <div class="message_text"
-                        ref="messageText"
+                        :class="{'active_text_fone': message.isMesssageDel}"
                         @click="showBtnDelete(message, index)">
                         <p>{{ message.message }}</p>
                     </div>
@@ -129,14 +133,8 @@ export default {
             }
         },
 
-        showBtnDelete(message, id) {
+        showBtnDelete(message) {
             message.isMesssageDel = !message.isMesssageDel
-
-            if(message.isMesssageDel) {
-                this.$refs.messageText[id].style.background = "aliceblue";
-            } else {
-                this.$refs.messageText[id].style.background = "none"
-            }
         },
 
         //автоматическая прокрутка сообщений вниз
@@ -147,10 +145,12 @@ export default {
             }
         }
     },
+
     computed: {
         ...mapGetters({
             getMessageUser: "messageStore/getMessageUser",
-            getArrayMessages: "messageStore/getArrayMessages"
+            getArrayMessages: "messageStore/getArrayMessages",
+            getUser: "authorizationStore/getUser",
         }),
         ...mapState({
             messageUser: (state) => state.messageStore.messageUser,
@@ -211,6 +211,7 @@ export default {
 
 .header_ava_user {
     margin-right: 10px;
+    cursor: pointer;
 }
 
 .header_ava_user img {
@@ -221,6 +222,7 @@ export default {
 .header_name_user {
     font-family: fantasy;
     font-size: 20px;
+    cursor: pointer;
 }
 
 .wrapper_main_messages {
@@ -238,6 +240,7 @@ export default {
 .dialog_ava_user img {
     width: 40px;
     border-radius: 100%;
+    cursor: pointer;
 }
 
 .wrapper_block_message_user {
@@ -255,6 +258,7 @@ export default {
     margin-right: 10px;
     font-size: 17px;
     font-family: fantasy;
+    cursor: pointer;
 }
 
 .message_time {
@@ -327,5 +331,8 @@ export default {
 
 .invalid {
     /* border: 1px solid red; */
+}
+.active_text_fone{
+    background: aliceblue;
 }
 </style>
