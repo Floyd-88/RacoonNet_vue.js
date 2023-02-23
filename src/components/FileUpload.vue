@@ -1,5 +1,5 @@
 <template>
-    <CloseModal @click="setIsModalLoadPhoto(false)" />
+    <CloseModal @click="cancelLoadPhoto()" />
 
     <form class="form_load_photo">
 
@@ -14,12 +14,35 @@
         
         <div class="wrapper_preview_photos">
             <div class="preview_image" v-for="(url, index) in getUrlsImages" :key="index">
-                <div class="preview_remove" @click="removePreviewImage(url.name)">&times;</div>
-                <img class="preview_photo" :src="url.url" :alt="url.name">
-                <div class="preview_info">
-                    <span>{{ url.name }}</span>
-                    {{ bytesToSize(url.size) }}
+
+                <div class="preview_remove"
+                     v-if="!getProgressLoadPhoto" 
+                     @click="removePreviewImage(url.name)">
+                     &times;
                 </div>
+
+                <img class="preview_photo" 
+                    :src="url.url" 
+                    :alt="url.name">
+
+                <div class="preview_info" :class="{'active_load': getProgressLoadPhoto}">
+                    <!-- размер фото -->
+                   <template v-if="!getProgressLoadPhoto">
+                    <span>
+                        {{ url.name }}
+                    </span>
+                        {{ bytesToSize(url.size) }}
+                   </template> 
+                
+                   <!-- полоса загрузки фото -->
+                   <template v-if="getProgressLoadPhoto">
+                    <div class="preview_info_progress" 
+                         :style="{'width': getProgressLoadPhoto}">
+                        {{getProgressLoadPhoto}}
+                    </div>
+                   </template>
+                </div>
+                
             </div>
         </div>
 
@@ -28,11 +51,10 @@
                 Выбрать фотографии
             </UIbtn>
 
-            <UIbtn v-if="getUrlsImages.length > 0" @click.prevent="addPhotoServer" :disabled="getArrayLoadImage.length < 1">
+            <UIbtn v-if="getUrlsImages.length > 0" @click.prevent="addPhotoServer($event)" :disabled="getArrayLoadImage.length < 1">
                 Добавить фотографии
             </UIbtn>
         </div>
-
 
     </form>
 </template>
@@ -48,7 +70,9 @@ export default {
     name: "FileUpload",
 
     data() {
-        return {};
+        return {
+
+        };
     },
 
     methods: {
@@ -62,7 +86,8 @@ export default {
         
         ...mapActions({
             removePreviewImage: "loadPhotoStore/removePreviewImage",
-            addPhotoServer: "loadPhotoStore/addPhotoServer"
+            addPhotoServer: "loadPhotoStore/addPhotoServer",
+            cancelLoadPhoto: "loadPhotoStore/cancelLoadPhoto"
         }),
 
         choosePhoto() {
@@ -125,6 +150,7 @@ export default {
             getMessageLoadPhoto: "loadPhotoStore/getMessageLoadPhoto",
             getArrayLoadImage: "loadPhotoStore/getArrayLoadImage",
             getUrlsImages: "loadPhotoStore/getUrlsImages",
+            getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto"
     })
     }
 }
@@ -223,6 +249,11 @@ export default {
     align-items: center;
     justify-content: center;
     transition: width .22s;
+    /* bottom: 4px; */
+}
+
+.active_load {
+    bottom: 4px;
 }
 
 .wrapper_message_error {

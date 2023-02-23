@@ -19,6 +19,8 @@ export const loadPhotoStore = {
         limitAllPhoto: 8, //количествофотографий отображаемых каждый раз при прокрутке вниз
 
         avaPhoto: "",
+        progressLoadPhoto: 0,
+        request: null //прерывание запроса
 
     }),
 
@@ -35,6 +37,7 @@ export const loadPhotoStore = {
         getModulePhotoRemove: (state) => state.isModulePhotoRemove,
         getLimitAllPhoto: (state) => state.limitAllPhoto,
         getAvaPhoto: (state) => state.avaPhoto,
+        getProgressLoadPhoto: (state) => state.progressLoadPhoto,
 
     },
 
@@ -110,6 +113,10 @@ export const loadPhotoStore = {
         setAvaPhoto(state, value) {
             state.avaPhoto = value
         },
+
+        setProgressLoadPhoto(state, value) {
+            state.progressLoadPhoto = value;
+        }
     },
 
     actions: {
@@ -158,8 +165,16 @@ export const loadPhotoStore = {
         //загрузка картинок на сервер
         addPhotoServer: function({
             getters,
-            commit
-        }) {
+            commit,
+            state
+        }, event) {
+            //остановка загрузки картинок
+            const axiosSource = axios.CancelToken.source();
+            state.request = { cancel: axiosSource.cancel };
+
+            //сокрытие кнопки загрузить картинки после ее нажатия
+            event.target.style.opacity = '0'
+
             const formData = new FormData();
 
             for (let i = 0; i < getters.getArrayLoadImage.length; i++) {
@@ -171,9 +186,14 @@ export const loadPhotoStore = {
             axios.post(
                     'http://localhost:8000/upload_photo',
                     formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
+                        headers: { 'Content-Type': 'multipart/form-data' },
+                        cancelToken: axiosSource.token,
+                        onUploadProgress: ProgressEvent => {
+                            let progress =
+                                Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) +
+                                "%";
+                            commit("setProgressLoadPhoto", progress);
+                        },
                     }
                 ).then((res) => {
                     commit("setIsModalLoadPhoto", false);
@@ -183,14 +203,27 @@ export const loadPhotoStore = {
                     commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                         root: true
                     });
-                    window.location.href = `/id${getters.getUser.userID}`;
+                    commit("setProgressLoadPhoto", 0);
+                    // window.location.href = `/id${getters.getUser.userID}`;
                 })
                 .catch((err) => {
-                    console.log(err);
-                    // commit("setArrayLoadImage", []);
-                    // commit("setUrlsImages", []);
+                    if (axios.isCancel(err)) {
+                        console.info("Загрузка фотографий была прервана");
+                        return
+                    }
+                    commit("setArrayLoadImage", []);
+                    commit("setUrlsImages", []);
                     commit("setMessageLoadPhoto", err);
                 })
+        },
+
+        //остановка загрузки картиновк на сервер
+        cancelLoadPhoto({ state, commit }) {
+            if (state.request) {
+                state.request.cancel();
+            }
+            commit("setIsModalLoadPhoto", false)
+            commit("setProgressLoadPhoto", 0)
         },
 
         //удаление картинки на предпросмотре перед загрузкой

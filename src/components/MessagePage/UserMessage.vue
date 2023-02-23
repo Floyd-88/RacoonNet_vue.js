@@ -20,7 +20,7 @@
                 <div class="message_user_text" 
                     @click="openDialogUser(dialog.userID)"
                     :class="{'new_message_color': dialog.unread}">
-                    <p>{{ dialog.message }}</p>
+                    <p>{{ dialogText(dialog.message) }}</p>
                 </div>
             </div>
         </div>
@@ -88,6 +88,11 @@ export default {
         },
         btnDialogDel(dialog) {
             dialog.isDialogDel = !dialog.isDialogDel;
+        },
+
+        dialogText(value) {
+            let doc = new DOMParser().parseFromString(value, "text/html");
+            return doc.documentElement.textContent;
         }
     }
 }

@@ -40,7 +40,8 @@
         <div class="wrapper_city_user">
           <p v-if="getUser.country" class="city_user">Страна: {{ getUser.country }}</p>
           <p v-if="getUser.city"  class="city_user">Город: {{ getUser.city }}</p>
-          <p v-if="age" @click="func" class="city_user">Возраст: {{ age }}</p>
+          <p v-if="age" class="city_user">Возраст: {{ age }}</p>
+          <p v-if="getUser.selectedGender"  class="city_user">Пол: {{ getUser.selectedGender }}</p>
         </div>
       </div>
 

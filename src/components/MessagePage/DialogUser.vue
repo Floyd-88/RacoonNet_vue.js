@@ -8,12 +8,10 @@
                 <button @click="$router.go(-1)">Назад</button>
             </div>
             <div class="wrapper_header_user_name">
-                <div class="header_ava_user" 
-                    @click="$router.push({name: 'mypage', params: {id: getUser.userID}})">
+                <div class="header_ava_user" @click="$router.push({ name: 'mypage', params: { id: getUser.userID } })">
                     <img :src="loadAva(getUser.ava)" alt="ava">
                 </div>
-                <div class="header_name_user"
-                    @click="$router.push({name: 'mypage', params: {id: getUser.userID}})">
+                <div class="header_name_user" @click="$router.push({ name: 'mypage', params: { id: getUser.userID } })">
                     <p>{{ (getUser.name || "") + " " + (getUser.surname || "") }}</p>
                 </div>
             </div>
@@ -23,34 +21,31 @@
 
         <div class="wrapper_main_messages" ref="scrollToMe">
             <!-- message -->
-            <div class="wrapper_message_dialog_user"  v-for="(message, index) in getArrayMessages" :key="message.id">
-                <div class="dialog_ava_user"
-                @click="$router.push({name: 'mypage', params: {id: message.sender}})">
+            <div class="wrapper_message_dialog_user" v-for="(message, index) in getArrayMessages" :key="message.id">
+                <div class="dialog_ava_user" @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
                     <img :src="loadAva(message.ava)" alt="ava">
                 </div>
                 <div class="wrapper_block_message_user">
                     <div class="wrapper_message_user">
                         <div class="message_name_user"
-                        @click="$router.push({name: 'mypage', params: {id: message.sender}})">
+                            @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
                             <p>{{ message.name + " " + message.surname }}</p>
                         </div>
                         <div class="message_time">
                             <p>{{ message.date }}</p>
                         </div>
-                        <div class="message_btn_delete" 
-                            v-if="message.isMesssageDel">
+                        <div class="message_btn_delete" v-if="message.isMesssageDel">
                             <UIbtn @click="DELETE_MESSAGES(message.id)">Удалить</UIbtn>
                         </div>
                     </div>
-                    <div class="message_text"
-                        :class="{'active_text_fone': message.isMesssageDel}"
+                    <div class="message_text" :class="{ 'active_text_fone': message.isMesssageDel }"
                         @click="showBtnDelete(message, index)">
-                        <p :class="{'not_read_message': index >= getArrayMessages.length - message.unread}">{{ message.message }}</p>
+                        <p :class="{ 'not_read_message': index >= getArrayMessages.length - message.unread }">
+                        {{messageText(message.message)}}</p>
                     </div>
                 </div>
             </div>
             <!-- -- -->
-
         </div>
 
 
@@ -109,10 +104,17 @@ export default {
         },
     },
     async mounted() {
-        this.scrollToElement();
+        // this.scrollToElement();
         let id = this.$route.params.id;
         await this.LOAD_MESSAGES_USER(id);
-        this.scrollToElement();
+        // this.scrollToElement();
+    },
+
+    updated() {
+        this.$nextTick(function () {
+            this.scrollToElement();
+
+        })
     },
     methods: {
         ...mapActions({
@@ -143,14 +145,13 @@ export default {
             if (el) {
                 el.scrollTop = el.scrollHeight;
             }
-        }
-    },
+        },
 
-    watch: {
-        getArrayMessages() {
-            this.scrollToElement();
-            console.log(111)
-        }
+        //в случае закодированных специсимволов в тектсе- переводим их обратно в читаемый вид
+        messageText(value) {
+            let doc = new DOMParser().parseFromString(value, "text/html");
+            return doc.documentElement.textContent;
+        },
     },
 
     computed: {
@@ -271,15 +272,19 @@ export default {
 .message_time {
     font-size: 15px;
 }
+
 .message_text {
     cursor: pointer;
 }
+
 .message_text p {
     word-break: break-word;
 }
+
 .message_btn_delete {
     margin-left: 10px;
 }
+
 .message_btn_delete button {
     height: 20px;
     display: flex;
@@ -339,9 +344,11 @@ export default {
 .invalid {
     /* border: 1px solid red; */
 }
-.active_text_fone{
+
+.active_text_fone {
     background: aliceblue;
 }
+
 .not_read_message {
     background-color: aliceblue;
 }
