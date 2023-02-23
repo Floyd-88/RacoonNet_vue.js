@@ -8,6 +8,7 @@
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/message')">Сообщения</button>
+      <p class="new_message">{{ getCountNewMessage || "" }}</p>
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/friends')"> Мои друзья</button>
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 export default {
   name: "NavigationNet",
   
@@ -35,6 +36,10 @@ export default {
       loadUser: "authorizationStore/loadUser"
     }),
   },
+
+  computed: {
+    ...mapGetters({getCountNewMessage: "messageStore/getCountNewMessage"})
+  }
 
   // watch: {
   //   $route() {
@@ -68,9 +73,16 @@ export default {
   height: 100%;
   min-width: 150px;
 }
-/* .wrapper_nav_link {
-
-} */
+.wrapper_nav_link {
+  display: flex;
+justify-content: space-between;
+align-items: baseline;
+}
+.new_message {
+  padding-left: 10px;
+  font-size: 18px;
+  color: #0197d6;
+}
 .link {
   margin: 7px 0;
   font-size: 18px;
@@ -95,3 +107,6 @@ export default {
   filter:contrast(30%)
 }
 </style>
+
+
+

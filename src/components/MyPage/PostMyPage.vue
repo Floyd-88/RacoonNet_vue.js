@@ -1,5 +1,8 @@
 <template>
-  <div class="post" v-for="post of getPost" :key="post.id" @mouseover="showBtnPost(post)"
+  <div class="post" 
+    v-for="post of getPost" 
+    :key="post.id" 
+    @mouseover="showBtnPost(post)"
     @mouseleave="notShowBtnPost(post)">
 
     <div class="wrapper_post">
@@ -247,18 +250,21 @@ export default {
   display: flex;
   display: flex;
   justify-content: flex-end;
-  margin: 5px;
+  /* margin: 5px; */
 }
 
 .redaction_post_btn {
   width: 100px;
   font-size: 13px;
   margin-right: 5px;
+  margin-bottom: 5px;
 }
 
 .delete_post_btn {
   width: 70px;
   font-size: 13px;
+  margin-bottom: 5px;
+
 }
 
 .wrapper_edit_text_body {

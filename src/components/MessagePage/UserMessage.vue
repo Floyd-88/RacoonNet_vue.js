@@ -17,7 +17,9 @@
                         </UIbtn>
                     </div>
                 </div>
-                <div class="message_user_text" @click="openDialogUser(dialog.userID)">
+                <div class="message_user_text" 
+                    @click="openDialogUser(dialog.userID)"
+                    :class="{'new_message_color': dialog.unread}">
                     <p>{{ dialog.message }}</p>
                 </div>
             </div>
@@ -135,7 +137,6 @@ export default {
 
 .message_user_text {
     border-radius: 5px;
-    background: aliceblue;
     box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
     padding: 5px 5px 5px 5px;
     margin-bottom: 10px;
@@ -171,5 +172,8 @@ export default {
 
 .message_user_del {
     width: max-content;
+}
+.new_message_color {
+  background: aliceblue;
 }
 </style>

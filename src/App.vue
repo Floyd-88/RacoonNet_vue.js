@@ -33,8 +33,9 @@ export default {
     ...mapActions({
       logout: "authorizationStore/logout",
       loadUser: "authorizationStore/loadUser",
-      loadAllPhotos: "loadPhotoStore/loadAllPhotos",
-      loadPostServer: "postsMyPageStore/loadPostServer",
+      LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
+      // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
+      // loadPostServer: "postsMyPageStore/loadPostServer",
 
 
     }),
@@ -47,6 +48,7 @@ export default {
       if (id) {
         this.loadUser({ id })
           .then(() => {
+            this.LOAD_DIALOGS();
               // this.loadAllPhotos();
               // this.loadPostServer(this.$route.params.id);
           })

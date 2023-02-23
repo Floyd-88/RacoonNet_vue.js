@@ -5,7 +5,7 @@
 
         <div class="wrapper_posts">
             <AddPost />
-            <PostMyPage/>
+            <PostMyPage />
 
             <div class="wrapper_not_posts" v-if="getPosts.length === 0">
                 <p class="not_posts">Посты не найдены!!!</p>
@@ -14,11 +14,11 @@
             <!--при прокрутки страницы до данного элемента - подгружать следующие посты -->
             <div ref="observer" class="observer"></div>
         </div>
-    <!-- <p>Загрузить еще</p> -->
+        <!-- <p>Загрузить еще</p> -->
 
     </div>
 
-    <MyFriends/>
+    <MyFriends />
 </template>
   
 <script>
@@ -40,36 +40,36 @@ export default {
     computed: {
         ...mapGetters({
             getPosts: "postsMyPageStore/getPosts",
-            //   getModulEditProfile: "editProfileStore/getModulEditProfile",
-            getUser: "authorizationStore/getUser",
-         
         }),
-  },
-  watch: {
-    $route() {
-        if(this.$route.params.id) {
-            this.loadAllPhotos(this.$route.params.id);
-            window.scrollTo(0, 0);
-            this.setPosts([])
-            this.setCountPostsNull()
-            this.loadPostServer(this.$route.params.id);
-        }
-    }
-  },
-        mounted() {
-       const options = {
-        rootMargin: "0px",
-        threshold: 1
-       };
-       const callback = (entries) => {
-           if (entries[0].isIntersecting) {
-               this.loadPostServer(this.$route.params.id);
-           }
-       };
-       const observer = new IntersectionObserver(callback, options);
-       observer.observe(this.$refs.observer);
-   
-},
+    },
+
+    watch: {
+        $route() {
+            if (this.$route.params.id) {
+                this.loadAllPhotos(this.$route.params.id);
+                window.location.href = `/id${this.$route.params.id}`;
+                // window.scrollTo(0, 0);
+                // this.setPosts([]);
+                // this.setCountPostsNull();
+                // this.loadPostServer(this.$route.params.id);
+            }
+        },
+
+    },
+    mounted() {
+        const options = {
+            rootMargin: "0px",
+            threshold: 1
+        };
+        const callback = (entries) => {
+            if (entries[0].isIntersecting) {
+                this.loadPostServer(this.$route.params.id);
+            }
+        };
+        const observer = new IntersectionObserver(callback, options);
+        observer.observe(this.$refs.observer);
+
+    },
 
 }
 </script>

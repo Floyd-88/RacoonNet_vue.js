@@ -45,7 +45,7 @@
                     <div class="message_text"
                         :class="{'active_text_fone': message.isMesssageDel}"
                         @click="showBtnDelete(message, index)">
-                        <p>{{ message.message }}</p>
+                        <p :class="{'not_read_message': index >= getArrayMessages.length - message.unread}">{{ message.message }}</p>
                     </div>
                 </div>
             </div>
@@ -143,6 +143,13 @@ export default {
             if (el) {
                 el.scrollTop = el.scrollHeight;
             }
+        }
+    },
+
+    watch: {
+        getArrayMessages() {
+            this.scrollToElement();
+            console.log(111)
         }
     },
 
@@ -334,5 +341,8 @@ export default {
 }
 .active_text_fone{
     background: aliceblue;
+}
+.not_read_message {
+    background-color: aliceblue;
 }
 </style>

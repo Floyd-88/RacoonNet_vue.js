@@ -66,6 +66,20 @@ class MessagesDB {
         });
     }
 
+    //возвращаем написанное сообщение клиенту
+    get_last_message_DB(id_message, callback) {
+        return this.connection.execute(`SELECT 
+        M.id,
+        M.date,
+        M.message,
+        M.sender,
+        U.name,
+        U.surname,
+        U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  WHERE M.id = ?`, id_message, (err, newMessage) => {
+            callback(err, newMessage);
+        })
+    }
+
     //обновление таблицы с диалогами
     update_conversation_id_DB(params, callback) {
         return this.connection.execute(`UPDATE conversation C SET
@@ -134,12 +148,13 @@ class MessagesDB {
         M.sender,
         U.name,
         U.surname,
-        U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  
-        WHERE conv_id = ?
+       	(SELECT unread FROM conversation WHERE id = ? AND CASE WHEN sender = ? THEN unread = 0 ELSE unread END) as unread,
+        U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  LEFT JOIN conversation C ON C.id = M.conv_id
+        WHERE M.conv_id = ?
         AND CASE
-            WHEN sender = ?
+            WHEN M.sender = ?
                 THEN sender_delete = '0'
-            WHEN addressee = ?
+            WHEN M.addressee = ?
                 THEN addressee_delete = '0'
             END ORDER BY id ASC`, params, (err, messages_user) => {
             callback(err, messages_user)

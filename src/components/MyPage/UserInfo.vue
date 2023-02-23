@@ -55,7 +55,7 @@
       </UIbtn>
 
       <UIbtn 
-      v-if="!getUser.is_editProfile"
+      v-if="!getUser.is_editProfile && getToken"
       class="redaction_profile_btn" 
       @click="setModalWriteMessage(true)">
       Написать сообщение
@@ -112,6 +112,7 @@ export default {
     ...mapGetters({
       getUser: "authorizationStore/getUser",
       getShowFullAvaPhoto: "showFullPhotoStore/getShowFullAvaPhoto",
+      getToken: "authorizationStore/getToken"
     }),
 
     pathAva() {

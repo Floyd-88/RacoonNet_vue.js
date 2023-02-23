@@ -9,6 +9,7 @@ export const messageStore = {
         messageUser: "", //текст сообщения
         arrayDialogs: [],
         arrayMessages: [],
+        countNewMessage: "",
 
     }),
     getters: {
@@ -16,6 +17,7 @@ export const messageStore = {
         getMessageUser: (state) => state.messageUser,
         getArrayDialogs: (state) => state.arrayDialogs,
         getArrayMessages: (state) => state.arrayMessages,
+        getCountNewMessage: (state) => state.countNewMessage,
 
     },
 
@@ -40,6 +42,13 @@ export const messageStore = {
 
         setArrayMessages(state, value) {
             state.arrayMessages = value;
+        },
+        // setNewMessage(state, message) (
+
+        // )
+
+        setCountNewMessage(state, count) {
+            state.countNewMessage = count;
         }
 
     },
@@ -56,11 +65,15 @@ export const messageStore = {
                 date: date
             }
             try {
-                commit("setMessageUser", "")
-                commit("setModalWriteMessage", false)
-                await axios.post("http://localhost:8000/user_message", message)
-                    .then(function() {
+                commit("setMessageUser", "");
+                commit("setModalWriteMessage", false);
 
+                await axios.post("http://localhost:8000/user_message", message)
+                    .then(function(res) {
+                        // console.log(state.arrayMessages)
+                        // console.log(res.data)
+
+                        commit("setArrayMessages", [...state.arrayMessages, ...res.data]);
                         // state.arrayMessages.push(resp.data)
                         // console.log(state.arrayMessages)
 
@@ -80,6 +93,9 @@ export const messageStore = {
                 await axios.get("http://localhost:8000/user_dialogs")
                     .then(function(resp) {
                         commit("setArrayDialogs", resp.data)
+                        let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
+
+                        commit("setCountNewMessage", count)
                             // console.log(state.arrayDialogs)
                             // console.log(state.arrayMessages)
                             // commit("setMessageUser", "")

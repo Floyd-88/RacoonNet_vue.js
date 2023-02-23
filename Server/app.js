@@ -815,7 +815,13 @@ router.post('/user_message', authenticateJWT, messageValidate, function(req, res
                         ], (err) => {
                             if (err) return res.status(500).send('При обновлении таблицы диалогов произошла ошибка' + ' ' + err);
                         })
-                        res.status(200).send("Сообщение добавлено в базу данных");
+
+                        //возвращаем отправленное сообщение
+                        messages.get_last_message_DB([row_messages_id], (err, newMessage) => {
+                            if (err) return res.status(500).send('Неудалось вернуть добавленное сообщение' + ' ' + err);
+                            res.status(200).send(newMessage);
+
+                        })
                     })
                 })
         })
@@ -827,11 +833,22 @@ router.get('/user_dialogs', authenticateJWT, function(req, res) {
 
     tokenID = req.tokenID //id из сохраненного токена   
 
-    // Вывод диалогов пользователя
-    messages.get_all_conversation_DB(tokenID, (err, dialogs) => {
-        if (err) return res.status(500).send('При получении диалогов из БД произошла ошибка:' + ' ' + err);
-        return res.status(200).send(dialogs)
-    })
+    if (tokenID) {
+        // Вывод диалогов пользователя
+        messages.get_all_conversation_DB(tokenID, (err, dialogs) => {
+            if (err) return res.status(500).send('При получении диалогов из БД произошла ошибка:' + ' ' + err);
+
+            //определяем количство непрочитанных сообщений для адресата
+            let newDialogs = dialogs.map((dialog) => {
+                if (dialog.sender === tokenID) {
+                    dialog.unread = 0;
+                }
+                return dialog
+            })
+            return res.status(200).send(newDialogs)
+        })
+    }
+
 })
 
 //ПОЛУЧЕНИЕ ПЕРЕПИСКИ С КОНКРЕТНЫМ ПОЛЬЗОВАТЕЛЕМ
@@ -858,6 +875,8 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
             } else {
                 //возвращаем переписку из БД
                 messages.get_messages_user_DB([
+                    row_conversation[0].id,
+                    tokenID,
                     row_conversation[0].id,
                     tokenID,
                     tokenID
@@ -913,7 +932,6 @@ router.delete('/user_messages', authenticateJWT, function(req, res) {
             return res.status(200).send("Сообщение не найдено")
         } else {
             //обновляем флаги удаления сообщения у пользователей
-            console.log(message)
             messages.update_message_flag_delete([
                 tokenID,
                 tokenID,

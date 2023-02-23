@@ -51,7 +51,8 @@ export default {
   methods: {
     ...mapActions({
       loadAllPhotos: "loadPhotoStore/loadAllPhotos",
-      loadPostServer: "postsMyPageStore/loadPostServer",
+      // LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
+      // loadPostServer: "postsMyPageStore/loadPostServer",
     }),
 
     ...mapMutations({
@@ -75,7 +76,8 @@ export default {
 
     this.setPosts([])
     this.setCountPostsNull()
-    this.loadPostServer(this.$route.params.id);
+    // this.loadPostServer(this.$route.params.id);
+    // this.LOAD_DIALOGS();
   },
 
   // watch: {
