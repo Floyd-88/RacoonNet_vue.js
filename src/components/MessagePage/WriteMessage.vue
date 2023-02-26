@@ -5,7 +5,7 @@
   <h4 class="form_message_title">Написать сообщение</h4>
 
   <div class="wrapper_form_message">
-    <form class="form_message" @submit.prevent="WRITE_MESSAGE_USER(user.userID)" novalidate>
+    <form class="form_message" @submit.prevent="submitMessage()" novalidate>
 
       <div class="wrapper_message_user_content">
         <div class="message_user_ava">
@@ -52,6 +52,8 @@ import { required, minLength } from "@vuelidate/validators";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 import CloseModal from "@/components/UI/CloseModal";
 
+// import SocketioService from "../../services/socketio.service"
+
 export default {
   name: "WriteMessage",
   components: { CloseModal },
@@ -89,6 +91,22 @@ export default {
       setModalWriteMessage: "messageStore/setModalWriteMessage",
       setMessageUser: "messageStore/setMessageUser",
     }),
+
+    //отправляем сообщение
+    submitMessage() {
+
+      //создаем имя комнаты
+      // const CHAT_ROOM = "50";
+
+      //отправляем сообщение в сокет
+      // const message = this.getMessageUser;
+      // SocketioService.sendMessage({ message, roomName: +this.$route.params.id  }, cb => {
+      //   console.log(cb);
+      // });
+
+      //сохраянем сообщение в БД
+      this.WRITE_MESSAGE_USER(this.$route.params.id);
+    },
   },
 
   computed: {

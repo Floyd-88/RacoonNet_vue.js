@@ -1,4 +1,5 @@
 import axios from "axios";
+// import SocketioService from "../../services/socketio.service";
 
 export const authorizationStore = {
     state: () => ({
@@ -72,14 +73,31 @@ export const authorizationStore = {
                             localStorage.setItem('token', token);
                             localStorage.setItem('user', JSON.stringify(user));
 
-                            //записываем токен во все заголовки отправляемые на сервер
-                            axios.defaults.headers.common['Authorization'] = token;
+                            window.location.href = `/id${user.userID}`;
 
-                            commit('auth_success', {
-                                // user,
-                                token
-                            });
-                            resolve(resp);
+
+                            //записываем токен во все заголовки отправляемые на сервер
+                            // axios.defaults.headers.common['Authorization'] = token;
+
+                            // commit('auth_success', {
+                            //     // user,
+                            //     token
+                            // });
+
+                            // вызываем метод для отправки сообщения всем участникам комнаты
+                            // SocketioService.setupSocketConnection();
+                            // console.log("connected")
+
+                            // SocketioService.subscribeToMessages((err) => {
+                            //     if (err) return console.log(err)
+                            //         // this.setArrayMessages([...this.getArrayMessages, data])
+                            // });
+
+
+                            // resolve(resp);
+
+                            // window.location.href = `/id${user.userID}`;
+
                         }
                     })
                     .catch((err) => {

@@ -1,4 +1,6 @@
 import axios from "axios";
+// import SocketioService from "../../services/socketio.service";
+
 
 export const registrationStore = {
     modulRegister: false,
@@ -120,17 +122,29 @@ export const registrationStore = {
                             localStorage.setItem('token', token);
                             localStorage.setItem('user', JSON.stringify(user));
 
-                            //записываем токен во все заголовки отправляемые на сервер
-                            axios.defaults.headers.common['Authorization'] = token;
+                            window.location.href = `/id${user.userID}`;
 
-                            commit('authorizationStore/auth_success', {
-                                // user,
-                                token
-                            }, {
-                                root: true
-                            });
+
+                            //записываем токен во все заголовки отправляемые на сервер
+                            // axios.defaults.headers.common['Authorization'] = token;
+
+                            // commit('authorizationStore/auth_success', {
+                            //     // user,
+                            //     token
+                            // }, {
+                            //     root: true
+                            // });
+
+                            //вызываем метод для отправки сообщения всем участникам комнаты
+                            // SocketioService.setupSocketConnection();
+                            // SocketioService.subscribeToMessages((err, data) => {
+                            //     if (err) return console.log(err)
+                            //     console.log(data);
+                            //     this.messages = data;
+                            // });
+
                             // commit('editProfileStore/setEditingUser', user, { root: true });
-                            resolve(resp);
+                            // resolve(resp);
                         }
                     })
                     .catch(err => {

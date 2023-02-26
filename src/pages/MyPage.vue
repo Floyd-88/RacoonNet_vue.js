@@ -44,9 +44,24 @@ import { mapGetters, mapActions, mapMutations } from "vuex";
 import EditProfile from "@/components/MyPage/EditProfile";
 import MyPageContent from "@/components/MyPage/MyPageContent.vue";
 
+// import SocketioService from "../services/socketio.service";
+
+
 export default {
   name: "MyPage",
   components: { EditProfile, MyPageContent },
+
+  created() {
+        //вызываем метод для отправки сообщения всем участникам комнаты
+        // SocketioService.setupSocketConnection();
+        // console.log("connected")
+
+        // SocketioService.subscribeToMessages((err, data) => {
+        //     if (err) return console.log(err)
+        //     this.setArrayMessages([...this.getArrayMessages, data])
+        //     // console.log(this.getArrayMessages)
+        // });
+  }, 
 
   methods: {
     ...mapActions({
@@ -57,7 +72,9 @@ export default {
 
     ...mapMutations({
     setPosts: "postsMyPageStore/setPosts",
-    setCountPostsNull: "postsMyPageStore/setCountPostsNull"
+    setCountPostsNull: "postsMyPageStore/setCountPostsNull",
+    // setArrayMessages: "messageStore/setArrayMessages"
+
   })
 
   },
@@ -67,7 +84,8 @@ export default {
       isLoggedIn: "authorizationStore/isLoggedIn",
       getModulEditProfile: "editProfileStore/getModulEditProfile",
       getUser: "authorizationStore/getUser",
-      getModalWriteMessage: "messageStore/getModalWriteMessage"
+      getModalWriteMessage: "messageStore/getModalWriteMessage",
+      // getArrayMessages: "messageStore/getArrayMessages"
     }),
   },
 

@@ -6,13 +6,25 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from "vuex";
+import { mapActions, mapMutations, mapGetters } from "vuex";
+import SocketioService from "./services/socketio.service"
+
 // import axios from "axios";
 
 export default {
   name: 'App',
 
-  // created: function () {
+  created() {
+        //вызываем метод для отправки сообщения всем участникам комнаты
+        SocketioService.setupSocketConnection();
+        console.log("connected")
+
+        SocketioService.subscribeToMessages((err, data) => {
+            if (err) return console.log(err)
+            // console.log(data)
+            this.setArrayMessages([...this.getArrayMessages, data])
+        });
+
   //       axios.interceptors.response.use(undefined, function (err) {
   //         // this.logout()
   //         return new Promise(function (resolve) {
@@ -25,10 +37,17 @@ export default {
   //       throw err; 
   //     }); 
   //   });  
-  // }, 
+  }, 
+
+  beforeUnmount() {
+    SocketioService.disconnect();
+    console.log("disconnected")
+    },
+
 
   methods: {
     ...mapMutations({
+      setArrayMessages: "messageStore/setArrayMessages"
     }),
     ...mapActions({
       logout: "authorizationStore/logout",
@@ -39,6 +58,10 @@ export default {
 
 
     }),
+  },
+
+  computed: {
+    ...mapGetters({ getArrayMessages: "messageStore/getArrayMessages"})
   },
 
 

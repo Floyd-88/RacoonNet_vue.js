@@ -43,12 +43,24 @@ const {
 
 
 const app = express();
+const http = require('http').createServer(app);
 
 const router = express.Router();
 router.use(bodyParser.urlencoded({
     extended: false
 }));
 router.use(bodyParser.json());
+
+
+//прослушивание событий
+const io = require('socket.io')(http, {
+    cors: {
+        origins: ['http://localhost:8080']
+    }
+});
+
+
+
 
 // CORS middleware
 const allowCrossDomain = function(req, res, next) {
@@ -455,7 +467,6 @@ router.get('/dataBase.js', authenticateJWT, function(req, res) {
         req.query._count,
         req.query._limit
     ], (err, allPosts) => {
-        console.log(err)
         if (err) return res.status(500).send('Error on the server.' + " " + err);
         if (!allPosts) return res.status(404).send('No posts found.' + " " + err);
         res.status(200).json(allPosts);
@@ -985,10 +996,77 @@ router.put('/user_messages', authenticateJWT, function(req, res) {
 })
 
 
+//получение сообщений без перезагрузки
+io.use(async(socket, next) => {
+    // получаем токен от клиента
+    const token = socket.handshake.auth.token;
+    try {
+        // проверяем что токен соответствует авторизованному пользователю
+        const user = await jwt.verify(token, tokenKey.secret);
+
+        // console.log('user', user);
+
+        // сохраняем информацию из токена в сокете
+        socket.user = user;
+
+        next();
+    } catch (e) {
+        console.log('error', e.message);
+        return next(new Error(e.message));
+    }
+});
+
+io.on("connection", (socket) => {
+    socket.join(socket.user.id)
+        // let arr = [];
+        // arr[socket.user.id] = socket.rooms;
+
+    // console.log(arr)
+    // const { id, userID } = socket.rooms;
+
+    //записываем id пользователя в комнату
+    // socket.join(socket.user.id);
+    // console.log(socket.user.id)
+    // socket.join(roomName);
+
+    console.log("a user connected");
+
+    //выходим из комнаты
+    socket.on("disconnect", () => {
+        // socket.leave(roomName);
+        console.log("user disconnected");
+    });
+
+    // socket.on("my message", (msg) => {
+    //     console.log("message: " + msg);
+    //     io.emit("my broadcast", `server: ${msg}`);
+    // });
+
+    //записываем имя комнаты
+    // socket.on("join", ({ roomName }) => {
+    //     console.log("join: " + roomName);
+    //     socket.join('50');
+    // });
+
+    //получаем сообщение
+    socket.on("message", (newMessage) => {
+
+        // console.log(newMessage);
+
+        //отправляем сообщение всем кто находится в комнате кроме отправителя
+        socket.to(Number(newMessage.destinationID)).emit("message", newMessage);
+
+        // отправляем сообщение всем кто находится в комнате включая отправителя
+        // io.to(roomName).emit("message", outgoingMessage);
+    });
+
+});
+
+
 
 app.use(router)
 
 let port = process.env.PORT || 8000;
-app.listen(port, function() {
+http.listen(port, function() {
     console.log('Express server listening on port ' + port)
 });

@@ -1,6 +1,6 @@
-// import axios from "axios"
-
 import axios from "axios";
+import SocketioService from "../../services/socketio.service";
+
 
 export const messageStore = {
 
@@ -55,12 +55,12 @@ export const messageStore = {
 
     actions: {
         //сохранение сообщений в базе данных
-        async WRITE_MESSAGE_USER({ state, commit, dispatch }, userID) {
+        async WRITE_MESSAGE_USER({ state, commit, dispatch }, addresseeID) {
 
             let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
 
             let message = {
-                destinationID: userID,
+                destinationID: addresseeID,
                 textMessage: state.messageUser,
                 date: date
             }
@@ -73,11 +73,21 @@ export const messageStore = {
                         // console.log(state.arrayMessages)
                         // console.log(res.data)
 
-                        commit("setArrayMessages", [...state.arrayMessages, ...res.data]);
+                        //отпраляем сообщение на сервер для передачи его адресату через сокет
+                        let newMessage = res.data[0];
+                        newMessage.destinationID = addresseeID;
+                        SocketioService.sendMessage(newMessage, cb => {
+                            console.log(cb);
+                        });
+
+                        commit("setArrayMessages", [...state.arrayMessages, newMessage]);
                         // state.arrayMessages.push(resp.data)
                         // console.log(state.arrayMessages)
 
+
+
                     })
+
             } catch (err) {
                 console.log(err)
             }

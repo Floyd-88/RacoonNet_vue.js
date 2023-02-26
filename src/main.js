@@ -11,7 +11,7 @@ import axios from "axios";
 const app = createApp(App);
 
 const token = localStorage.getItem('token');
-if(token) {
+if (token) {
     axios.defaults.headers.common['Authorization'] = token;
 }
 
@@ -19,11 +19,10 @@ pages.forEach(page => {
     app.component(page.name, page);
 });
 
-components.forEach(comp=> {
+components.forEach(comp => {
     app.component(comp.name, comp);
 });
 
 app.use(router);
 app.use(store);
 app.mount('#app');
-

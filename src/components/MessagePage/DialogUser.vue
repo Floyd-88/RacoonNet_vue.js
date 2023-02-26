@@ -41,13 +41,12 @@
                     <div class="message_text" :class="{ 'active_text_fone': message.isMesssageDel }"
                         @click="showBtnDelete(message, index)">
                         <p :class="{ 'not_read_message': index >= getArrayMessages.length - message.unread }">
-                        {{messageText(message.message)}}</p>
+                            {{ messageText(message.message) }}</p>
                     </div>
                 </div>
             </div>
             <!-- -- -->
         </div>
-
 
         <div class="wrapper_block_write_message">
 
@@ -69,8 +68,7 @@
 
             <!-- button -->
             <div class="wrapper_form_message_btn">
-                <button class="form_message_btn" type="submit" @click="WRITE_MESSAGE_USER($route.params.id)"
-                    :disabled="v$.$invalid">
+                <button class="form_message_btn" type="submit" @click="submitMessage()" :disabled="v$.$invalid">
                     Написать
                 </button>
             </div>
@@ -82,6 +80,7 @@
 </template>
 
 <script>
+// import SocketioService from "../../services/socketio.service";
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
@@ -95,6 +94,7 @@ export default {
     data() {
         return {
             isBtnMessageDelete: false,
+            messages: []
         };
     },
     validations: {
@@ -103,11 +103,23 @@ export default {
             min: minLength(1),
         },
     },
+
     async mounted() {
         // this.scrollToElement();
         let id = this.$route.params.id;
         await this.LOAD_MESSAGES_USER(id);
         // this.scrollToElement();
+
+        // SocketioService.subscribeToMessages((err, data) => {
+        //     if (err) return console.log(err)
+        //     this.setArrayMessages([...this.getArrayMessages, data])
+        // });
+
+    },
+
+    created() {
+        // SocketioService.setupSocketConnection();
+        // console.log("connected")
     },
 
     updated() {
@@ -116,16 +128,46 @@ export default {
 
         })
     },
+
+    beforeUnmount() {
+    // SocketioService.disconnect();
+    // console.log("disconnected")
+    },
+
     methods: {
         ...mapActions({
             WRITE_MESSAGE_USER: "messageStore/WRITE_MESSAGE_USER",
             LOAD_MESSAGES_USER: "messageStore/LOAD_MESSAGES_USER",
-            DELETE_MESSAGES: "messageStore/DELETE_MESSAGES"
+            DELETE_MESSAGES: "messageStore/DELETE_MESSAGES",
+            newDate: "postsMyPageStore/newDate"
         }),
         ...mapMutations({
             setModalWriteMessage: "messageStore/setModalWriteMessage",
             setMessageUser: "messageStore/setMessageUser",
+            setArrayMessages: "messageStore/setArrayMessages"
         }),
+
+        //отправляем сообщение
+        async submitMessage() {
+
+            //дата сообщения
+            // let date = await this.newDate();
+            // let newMessage = {
+            //     message: this.getMessageUser,
+            //     date,
+            //     addresseeID: +this.$route.params.id
+            // }
+
+            //отпраляем сообщение на сервер для передачи его адресату через сокет
+            // SocketioService.sendMessage(newMessage, cb => {
+            //     console.log(cb);
+            // });
+
+            //сохраянем сообщение в БД
+            this.WRITE_MESSAGE_USER(this.$route.params.id);
+        },
+
+        //проверяем наличие аватарки
         loadAva(ava) {
             try {
                 return require(`../../assets/photo/${ava}`);
