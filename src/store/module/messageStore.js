@@ -18,6 +18,7 @@ export const messageStore = {
         getArrayDialogs: (state) => state.arrayDialogs,
         getArrayMessages: (state) => state.arrayMessages,
         getCountNewMessage: (state) => state.countNewMessage,
+        userAva: (state, _, rootState) => rootState.authorizationStore.user.ava,
 
     },
 
@@ -43,9 +44,9 @@ export const messageStore = {
         setArrayMessages(state, value) {
             state.arrayMessages = value;
         },
-        // setNewMessage(state, message) (
-
-        // )
+        setArrayMessagesUnread(state) {
+            state.arrayMessages.map(message => message.unread = 0)
+        },
 
         setCountNewMessage(state, count) {
             state.countNewMessage = count;
@@ -70,8 +71,6 @@ export const messageStore = {
 
                 await axios.post("http://localhost:8000/user_message", message)
                     .then(function(res) {
-                        // console.log(state.arrayMessages)
-                        // console.log(res.data)
 
                         //отпраляем сообщение на сервер для передачи его адресату через сокет
                         let newMessage = res.data[0];
@@ -82,10 +81,6 @@ export const messageStore = {
 
                         commit("setArrayMessages", [...state.arrayMessages, newMessage]);
                         // state.arrayMessages.push(resp.data)
-                        // console.log(state.arrayMessages)
-
-
-
                     })
 
             } catch (err) {
@@ -95,19 +90,13 @@ export const messageStore = {
 
         //получение всех диалогов пользователя
         async LOAD_DIALOGS({ commit }) {
-            // let user = {
-            // destinationID: userID,
-            // textMessage: state.messageUser,
-            // }
             try {
                 await axios.get("http://localhost:8000/user_dialogs")
                     .then(function(resp) {
-                        commit("setArrayDialogs", resp.data)
+                        commit("setArrayDialogs", resp.data);
                         let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
 
                         commit("setCountNewMessage", count)
-                            // console.log(state.arrayDialogs)
-                            // console.log(state.arrayMessages)
                             // commit("setMessageUser", "")
                             // commit("setModalWriteMessage", false)
                     })
@@ -161,9 +150,24 @@ export const messageStore = {
             } catch (err) {
                 console.log(err)
             }
+        },
+
+        //обновление флагов непрочитанных сообщений после выхода из переписки
+        async UPDATE_FLAGS_UNREAD_MESSAGE({ getters, commit }, conv_id) {
+            try {
+                await axios.put("http://localhost:8000/unread_messages", { conv_id })
+                    .then(function(res) {
+                        getters.getArrayDialogs.map((dialog) => {
+                            if (dialog.convId === conv_id) {
+                                dialog.unread = 0
+                            }
+                        })
+                        commit("setCountNewMessage", getters.getCountNewMessage - res.data.count)
+                    })
+            } catch (err) {
+                console.log(err)
+            }
         }
-
-
     },
 
     namespaced: true,

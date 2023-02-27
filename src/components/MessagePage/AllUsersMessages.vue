@@ -20,8 +20,7 @@ import { mapGetters, mapActions } from "vuex";
 
     methods: {
         ...mapActions({
-            LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
-           
+            LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",      
         })
     },
 

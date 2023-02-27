@@ -537,7 +537,6 @@ router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
 
     //удалять посты может только автор поста или хозяин страницы
     if (tokenID === req.body.authorPost || tokenID === req.body.pageID) {
-        console.log("ok")
         posts.remove_post_DB(req.body.postID, (err) => {
             if (err) return res.status(500).send('Error on the server' + " " + err);
             res.status(200);
@@ -734,6 +733,7 @@ router.put('/remove_ava_photo', authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
 
     if (userID === tokenID) {
+
         //удаление аватарки из папки на сервере
         fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
             if (err) console.log(err)
@@ -907,7 +907,7 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
                         ], (err) => {
                             if (err) return res.status(500).send('При обновлении флага в таблице сообщений произошла ошибка:' + ' ' + err);
 
-                            //обновляем флаг с непросчитанными сообщениями в таблице диалогов
+                            //обновляем флаг с непрочитанными сообщениями в таблице диалогов
                             messages.update_flag_unread_conersation([
                                 row_conversation[0].id,
                                 tokenID,
@@ -995,6 +995,43 @@ router.put('/user_messages', authenticateJWT, function(req, res) {
     })
 })
 
+//ОБНОВЛЕНИЕ ФЛАГА НЕПРОЧИТАННЫХ СООБЩЕНИЙ ПРИ ВЫХДОЕ ИЗ ПЕРЕПИСКИ
+router.put('/unread_messages', authenticateJWT, function(req, res) {
+
+    tokenID = req.tokenID //id из сохраненного токена
+
+    //получаем количество непрочитанных сообщений
+    messages.get_unread_messages([
+        req.body.conv_id,
+        tokenID
+    ], (err, row) => {
+        if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
+
+        // Обновляем флаг просмотров сообщений
+        messages.update_flag_unread_messages([
+            req.body.conv_id,
+            tokenID
+        ], (err) => {
+            if (err) return res.status(500).send('При обновлении флага в таблице сообщений произошла ошибка:' + ' ' + err);
+
+            //обновляем флаг с непрочитанными сообщениями в таблице диалогов
+            messages.update_flag_unread_conersation([
+                req.body.conv_id,
+                tokenID,
+                req.body.conv_id,
+            ], (err) => {
+                if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
+
+                res.status(200).send(row);
+            })
+        })
+
+
+    })
+
+
+})
+
 
 //получение сообщений без перезагрузки
 io.use(async(socket, next) => {
@@ -1003,8 +1040,6 @@ io.use(async(socket, next) => {
     try {
         // проверяем что токен соответствует авторизованному пользователю
         const user = await jwt.verify(token, tokenKey.secret);
-
-        // console.log('user', user);
 
         // сохраняем информацию из токена в сокете
         socket.user = user;
@@ -1050,6 +1085,7 @@ io.on("connection", (socket) => {
 
     //получаем сообщение
     socket.on("message", (newMessage) => {
+
 
         // console.log(newMessage);
 

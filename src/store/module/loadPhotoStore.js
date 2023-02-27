@@ -296,10 +296,10 @@ export const loadPhotoStore = {
                     id: getters.getUser.userID,
                     nameAva: getters.getUser.ava
                 }).then((res) => {
-                    commit("authorizationStore/setUserAva", res.data.user.ava, { root: true })
+                    commit("authorizationStore/setUserAva", res.data.user.ava, { root: true });
                     commit("showFullPhotoStore/setShowFullAvaPhoto", false, { root: true });
                     commit("setModulePhotoRemove", false)
-                        // window.location.href = '/';
+                    window.location.href = '/';
                 });
             } catch (err) {
                 console.log(err);

@@ -179,6 +179,6 @@ export default {
     width: max-content;
 }
 .new_message_color {
-  background: aliceblue;
+  background: #ddffe6b3;
 }
 </style>

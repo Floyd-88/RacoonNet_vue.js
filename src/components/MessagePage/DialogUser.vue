@@ -1,5 +1,4 @@
 <template >
-
     <div class="wrapper_dialog_user">
 
         <!-- headre -->
@@ -9,7 +8,9 @@
             </div>
             <div class="wrapper_header_user_name">
                 <div class="header_ava_user" @click="$router.push({ name: 'mypage', params: { id: getUser.userID } })">
-                    <img :src="loadAva(getUser.ava)" alt="ava">
+                    <template v-if="getUser.ava != undefined || getUser.ava != null">
+                        <img :src="pathAva" alt="ava">
+                    </template>
                 </div>
                 <div class="header_name_user" @click="$router.push({ name: 'mypage', params: { id: getUser.userID } })">
                     <p>{{ (getUser.name || "") + " " + (getUser.surname || "") }}</p>
@@ -23,7 +24,13 @@
             <!-- message -->
             <div class="wrapper_message_dialog_user" v-for="(message, index) in getArrayMessages" :key="message.id">
                 <div class="dialog_ava_user" @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
-                    <img :src="loadAva(message.ava)" alt="ava">
+                    <template v-if="message.sender == $route.params.id">
+                        <img :src="pathAva" alt="ava">
+                    </template>
+                    <template v-else>
+                        <img :src="require(`../../assets/photo/${message.ava}`)" alt="ava">
+                    </template>
+
                 </div>
                 <div class="wrapper_block_message_user">
                     <div class="wrapper_message_user">
@@ -61,7 +68,7 @@
 
                     <textarea class="new_message" id="name" placeholder="Введите сообщение" v-model="changeMessage"
                         :class="{ invalid: (v$.messageUser.$error) }">
-                    </textarea>
+                                </textarea>
                 </div>
             </div>
             <!-- -- -->
@@ -76,7 +83,7 @@
 
         </div>
 
-    </div>
+</div>
 </template>
 
 <script>
@@ -94,9 +101,11 @@ export default {
     data() {
         return {
             isBtnMessageDelete: false,
-            messages: []
+            messages: [],
+            id: "",
         };
     },
+
     validations: {
         messageUser: {
             required,
@@ -104,11 +113,13 @@ export default {
         },
     },
 
-    async mounted() {
+    mounted() {
         // this.scrollToElement();
-        let id = this.$route.params.id;
-        await this.LOAD_MESSAGES_USER(id);
+
+        this.id = this.$route.params.id;
+        this.LOAD_MESSAGES_USER(this.id);
         // this.scrollToElement();
+        // console.log(this.getArrayMessages)
 
         // SocketioService.subscribeToMessages((err, data) => {
         //     if (err) return console.log(err)
@@ -117,21 +128,18 @@ export default {
 
     },
 
-    created() {
-        // SocketioService.setupSocketConnection();
-        // console.log("connected")
-    },
-
     updated() {
-        this.$nextTick(function () {
-            this.scrollToElement();
+        if (this.$refs.scrollToMe) {
+            this.$nextTick(function () {
+                this.scrollToElement();
+            })
+        }
 
-        })
     },
 
-    beforeUnmount() {
-    // SocketioService.disconnect();
-    // console.log("disconnected")
+    unmounted() {
+        //обновляем флаги непрочитанных сообщений при выходе из переписки
+        this.UPDATE_FLAGS_UNREAD_MESSAGE(this.getArrayMessages[0].conv_id)
     },
 
     methods: {
@@ -139,42 +147,24 @@ export default {
             WRITE_MESSAGE_USER: "messageStore/WRITE_MESSAGE_USER",
             LOAD_MESSAGES_USER: "messageStore/LOAD_MESSAGES_USER",
             DELETE_MESSAGES: "messageStore/DELETE_MESSAGES",
-            newDate: "postsMyPageStore/newDate"
+            LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
+            UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE"
         }),
+        
         ...mapMutations({
             setModalWriteMessage: "messageStore/setModalWriteMessage",
             setMessageUser: "messageStore/setMessageUser",
-            setArrayMessages: "messageStore/setArrayMessages"
+            setArrayMessagesUnread: "messageStore/setArrayMessagesUnread"
         }),
 
         //отправляем сообщение
         async submitMessage() {
 
-            //дата сообщения
-            // let date = await this.newDate();
-            // let newMessage = {
-            //     message: this.getMessageUser,
-            //     date,
-            //     addresseeID: +this.$route.params.id
-            // }
-
-            //отпраляем сообщение на сервер для передачи его адресату через сокет
-            // SocketioService.sendMessage(newMessage, cb => {
-            //     console.log(cb);
-            // });
+            // при отпарвке сообщения убирать фон с непрачитанных
+            this.setArrayMessagesUnread()
 
             //сохраянем сообщение в БД
             this.WRITE_MESSAGE_USER(this.$route.params.id);
-        },
-
-        //проверяем наличие аватарки
-        loadAva(ava) {
-            try {
-                return require(`../../assets/photo/${ava}`);
-            }
-            catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
         },
 
         showBtnDelete(message) {
@@ -183,10 +173,15 @@ export default {
 
         //автоматическая прокрутка сообщений вниз
         scrollToElement() {
-            const el = this.$refs.scrollToMe;
-            if (el) {
-                el.scrollTop = el.scrollHeight;
+            try {
+                const el = this.$refs.scrollToMe;
+                if (el) {
+                    el.scrollTop = el.scrollHeight;
+                }
+            } catch (err) {
+                console.log(err)
             }
+
         },
 
         //в случае закодированных специсимволов в тектсе- переводим их обратно в читаемый вид
@@ -205,6 +200,7 @@ export default {
         ...mapState({
             messageUser: (state) => state.messageStore.messageUser,
         }),
+
         //двухстороннее связывание + валидация
         changeMessage: {
             get() {
@@ -215,7 +211,17 @@ export default {
                 this.v$.messageUser.$touch();
             }
         },
+
+        //подгрузка автатарки
+        pathAva() {
+            try {
+                return require(`../../assets/photo/${this.getUser.ava}`);
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
     },
+
     components: { UIbtn }
 }
 </script>
@@ -392,6 +398,6 @@ export default {
 }
 
 .not_read_message {
-    background-color: aliceblue;
+    background-color: #ddffe6b3;
 }
 </style>

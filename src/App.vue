@@ -21,7 +21,6 @@ export default {
 
         SocketioService.subscribeToMessages((err, data) => {
             if (err) return console.log(err)
-            // console.log(data)
             this.setArrayMessages([...this.getArrayMessages, data])
         });
 

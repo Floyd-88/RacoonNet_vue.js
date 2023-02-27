@@ -74,7 +74,6 @@ export default {
     setPosts: "postsMyPageStore/setPosts",
     setCountPostsNull: "postsMyPageStore/setCountPostsNull",
     // setArrayMessages: "messageStore/setArrayMessages"
-
   })
 
   },
