@@ -125,7 +125,7 @@ export const messageStore = {
                     deleteID: id,
                 }
                 await axios.delete("http://localhost:8000/user_messages", { data: message_params })
-                    .then(function(resp) {
+                    .then(function() {
                         state.arrayMessages = state.arrayMessages.filter(message => message.id !== id);
                     })
             } catch (err) {
@@ -165,8 +165,46 @@ export const messageStore = {
             } catch (err) {
                 console.log(err)
             }
-        }
+        },
+
+        //обновление диалогов без перезагрузки через сокеты
+        UPDATE_DIALOGS_SOCKETS({ state, commit }, data) {
+            state.arrayDialogs.map((dialog) => {
+                if (dialog.convId == data.conv_id) {
+                    dialog.message = data.message,
+                        dialog.date = data.date,
+                        dialog.id = data.id,
+                        dialog.ava = data.ava,
+                        dialog.name = data.name,
+                        dialog.surname = data.surname,
+                        dialog.unread += 1
+                }
+            });
+
+            if (!state.arrayDialogs.some(i => i.convId === data.conv_id)) {
+                const newDialog = {
+                    convId: data.conv_id,
+                    message: data.message,
+                    date: data.date,
+                    isShowBtnDelete: false,
+                    id: data.id,
+                    ava: data.ava,
+                    name: data.name,
+                    surname: data.surname,
+                    unread: 1,
+                    sender: data.sender,
+                    userID: data.sender
+                }
+                commit("setArrayDialogs", [newDialog, ...state.arrayDialogs]);
+            }
+
+            state.arrayDialogs.sort((a, b) => {
+                if (a.unread) { return b.id - a.id }
+            });
+        },
     },
+
+
 
     namespaced: true,
 }

@@ -73,6 +73,7 @@ class MessagesDB {
         M.date,
         M.message,
         M.sender,
+        M.conv_id,
         U.name,
         U.surname,
         U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  WHERE M.id = ?`, id_message, (err, newMessage) => {
@@ -134,7 +135,7 @@ class MessagesDB {
                                 END
                                 GROUP BY U.userID
                             ORDER BY last_message DESC) 
-                        ORDER BY M.id DESC`, (err, dialogs) => {
+                        ORDER BY case when C.unread = 0 then 1 else 0 end, M.id  DESC`, (err, dialogs) => {
             callback(err, dialogs)
         })
     }

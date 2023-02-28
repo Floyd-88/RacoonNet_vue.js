@@ -855,8 +855,7 @@ router.get('/user_dialogs', authenticateJWT, function(req, res) {
                     dialog.unread = 0;
                 } else {
                     if (req.query.isExitMessage && (req.query.convID == dialog.convId)) {
-                        console.log('conv')
-                            // Обновляем флаг просмотров сообщений
+                        // Обновляем флаг просмотров сообщений
                         messages.update_flag_unread_messages([
                             req.query.convID,
                             tokenID
@@ -876,10 +875,8 @@ router.get('/user_dialogs', authenticateJWT, function(req, res) {
                         dialog.unread = 0;
                     }
                 }
-                console.log('go')
                 return dialog
             })
-            console.log(newDialogs)
             return res.status(200).send(newDialogs)
         })
     }
@@ -1101,8 +1098,6 @@ io.on("connection", (socket) => {
     //получаем сообщение
     socket.on("message", (newMessage) => {
 
-
-        // console.log(newMessage);
 
         //отправляем сообщение всем кто находится в комнате кроме отправителя
         socket.to(Number(newMessage.destinationID)).emit("message", newMessage);

@@ -21,7 +21,19 @@ export default {
 
         SocketioService.subscribeToMessages((err, data) => {
             if (err) return console.log(err)
-            this.setArrayMessages([...this.getArrayMessages, data])
+            this.setArrayMessages([...this.getArrayMessages, data]);
+
+            this.UPDATE_DIALOGS_SOCKETS(data);
+            // console.log(this.getArrayDialogs);
+            // console.log(data.conv_id)
+
+            //  this.getArrayDialogs.map((dialog) => {
+            //   if(dialog.convId == data.conv_id) {
+            //    this.setArrayDialogs(data);
+            //     // dialog.message = data.message
+            //   }
+            // })
+
         });
 
   //       axios.interceptors.response.use(undefined, function (err) {
@@ -46,12 +58,14 @@ export default {
 
   methods: {
     ...mapMutations({
-      setArrayMessages: "messageStore/setArrayMessages"
+      setArrayMessages: "messageStore/setArrayMessages",
+      setArrayDialogs: "messageStore/setArrayDialogs"
     }),
     ...mapActions({
       logout: "authorizationStore/logout",
       loadUser: "authorizationStore/loadUser",
       LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
+      UPDATE_DIALOGS_SOCKETS: "messageStore/UPDATE_DIALOGS_SOCKETS"
       // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
       // loadPostServer: "postsMyPageStore/loadPostServer",
 
@@ -60,7 +74,10 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ getArrayMessages: "messageStore/getArrayMessages"})
+    ...mapGetters({ 
+      getArrayMessages: "messageStore/getArrayMessages",
+      getArrayDialogs: "messageStore/getArrayDialogs"
+    })
   },
 
 
