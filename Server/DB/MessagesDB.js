@@ -172,14 +172,14 @@ class MessagesDB {
     }
 
     //получаем количество непрочитанных сообщений перед выходм из переписки
-    get_unread_messages(body, callback) {
-        return this.connection.execute(`SELECT COUNT(*) as count FROM messages M WHERE
-        M.conv_id = ? AND 
-        M.readed = '0' AND 
-        M.addressee = ?`, body, (err, row) => {
-            callback(err, row[0])
-        })
-    }
+    // get_unread_messages(body, callback) {
+    //     return this.connection.execute(`SELECT COUNT(*) as count FROM messages M WHERE
+    //     M.conv_id = ? AND 
+    //     M.readed = '0' AND 
+    //     M.addressee = ?`, body, (err, row) => {
+    //         callback(err, row[0])
+    //     })
+    // }
 
     //обновляем флаг просмотра сообщений в таблице диалогов
     update_flag_unread_conersation(id, callback) {
@@ -188,10 +188,22 @@ class MessagesDB {
         M.conv_id = ? AND 
         M.readed = '0' AND 
         M.addressee = ?) 
-        WHERE id = ?`, id, (err, row) => {
+        WHERE id = ? AND second = ?`, id, (err, row) => {
             callback(err, row)
         })
     }
+
+    //обновляем флаг просмотра сообщений в таблице диалогов
+    // update_flag_unread_conersation_exit(id, callback) {
+    //     return this.connection.execute(`UPDATE LOW_PRIORITY conversation
+    //         SET unread = (SELECT COUNT(*) FROM messages M WHERE
+    //         M.conv_id = ? AND 
+    //         M.readed = '0' AND 
+    //         M.addressee = ?) 
+    //         WHERE id = ?`, id, (err, row) => {
+    //         callback(err, row)
+    //     })
+    // }
 
 
     //проверяем наличие сообщения для удаления

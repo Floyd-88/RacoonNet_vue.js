@@ -8,7 +8,7 @@
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/message')">Сообщения</button>
-      <p class="new_message">{{ getCountNewMessage || "" }}</p>
+      <p :class="{'new_message': newMessage}"></p>
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/friends')"> Мои друзья</button>
@@ -38,7 +38,14 @@ export default {
   },
 
   computed: {
-    ...mapGetters({getCountNewMessage: "messageStore/getCountNewMessage"})
+    ...mapGetters({
+      getCountNewMessage: "messageStore/getCountNewMessage",
+      getArrayDialogs: "messageStore/getArrayDialogs"
+  }),
+
+    newMessage() {
+      return this.getArrayDialogs.some(dialog => dialog.unread)
+    }
   }
 
   // watch: {
@@ -76,12 +83,18 @@ export default {
 .wrapper_nav_link {
   display: flex;
 justify-content: space-between;
-align-items: baseline;
+align-items: center;
 }
-.new_message {
+/* .new_message {
   padding-left: 10px;
   font-size: 18px;
   color: #0197d6;
+} */
+.new_message {
+  width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    background: #67f54d;
 }
 .link {
   margin: 7px 0;

@@ -89,16 +89,15 @@ export const messageStore = {
         },
 
         //получение всех диалогов пользователя
-        async LOAD_DIALOGS({ commit }) {
+        async LOAD_DIALOGS({ commit }, body) {
             try {
-                await axios.get("http://localhost:8000/user_dialogs")
+                await axios.get("http://localhost:8000/user_dialogs", { params: body })
                     .then(function(resp) {
                         commit("setArrayDialogs", resp.data);
-                        let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
-
-                        commit("setCountNewMessage", count)
-                            // commit("setMessageUser", "")
-                            // commit("setModalWriteMessage", false)
+                        // let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
+                        // commit("setCountNewMessage", count)
+                        // commit("setMessageUser", "")
+                        // commit("setModalWriteMessage", false)
                     })
             } catch (err) {
                 console.log(err)
@@ -127,7 +126,6 @@ export const messageStore = {
                 }
                 await axios.delete("http://localhost:8000/user_messages", { data: message_params })
                     .then(function(resp) {
-                        console.log(resp)
                         state.arrayMessages = state.arrayMessages.filter(message => message.id !== id);
                     })
             } catch (err) {

@@ -853,9 +853,33 @@ router.get('/user_dialogs', authenticateJWT, function(req, res) {
             let newDialogs = dialogs.map((dialog) => {
                 if (dialog.sender === tokenID) {
                     dialog.unread = 0;
+                } else {
+                    if (req.query.isExitMessage && (req.query.convID == dialog.convId)) {
+                        console.log('conv')
+                            // Обновляем флаг просмотров сообщений
+                        messages.update_flag_unread_messages([
+                            req.query.convID,
+                            tokenID
+                        ], (err) => {
+                            if (err) return res.status(500).send('При обновлении флага в таблице сообщений произошла ошибка:' + ' ' + err);
+
+                            //обновляем флаг с непрочитанными сообщениями в таблице диалогов
+                            messages.update_flag_unread_conersation([
+                                req.query.convID,
+                                tokenID,
+                                req.query.convID,
+                                tokenID
+                            ], (err) => {
+                                if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
+                            })
+                        })
+                        dialog.unread = 0;
+                    }
                 }
+                console.log('go')
                 return dialog
             })
+            console.log(newDialogs)
             return res.status(200).send(newDialogs)
         })
     }
@@ -869,7 +893,6 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
     user_companion = req.query.user_companion //id собеседника по переписки
 
     if (tokenID != user_companion) {
-
 
         // Поиск диалога
         messages.get_conversation_id_DB([
@@ -898,10 +921,9 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
                         return res.status(200);
                     }
 
-                    if (row_conversation[0].unread !== 0) {
-
-                        // Обновляем флаг просмотров сообщений
-                        messages.update_flag_unread_messages([
+                    // if (row_conversation[0].unread !== 0) {
+                    // Обновляем флаг просмотров сообщений
+                    messages.update_flag_unread_messages([
                             row_conversation[0].id,
                             tokenID
                         ], (err) => {
@@ -911,17 +933,16 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
                             messages.update_flag_unread_conersation([
                                 row_conversation[0].id,
                                 tokenID,
-                                row_conversation[0].id
+                                row_conversation[0].id,
+                                tokenID
                             ], (err) => {
                                 if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
                             })
                         })
-                    }
+                        // }
                     return res.status(200).send(messages_user)
                 })
-
             }
-
         })
     }
 })
@@ -930,7 +951,6 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
 router.delete('/user_messages', authenticateJWT, function(req, res) {
 
     tokenID = req.tokenID //id из сохраненного токена
-        // userID = +req.body.userID; //id пользователя с которым ведется переписка
 
     // Проверяем существование сообщения
     messages.get_message([
@@ -996,44 +1016,39 @@ router.put('/user_messages', authenticateJWT, function(req, res) {
 })
 
 //ОБНОВЛЕНИЕ ФЛАГА НЕПРОЧИТАННЫХ СООБЩЕНИЙ ПРИ ВЫХДОЕ ИЗ ПЕРЕПИСКИ
-router.put('/unread_messages', authenticateJWT, function(req, res) {
+// router.put('/unread_messages', authenticateJWT, function(req, res) {
 
-    tokenID = req.tokenID //id из сохраненного токена
+//     tokenID = req.tokenID //id из сохраненного токена
 
-    //получаем количество непрочитанных сообщений
-    messages.get_unread_messages([
-        req.body.conv_id,
-        tokenID
-    ], (err, row) => {
-        if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
+//     //получаем количество непрочитанных сообщений
+//     messages.get_unread_messages([
+//         req.body.conv_id,
+//         tokenID
+//     ], (err, row) => {
+//         if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
+//         console.log(row)
+//             // Обновляем флаг просмотров сообщений
+//         messages.update_flag_unread_messages([
+//             req.body.conv_id,
+//             tokenID
+//         ], (err) => {
+//             if (err) return res.status(500).send('При обновлении флага в таблице сообщений произошла ошибка:' + ' ' + err);
 
-        // Обновляем флаг просмотров сообщений
-        messages.update_flag_unread_messages([
-            req.body.conv_id,
-            tokenID
-        ], (err) => {
-            if (err) return res.status(500).send('При обновлении флага в таблице сообщений произошла ошибка:' + ' ' + err);
-
-            //обновляем флаг с непрочитанными сообщениями в таблице диалогов
-            messages.update_flag_unread_conersation([
-                req.body.conv_id,
-                tokenID,
-                req.body.conv_id,
-            ], (err) => {
-                if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
-
-                res.status(200).send(row);
-            })
-        })
-
-
-    })
+//             //обновляем флаг с непрочитанными сообщениями в таблице диалогов
+//             messages.update_flag_unread_conersation_exit([
+//                 req.body.conv_id,
+//                 tokenID,
+//                 req.body.conv_id,
+//             ], (err) => {
+//                 if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
+//                 res.status(200).send(row);
+//             })
+//         })
+//     })
+// })
 
 
-})
-
-
-//получение сообщений без перезагрузки
+//ПОЛУЧЕНИЕ СООБЩЕНИЙ БЕЗ ПЕРЕЗАГРУЗКИ
 io.use(async(socket, next) => {
     // получаем токен от клиента
     const token = socket.handshake.auth.token;

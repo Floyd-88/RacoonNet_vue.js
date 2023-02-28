@@ -39,11 +39,9 @@
 <script>
 import { mapActions } from 'vuex';
 import UIbtn from '../UI/UIbtn.vue';
-
 export default {
     name: "UserMessage",
     components: { UIbtn },
-
     props: {
         dialog: {
             type: Object,
@@ -52,17 +50,13 @@ export default {
             }
         }
     },
-
     date() {
         return {
             // isDialogDel: false,
         }
     },
-
     methods: {
-
         ...mapActions({ DELETE_DIALOGS: "messageStore/DELETE_DIALOGS" }),
-
         openDialogUser(id) {
             this.$router.push({
                 name: `dialoguser`, 
@@ -71,7 +65,6 @@ export default {
                 }
             })
         },
-
         loadAva(ava) {
             try {
                 return require(`../../assets/photo/${ava}`)
@@ -79,7 +72,6 @@ export default {
                 return require(`../../assets/ava/ava_1.jpg`);
             }
         },
-
         showBtnDelete(dialog) {
             dialog.isShowBtnDelete = true;
         },
@@ -89,7 +81,6 @@ export default {
         btnDialogDel(dialog) {
             dialog.isDialogDel = !dialog.isDialogDel;
         },
-
         dialogText(value) {
             let doc = new DOMParser().parseFromString(value, "text/html");
             return doc.documentElement.textContent;
@@ -107,27 +98,20 @@ export default {
     justify-content: space-between;
     border-bottom: 1px solid black;
 }
-
 /* .message_user_ava {} */
-
 .ava_posts {
     width: 90px;
     border-radius: 100%;
     cursor: pointer;
-
 }
-
 .wrapper_message_user_content {
     display: flex;
     width: 100%;
-
 }
-
 .message_user_content {
     width: 100%;
     padding-left: 10px;
 }
-
 .message_user_name {
     display: flex;
     justify-content: space-between;
@@ -139,20 +123,16 @@ export default {
 .message_user_content p {
     cursor: pointer;
 }
-
 .message_user_text {
     border-radius: 5px;
     box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
     padding: 5px 5px 5px 5px;
     margin-bottom: 10px;
     cursor: pointer;
-
 }
-
 .message_user_text p {
     word-break: break-word;
 }
-
 .wrapper_message_user_btn {
     display: flex;
     flex-direction: column;
@@ -160,7 +140,6 @@ export default {
     margin-left: 10px;
     margin-bottom: 10px;
 }
-
 .message_user_date {
     font-size: 14px;
     display: flex;
@@ -168,13 +147,11 @@ export default {
     flex-direction: column;
     align-items: center;
 }
-
 .show_btn_delete {
     font-size: 25px;
     font-family: fantasy;
     cursor: pointer;
 }
-
 .message_user_del {
     width: max-content;
 }

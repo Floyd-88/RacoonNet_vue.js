@@ -48,16 +48,12 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
-
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 import CloseModal from "@/components/UI/CloseModal";
-
 // import SocketioService from "../../services/socketio.service"
-
 export default {
   name: "WriteMessage",
   components: { CloseModal },
-
   props: {
     user: {
       type: Object,
@@ -65,24 +61,19 @@ export default {
         return {}
       }
     }
-
   },
-
   setup() {
     return { v$: useVuelidate() }
   },
-
   data() {
     return {}
   },
-
   validations: {
     messageUser: {
       required,
       min: minLength(1),
     },
   },
-
   methods: {
     ...mapActions({
       WRITE_MESSAGE_USER: "messageStore/WRITE_MESSAGE_USER"
@@ -91,34 +82,26 @@ export default {
       setModalWriteMessage: "messageStore/setModalWriteMessage",
       setMessageUser: "messageStore/setMessageUser",
     }),
-
     //отправляем сообщение
     submitMessage() {
-
       //создаем имя комнаты
       // const CHAT_ROOM = "50";
-
       //отправляем сообщение в сокет
       // const message = this.getMessageUser;
       // SocketioService.sendMessage({ message, roomName: +this.$route.params.id  }, cb => {
       //   console.log(cb);
       // });
-
       //сохраянем сообщение в БД
       this.WRITE_MESSAGE_USER(this.$route.params.id);
     },
   },
-
   computed: {
     ...mapGetters({
       getMessageUser: "messageStore/getMessageUser",
-
     }),
     ...mapState({
       messageUser: (state) => state.messageStore.messageUser,
-
     }),
-
     //двухстороннее связывание + валидация
     changeMessage: {
       get() {
@@ -129,17 +112,14 @@ export default {
         this.v$.messageUser.$touch()
       }
     },
-
     pathAva() {
       try {
         return require(`../../assets/photo/${this.user.ava}`);
       } catch {
         return require(`../../assets/ava/ava_1.jpg`);
       }
-
     },
   }
-
 }
 </script>
 
@@ -152,64 +132,52 @@ export default {
   border-bottom: 2px solid;
   padding-bottom: 5px;
 }
-
 .wrapper_form_message {
   display: flex;
   justify-content: center;
   padding: 0 13px;
 }
-
 .form_message {
   width: 400px;
 }
-
 .wrapper_message_user_content {
   display: flex;
   margin-bottom: 10px;
 }
-
 /* .message_user_ava {} */
-
 .ava_message {
   width: 40px;
   border-radius: 100%;
 }
-
 .message_user_content {
   padding-left: 10px;
   display: flex;
   align-items: center;
 }
-
 .message_user_name {
   margin-bottom: 10px;
   font-family: fantasy;
   font-size: 16px;
 }
-
 .new_message {
   width: 100%;
   min-height: 100px;
   resize: none;
 }
-
 .wrapper_form_message_name {
   display: flex;
   justify-content: space-around;
 }
-
 .wrapper_form_message_input {
   width: 100%;
   margin-bottom: 0px;
 }
-
 .wrapper_form_message_btn {
   display: flex;
   justify-content: flex-end;
   height: 35px;
   margin: 5px 0px 10px 5px;
 }
-
 .form_message_btn {
   width: 130px;
   height: 100%;
@@ -221,15 +189,11 @@ export default {
   color: white;
   font-family: emoji;
 }
-
 .error-msg {
   color: red;
   font-size: 14px;
 }
-
 .invalid {
   border: 1px solid red;
 }
 </style>
-
-
