@@ -20,7 +20,7 @@
 </template>
 
 <script>
-// import SocketioService from "../services/socketio.service";
+import SocketioService from "../services/socketio.service";
 import { mapGetters } from 'vuex';
 export default {
   name: "MainPage",
@@ -29,8 +29,8 @@ export default {
   },
 
   created() {
-    // SocketioService.disconnect();
-    // console.log("disconnected")
+    SocketioService.disconnect();
+    console.log("disconnected")
   },
 
 computed: {

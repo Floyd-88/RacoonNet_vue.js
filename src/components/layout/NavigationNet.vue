@@ -39,7 +39,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      getCountNewMessage: "messageStore/getCountNewMessage",
+      // getCountNewMessage: "messageStore/getCountNewMessage",
       getArrayDialogs: "messageStore/getArrayDialogs"
   }),
 
@@ -90,11 +90,18 @@ align-items: center;
   font-size: 18px;
   color: #0197d6;
 } */
-.new_message {
-  width: 10px;
-    height: 10px;
-    border-radius: 100%;
-    background: #67f54d;
+
+  .new_message {
+    color:#fff;
+    background-color:#fff;
+    background-image: linear-gradient(#bdd7fa, #5d66b1 50%, #010767 20%, #40def7);
+    background-image: -moz-linear-gradient(#bdd7fa, #5d66b1 50%, #010767 20%, #40def7);
+    background-image: -webkit-linear-gradient(#bdd7fa, #5d66b1 50%, #010767 20%, #40def7);
+    background-image: -o-linear-gradient(#bdd7fa, #5d66b1 50%, #010767 20%, #40def7);
+    border:0px;
+    border-radius:10px;
+    padding: 7px 7px;
+    margin-left: 8px;
 }
 .link {
   margin: 7px 0;

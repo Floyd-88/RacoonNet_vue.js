@@ -28,6 +28,7 @@ import CommentsPhoto from "@/components/CommentsPhoto";
 import UIbtn from "@/components/UI/UIbtn";
 import UImodal from "@/components/UI/UImodal";
 import CloseModal from "@/components/UI/CloseModal";
+import UInewMessage from "@/components/UI/UInewMessage";
 import NotFound from "@/components/authorizationUser/NotFound";
 
 import AllUsersMessages from "@/components/MessagePage/AllUsersMessages";
@@ -62,5 +63,6 @@ export default [
     AllUsersMessages,
     UserMessage,
     DialogUser,
-    WriteMessage
+    WriteMessage,
+    UInewMessage
 ]

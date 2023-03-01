@@ -1005,7 +1005,7 @@ router.put('/user_messages', authenticateJWT, function(req, res) {
                 ], (err) => {
                     if (err) return res.status(500).send("Диалог небыл удален" + " " + err);
 
-                    return res.status(200).send("Диалог был удален");
+                    return res.status(200).send(dialog);
                 })
             })
         }
@@ -1097,7 +1097,6 @@ io.on("connection", (socket) => {
 
     //получаем сообщение
     socket.on("message", (newMessage) => {
-
 
         //отправляем сообщение всем кто находится в комнате кроме отправителя
         socket.to(Number(newMessage.destinationID)).emit("message", newMessage);

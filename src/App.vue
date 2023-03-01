@@ -2,6 +2,7 @@
   <HeaderNet />
   <div class="wrapper">
     <router-view></router-view>
+  <UInewMessage/>
   </div>
 </template>
 
@@ -20,7 +21,7 @@ export default {
         console.log("connected")
 
         SocketioService.subscribeToMessages((err, data) => {
-            if (err) return console.log(err)
+            // if (err) return console.log(err)
             this.setArrayMessages([...this.getArrayMessages, data]);
 
             this.UPDATE_DIALOGS_SOCKETS(data);
@@ -120,6 +121,7 @@ body {
 
 .wrapper {
   margin: 0 10%;
+  position: static;
 }
 
 .wrapper_main {

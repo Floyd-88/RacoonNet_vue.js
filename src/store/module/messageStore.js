@@ -134,7 +134,7 @@ export const messageStore = {
         },
 
         //удаление диалога
-        async DELETE_DIALOGS({ state }, id) {
+        async DELETE_DIALOGS({ state, commit }, id) {
             try {
                 let dialogs_params = {
                     dialogsID: id,
@@ -142,7 +142,8 @@ export const messageStore = {
 
                 await axios.put("http://localhost:8000/user_messages", dialogs_params)
                     .then(function(resp) {
-                        console.log(resp)
+                        let dialogs = state.arrayDialogs.filter(dialog => dialog.convId !== resp.data.id);
+                        commit("setArrayDialogs", dialogs);
                     })
                 state.messageUser
             } catch (err) {
