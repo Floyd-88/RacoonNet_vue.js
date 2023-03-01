@@ -9,6 +9,7 @@ import { removeUserStore } from "@/store/module/removeUserStore"
 import { loadPhotoStore } from "@/store/module/loadPhotoStore"
 import { showFullPhotoStore } from "@/store/module/showFullPhotoStore"
 import { messageStore } from "@/store/module/messageStore"
+import { friendsStore } from "@/store/module/friendsStore"
 
 
 
@@ -23,6 +24,7 @@ export default createStore({
         removeUserStore,
         loadPhotoStore,
         showFullPhotoStore,
-        messageStore
+        messageStore,
+        friendsStore
     }
 });

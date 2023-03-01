@@ -27,6 +27,9 @@ const photos = new PhotosDB();
 const MessagesDB = require('./DB/MessagesDB');
 const messages = new MessagesDB();
 
+const FriendsDB = require('./DB/FriendsDB');
+const friends = new FriendsDB();
+
 
 //подключаем массивы с валидацией
 const loginValidate = require('./validate/loginValidate')
@@ -1043,6 +1046,59 @@ router.put('/user_messages', authenticateJWT, function(req, res) {
 //         })
 //     })
 // })
+
+
+//ОТПРАВЛЕНИЕ ЗАПРОСА В ДРУЗЬЯ
+router.post("/add_friend", authenticateJWT, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+    if (tokenID != req.body.id) {
+
+        //проверка на ранее отправленную заявку
+        friends.get_confirm_friend_DB([tokenID, req.body.id], (err, confirmID) => {
+            if (err) return res.status(500).send("При поиске приглашения в друзья, произошла ошибка" + " " + err);
+
+            //если запроса ранее небыло создаем его
+            if (confirmID.length === 0) {
+                friends.add_friend_DB([tokenID, req.body.id], (err) => {
+                    if (err) return res.status(500).send("При отправке запроса в друзья, произошла ошибка" + " " + err);
+
+                    res.status(200).send("Заявка отправлена")
+                })
+            } else {
+                //если запрос ранее был - отменяем его
+                friends.cancel_add_friend_DB([confirmID[0].id], (err) => {
+                    if (err) return res.status(500).send("При отмене заявки в друзья произошла ошибка" + " " + err);
+
+                    res.status(200).send("Добавить в друзья")
+                })
+            }
+        })
+    }
+})
+
+//ПРОВЕРКА НА РАНЕЕ ОТПРАВЛЕННУЮ ЗАЯВКУ В ДРУЗЬЯ
+router.get("/check_request_friend", authenticateJWT, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+
+    if (tokenID != req.query.id) {
+        //проверка на ранее отправленную заявку
+        friends.get_confirm_friend_DB([tokenID, req.query.id], (err, confirmID) => {
+            if (err) return res.status(500).send("При поиске приглашения в друзья, произошла ошибка" + " " + err);
+
+            //если запроса небыло - оставляем как есть
+            if (confirmID.length === 0) {
+                res.status(200).send("Добавить в друзья");
+            } else {
+                if (confirmID[0].confirm_sender === 1 && confirmID[0].confirm_addressee === 0) {
+                    res.status(200).send("Заявка отправлена");
+                } else if (confirmID[0].confirm_sender === 1 && confirmID[0].confirm_addressee === 1) {
+                    res.status(200).send("Это Ваш друг");
+
+                }
+            }
+        })
+    }
+})
 
 
 //ПОЛУЧЕНИЕ СООБЩЕНИЙ БЕЗ ПЕРЕЗАГРУЗКИ

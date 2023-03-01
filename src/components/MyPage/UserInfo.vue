@@ -63,13 +63,13 @@
       </UIbtn>
 
       <UIbtn 
-      v-if="!getUser.is_editProfile && getToken"
+      v-if="!getUser.is_editProfile && getToken && !getIsFriend"
       ref = addFriendBtn
       class="add_friend_btn"
-      :class="{'add_friend_btn_togle': text_btn_friend === 'Заявка отправлена'}" 
+      :class="{'add_friend_btn_togle': getTextBtnFfriend === 'Заявка отправлена'}" 
       @click="addFriend()"
       >
-      {{ text_btn_friend }}
+      {{ getTextBtnFfriend }}
       </UIbtn>
     </div>
       
@@ -88,9 +88,12 @@ export default {
   data() {
     return {
       active_btn: false,
-      text_btn: "",  
-      text_btn_friend: "Добавить в друзья"     
+      text_btn: "",   
     };
+  },
+
+  mounted() {
+    this.CHECK_REQUEST_FRIEND(this.$route.params.id);
   },
 
   methods: {
@@ -101,6 +104,8 @@ export default {
     }),
     ...mapActions({
       showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto",
+      ADD_FRIEND: "friendsStore/ADD_FRIEND",
+      CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND"
       // age: "authorizationStore/age",
 
     }),
@@ -114,8 +119,11 @@ export default {
       }
     },
 
+    //приглашение в друзья
     addFriend() {
-      this.text_btn_friend === "Добавить в друзья" ? this.text_btn_friend = "Заявка отправлена" : this.text_btn_friend = "Добавить в друзья";
+      // this.getTextBtnFfriend === "Добавить в друзья" ? this.getTextBtnFfriend = "Заявка отправлена" : this.getTextBtnFfriend = "Добавить в друзья";
+
+      this.ADD_FRIEND(this.$route.params.id)
     }
 
     // editToken() {
@@ -128,7 +136,9 @@ export default {
     ...mapGetters({
       getUser: "authorizationStore/getUser",
       getShowFullAvaPhoto: "showFullPhotoStore/getShowFullAvaPhoto",
-      getToken: "authorizationStore/getToken"
+      getToken: "authorizationStore/getToken",
+      getTextBtnFfriend: "friendsStore/getTextBtnFfriend",
+      getIsFriend: "friendsStore/getIsFriend"
     }),
 
     pathAva() {
@@ -275,20 +285,20 @@ export default {
   font-size: 13px;
   margin-bottom: 15px;
   background: #00adef;
-  border: 1px solid #00adef;
+  border: 2px solid #00adef;
 
 }
 .add_friend_btn_togle {
   /* filter: opacity(0.5); */
     background: content-box;
-    transition: 0.3s;
+    /* transition: 0.3s; */
     z-index: 1;
-    border: 1px solid #00adef;
+    border: 2px solid #00adef;
     box-shadow: 0px 1px 3px 0px rgb(0 0 0 / 40%);
 }
 .add_friend_btn_togle:hover {
     /* filter: opacity(0.5); */
     background: content-box;
-    transition: 0.3s;
+    /* transition: 0.3s; */
 }
 </style>
