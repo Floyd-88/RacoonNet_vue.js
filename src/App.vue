@@ -27,7 +27,6 @@ export default {
       this.UPDATE_DIALOGS_SOCKETS(data);
 
       if (this.$route.path === `/message/id${this.$route.params.id}`) {
-        console.log(21212)
         this.setIsNewMessageNotify(false);
       } else {
         this.setIsNewMessageNotify(true);

@@ -61,6 +61,16 @@
       @click="setModalWriteMessage(true)">
       Написать сообщение
       </UIbtn>
+
+      <UIbtn 
+      v-if="!getUser.is_editProfile && getToken"
+      ref = addFriendBtn
+      class="add_friend_btn"
+      :class="{'add_friend_btn_togle': text_btn_friend === 'Заявка отправлена'}" 
+      @click="addFriend()"
+      >
+      {{ text_btn_friend }}
+      </UIbtn>
     </div>
       
 
@@ -78,7 +88,8 @@ export default {
   data() {
     return {
       active_btn: false,
-      text_btn: "",       
+      text_btn: "",  
+      text_btn_friend: "Добавить в друзья"     
     };
   },
 
@@ -102,6 +113,10 @@ export default {
         this.text_btn = "Редактировать фото";
       }
     },
+
+    addFriend() {
+      this.text_btn_friend === "Добавить в друзья" ? this.text_btn_friend = "Заявка отправлена" : this.text_btn_friend = "Добавить в друзья";
+    }
 
     // editToken() {
     //   localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSWx5YSIsImlkIjoyLCJpYXQiOjE2NzYzMjA0NjUsImV4cCI6MTY3NjQwNjg2NX0=.kWsqEdmYWjsShYxCy8TV2ivBk7J_wLCqNaAlilrs2VE");
@@ -253,5 +268,27 @@ export default {
   width: 155px;
   font-size: 13px;
   margin-bottom: 15px;
+}
+
+.add_friend_btn {
+  width: 155px;
+  font-size: 13px;
+  margin-bottom: 15px;
+  background: #00adef;
+  border: 1px solid #00adef;
+
+}
+.add_friend_btn_togle {
+  /* filter: opacity(0.5); */
+    background: content-box;
+    transition: 0.3s;
+    z-index: 1;
+    border: 1px solid #00adef;
+    box-shadow: 0px 1px 3px 0px rgb(0 0 0 / 40%);
+}
+.add_friend_btn_togle:hover {
+    /* filter: opacity(0.5); */
+    background: content-box;
+    transition: 0.3s;
 }
 </style>
