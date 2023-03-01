@@ -10,6 +10,7 @@ export const messageStore = {
         arrayDialogs: [],
         arrayMessages: [],
         countNewMessage: "",
+        isNewMessageNotify: false
 
     }),
     getters: {
@@ -19,6 +20,7 @@ export const messageStore = {
         getArrayMessages: (state) => state.arrayMessages,
         getCountNewMessage: (state) => state.countNewMessage,
         userAva: (state, _, rootState) => rootState.authorizationStore.user.ava,
+        getIsNewMessageNotify: (state) => state.isNewMessageNotify
 
     },
 
@@ -50,6 +52,10 @@ export const messageStore = {
 
         setCountNewMessage(state, count) {
             state.countNewMessage = count;
+        },
+
+        setIsNewMessageNotify(state, bool) {
+            state.isNewMessageNotify = bool;
         }
 
     },

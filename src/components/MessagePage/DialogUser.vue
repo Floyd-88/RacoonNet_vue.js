@@ -50,10 +50,17 @@
                         <p>
                             {{ messageText(message.message)}}
                         </p>
+                       
                     </div>
                 </div>
             </div>
             <!-- -- -->
+            <div class="wrapper_not_messages" v-if="getArrayMessages.length < 1">
+                <p class="not_messages">
+                    У вас отстутвует перписка с данным пользователем, но Вы можете начать общение прямо сейчас.
+                </p>
+            </div>
+            
         </div>
 
         <div class="wrapper_block_write_message">
@@ -131,7 +138,9 @@ export default {
     },
 
     unmounted() {
-    this.LOAD_DIALOGS({isExitMessage: true, convID: this.getArrayMessages[0].conv_id})
+        if(this.getArrayMessages.length > 0) {
+            this.LOAD_DIALOGS({isExitMessage: true, convID: this.getArrayMessages[0].conv_id});
+        }
     },
 
     methods: {
@@ -256,6 +265,7 @@ export default {
 .wrapper_main_messages {
     flex-grow: 1;
     overflow: auto;
+    position: relative;
 }
 .wrapper_message_dialog_user {
     display: flex;
@@ -350,5 +360,18 @@ export default {
 }
 .not_read_message {
     background-color: #ddffe6b3;
+}
+
+.wrapper_not_messages {
+    font-size: 16px;
+    line-height: 26px;
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    text-align: center;
+    padding: 0 30px;
+    opacity: .3;
+    font-family: fantasy;
+    color: dimgray;
 }
 </style>

@@ -2,8 +2,8 @@
   <HeaderNet />
   <div class="wrapper">
     <router-view></router-view>
-  <UInewMessage/>
-  </div>
+    <UInewMessage />
+</div>
 </template>
 
 <script>
@@ -16,51 +16,60 @@ export default {
   name: 'App',
 
   created() {
-        //вызываем метод для отправки сообщения всем участникам комнаты
-        SocketioService.setupSocketConnection();
-        console.log("connected")
+    //вызываем метод для отправки сообщения всем участникам комнаты
+    SocketioService.setupSocketConnection();
+    console.log("connected")
 
-        SocketioService.subscribeToMessages((err, data) => {
-            // if (err) return console.log(err)
-            this.setArrayMessages([...this.getArrayMessages, data]);
+    SocketioService.subscribeToMessages((err, data) => {
+      // if (err) return console.log(err)
+      this.setArrayMessages([...this.getArrayMessages, data]);
 
-            this.UPDATE_DIALOGS_SOCKETS(data);
-            // console.log(this.getArrayDialogs);
-            // console.log(data.conv_id)
+      this.UPDATE_DIALOGS_SOCKETS(data);
 
-            //  this.getArrayDialogs.map((dialog) => {
-            //   if(dialog.convId == data.conv_id) {
-            //    this.setArrayDialogs(data);
-            //     // dialog.message = data.message
-            //   }
-            // })
+      if (this.$route.path === `/message/id${this.$route.params.id}`) {
+        console.log(21212)
+        this.setIsNewMessageNotify(false);
+      } else {
+        this.setIsNewMessageNotify(true);
 
-        });
+      }
+      // console.log(this.getArrayDialogs);
+      // console.log(data.conv_id)
 
-  //       axios.interceptors.response.use(undefined, function (err) {
-  //         // this.logout()
-  //         return new Promise(function (resolve) {
-  //       if (err.status === 403 && err.config 
-  //           && !err.config.__isRetryRequest 
-  //       ) {
-  //         // this.logout()
-  //         resolve()
-  //       }
-  //       throw err; 
-  //     }); 
-  //   });  
-  }, 
+      //  this.getArrayDialogs.map((dialog) => {
+      //   if(dialog.convId == data.conv_id) {
+      //    this.setArrayDialogs(data);
+      //     // dialog.message = data.message
+      //   }
+      // })
+
+    });
+
+    //       axios.interceptors.response.use(undefined, function (err) {
+    //         // this.logout()
+    //         return new Promise(function (resolve) {
+    //       if (err.status === 403 && err.config 
+    //           && !err.config.__isRetryRequest 
+    //       ) {
+    //         // this.logout()
+    //         resolve()
+    //       }
+    //       throw err; 
+    //     }); 
+    //   });  
+  },
 
   beforeUnmount() {
     SocketioService.disconnect();
     console.log("disconnected")
-    },
+  },
 
 
   methods: {
     ...mapMutations({
       setArrayMessages: "messageStore/setArrayMessages",
-      setArrayDialogs: "messageStore/setArrayDialogs"
+      setArrayDialogs: "messageStore/setArrayDialogs",
+      setIsNewMessageNotify: "messageStore/setIsNewMessageNotify"
     }),
     ...mapActions({
       logout: "authorizationStore/logout",
@@ -75,9 +84,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ 
+    ...mapGetters({
       getArrayMessages: "messageStore/getArrayMessages",
-      getArrayDialogs: "messageStore/getArrayDialogs"
+      getArrayDialogs: "messageStore/getArrayDialogs",
     })
   },
 
@@ -89,11 +98,12 @@ export default {
         this.loadUser({ id })
           .then(() => {
             this.LOAD_DIALOGS();
-              // this.loadAllPhotos();
-              // this.loadPostServer(this.$route.params.id);
+            // console.log(this.getArrayDialogs.reduce((accum, item) => accum + item.unread, 0))
+            // this.loadAllPhotos();
+            // this.loadPostServer(this.$route.params.id);
           })
           .catch(() => {
-              this.$router.push('notFound')
+            this.$router.push('notFound')
           })
       }
     }
