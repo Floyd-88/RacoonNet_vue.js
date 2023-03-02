@@ -16,9 +16,14 @@ export default {
   name: 'App',
 
   created() {
+
+    this.CHECK_CONFIRM_FRIEND();
+    this.LOAD_DIALOGS();
+
+
     //вызываем метод для отправки сообщения всем участникам комнаты
     SocketioService.setupSocketConnection();
-    console.log("connected")
+    console.log("connected");
 
     SocketioService.subscribeToMessages((err, data) => {
       // if (err) return console.log(err)
@@ -74,7 +79,8 @@ export default {
       logout: "authorizationStore/logout",
       loadUser: "authorizationStore/loadUser",
       LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
-      UPDATE_DIALOGS_SOCKETS: "messageStore/UPDATE_DIALOGS_SOCKETS"
+      UPDATE_DIALOGS_SOCKETS: "messageStore/UPDATE_DIALOGS_SOCKETS",
+      CHECK_CONFIRM_FRIEND: "friendsStore/CHECK_CONFIRM_FRIEND"
       // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
       // loadPostServer: "postsMyPageStore/loadPostServer",
 
@@ -96,7 +102,8 @@ export default {
       if (id) {
         this.loadUser({ id })
           .then(() => {
-            this.LOAD_DIALOGS();
+            // this.LOAD_DIALOGS();
+            // this.CHECK_CONFIRM_FRIEND();
             // console.log(this.getArrayDialogs.reduce((accum, item) => accum + item.unread, 0))
             // this.loadAllPhotos();
             // this.loadPostServer(this.$route.params.id);

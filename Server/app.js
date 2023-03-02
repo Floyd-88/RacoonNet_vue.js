@@ -905,7 +905,7 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
 
             // Если диалог не создан ранее
             if (row_conversation.length == 0) {
-                return res.status(200).send("Переписка с данным пользователем отстутствует");
+                return res.status(200);
             } else {
                 //возвращаем переписку из БД
                 messages.get_messages_user_DB([
@@ -1099,6 +1099,27 @@ router.get("/check_request_friend", authenticateJWT, function(req, res) {
         })
     }
 })
+
+//ПРОВЕРКА НА ПОЛУЧЕНИЕ ЗАПРОСОВ В ДРУЗЬЯ
+router.get("/check_confirm_friends", authenticateJWT, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+    if (tokenID) {
+        //проверка отправленных мне запросов
+        friends.get_confirm_friends_DB([tokenID], (err, confirm) => {
+            if (err) return res.status(500).send("При поиске приглашения в друзья, произошла ошибка" + " " + err);
+
+            //если запроса небыло - оставляем как есть
+            // if (confirm.length === 0) {
+            // res.status(200).send("Заявок не было");
+            // } else {
+
+            res.status(200).send(confirm);
+
+            // }
+        })
+    }
+})
+
 
 
 //ПОЛУЧЕНИЕ СООБЩЕНИЙ БЕЗ ПЕРЕЗАГРУЗКИ

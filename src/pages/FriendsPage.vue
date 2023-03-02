@@ -4,7 +4,10 @@
   <div class="wrapper_main">
     <div class="main">
 
-      <p>Мои друзья</p>
+      <div class="MyFriends">
+        <MyFriends/>
+      </div>
+      <!-- <NotificationFriends/> -->
 
     </div>
   </div>
@@ -17,15 +20,12 @@
 import { mapGetters } from "vuex";
 
 export default {
-  name: "FriendsPage",
-
-  computed: {
-
-    ...mapGetters({
-      isLoggedIn: "authorizationStore/isLoggedIn",
-    }),
-
-  },
+    name: "FriendsPage",
+    computed: {
+        ...mapGetters({
+            isLoggedIn: "authorizationStore/isLoggedIn",
+        }),
+    },
 }
 </script>
 
@@ -37,5 +37,8 @@ export default {
 
 .main {
   margin-left: 180px;
+}
+.MyFriends {
+  display: flex;
 }
 </style>

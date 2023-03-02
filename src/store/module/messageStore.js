@@ -117,6 +117,7 @@ export const messageStore = {
                         params: { user_companion: id }
                     })
                     .then(function(resp) {
+                        console.log(resp.data)
                         commit("setArrayMessages", resp.data);
                     })
             } catch (err) {

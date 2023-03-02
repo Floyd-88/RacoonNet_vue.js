@@ -6,11 +6,13 @@ export const friendsStore = {
     state: () => ({
         textBtnFfriend: "Добавить в друзья",
         isFriend: false,
+        notificationAddFriends: []
     }),
 
     getters: {
         getTextBtnFfriend: (state) => state.textBtnFfriend,
-        getIsFriend: (state) => state.isFriend
+        getIsFriend: (state) => state.isFriend,
+        getNotificationAddFriends: (state) => state.notificationAddFriends
     },
 
     mutations: {
@@ -18,9 +20,16 @@ export const friendsStore = {
             state.textBtnFfriend = value;
         },
 
+        //показываеть или нет кнопку добавить в друзья
         setIsFriend(state, bool) {
             state.isFriend = bool;
+        },
+
+        setNotificationAddFriends(state, value) {
+            state.notificationAddFriends = value
         }
+
+
     },
 
     actions: {
@@ -37,7 +46,7 @@ export const friendsStore = {
             }
         },
 
-        //проверка на заявку в друзью после обновления страницы
+        //проверка на заявку в друзья после обновления страницы
         async CHECK_REQUEST_FRIEND({ commit }, id) {
             try {
                 await axios.get("http://localhost:8000/check_request_friend", { params: { id } })
@@ -53,7 +62,26 @@ export const friendsStore = {
             } catch (err) {
                 console.log(err)
             }
-        }
+        },
+
+        //проверка на приглашение в друзья
+        async CHECK_CONFIRM_FRIEND({ commit }) {
+            try {
+                await axios.get("http://localhost:8000/check_confirm_friends")
+                    .then(function(res) {
+                        if (res.data.length === 0) {
+                            console.log("Новых заявок в друзья нет")
+                        } else {
+                            commit("setNotificationAddFriends", res.data)
+                            console.log(res.data);
+                        }
+
+                    })
+            } catch (err) {
+                console.log(err)
+            }
+        },
+
     },
 
 

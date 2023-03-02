@@ -1,12 +1,12 @@
 <template>
   <div class="wrapper_myFriends">
-    Мои друзья
+    <slot></slot>
   </div>
 </template>
 
 <script>
 export default {
-  name: "MyFriends"
+  name: "MyFriendsBlock"
 }
 </script>
 

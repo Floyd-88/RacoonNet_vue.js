@@ -10,7 +10,7 @@ import MyPageContent from "@/components/MyPage/MyPageContent";
 import PhotoMyPage from "@/components/MyPage/PhotoMyPage";
 import AddPost from "@/components/MyPage/AddPost";
 import PostMyPage from "@/components/MyPage/PostMyPage";
-import MyFriends from "@/components/MyPage/MyFriends";
+import MyFriendsBlock from "@/components/MyPage/MyFriendsBlock";
 
 import AvatarEditor from "@/components/AvatarEditor";
 import EditProfile from "@/components/MyPage/EditProfile";
@@ -36,6 +36,11 @@ import UserMessage from "@/components/MessagePage/UserMessage";
 import DialogUser from "@/components/MessagePage/DialogUser";
 import WriteMessage from "@/components/MessagePage/WriteMessage";
 
+import MyFriends from "@/components/FriendsPage/MyFriends";
+import NotificationFriends from "@/components/FriendsPage/NotificationFriends";
+
+
+
 export default [
     UserInfo,
     NavigationNet,
@@ -47,7 +52,7 @@ export default [
     RegisterNet,
     UImodal,
     PhotoMyPage,
-    MyFriends,
+    MyFriendsBlock,
     EditProfile,
     ChangePassword,
     CloseModal,
@@ -64,5 +69,7 @@ export default [
     UserMessage,
     DialogUser,
     WriteMessage,
-    UInewMessage
+    UInewMessage,
+    MyFriends,
+    NotificationFriends
 ]

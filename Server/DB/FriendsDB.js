@@ -20,6 +20,13 @@ class FriendsDB {
         })
     }
 
+    //проверяем на наличие полученных заявок в друзья
+    get_confirm_friends_DB(userID, callback) {
+        return this.connection.query(`SELECT * FROM friends WHERE addressee_user_id=?`, userID, (err, confirm) => {
+            callback(err, confirm)
+        })
+    }
+
     // отправляем заявку в друзья
     add_friend_DB(users, callback) {
         return this.connection.query(

@@ -28,7 +28,7 @@
                         <img :src="pathAva" alt="ava">
                     </template>
                     <template v-else>
-                        <img :src="require(`../../assets/photo/${message.ava}`)" alt="ava">
+                            <img :src="require(`../../assets/photo/${message.ava}`)" alt="ava">
                     </template>
 
                 </div>

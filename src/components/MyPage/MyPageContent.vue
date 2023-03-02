@@ -18,14 +18,14 @@
 
     </div>
 
-    <MyFriends />
+    <MyFriendsBlock>Мои друзья </MyFriendsBlock>
 </template>
   
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
+import MyFriendsBlock from "./MyFriendsBlock.vue";
 export default {
     name: "MyPageContent",
-
     methods: {
         ...mapActions({
             loadPostServer: "postsMyPageStore/loadPostServer",
@@ -36,13 +36,11 @@ export default {
             setCountPostsNull: "postsMyPageStore/setCountPostsNull"
         }),
     },
-
     computed: {
         ...mapGetters({
             getPosts: "postsMyPageStore/getPosts",
         }),
     },
-
     watch: {
         $route() {
             if (this.$route.params.id) {
@@ -54,7 +52,6 @@ export default {
                 // this.loadPostServer(this.$route.params.id);
             }
         },
-
     },
     mounted() {
         const options = {
@@ -68,9 +65,8 @@ export default {
         };
         const observer = new IntersectionObserver(callback, options);
         observer.observe(this.$refs.observer);
-
     },
-
+    components: { MyFriendsBlock }
 }
 </script>
   

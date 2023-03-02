@@ -264,6 +264,7 @@ export default {
   width: 70px;
   font-size: 13px;
   margin-bottom: 5px;
+  margin-right: 5px;
 
 }
 
