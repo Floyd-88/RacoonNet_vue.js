@@ -231,7 +231,7 @@
 
 <script>
 import {useVuelidate} from "@vuelidate/core";
-import {required, email, minLength} from "@vuelidate/validators";
+import {required, email, minLength, maxLength} from "@vuelidate/validators";
 
 import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 import CloseModal from "@/components/UI/CloseModal";
@@ -258,13 +258,14 @@ export default {
     name: {
       required,
       min: minLength(2),
+      max: maxLength(30),
       name_validation: {
         $validator: validName,
         $message: 'Invalid Name'
       },
     },
     surname: {
-      required, min: minLength(2), name_validation: {
+      required, min: minLength(2), max: maxLength(30), name_validation: {
         $validator: validName,
         $message: 'Invalid Name'
       }
@@ -277,7 +278,7 @@ export default {
       }
     },
     city: {
-      required, min: minLength(2), name_validation: {
+      required, min: minLength(2), max: maxLength(30), name_validation: {
         $validator: validName,
         $message: 'Invalid Name'
       }

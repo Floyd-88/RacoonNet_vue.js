@@ -37,7 +37,12 @@ import DialogUser from "@/components/MessagePage/DialogUser";
 import WriteMessage from "@/components/MessagePage/WriteMessage";
 
 import MyFriends from "@/components/FriendsPage/MyFriends";
-import NotificationFriends from "@/components/FriendsPage/NotificationFriends";
+import InviteFriendsMe from "@/components/FriendsPage/InviteFriendsMe";
+import InviteFriendsFromMe from "@/components/FriendsPage/InviteFriendsFromMe";
+import CardFriend from "@/components/FriendsPage/CardFriend";
+import FilterName from "@/components/FriendsPage/FilterName";
+import SearchNewFriends from "@/components/FriendsPage/SearchNewFriends";
+import FriendCardBtns from "@/components/FriendsPage/FriendCardBtns";
 
 
 
@@ -71,5 +76,10 @@ export default [
     WriteMessage,
     UInewMessage,
     MyFriends,
-    NotificationFriends
+    InviteFriendsMe,
+    InviteFriendsFromMe,
+    CardFriend,
+    FilterName,
+    SearchNewFriends,
+    FriendCardBtns
 ]

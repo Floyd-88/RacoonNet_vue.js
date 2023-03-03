@@ -82,7 +82,7 @@
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
-import { required, minLength } from "@vuelidate/validators";
+import { required, minLength, maxLength } from "@vuelidate/validators";
 import { mapMutations, mapGetters, mapState, mapActions } from "vuex";
 import UIbtn from "./UI/UIbtn.vue";
 
@@ -98,7 +98,7 @@ export default {
   },
   validations: {
     old_password: { required },
-    new_password: { required, min: minLength(8) },
+    new_password: { required, min: minLength(8), max: maxLength(30) },
     new_password_confirmation: { required },
   },
   methods: {
