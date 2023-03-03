@@ -17,8 +17,12 @@ export default {
 
   created() {
 
-    this.CHECK_CONFIRM_FRIEND();
+    // this.CHECK_CONFIRM_FRIEND();
     this.LOAD_DIALOGS();
+    this.GET_USER_ADD_FRIENDS_ME();
+    this.GET_USER_MY_FRIENDS();
+   
+
 
 
     //вызываем метод для отправки сообщения всем участникам комнаты
@@ -63,6 +67,10 @@ export default {
     //   });  
   },
 
+  // mounted() {
+  //   this.CHECK_REQUEST_FRIEND(this.$route.params.id);
+  // },
+
   beforeUnmount() {
     SocketioService.disconnect();
     console.log("disconnected")
@@ -80,7 +88,10 @@ export default {
       loadUser: "authorizationStore/loadUser",
       LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
       UPDATE_DIALOGS_SOCKETS: "messageStore/UPDATE_DIALOGS_SOCKETS",
-      CHECK_CONFIRM_FRIEND: "friendsStore/CHECK_CONFIRM_FRIEND"
+      GET_USER_ADD_FRIENDS_ME: "friendsStore/GET_USER_ADD_FRIENDS_ME",
+      GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
+      // CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND"
+
       // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
       // loadPostServer: "postsMyPageStore/loadPostServer",
 

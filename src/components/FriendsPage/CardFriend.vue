@@ -1,17 +1,21 @@
 <template>
         <div class="my_friends_user_info">
-            <div class="wrapper_my_friend_card_ava">
-                <img class="my_friend_card_ava" src="../../assets/ava/ava_1.jpg" alt="ava">
+
+            <div class="wrapper_my_friend_card_ava"
+                @click="$router.push({name: 'mypage', params: {id: `${user.userID}`}})">
+                <img class="my_friend_card_ava" :src="loadAva(user.ava)" alt="ava">
             </div>
+
             <div class="wrapper_my_friend_card_identification">
-                <div class="wrapper_my_friend_card_name">
-                    <p class="my_friend_card_name">Илья Сазонов {{ elem }}</p>
+                <div class="wrapper_my_friend_card_name"
+                @click="$router.push({name: 'mypage', params: {id: `${user.userID}`}})">
+                    <p class="my_friend_card_name">{{ user.name + " " + user.surname }}</p>
                 </div>
                 <div class="wrapper_my_friend_card_country">
-                    <p class="my_friend_card_country">Страна: Россия</p>
+                    <p class="my_friend_card_country">Страна: {{ user.country }}</p>
                 </div>
                 <div class="wrapper_my_friend_card_city">
-                    <p class="my_friend_card_city">Город: Ставрополь</p>
+                    <p class="my_friend_card_city">Город: {{ user.city }}</p>
                 </div>
             </div>
         </div>    
@@ -22,14 +26,23 @@ export default {
     name: "CardFriend",
 
     props: {
-        elem:  {
-            type: Number,
+        user:  {
+            type: Object,
             default: () => {
-                return 0
+                return {}
             }
         }
     },
 
+    methods: {
+        loadAva(ava) {
+            try {
+                return require(`../../assets/photo/${ava}`)
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        }
+    }
 
 }
 </script>
@@ -51,6 +64,7 @@ export default {
     height: 80px;
     overflow: hidden;
     border-radius: 100%;
+    cursor: pointer;
 }
 
 .my_friend_card_ava {
@@ -61,9 +75,13 @@ export default {
 .wrapper_my_friend_card_name {
     font-size: 16px;
     font-family: fantasy;
+   
 }
 
-.my_friend_card_name {}
+.my_friend_card_name {
+    display: inline;
+    cursor: pointer;
+}
 
 .wrapper_my_friend_card_country {
     margin-top: 1px;

@@ -4,15 +4,15 @@
   <div class="wrapper_main">
     <div class="main">
 
-      <div class="MyFriends">
-        <div class="wrapper_my_friends">
-          <template v-if="isFriendShow === 'allFriends'">
+      <div class="wrapper_my_friends">
+        <div class="my_friends">
+          <template v-if="getIsFriendShow === 'allFriends'">
             <MyFriends />
           </template>
-          <template v-else-if="isFriendShow === 'friendsMe'">
+          <template v-else-if="getIsFriendShow === 'friendsMe'">
             <InviteFriendsMe />
           </template>
-          <template v-else-if="isFriendShow === 'friendsFromMe'">
+          <template v-else-if="getIsFriendShow === 'friendsFromMe'">
             <InviteFriendsFromMe />
           </template>
         </div>
@@ -22,9 +22,9 @@
 
           <!-- Переключение между уведомлениями -->
           <div class="my_friends_params_choice">
-            <button class="my_friends_params_choice_btn" @click="friendShow('allFriends')">Все мои друзья</button>
-            <button class="my_friends_params_choice_btn" @click="friendShow('friendsMe')">Со мной хотят дружить</button>
-            <button class="my_friends_params_choice_btn my_friends_params_choice_btn_end" @click="friendShow('friendsFromMe')">Я хочу дружить</button>
+            <button class="my_friends_params_choice_btn" @click="setIsFriendShow('allFriends')">Все мои друзья</button>
+            <button class="my_friends_params_choice_btn" @click="setIsFriendShow('friendsMe')">Со мной хотят дружить</button>
+            <button class="my_friends_params_choice_btn my_friends_params_choice_btn_end" @click="setIsFriendShow('friendsFromMe')">Я хочу дружить</button>
           </div>
 
           <!-- Фильтр поиска новых друзей -->
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "FriendsPage",
@@ -49,6 +49,9 @@ export default {
   },
 
   methods: {
+
+    ...mapMutations({setIsFriendShow: "friendsStore/setIsFriendShow"}),
+
     friendShow(value) {
       this.isFriendShow = value
     }
@@ -57,6 +60,7 @@ export default {
   computed: {
     ...mapGetters({
       isLoggedIn: "authorizationStore/isLoggedIn",
+      getIsFriendShow: "friendsStore/getIsFriendShow"
     }),
   },
 }
@@ -72,7 +76,7 @@ export default {
   margin-left: 180px;
 }
 
-.wrapper_my_friends {
+.my_friends  {
   white-space: nowrap;
   display: flex;
   flex-direction: column;
@@ -83,7 +87,7 @@ export default {
   box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
 }
 
-.MyFriends {
+.wrapper_my_friends {
   display: flex;
 }
 

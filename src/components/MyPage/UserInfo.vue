@@ -63,11 +63,11 @@
       </UIbtn>
 
       <UIbtn 
-      v-if="!getUser.is_editProfile && getToken && !getIsFriend"
+      v-if="!getUser.is_editProfile && getToken && getIsFriend"
       ref = addFriendBtn
       class="add_friend_btn"
       :class="{'add_friend_btn_togle': getTextBtnFfriend === 'Заявка отправлена'}" 
-      @click="addFriend()"
+      @click="addFriend(getTextBtnFfriend)"
       >
       {{ getTextBtnFfriend }}
       </UIbtn>
@@ -92,7 +92,7 @@ export default {
     };
   },
 
-  mounted() {
+  created() {
     this.CHECK_REQUEST_FRIEND(this.$route.params.id);
   },
 
@@ -100,7 +100,8 @@ export default {
     ...mapMutations({
       setModulEditProfile: "editProfileStore/setModulEditProfile",
       setShowFullAvaPhoto: "showFullPhotoStore/setShowFullAvaPhoto",
-      setModalWriteMessage: "messageStore/setModalWriteMessage"
+      setModalWriteMessage: "messageStore/setModalWriteMessage",
+      setIsFriendShow: "friendsStore/setIsFriendShow"
     }),
     ...mapActions({
       showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto",
@@ -120,10 +121,15 @@ export default {
     },
 
     //приглашение в друзья
-    addFriend() {
+    addFriend(nameBTN) {
       // this.getTextBtnFfriend === "Добавить в друзья" ? this.getTextBtnFfriend = "Заявка отправлена" : this.getTextBtnFfriend = "Добавить в друзья";
+      if(nameBTN === "Рассмотреть заявку") {
+        this.setIsFriendShow("friendsMe");
+        this.$router.push({name: 'friendspage'})
+      } else {
+        this.ADD_FRIEND(this.$route.params.id)
+      }
 
-      this.ADD_FRIEND(this.$route.params.id)
     }
 
     // editToken() {

@@ -11,9 +11,9 @@
         </div>
 
         <!-- карточка с другом -->
-        <div class="wrapper_my_friends_list" v-for="elem in 4" :key="elem">
+        <div class="wrapper_my_friends_list" v-for="user in getUsersMyFriends" :key="user.id">
             <div class="my_friend_card">
-                <CardFriend :elem="elem" />
+                <CardFriend :user="user"/>
                 
                 <!-- блок с кнопками -->
                 <FriendCardBtns/>
@@ -22,8 +22,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
     name: "MyFriends",
+
+    computed: {
+        ...mapGetters({ getUsersMyFriends: "friendsStore/getUsersMyFriends" }),
+    }
+    
 }
 
 </script>

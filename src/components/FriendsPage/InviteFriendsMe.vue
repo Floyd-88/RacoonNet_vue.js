@@ -6,29 +6,56 @@
     </div>
 
     <!-- карточка с другом -->
-    <div class="wrapper_my_friends_list" v-for="elem in 2" :key="elem">
+    <template v-if="getUsersFriendsMe.length > 0">
+        <div class="wrapper_my_friends_list" v-for="user in getUsersFriendsMe" :key="user.userID">
         <div class="my_friend_card">
-            <CardFriend :elem="elem" />
+            <CardFriend :user="user" />
 
-            <!-- блок с кнопками -->
             <!-- блок с кнопками -->
             <div class="wrapper_my_friend_card_show_btns">
                 <div class="wrapper_my_friend_card_btns">
                     <div class="my_friend_card_btn_write_message">
-                        <UIbtn class="btn_write_message">Принять приглашение</UIbtn>
+                        <UIbtn class="btn_write_message" @click="AGREE_ADD_FRIEND_USER(user.id)">Принять приглашение</UIbtn>
                     </div>
+                <div class="my_friend_card_btn_delete_friend">
+                    <UIbtn class="btn_delete_friend">Отказаться от дружбы</UIbtn>
+                </div>
                 </div>
             </div>
 
         </div>
-</div>
+    </div>
+    </template>
+    <template v-else>
+        <div>
+            <p>Список приглашений в друзья от других пользователй пуст</p>
+        </div>
+    </template>
+   
 </template>
     
 <script>
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
     name: "InviteFriendsMe",
 
+    mounted() {
+        this.GET_USER_ADD_FRIENDS_ME();
+    },
+
+    methods: {
+        ...mapActions({ 
+            GET_USER_ADD_FRIENDS_ME: "friendsStore/GET_USER_ADD_FRIENDS_ME",
+            AGREE_ADD_FRIEND_USER: "friendsStore/AGREE_ADD_FRIEND_USER"
+        })
+    },
+
+    computed: {
+        ...mapGetters({ getUsersFriendsMe: "friendsStore/getUsersFriendsMe" })
+    }
 }
+
 
 </script>
     
@@ -72,4 +99,8 @@ export default {
 }
 
 .btn_write_message {}
+
+.btn_delete_friend {
+    filter: opacity(0.7);
+}
 </style>

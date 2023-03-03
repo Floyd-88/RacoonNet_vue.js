@@ -12,7 +12,7 @@
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/friends')"> Мои друзья</button>
-      <p :class="{'new_message': getNotificationAddFriends.length > 0}"></p>
+      <p :class="{'new_message': getUsersFriendsMe.length > 0}"></p>
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/gallery')"> Галерея</button>
@@ -42,7 +42,7 @@ export default {
     ...mapGetters({
       // getCountNewMessage: "messageStore/getCountNewMessage",
       getArrayDialogs: "messageStore/getArrayDialogs",
-      getNotificationAddFriends: "friendsStore/getNotificationAddFriends"
+      getUsersFriendsMe: "friendsStore/getUsersFriendsMe"
   }),
 
     newMessage() {
