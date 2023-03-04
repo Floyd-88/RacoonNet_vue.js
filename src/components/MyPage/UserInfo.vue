@@ -122,7 +122,6 @@ export default {
 
     //приглашение в друзья
     addFriend(nameBTN) {
-      // this.getTextBtnFfriend === "Добавить в друзья" ? this.getTextBtnFfriend = "Заявка отправлена" : this.getTextBtnFfriend = "Добавить в друзья";
       if(nameBTN === "Рассмотреть заявку") {
         this.setIsFriendShow("friendsMe");
         this.$router.push({name: 'friendspage'})

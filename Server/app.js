@@ -1061,14 +1061,12 @@ router.post("/add_friend", authenticateJWT, function(req, res) {
             if (confirmID.length === 0) {
                 friends.add_friend_DB([tokenID, req.body.id], (err) => {
                     if (err) return res.status(500).send("При отправке запроса в друзья, произошла ошибка" + " " + err);
-
                     res.status(200).send("Заявка отправлена")
                 })
             } else {
                 //если запрос ранее был - отменяем его
                 friends.cancel_add_friend_DB([confirmID[0].id], (err) => {
                     if (err) return res.status(500).send("При отмене заявки в друзья произошла ошибка" + " " + err);
-
                     res.status(200).send("Добавить в друзья")
                 })
             }
@@ -1079,9 +1077,6 @@ router.post("/add_friend", authenticateJWT, function(req, res) {
 //ПРОВЕРКА НА РАНЕЕ ОТПРАВЛЕННУЮ ЗАЯВКУ В ДРУЗЬЯ
 router.get("/check_request_friend", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
-
-    console.log(tokenID === req.query.id);
-
 
     if (tokenID != req.query.id) {
         //проверка на ранее отправленную заявку
@@ -1139,6 +1134,19 @@ router.get("/add_friends_me", authenticateJWT, function(req, res) {
     }
 })
 
+//ПОЛУЧЕНИЕ ПЛЬЗОВАТЕЛЕЙvКОТОРЫМ Я ОТПРАВИЛ ЗАПРОС В ДРУЗЬЯ
+router.get("/add_friends_from_me", authenticateJWT, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+    if (tokenID) {
+        friends.get_user_confirm_friends_from_me_DB([tokenID], (err, users) => {
+            if (err) return res.status(500).send("При получении пользователей которых я пригласил в друзья, произошла ошибка" + " " + err);
+
+            res.status(200).send(users);
+
+        })
+    }
+})
+
 //ПОЛУЧЕНИЕ МОИХ ДРУЗЕЙ
 router.get("/my_friends", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
@@ -1160,6 +1168,18 @@ router.put("/add_friends_me", authenticateJWT, function(req, res) {
             if (err) return res.status(500).send("При получении пользователей приглашающих меня в друзья, произошла ошибка" + " " + err);
 
             res.status(200).send("Пользователь добавлен в Ваши друзья");
+
+        })
+    }
+})
+
+//УДАЛИТЬ ИЗ ДРУЗЕЙ
+router.delete("/delete_friends", authenticateJWT, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+    if (tokenID) {
+        friends.delete_friend_DB([req.body.id], (err) => {
+            if (err) return res.status(500).send("При удалении пользователя из друзей, произошла ошибка" + " " + err);
+            res.status(200).send("Пользователь удален из ваших друзей");
 
         })
     }

@@ -53,6 +53,13 @@ class FriendsDB {
         })
     }
 
+    //получаем пользователй которым я отправил заявку в друзья
+    get_user_confirm_friends_from_me_DB(userID, callback) {
+        return this.connection.query(`SELECT F.id, U.userID, U.name, U.surname, U.country, U.ava, U.city FROM users U INNER JOIN friends F ON U.userID = F.addressee_user_id WHERE sender_user_id=? AND confirm_addressee NOT IN (1)`, userID, (err, users) => {
+            callback(err, users)
+        })
+    }
+
     // отправляем заявку в друзья
     add_friend_DB(users, callback) {
         return this.connection.query(
@@ -75,27 +82,13 @@ class FriendsDB {
         });
     }
 
+    //удаление пользователя из друзей
+    delete_friend_DB(body, callback) {
+        return this.connection.execute(`DELETE from friends WHERE id=?`, body, (err) => {
+            callback(err)
+        })
+    }
 
-    // // загрузка фото из базы данны
-    // load_photos_DB(params, callback) {
-    //     return this.connection.execute(`SELECT photo_name FROM photos WHERE userID = ? ORDER BY id DESC limit ?, ?`, params, (err, row) => {
-    //         callback(err, row)
-    //     });
-    // }
-
-    // //загрузка всех фото из базы данных
-    // load_all_photos_DB(params, callback) {
-    //     return this.connection.execute(`SELECT id, photo_name FROM photos WHERE userID = ? ORDER BY id DESC`, params, (err, row) => {
-    //         callback(err, row)
-    //     });
-    // }
-
-    // // удаление фотографии
-    // remove_photo(photo, callback) {
-    //     return this.connection.execute(`DELETE from photos WHERE id = ? and userID = ?`, photo, (err) => {
-    //         callback(err);
-    //     });
-    // }
 
 }
 module.exports = FriendsDB;

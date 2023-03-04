@@ -92,7 +92,7 @@ export default {
       //   console.log(cb);
       // });
       //сохраянем сообщение в БД
-      this.WRITE_MESSAGE_USER(this.$route.params.id);
+      this.WRITE_MESSAGE_USER(this.user.userID);
     },
   },
   computed: {

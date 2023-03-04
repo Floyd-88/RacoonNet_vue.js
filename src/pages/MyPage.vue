@@ -4,7 +4,6 @@
 
   <div class="wrapper_main">
     <div class="main">
-
       <!-- модальное окно для редактирования профиля -->
       <template v-if="getModulEditProfile">
         <UImodal>
@@ -13,7 +12,7 @@
       </template>
 
       <!-- модальное окно для написания сообщения -->
-      <template v-if="getModalWriteMessage">
+      <template v-if="getModalWriteMessage && $route.params.id">
         <UImodal>
           <WriteMessage :user="{
             name: getUser.name,

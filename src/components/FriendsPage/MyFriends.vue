@@ -1,7 +1,7 @@
 <template>
         <div class="wrapper_my_friends_header">
             <div class="my_friends_header">
-                <h3>Список ваших друзей</h3>
+                <h3>Мои друзья</h3>
             </div>
 
             <!-- поск друга по имени -->
@@ -11,14 +11,27 @@
         </div>
 
         <!-- карточка с другом -->
-        <div class="wrapper_my_friends_list" v-for="user in getUsersMyFriends" :key="user.id">
+        <template v-if="getUsersMyFriends.length > 0">
+            <div class="wrapper_my_friends_list" v-for="user in getUsersMyFriends" :key="user.id">
             <div class="my_friend_card">
                 <CardFriend :user="user"/>
                 
                 <!-- блок с кнопками -->
-                <FriendCardBtns/>
+                <FriendCardBtns 
+                :user="user"
+                @getUserInfo="getUserInfo"
+                />
             </div>
         </div>
+        </template>
+        <template v-else>
+        <div class="wrapper_text_not_friends">
+            <p>Ваш список друзей пуст, попробуйте завести новые знакомства здесь</p>
+        </div>
+        </template>
+
+
+
 </template>
 
 <script>
@@ -26,6 +39,13 @@ import { mapGetters } from 'vuex';
 
 export default {
     name: "MyFriends",
+    emits: ["getUserInfo"],
+
+    methods: {
+        getUserInfo(user) {
+            this.$emit("getUserInfo", user);
+        }
+    },
 
     computed: {
         ...mapGetters({ getUsersMyFriends: "friendsStore/getUsersMyFriends" }),
@@ -59,5 +79,13 @@ export default {
     border-radius: 5px;
     background: #f8f8f9;
     box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
+}
+
+.wrapper_text_not_friends {
+    font-size: 15px;
+    font-family: fantasy;
+    text-align: center;
+    margin-top: 20px;
+    opacity: .6;
 }
 </style>
