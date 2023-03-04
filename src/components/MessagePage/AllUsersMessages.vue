@@ -1,7 +1,16 @@
 <template>
-  <div v-for="dialog in getArrayDialogs" :key="dialog.convId" class="wrapper_all_messages_users">
-    <UserMessage :dialog="dialog" />
-</div>
+  <template v-if="getArrayDialogs.length > 0">
+    <div v-for="dialog in getArrayDialogs" :key="dialog.convId" class="wrapper_all_messages_users">
+      <UserMessage :dialog="dialog" />
+    </div>
+  </template>
+  <template v-else>
+    <div class="wrapper_not_messages">
+      <p class="not_messages">
+        Ваш список диалогов пуст. Пора приступать к общению!
+      </p>
+    </div>
+</template>
 </template>
     
 <script>
@@ -43,5 +52,18 @@ export default {
 
 .wrapper_all_messages_users:hover {
   filter: brightness(97%);
+}
+
+.wrapper_not_messages {
+  font-size: 16px;
+  line-height: 26px;
+  display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    font-size: 20px;
+  opacity: .8;
+  font-family: fantasy;
+  color: dimgray;
 }
 </style>

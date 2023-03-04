@@ -10,8 +10,8 @@
                 </div>
                 <!-- </transition-group> -->
                 <!-- <button class="prev" v-on:click.left="setPrevIndexPhoto" >&#10094;</button> -->
-                <a class="prev" @click="setPrevIndexPhoto" href='#'>&#10094;</a>
-                <a class="next" @click="setNextIndexPhoto" href='#'>&#10095;</a>
+                <a class="prev" @click.prevent="setPrevIndexPhoto" href='#'>&#10094;</a>
+                <a class="next" @click.prevent="setNextIndexPhoto" href='#'>&#10095;</a>
 
                 <div class="wrapper_block_info_photo">
                     <div class="wrapper_block_info_name_count_photo">

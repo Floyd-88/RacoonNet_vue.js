@@ -195,16 +195,16 @@ export const loadPhotoStore = {
                             commit("setProgressLoadPhoto", progress);
                         },
                     }
-                ).then((res) => {
+                ).then(() => {
                     commit("setIsModalLoadPhoto", false);
-                    commit("authorizationStore/setUserAva", res.data.ava, {
-                        root: true
-                    })
-                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                        root: true
-                    });
+                    // commit("authorizationStore/setUserAva", res.data.ava, {
+                    //     root: true
+                    // })
+                    // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                    //     root: true
+                    // });
                     commit("setProgressLoadPhoto", 0);
-                    // window.location.href = `/id${getters.getUser.userID}`;
+                    window.location.href = `/id${getters.getUser.userID}`;
                 })
                 .catch((err) => {
                     if (axios.isCancel(err)) {
@@ -238,6 +238,7 @@ export const loadPhotoStore = {
         async loadAllPhotos({
             commit
         }, id) {
+            console.log(id)
             try {
                 await axios.get('http://localhost:8000/upload_all_photo', {
                     params: {

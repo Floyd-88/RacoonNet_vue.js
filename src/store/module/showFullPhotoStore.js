@@ -29,7 +29,7 @@ export const showFullPhotoStore = {
             state.indexPhoto = elem;
         },
 
-        //преход на одну картинку аперед
+        //преход на одну картинку вперед
         setNextIndexPhoto(state) {
             state.indexPhoto += 1;
         },
