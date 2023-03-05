@@ -1,7 +1,7 @@
 <template>
     <CloseModal @click="setIsModalAllPhotos(false)"/>
 
-    <h2 class="title_pthoto_name">Фотографии {{getUser.name + " " + getUser.surname}}</h2>
+    <h2 class="title_pthoto_name">Мои фотографии</h2>
     <div class="wrapper_contents_allPhotos">
         <div class="wrapper_preview_allPhotos">
             <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage.slice(0, getLimitAllPhoto)" :key="index">

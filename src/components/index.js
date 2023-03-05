@@ -44,6 +44,8 @@ import FilterName from "@/components/FriendsPage/FilterName";
 import SearchNewFriends from "@/components/FriendsPage/SearchNewFriends";
 import FriendCardBtns from "@/components/FriendsPage/FriendCardBtns";
 
+import HeaderGallery from "@/components/GalleryPage/HeaderGallery";
+import CategoryFilter from "@/components/GalleryPage/CategoryFilter";
 
 
 export default [
@@ -81,5 +83,7 @@ export default [
     CardFriend,
     FilterName,
     SearchNewFriends,
-    FriendCardBtns
+    FriendCardBtns,
+    HeaderGallery,
+    CategoryFilter
 ]

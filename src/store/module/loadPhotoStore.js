@@ -181,7 +181,7 @@ export const loadPhotoStore = {
                 let file = getters.getArrayLoadImage[i];
                 formData.append('files[' + i + ']', file);
             }
-            formData.append('id', getters.getUser.userID);
+            formData.append('id', JSON.parse(localStorage.getItem('user')).userID);
 
             axios.post(
                     'http://localhost:8000/upload_photo',
@@ -204,7 +204,7 @@ export const loadPhotoStore = {
                     //     root: true
                     // });
                     commit("setProgressLoadPhoto", 0);
-                    window.location.href = `/id${getters.getUser.userID}`;
+                    window.location.href = `/id${JSON.parse(localStorage.getItem('user')).userID}`;
                 })
                 .catch((err) => {
                     if (axios.isCancel(err)) {

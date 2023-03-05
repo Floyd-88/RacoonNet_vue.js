@@ -16,6 +16,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   flex: 0 0 30%;
+  border-radius: 5px;
   background: #f8f8f9;
   box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
   height: max-content;

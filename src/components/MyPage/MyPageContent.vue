@@ -18,7 +18,21 @@
 
     </div>
 
-    <MyFriendsBlock>Мои друзья </MyFriendsBlock>
+    <MyFriendsBlock>
+        <div class="wrapper_my_friends_title">
+            <h4>Мои друзья</h4>
+        </div>
+        <div class="list_my_friends">
+            <div class="my_friend" v-for="friend in getUsersMyFriends" :key="friend.id">
+                <div class="my_friend_ava" @click="$router.push({name: 'mypage', params: {id: `${friend.userID}`}})">
+                    <img :src="loadAva(friend.ava)" alt="ava">
+                </div>
+                <div class="my_friend_name" @click="$router.push({name: 'mypage', params: {id: `${friend.userID}`}})">
+                    <p>{{ friend.name }}</p>
+                </div>
+            </div>
+        </div>
+    </MyFriendsBlock>
 </template>
   
 <script>
@@ -35,10 +49,19 @@ export default {
             setPosts: "postsMyPageStore/setPosts",
             setCountPostsNull: "postsMyPageStore/setCountPostsNull"
         }),
+
+        loadAva(ava) {
+            try {
+                return require(`../../assets/photo/${ava}`)
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        }
     },
     computed: {
         ...mapGetters({
             getPosts: "postsMyPageStore/getPosts",
+            getUsersMyFriends: "friendsStore/getUsersMyFriends"
         }),
     },
     watch: {
@@ -95,5 +118,42 @@ export default {
 
 .observer {
     border: 1px solid;
+}
+
+
+/* --------------------------- */
+
+.wrapper_my_friends_title {
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+    font-size: 17px;
+    font-family: fantasy;
+}
+.wrapper_my_friends_title h4 {
+    font-weight: 300;
+}
+.list_my_friends {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 0 10px;
+    justify-content: center;
+}
+.my_friend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+}
+.my_friend_ava {
+    
+}
+.my_friend_ava img {
+    width: 64px;
+    border-radius: 100%;
+    cursor: pointer;
+}
+.my_friend_name {
+    cursor: pointer;
 }
 </style>

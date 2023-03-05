@@ -10,6 +10,7 @@ import { loadPhotoStore } from "@/store/module/loadPhotoStore"
 import { showFullPhotoStore } from "@/store/module/showFullPhotoStore"
 import { messageStore } from "@/store/module/messageStore"
 import { friendsStore } from "@/store/module/friendsStore"
+import { galleryStore } from "@/store/module/galleryStore"
 
 
 
@@ -25,6 +26,7 @@ export default createStore({
         loadPhotoStore,
         showFullPhotoStore,
         messageStore,
-        friendsStore
+        friendsStore,
+        galleryStore
     }
 });
