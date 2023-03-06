@@ -166,7 +166,8 @@ export const loadPhotoStore = {
         addPhotoServer: function({
             getters,
             commit,
-            state
+            state,
+            rootGetters
         }, event) {
             //остановка загрузки картинок
             const axiosSource = axios.CancelToken.source();
@@ -182,6 +183,11 @@ export const loadPhotoStore = {
                 formData.append('files[' + i + ']', file);
             }
             formData.append('id', JSON.parse(localStorage.getItem('user')).userID);
+
+            //добавляем категорию к фотографии если она есть
+            if (rootGetters["galleryStore/getSelectedLoadThemaPhoto"]) {
+                formData.append('category', rootGetters["galleryStore/getSelectedLoadThemaPhoto"])
+            }
 
             axios.post(
                     'http://localhost:8000/upload_photo',
@@ -247,6 +253,7 @@ export const loadPhotoStore = {
                 }).then((response) => {
                     commit("setMyPhotosMyPage", response.data);
                     commit("setAllMyPhotosMyPage", response.data);
+                    commit("galleryStore/setArrayFilterPhotos", response.data, { root: true });
                 });
             } catch (err) {
                 console.log(err);
@@ -280,6 +287,9 @@ export const loadPhotoStore = {
                     commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                         root: true
                     });
+                    commit("galleryStore/removeArrayFilterPhotos", getters.getIdPhoto, {
+                        root: true
+                    })
                     console.log(response.data)
                 });
             } catch (err) {

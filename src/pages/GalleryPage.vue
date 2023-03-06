@@ -15,7 +15,7 @@
         <div class="wrapper_contents_allPhotos">
           <div class="wrapper_preview_allPhotos">
             <div class="all_photos" id="preview_myPhoto"
-              v-for="(photo, index) in getAllPhotosMyPage.slice(0, getLimitAllPhoto)" :key="index">
+              v-for="(photo, index) in getArrayFilterPhotos.slice(0, getLimitAllPhoto)" :key="index">
               <img class="photo" :src="require(`../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name"
                 @click="fullSizePhoto({ bool: true, elem: index, id: photo.id })">
 
@@ -56,7 +56,14 @@ export default {
   },
 
 
-  mounted() {
+  async mounted() {
+    this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
+    this.loadUser({id: JSON.parse(localStorage.getItem('user')).userID})
+
+
+    // this.setFilterPhoto(this.getAllPhotosMyPage);
+    // console.log(this.getFilterPhoto)
+
     // обсервер срабатывает каждый раз когда докручиваем страницу донизу
     const options = {
       rootMargin: "0px",
@@ -65,7 +72,7 @@ export default {
     const callback = (entries) => {
       if (entries[0].isIntersecting) {
         this.setLimitAllPhoto(8);
-        this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
+        // this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
       }
     };
     const observer = new IntersectionObserver(callback, options);
@@ -78,6 +85,8 @@ export default {
       setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
       setCountPhoto: "loadPhotoStore/setCountPhoto",
       setLimitAllPhoto: "loadPhotoStore/setLimitAllPhoto",
+      setArrayFilterPhotos: "galleryStore/setArrayFilterPhotos"
+
     }),
 
     ...mapActions({
@@ -85,7 +94,7 @@ export default {
       loadAllPhotos: "loadPhotoStore/loadAllPhotos",
       fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
       // modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
-      closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
+      closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
     }),
 
   },
@@ -102,6 +111,8 @@ export default {
       getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
       // getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",
       getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
+
+      getArrayFilterPhotos: "galleryStore/getArrayFilterPhotos"
     }),
   },
 }

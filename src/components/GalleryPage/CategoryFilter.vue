@@ -14,8 +14,8 @@
                 <label for="3">Арты</label>
             </div>
             <div class="header_checkboxes">
-                <input type="checkbox" id="4" value="Города" v-model="chooseCat" />
-                <label for="4">Города</label>
+                <input type="checkbox" id="4" value="Город" v-model="chooseCat" />
+                <label for="4">Город</label>
             </div>
             <div class="header_checkboxes">
                 <input type="checkbox" id="5" value="Горы" v-model="chooseCat" />
@@ -117,21 +117,27 @@
                 <input type="checkbox" id="29" value="Черно-белые" v-model="chooseCat" />
                 <label for="29">Черно-белые</label>
             </div>
+            <div class="header_checkboxes">
+                <input type="checkbox" id="30" value="not category" v-model="chooseCat" />
+                <label for="30">Без темы</label>
+            </div>
         </div>
 
-        <div class="wrapper_checkboxes_filter">
+        <!-- <div class="wrapper_checkboxes_filter">
             <p>Отмеченные имена: {{ getCheckedCat }}</p>
-        </div>
+        </div> -->
 
         <div class="wrapper_checkboxes_filter_btn">
-            <UIbtn class="checkboxes_filter_btn">Отфильтровать</UIbtn>
+            <UIbtn class="checkboxes_filter_btn" @click="GET_PHOTO_FILTER_THEMA()">Отфильтровать</UIbtn>
+            <UIbtn class="checkboxes_filter_btn checkboxes_filter_btn_not" @click="GET_PHOTO_NOT_FILTER()">Убрать все фильтры </UIbtn>
+
         </div>
 </div>
 </template>
 
 <script>
 import UIbtn from "@/components/UI/UIbtn.vue";
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
     name: "CategoryFilter",
@@ -142,7 +148,15 @@ export default {
     },
 
     methods: {
-        ...mapMutations({setCheckedCat: "galleryStore/setCheckedCat"})
+        ...mapMutations({setCheckedCat: "galleryStore/setCheckedCat"}),
+        ...mapActions({
+            GET_PHOTO_FILTER_THEMA: "galleryStore/GET_PHOTO_FILTER_THEMA",
+            GET_PHOTO_NOT_FILTER: "galleryStore/GET_PHOTO_NOT_FILTER"
+        })
+
+        // getPhotoFilterThema() {
+
+        // }
     },
 
     computed: {
@@ -193,5 +207,9 @@ export default {
 
 .checkboxes_filter_btn {
   background: #0197d6c2;
+}
+.checkboxes_filter_btn_not {
+    margin-left: 10px;
+    background: whitesmoke;
 }
 </style>

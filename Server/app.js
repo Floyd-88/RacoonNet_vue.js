@@ -608,6 +608,8 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
     userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
 
+    console.log(req.body.category)
+
     if (userID === tokenID) {
         //допустимые форматы
         const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
@@ -616,6 +618,13 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
         if (!req.files) {
             return res.status(500).send("Файлы не отправлены")
         }
+
+        //проверка на наличие категории у фото
+        let category = "not category";
+        if (req.body.category) {
+            category = req.body.category;
+        }
+
         let arrayPhotos = [];
 
         //переберем массив фотографий
@@ -648,7 +657,7 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
                 // );
 
                 //добавляем в массив название фото и id юзера
-                arrayPhotos.push([updateName, tokenID]);
+                arrayPhotos.push([updateName, tokenID, category]);
             }
         }
         //загрузка в БД

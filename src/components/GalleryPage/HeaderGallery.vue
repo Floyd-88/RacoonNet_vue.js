@@ -2,7 +2,7 @@
     <div class="wrapper_contents_myPhoto wrapper_contents_myPhoto_header">
         <div class="wrapper_header_btns">
             <div class="header_btn_show cat">
-                <UIbtn @click="setIsShowCat">Отфильтровать по категориям</UIbtn>
+                <UIbtn @click="setIsShowCat">Отфильтровать по темам</UIbtn>
             </div>
             <div class="header_btns_load_photo">
 
@@ -25,7 +25,7 @@
                                 </option>
                                 <option class="select_cat_photo_opt" value="Аниме">Аниме</option>
                                 <option class="select_cat_photo_opt" value="Арты">Арты</option>
-                                <option class="select_cat_photo_opt" value="Города">Города</option>
+                                <option class="select_cat_photo_opt" value="Города">Город</option>
                                 <option class="select_cat_photo_opt" value="Горы">Горы</option>
                                 <option class="select_cat_photo_opt" value="Девушки">Девушки</option>
                                 <option class="select_cat_photo_opt" value="Друзья">Друзья</option>

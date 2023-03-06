@@ -28,7 +28,7 @@
                         <img :src="pathAva" alt="ava">
                     </template>
                     <template v-else>
-                            <img :src="require(`../../assets/photo/${message.ava}`)" alt="ava">
+                            <img :src="pathAvaMy" alt="ava">
                     </template>
 
                 </div>
@@ -203,11 +203,23 @@ export default {
                 this.v$.messageUser.$touch();
             }
         },
-        //подгрузка автатарки
+        //подгрузка автатарки с кем я переписываюсь
         pathAva() {
             try {
                 return require(`../../assets/photo/${this.getUser.ava}`);
             } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
+
+        //подгрузка аватрки моей
+        pathAvaMy() {
+            let message = this.getArrayMessages.find(message => message.sender === JSON.parse(localStorage.getItem('user')).userID)
+            try {
+                console.log(message.ava)
+                return require(`../../assets/photo/${message.ava}`);
+            } catch {
+                console.log('ava')
                 return require(`../../assets/ava/ava_1.jpg`);
             }
         },

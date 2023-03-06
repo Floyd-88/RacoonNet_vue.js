@@ -9,14 +9,14 @@ class PhotosDB {
 
     //создаем таблицу БД с фотографиями
     createTablePhotos() {
-        const sql = `CREATE TABLE IF NOT EXISTS photos (id integer PRIMARY KEY AUTO_INCREMENT, photo_name varchar(150) not null, date timestamp not null DEFAULT CURRENT_TIMESTAMP, userID integer not null, CONSTRAINT FK_Photos_Users FOREIGN KEY (userID)  REFERENCES users (userID) ON DELETE CASCADE)`;
+        const sql = `CREATE TABLE IF NOT EXISTS photos (id integer PRIMARY KEY AUTO_INCREMENT, photo_name varchar(150) not null, date timestamp not null DEFAULT CURRENT_TIMESTAMP, userID integer not null, category varchar (50) default 'not category', CONSTRAINT FK_Photos_Users FOREIGN KEY (userID)  REFERENCES users (userID) ON DELETE CASCADE)`;
         this.connection.execute(sql);
     }
 
     // добавление фото в базу данных
     add_photo_DB(arrayPhotos, callback) {
         return this.connection.query(
-            'INSERT INTO photos (photo_name, userID) VALUES ?', [arrayPhotos], (err) => {
+            'INSERT INTO photos (photo_name, userID, category) VALUES ?', [arrayPhotos], (err) => {
                 callback(err);
             })
     }
@@ -30,7 +30,7 @@ class PhotosDB {
 
     //загрузка всех фото из базы данных
     load_all_photos_DB(params, callback) {
-        return this.connection.execute(`SELECT id, photo_name FROM photos WHERE userID = ? ORDER BY id DESC`, params, (err, row) => {
+        return this.connection.execute(`SELECT id, photo_name, category FROM photos WHERE userID = ? ORDER BY id DESC`, params, (err, row) => {
             callback(err, row)
         });
     }
