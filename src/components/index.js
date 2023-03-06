@@ -47,6 +47,8 @@ import FriendCardBtns from "@/components/FriendsPage/FriendCardBtns";
 import HeaderGallery from "@/components/GalleryPage/HeaderGallery";
 import CategoryFilter from "@/components/GalleryPage/CategoryFilter";
 
+import ContentNews from "@/components/NewsPage/ContentNews"
+
 
 export default [
     UserInfo,
@@ -85,5 +87,6 @@ export default [
     SearchNewFriends,
     FriendCardBtns,
     HeaderGallery,
-    CategoryFilter
+    CategoryFilter,
+    ContentNews
 ]

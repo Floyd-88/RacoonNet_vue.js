@@ -4,7 +4,7 @@
   <div class="wrapper_main">
     <div class="main">
 
-      <p>Новости</p>
+      <ContentNews/>
 
     </div>
   </div>
@@ -17,15 +17,12 @@
 import { mapGetters } from "vuex";
 
 export default {
-  name: "NewsPage",
-
-  computed: {
-
-    ...mapGetters({
-      isLoggedIn: "authorizationStore/isLoggedIn",
-    }),
-
-  },
+    name: "NewsPage",
+    computed: {
+        ...mapGetters({
+            isLoggedIn: "authorizationStore/isLoggedIn",
+        }),
+    },
 }
 </script>
 
