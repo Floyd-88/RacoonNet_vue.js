@@ -35,6 +35,36 @@ class PostsDB {
         });
     }
 
+    // получение новостной ленты от друзей
+    load_news_friens_DB(params, callback) {
+        return this.connection.execute(`SELECT 
+        posts.id, 
+        users.ava, 
+        posts.date, 
+        posts.postText, 
+        users.name, 
+        users.surname,
+        posts.authorPost FROM posts 
+        INNER JOIN users ON posts.authorPost = users.userID 
+        WHERE page_userID IN (SELECT 
+                             U.userID FROM users U 
+                             INNER JOIN friends F ON 
+                                 CASE
+                             WHEN addressee_user_id = ?
+                                 THEN
+                                U.userID=sender_user_id
+                                 WHEN
+                             sender_user_id = ?
+                                 THEN
+                             U.userID=addressee_user_id
+                                 END
+                             WHERE (confirm_addressee=1 AND confirm_sender=1))
+         AND posts.authorPost = page_userID
+         ORDER BY posts.id DESC LIMIT ?, ?`, params, (err, row) => {
+            callback(err, row)
+        });
+    }
+
     // загрузка одного пота из базы данных
     load_one_post_DB(postID, callback) {
         return this.connection.execute(`SELECT 

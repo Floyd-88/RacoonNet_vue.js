@@ -1,11 +1,11 @@
 <template>
-  <div class="post" v-for="post of getPost" :key="post.id" @mouseover="showBtnPost(post)"
+  <div class="post" 
+    v-for="post in getNewsPostsFriends" 
+    :key="post.id" 
+    @mouseover="showBtnPost(post)"
     @mouseleave="notShowBtnPost(post)">
 
     <div class="wrapper_post">
-
-
-
       <div class="wrapper_post_user">
 
         <div class="wrapper_post_name">
@@ -34,64 +34,28 @@
       <div class="wrapper_text_post">
         <p class="text_post">{{ postText(post.postText) }}</p>
       </div>
-
     </div>
 
-    <!-- <div class="btn_post"
-                       v-show="post.isPostDel">
-                    <UIbtn class="redaction_post_btn" v-if="getUser.enterUser == post.authorPost"
-                      @click="setModulePost({ task: 'edit', id: post.id, text: post.postText })">
-                      Редактировать
-                    </UIbtn>
-              
-                    <UIbtn class="delete_post_btn" v-if="getUser.is_editProfile || getUser.enterUser == post.authorPost"
-                      @click="setModulePost({ task: 'remove', id: post.id })">
-                      Удалить
-                    </UIbtn>
-                  </div> -->
-
-</div>
-<!-- <template v-if="getModulePost === 'edit'">
-        <UImodal>
-          <div class="wrapper_save_editPost">
-            <div class="save_editPost_title">
-              <div class="wrapper_edit_text_body">
-                <textarea class="edit_text_body" v-model="beforeModelPostText"></textarea>
-              </div>
-            </div>
-    
-            <div class="wrapper_save_editPost_btn">
-              <UIbtn class="save_editPost_btn" type="submit" :disabled="getBeforePostText.length < 1" @click="editPost">
-                Сохранить
-              </UIbtn>
-    
-              <UIbtn class="save_editPost_btn" @click="setCloseModulePost">
-                Отменить
-              </UIbtn>
-    
-            </div>
-          </div>
-        </UImodal>
-      </template> --><!-- <template v-if="getModulePost === 'remove'">
-      <UImodal>
-        <div class="wrapper_save_editPost">
-          <div class="wrapper_title_text">
-            <p>Вы уверены что хотите удалить этот пост?</p>
-          </div>
-  
-          <div class="wrapper_save_editPost_btn">
-            <UIbtn class="save_editPost_btn" type="submit" @click="removePost">
+    <!-- <div class="btn_post" v-show="post.isPostDel">
+            <UIbtn class="redaction_post_btn" 
+                v-if="getUser.enterUser == post.authorPost"
+                @click="setModulePost({ task: 'edit', id: post.id, text: post.postText })">
+              Редактировать
+            </UIbtn>
+                        
+            <UIbtn class="delete_post_btn" v-if="getUser.is_editProfile || getUser.enterUser == post.authorPost"
+                @click="setModulePost({ task: 'remove', id: post.id })">
               Удалить
             </UIbtn>
-  
-            <UIbtn class="save_editPost_btn" @click="setCloseModulePost">
-              Отменить
-            </UIbtn>
-  
-          </div>
-        </div>
-      </UImodal>
-    </template> --></template>
+          </div> -->
+  </div>
+
+  <div class="wrapper_not_news" v-if="getNewsPostsFriends.length < 1">
+    <p class="not_news">
+      Список Ваше новостной ленты пуст. Попробуйте обзавестись новыми знакомыми что бы получать свежие новости.
+    </p>
+  </div>
+  </template>
   
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
@@ -100,32 +64,17 @@ export default {
   name: "ContentNews",
 
   data() {
-    return {
-      // isLoaded: false,
-      // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
-    }
+    return { }
   },
 
   methods: {
     ...mapMutations({
-      setBeforePostText: "postsMyPageStore/setBeforePostText",
-      setModulePost: "postsMyPageStore/setModulePost",
-      setCloseModulePost: "postsMyPageStore/setCloseModulePost"
+      // setModulePost: "postsMyPageStore/setModulePost",
     }),
     ...mapActions({
-      LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS",
-      editPost: "postsMyPageStore/editPost",
-      removePost: "postsMyPageStore/removePost",
-
+      LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS"
     }),
 
-    // onImgLoad() {
-    //   console.log(this.$refs)
-    //   // return this.isLoaded = false
-    // },
-    // loadAva() {
-    //   require(`../../assets/photo/${post.ava}`)
-    // }
     loadAva(ava) {
       try {
         return require(`../../assets/photo/${ava}`)
@@ -154,25 +103,9 @@ export default {
 
   computed: {
     ...mapGetters({
-      getPost: "postsMyPageStore/getPosts",
-      getBeforePostText: "postsMyPageStore/getBeforePostText",
-      getModulePost: "postsMyPageStore/getModulePost",
-      getUser: "authorizationStore/getUser",
+      // getUser: "authorizationStore/getUser",
+      getNewsPostsFriends: "postsMyPageStore/getNewsPostsFriends"
     }),
-
-    beforeModelPostText: {
-      get() {
-        let doc = new DOMParser().parseFromString(this.getBeforePostText, "text/html");
-        return doc.documentElement.textContent;
-        // return this.getBeforePostText;
-      },
-      set(value) {
-        this.setBeforePostText(value);
-      }
-    },
-
-
-
   }
 }
 </script>
@@ -212,7 +145,7 @@ export default {
 
 .wrapper_post_name {
   display: flex;
-    align-items: center;
+  align-items: center;
 }
 
 .post_show_btn {
@@ -224,8 +157,8 @@ export default {
 
 .block_post_name {
   display: flex;
-    flex-direction: column;
-    margin-top: 8px;
+  flex-direction: column;
+  margin-top: 8px;
 }
 
 .post_name {
@@ -246,7 +179,7 @@ export default {
 .data_post {
   padding-top: 2px;
   font-size: 13px;
-    font-family: none;
+  font-family: none;
 }
 
 .wrapper_text_post {
@@ -279,39 +212,16 @@ export default {
 
 }
 
-.wrapper_edit_text_body {
-  width: 100%;
-  padding-right: 5px;
-}
-
-.edit_text_body {
-  resize: none;
-  height: 150px;
-  width: 250px;
-}
-
-.wrapper_save_editPost {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 15px;
-}
-
-.save_editPost_title {
-  margin: 10px;
-  font-size: 17px;
-}
-
-/* .wrapper_save_editPost_btn {} */
-
-.save_editPost_btn {
-  width: 70px;
-  margin-left: 5px;
-  margin-right: 5px;
-}
-
-.wrapper_title_text {
-  margin: 0px 10px 10px;
-  font-size: 17px;
+.wrapper_not_news {
+  font-size: 16px;
+  line-height: 26px;
+  position: absolute;
+  top: 50%;
+  margin-top: -50px;
+  text-align: center;
+  padding: 0 30px;
+  opacity: .7;
+  font-family: fantasy;
+  color: dimgray;
 }
 </style>

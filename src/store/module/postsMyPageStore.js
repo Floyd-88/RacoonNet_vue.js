@@ -8,9 +8,12 @@ export const postsMyPageStore = {
         beforePostText: "", //копия текста отображаемого на странице с которым мы работаем при редактировании
         modulePost: false, //отображение модального окна
         posts: [], //массив постов подгружаемый из базы данных
-        countPosts: 0, //номер массива страницы
-        limitPosts: 3, //количество постов на одной странице
+        countPosts: 0, //с какого поста начинать вести счет
+        limitPosts: 10, //лимит постов на одной странице
         totalCount: 0, //всего страниц
+        newsPostsFriends: [], //новостная лента от друзей
+        countNews: 0, //с какой новости начинать вести счет
+        limitNews: 10 // лимит новостей на странице
     }),
 
     getters: {
@@ -21,11 +24,16 @@ export const postsMyPageStore = {
         getUser: (state, getters, rootState, rootGetters) => { //получаем ID авторизованного юзера
             return rootGetters["authorizationStore/getUser"]
         },
+        getNewsPostsFriends: state => state.newsPostsFriends,
     },
 
     mutations: {
         //при открытии модального окна сохраняем в state его id и текст поста
-        setModulePost(state, { task, id, text }) {
+        setModulePost(state, {
+            task,
+            id,
+            text
+        }) {
             state.modulePost = task;
             state.id = id;
             state.beforePostText = text;
@@ -63,11 +71,26 @@ export const postsMyPageStore = {
         setRemovePost(state, id) {
             state.posts = state.posts.filter(post => post.id !== id);
         },
+
+        setNewsPostsFriends(state, value) {
+            state.newsPostsFriends = value
+        },
+
+        setCountNews(state, count) {
+            state.countNews += count
+        },
+        setCountNewsNull(state) {
+            state.countNews = 0;
+        },
+
     },
 
     actions: {
         //загрузка постов с базы данных
-        async loadPostServer({ state, commit }, id) {
+        async loadPostServer({
+            state,
+            commit
+        }, id) {
             try {
                 await axios.get('http://localhost:8000/dataBase.js', {
                     params: {
@@ -78,7 +101,7 @@ export const postsMyPageStore = {
                 }).then((response) => {
                     if (response.data.length > 0) {
                         commit("setPosts", [...state.posts, ...response.data]);
-                        commit("setCountPosts", 3)
+                        commit("setCountPosts", 10)
                     }
 
                 });
@@ -88,7 +111,11 @@ export const postsMyPageStore = {
         },
 
         // добавление нового поста на мою страницу
-        async addPost({ dispatch, getters, commit }, postText) {
+        async addPost({
+            dispatch,
+            getters,
+            commit
+        }, postText) {
             const newPost = {
                 id: getters.getUser.userID,
                 postText: postText.trim(),
@@ -113,7 +140,11 @@ export const postsMyPageStore = {
 
 
         // изменение поста
-        async editPost({ state, dispatch, commit }) {
+        async editPost({
+            state,
+            dispatch,
+            commit
+        }) {
             const date = await dispatch("newDate");
             const [post] = state.posts.filter(post => post.id === state.id);
             post.date = "Изменено: " + date;
@@ -135,7 +166,11 @@ export const postsMyPageStore = {
         },
 
         //удаление поста
-        async removePost({ getters, commit, state }) {
+        async removePost({
+            getters,
+            commit,
+            state
+        }) {
             const [post] = state.posts.filter(post => post.id === state.id);
             commit("setRemovePost", state.id);
             commit("setCloseModulePost");
@@ -170,7 +205,34 @@ export const postsMyPageStore = {
 
             return result
         },
+
+
+        //получение постов от друзей для отображения в новостях
+        async LOAD_NEWS_FRIENDS_USERS({
+            state,
+            commit
+        }) {
+            try {
+                await axios.get('http://localhost:8000/news_friends.js', {
+                    params: {
+                        _count: state.countNews,
+                        _limit: state.limitNews,
+                    }
+                }).then((response) => {
+                    if (response.data.length > 0) {
+                        commit("setNewsPostsFriends", [...state.newsPostsFriends, ...response.data])
+                        commit("setCountNews", 10)
+                        console.log(state.newsPostsFriends)
+                    }
+
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        },
     },
+
+
 
     namespaced: true
 }

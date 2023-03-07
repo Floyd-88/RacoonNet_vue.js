@@ -1194,6 +1194,23 @@ router.delete("/delete_friends", authenticateJWT, function(req, res) {
     }
 })
 
+//ПОДГРУЗКА НОВОСТНОЙ ЛЕНТЫ
+router.get('/news_friends.js', authenticateJWT, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+
+    posts.load_news_friens_DB([
+        tokenID,
+        tokenID,
+        req.query._count,
+        req.query._limit
+    ], (err, newsFriends) => {
+        if (err) return res.status(500).send('Error on the server.' + " " + err);
+        if (!newsFriends) return res.status(404).send('No news found.' + " " + err);
+        // console.log(newsFriends)
+        res.status(200).json(newsFriends);
+    });
+});
+
 
 
 //ПОЛУЧЕНИЕ СООБЩЕНИЙ БЕЗ ПЕРЕЗАГРУЗКИ
@@ -1213,6 +1230,7 @@ io.use(async(socket, next) => {
         return next(new Error(e.message));
     }
 });
+
 
 io.on("connection", (socket) => {
     socket.join(socket.user.id)
