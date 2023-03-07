@@ -20,7 +20,7 @@
 
     <MyFriendsBlock>
         <div class="wrapper_my_friends_title">
-            <h4>Мои друзья</h4>
+            <h4>Список друзей</h4>
         </div>
         <div class="list_my_friends">
             <div class="my_friend" v-for="friend in getUsersMyFriends" :key="friend.id">

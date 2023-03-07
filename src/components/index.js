@@ -12,6 +12,11 @@ import AddPost from "@/components/MyPage/AddPost";
 import PostMyPage from "@/components/MyPage/PostMyPage";
 import MyFriendsBlock from "@/components/MyPage/MyFriendsBlock";
 
+import CommentsPost from "@/components/comments/CommentsPost"
+import WriteComments from "@/components/comments/WriteComments"
+import CommentPost from "@/components/comments/CommentPost"
+import UnderComment from "@/components/comments/UnderComment"
+
 import AvatarEditor from "@/components/AvatarEditor";
 import EditProfile from "@/components/MyPage/EditProfile";
 import ChangePassword from "@/components/ChangePassword";
@@ -88,5 +93,9 @@ export default [
     FriendCardBtns,
     HeaderGallery,
     CategoryFilter,
-    ContentNews
+    ContentNews,
+    CommentsPost,
+    WriteComments,
+    CommentPost,
+    UnderComment
 ]

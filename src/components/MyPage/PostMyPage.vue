@@ -33,6 +33,10 @@
       </div>
     </div>
 
+      <CommentsPost/>
+
+     
+
     <div class="btn_post"
          v-show="post.isPostDel">
       <UIbtn class="redaction_post_btn" v-if="getUser.enterUser == post.authorPost"
@@ -69,6 +73,7 @@
         </div>
       </div>
     </UImodal>
+
   </template>
 
   <template v-if="getModulePost === 'remove'">
@@ -100,81 +105,70 @@
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
-  name: "PostMyPage",
-
-  data() {
-    return {
-      // isLoaded: false,
-      // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
-    }
-  },
-
-  methods: {
-    ...mapMutations({
-      setBeforePostText: "postsMyPageStore/setBeforePostText",
-      setModulePost: "postsMyPageStore/setModulePost",
-      setCloseModulePost: "postsMyPageStore/setCloseModulePost"
-    }),
-    ...mapActions({
-      editPost: "postsMyPageStore/editPost",
-      removePost: "postsMyPageStore/removePost"
-    }),
-
-    // onImgLoad() {
-    //   console.log(this.$refs)
-    //   // return this.isLoaded = false
-    // },
-    // loadAva() {
-    //   require(`../../assets/photo/${post.ava}`)
-    // }
-    loadAva(ava) {
-      try {
-        return require(`../../assets/photo/${ava}`)
-      } catch {
-        return require(`../../assets/ava/ava_1.jpg`);
-      }
-
+    name: "PostMyPage",
+    data() {
+        return {
+        // isLoaded: false,
+        // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
+        };
     },
-
-    postText(value) {
-      let doc = new DOMParser().parseFromString(value, "text/html");
-      return doc.documentElement.textContent;
+    methods: {
+        ...mapMutations({
+            setBeforePostText: "postsMyPageStore/setBeforePostText",
+            setModulePost: "postsMyPageStore/setModulePost",
+            setCloseModulePost: "postsMyPageStore/setCloseModulePost"
+        }),
+        ...mapActions({
+            editPost: "postsMyPageStore/editPost",
+            removePost: "postsMyPageStore/removePost"
+        }),
+        // onImgLoad() {
+        //   console.log(this.$refs)
+        //   // return this.isLoaded = false
+        // },
+        // loadAva() {
+        //   require(`../../assets/photo/${post.ava}`)
+        // }
+        loadAva(ava) {
+            try {
+                return require(`../../assets/photo/${ava}`);
+            }
+            catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
+        postText(value) {
+            let doc = new DOMParser().parseFromString(value, "text/html");
+            return doc.documentElement.textContent;
+        },
+        showBtnPost(post) {
+            post.isShowBtn = true;
+        },
+        notShowBtnPost(post) {
+            post.isShowBtn = false;
+        },
+        btnPost(post) {
+            post.isPostDel = !post.isPostDel;
+        }
     },
-
-    showBtnPost(post) {
-      post.isShowBtn = true;
+    computed: {
+        ...mapGetters({
+            getPost: "postsMyPageStore/getPosts",
+            getBeforePostText: "postsMyPageStore/getBeforePostText",
+            getModulePost: "postsMyPageStore/getModulePost",
+            getUser: "authorizationStore/getUser",
+        }),
+        beforeModelPostText: {
+            get() {
+                let doc = new DOMParser().parseFromString(this.getBeforePostText, "text/html");
+                return doc.documentElement.textContent;
+                // return this.getBeforePostText;
+            },
+            set(value) {
+                this.setBeforePostText(value);
+            }
+        },
     },
-    notShowBtnPost(post) {
-      post.isShowBtn = false;
-    },
-    btnPost(post) {
-      post.isPostDel = !post.isPostDel;
-    }
-
-  },
-
-  computed: {
-    ...mapGetters({
-      getPost: "postsMyPageStore/getPosts",
-      getBeforePostText: "postsMyPageStore/getBeforePostText",
-      getModulePost: "postsMyPageStore/getModulePost",
-      getUser: "authorizationStore/getUser",
-    }),
-
-    beforeModelPostText: {
-      get() {
-        let doc = new DOMParser().parseFromString(this.getBeforePostText, "text/html");
-        return doc.documentElement.textContent;
-        // return this.getBeforePostText;
-      },
-      set(value) {
-        this.setBeforePostText(value);
-      }
-    },
-
-
-
-  }
 }
 </script>
 

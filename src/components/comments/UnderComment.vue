@@ -1,0 +1,185 @@
+<template>
+    <div class="wrapper_under_comment">
+        <div class="wrapper_block_under_comment_user">
+            <div class="wrapper_under_comment_user">
+                <div class="under_comment_name_user">
+                    <div class="under_comment_ava_user">
+                        <img src="../../assets/ava/ava_1.jpg" alt="ava">
+                    </div>
+                    <p class="under_comment_name">Илья Сазонов</p>
+                </div>
+                <div class="under_comment_time">
+                    <p>2022-03-02</p>
+                </div>
+            </div>
+            <div class="under_comment_text" @click.stop="showBtnsAnswUnder()">
+                <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing.. Lorem ipsum dolor sit amet consectetur adipisicing..
+                </p>
+                <div class="wrapper_answer_under_comment" v-if="isBtnsAnswUnder">
+                    <!-- <UIbtn class="answer_under_comment">Ответить</UIbtn> -->
+                    <UIbtn class="answer_under_comment answer_under_comment_del" @click.stop>Удалить</UIbtn>
+                </div>
+            </div>
+
+
+        </div>
+</div>
+<!-- -- --></template>
+
+<script>
+import UIbtn from '../UI/UIbtn.vue';
+
+
+export default {
+    name: "UnderComment",
+    data() {
+        return {
+            isBtnsAnswUnder: false,
+        };
+    },
+    methods: {
+        showBtnsAnswUnder() {
+            this.isBtnsAnswUnder = !this.isBtnsAnswUnder;
+        }
+    },
+    components: { UIbtn }
+}
+
+</script>
+
+<style scoped>
+.wrapper_under_comment {
+    display: flex;
+    margin: 10px 10px 20px 30px;
+}
+
+.under_comment_ava_user img {
+    width: 25px;
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+.wrapper_block_under_comment_user {
+    width: 100%;
+}
+
+.wrapper_under_comment_user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.under_comment_name_user {
+    display: flex;
+    align-items: center;
+}
+
+.under_comment_name {
+    padding-left: 5px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: cursive;
+    font-weight: 600;
+}
+
+.under_comment_time {
+    font-size: 13px;
+}
+
+.under_comment_text {
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.under_comment_text p {
+    word-break: break-word;
+}
+
+.wrapper_answer_under_comment {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.answer_under_comment {
+    padding: 3px 6px 3px 6px;
+    background: whitesmoke;
+    font-size: 12px;
+    font-family: fantasy;
+    border-radius: 0px;
+}
+
+.answer_under_comment_del {
+    margin-left: 10px;
+    opacity: 0.7;
+}
+
+/* .message_btn_delete {
+    margin-left: 10px;
+}
+
+.message_btn_delete button {
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.wrapper_block_write_message {
+    display: flex;
+    align-items: center;
+    margin: 10px;
+    flex-shrink: 0;
+}
+
+.wrapper_form_message_name {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.wrapper_form_message_input {
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+.new_message {
+    width: 100%;
+    min-height: 50px;
+    resize: none;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.wrapper_form_message_btn {
+    display: flex;
+    justify-content: flex-end;
+    height: 35px;
+    margin: 5px 0px 10px 5px;
+}
+
+.form_message_btn {
+    width: 130px;
+    height: 100%;
+    border: 1px solid;
+    border-radius: 5px;
+    background: cornflowerblue;
+    cursor: pointer;
+    font-size: 23px;
+    color: white;
+    font-family: emoji;
+}
+
+.error-msg {
+    color: red;
+    font-size: 14px;
+}
+
+.active_text_fone {
+    background: aliceblue;
+}
+
+.not_read_message {
+    background-color: #ddffe6b3;
+} */
+</style>
