@@ -44,10 +44,12 @@ export default {
         ...mapActions({
             loadPostServer: "postsMyPageStore/loadPostServer",
             loadAllPhotos: "loadPhotoStore/loadAllPhotos",
+            LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST"
         }),
         ...mapMutations({
             setPosts: "postsMyPageStore/setPosts",
-            setCountPostsNull: "postsMyPageStore/setCountPostsNull"
+            setCountPostsNull: "postsMyPageStore/setCountPostsNull",
+            setCommentsArray: "commentsPost/setCommentsArray"
         }),
 
         loadAva(ava) {
@@ -88,7 +90,15 @@ export default {
         };
         const observer = new IntersectionObserver(callback, options);
         observer.observe(this.$refs.observer);
+
+        this.LOAD_COMMENTS_POST();
     },
+
+    beforeUnmount() {
+        this.setCommentsArray([]);
+    },
+
+
     components: { MyFriendsBlock }
 }
 </script>

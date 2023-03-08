@@ -4,36 +4,55 @@
             <p class="count_likes">100</p>
             <img class="likes" src="../../assets/icons/like.svg" alt="like">
         </div>
-        <div class="wrapper_comments_show_btn" @click="showWriteComment()">
+        <div class="wrapper_comments_show_btn" @click="showWriteComment(post)">
             <img class="comments_show_btn" src="../../assets/icons/comment.svg" alt="comments">
         </div>
     </div>
 
-    <div class="wrapper_write_comments" v-if="isShowWriteComment">
-        <CommentPost />
-        <CommentPost />
-        <CommentPost />
-        <CommentPost />
-
-        <WriteComments />
+    <div class="wrapper_write_comments" v-if="post.isShowWriteComment">
+               
+        <CommentPost :comments="comments"/>
+        <WriteComments :post="post"/>
     </div>
-
-    
-    
 </template>
 
 <script>
+import { mapActions, mapMutations, mapGetters } from 'vuex';
+
 export default {
     name: "CommentsPost",
+
+    props: {
+        post: {
+            type: Object,
+            default: () => {
+                return {}
+            }
+        }
+    },
+
     data() {
-        return {
-            isShowWriteComment: false,
-        };
+        return { };
     },
     methods: {
-        showWriteComment() {
-            this.isShowWriteComment = !this.isShowWriteComment;
+        ...mapMutations({setIsShowWriteComment: "commentsPost/setIsShowWriteComment"}),
+        ...mapActions({LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST"}),
+
+        showWriteComment(post) {
+            post.isShowWriteComment = !post.isShowWriteComment;
         },
+
+        comment(value) {
+            console.log(value)
+        }
+    },
+
+    computed: {
+        ...mapGetters({getCommentsArray: "commentsPost/getCommentsArray"}),
+
+        comments() {
+          return this.getCommentsArray.filter(comment => comment.post_id === this.post.id)
+        }
     },
 }
 

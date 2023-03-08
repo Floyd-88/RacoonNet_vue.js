@@ -1,47 +1,50 @@
 <template>
-    <div class="wrapper_message_dialog_user">
+    <div class="wrapper_message_dialog_user" v-for="comment in comments" :key="comment.post_id">
         <div class="wrapper_block_message_user">
             <div class="wrapper_message_user">
                 <div class="message_name_user">
                     <div class="dialog_ava_user">
-                        <img src="../../assets/ava/ava_1.jpg" alt="ava">
+                        <img :src="pathAva(comment.ava)" alt="ava">
                     </div>
-                    <p class="message_name">Илья Сазонов</p>
+                    <p class="message_name">{{ comment.name + " " + comment.surname }}</p>
                 </div>
                 <div class="message_time">
-                    <p>2022-03-02</p>
+                    <p>{{ comment.date.slice(0, 10) }}</p>
                 </div>
             </div>
             <div class="message_text" @click="showBtnsAnsw()">
                 <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum, provident. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum, provident.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum, provident.
+                    {{ comment.comment_post_text }}
                 </p>
                 <div class="wrapper_answer_comment" v-if="isBtnsAnsw">
                     <UIbtn class="answer_comment" @click.stop="showWriteUnderComments()" >Ответить</UIbtn>
                     <UIbtn class="answer_comment answer_comment_del" @click.stop>Удалить</UIbtn>
                 </div>
-
-                <UnderComment/>
-                <UnderComment/>
-                <UnderComment/>
-
                 <div class="wrapper_under_write_comments" v-if="isShowWriteUnderComment">
                     <WriteComments/>
                 </div>
             </div>
-
-
         </div>
 </div>
-<!-- -- --></template>
+<!-- -- -->
+</template>
 
 <script>
+import { mapGetters } from 'vuex';
 import UIbtn from '../UI/UIbtn.vue';
-import UnderComment from './UnderComment.vue';
-
 
 export default {
     name: "CommentPost",
+
+    props: {
+        comments: {
+            type: Array,
+            default: () => {
+                return []
+            }
+        }
+    },
+
     data() {
         return {
             isBtnsAnsw: false,
@@ -55,9 +58,27 @@ export default {
 
         showWriteUnderComments() {
             this.isShowWriteUnderComment = !this.isShowWriteUnderComment;
-        }
+        },
+
+        pathAva(ava) {
+            try {
+                console.log('ava')
+                return require(`../../assets/photo/${ava}`);
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
     },
-    components: { UIbtn, UnderComment }
+
+    computed: {
+        ...mapGetters({
+            // getCommentsArray: "commentsPost/getCommentsArray",
+            // getCommentPost: "commentsPost/getCommentPost"
+        }),
+    },
+
+
+    components: { UIbtn }
 }
 
 </script>

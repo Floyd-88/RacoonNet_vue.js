@@ -219,7 +219,6 @@ export default {
                 console.log(message.ava)
                 return require(`../../assets/photo/${message.ava}`);
             } catch {
-                console.log('ava')
                 return require(`../../assets/ava/ava_1.jpg`);
             }
         },

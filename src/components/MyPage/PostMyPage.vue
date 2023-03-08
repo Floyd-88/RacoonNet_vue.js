@@ -1,8 +1,5 @@
 <template>
-  <div class="post" 
-    v-for="post of getPost" 
-    :key="post.id" 
-    @mouseover="showBtnPost(post)"
+  <div class="post" v-for="post of getPost" :key="post.id" @mouseover="showBtnPost(post)"
     @mouseleave="notShowBtnPost(post)">
 
     <div class="wrapper_post">
@@ -33,12 +30,13 @@
       </div>
     </div>
 
-      <CommentsPost/>
+    <!-- комментарии к посту -->
+    
+    <CommentsPost :post="post" />
+    
+    <!-- -------------------- -->
 
-     
-
-    <div class="btn_post"
-         v-show="post.isPostDel">
+    <div class="btn_post" v-show="post.isPostDel">
       <UIbtn class="redaction_post_btn" v-if="getUser.enterUser == post.authorPost"
         @click="setModulePost({ task: 'edit', id: post.id, text: post.postText })">
         Редактировать
@@ -95,80 +93,79 @@
         </div>
       </div>
     </UImodal>
-  </template>
-
-
-
+</template>
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
-    name: "PostMyPage",
-    data() {
-        return {
-        // isLoaded: false,
-        // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
-        };
+  name: "PostMyPage",
+  data() {
+    return {
+      // isLoaded: false,
+      // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
+    };
+  },
+  methods: {
+    ...mapMutations({
+      setBeforePostText: "postsMyPageStore/setBeforePostText",
+      setModulePost: "postsMyPageStore/setModulePost",
+      setCloseModulePost: "postsMyPageStore/setCloseModulePost"
+    }),
+    ...mapActions({
+      editPost: "postsMyPageStore/editPost",
+      removePost: "postsMyPageStore/removePost"
+    }),
+    // onImgLoad() {
+    //   console.log(this.$refs)
+    //   // return this.isLoaded = false
+    // },
+    // loadAva() {
+    //   require(`../../assets/photo/${post.ava}`)
+    // }
+    loadAva(ava) {
+      try {
+        return require(`../../assets/photo/${ava}`);
+      }
+      catch {
+        return require(`../../assets/ava/ava_1.jpg`);
+      }
     },
-    methods: {
-        ...mapMutations({
-            setBeforePostText: "postsMyPageStore/setBeforePostText",
-            setModulePost: "postsMyPageStore/setModulePost",
-            setCloseModulePost: "postsMyPageStore/setCloseModulePost"
-        }),
-        ...mapActions({
-            editPost: "postsMyPageStore/editPost",
-            removePost: "postsMyPageStore/removePost"
-        }),
-        // onImgLoad() {
-        //   console.log(this.$refs)
-        //   // return this.isLoaded = false
-        // },
-        // loadAva() {
-        //   require(`../../assets/photo/${post.ava}`)
-        // }
-        loadAva(ava) {
-            try {
-                return require(`../../assets/photo/${ava}`);
-            }
-            catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
-        postText(value) {
-            let doc = new DOMParser().parseFromString(value, "text/html");
-            return doc.documentElement.textContent;
-        },
-        showBtnPost(post) {
-            post.isShowBtn = true;
-        },
-        notShowBtnPost(post) {
-            post.isShowBtn = false;
-        },
-        btnPost(post) {
-            post.isPostDel = !post.isPostDel;
-        }
+    postText(value) {
+      let doc = new DOMParser().parseFromString(value, "text/html");
+      return doc.documentElement.textContent;
     },
-    computed: {
-        ...mapGetters({
-            getPost: "postsMyPageStore/getPosts",
-            getBeforePostText: "postsMyPageStore/getBeforePostText",
-            getModulePost: "postsMyPageStore/getModulePost",
-            getUser: "authorizationStore/getUser",
-        }),
-        beforeModelPostText: {
-            get() {
-                let doc = new DOMParser().parseFromString(this.getBeforePostText, "text/html");
-                return doc.documentElement.textContent;
-                // return this.getBeforePostText;
-            },
-            set(value) {
-                this.setBeforePostText(value);
-            }
-        },
+    showBtnPost(post) {
+      post.isShowBtn = true;
     },
+    notShowBtnPost(post) {
+      post.isShowBtn = false;
+    },
+    btnPost(post) {
+      post.isPostDel = !post.isPostDel;
+    },
+  },
+  computed: {
+    ...mapGetters({
+      getPost: "postsMyPageStore/getPosts",
+      getBeforePostText: "postsMyPageStore/getBeforePostText",
+      getModulePost: "postsMyPageStore/getModulePost",
+      getUser: "authorizationStore/getUser",
+      // getCommentsArray: "commentsPost/getCommentsArray",
+      getCommentsArray: "commentsPost/getCommentsArray"
+    }),
+    beforeModelPostText: {
+      get() {
+        let doc = new DOMParser().parseFromString(this.getBeforePostText, "text/html");
+        return doc.documentElement.textContent;
+        // return this.getBeforePostText;
+      },
+      set(value) {
+        this.setBeforePostText(value);
+      }
+    },
+  },
 }
 </script>
 
@@ -296,5 +293,10 @@ export default {
 .wrapper_title_text {
   margin: 0px 10px 10px;
   font-size: 17px;
+}
+
+.wrapper_write_comments {
+    border-top: 1px solid;
+    padding: 0px 8px 13px 8px;
 }
 </style>
