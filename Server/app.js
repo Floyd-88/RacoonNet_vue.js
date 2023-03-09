@@ -651,6 +651,34 @@ router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
     }
 });
 
+//УДАЛЯЕМ КОММЕНТАРИ К КОММЕНТАРИЮ
+router.delete('/load_comments_comment.js', authenticateJWT, function(req, res) {
+
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    //удалять комментарии может только автор поста или хозяин страницы
+    if (tokenID === req.body.authorID || tokenID === req.body.pageID) {
+        commentsPost.remove_comment_comment_DB(req.body.commentID, (err) => {
+            if (err) return res.status(500).send('Произошла ошибка при удалении комментария' + " " + err);
+            res.status(200);
+        });
+    }
+});
+
+//УДАЛЯЕМ КОММЕНТАРИ К КОММЕНТАРИЮ
+router.delete('/load_comments_post.js', authenticateJWT, function(req, res) {
+
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    //удалять комментарии может только автор поста или хозяин страницы
+    if (tokenID === req.body.authorID || tokenID === req.body.pageID) {
+        commentsPost.remove_comment_post_DB(req.body.commentID, (err) => {
+            if (err) return res.status(500).send('Произошла ошибка при удалении комментария' + " " + err);
+            res.status(200);
+        });
+    }
+});
+
 //ДОБАВЛЯЕМ АВАТАРКУ В БАЗУ ДАННЫХ
 router.post('/upload_ava', authenticateJWT, (req, res) => {
 

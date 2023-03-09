@@ -38,6 +38,16 @@ export const commentsPost = {
         setCommentsCommentArray(state, value) {
             state.commentsCommentArray = value
         },
+
+        //удалить комментарий к коментарию
+        setRemoveCommentsComment(state, id) {
+            state.commentsCommentArray = state.commentsCommentArray.filter(comment => comment.id !== id);
+        },
+
+        //удалить комментарий к посту
+        setRemoveCommentsPost(state, id) {
+            state.commentsArray = state.commentsArray.filter(comment => comment.id !== id);
+        },
     },
 
     actions: {
@@ -124,8 +134,40 @@ export const commentsPost = {
             } catch (err) {
                 console.error(err);
             }
+        },
+
+        //удаление комментария к комментарию
+        async DELETE_COMMENTS_COMMENT({ commit }, paramsComment) {
+            try {
+                commit("setRemoveCommentsComment", paramsComment.commentID)
+                await axios.delete('http://localhost:8000/load_comments_comment.js', {
+                    data: paramsComment
+                }).then((response) => {
+                    console.log(response.data);
+                })
+            } catch (err) {
+                console.log(err)
+            }
+
+        },
+
+        //удаление комментария к посту
+        async DELETE_COMMENTS_POST({ commit }, paramsComment) {
+            try {
+                commit("setRemoveCommentsPost", paramsComment.commentID)
+                await axios.delete('http://localhost:8000/load_comments_post.js', {
+                    data: paramsComment
+                }).then((response) => {
+                    console.log(response.data);
+                })
+            } catch (err) {
+                console.log(err)
+            }
+
         }
     },
+
+
 
 
     namespaced: true,

@@ -18,7 +18,7 @@
                 </p>
                 <div class="wrapper_answer_comment" v-if="comment.isBtnsAnsw">
                     <UIbtn class="answer_comment" @click.stop="showWriteUnderComments(comment)" >Ответить</UIbtn>
-                    <UIbtn class="answer_comment answer_comment_del" v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment_id" @click.stop>Удалить</UIbtn>
+                    <UIbtn class="answer_comment answer_comment_del" v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment_id" @click.stop="DELETE_COMMENTS_POST({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id})">Удалить</UIbtn>
                 </div>
 
                 <UnderComment :comment="comment"/>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import UIbtn from '../UI/UIbtn.vue';
 
 export default {
@@ -55,6 +55,8 @@ export default {
         };
     },
     methods: {
+        ...mapActions({DELETE_COMMENTS_POST: "commentsPost/DELETE_COMMENTS_POST"}),
+        
         showBtnsAnsw(comment) {
             comment.isBtnsAnsw = !comment.isBtnsAnsw;
         },

@@ -62,6 +62,20 @@ class CommentsPostDB {
         });
     }
 
+    //удаление комментария к комментарию
+    remove_comment_comment_DB(commentID, callback) {
+        return this.connection.execute(`DELETE from comments_comment WHERE id = ?`, [commentID], (err) => {
+            callback(err);
+        });
+    }
+
+    //удаление комментария к посту
+    remove_comment_post_DB(commentID, callback) {
+        return this.connection.execute(`DELETE from comments_post WHERE id = ?`, [commentID], (err) => {
+            callback(err);
+        });
+    }
+
     //проверяем на наличие ранее отправленных заявок в друзья
     // get_confirm_friend_DB(users, callback) {
     //     return this.connection.query(`SELECT id, sender_user_id, addressee_user_id, confirm_sender, confirm_addressee FROM friends WHERE (sender_user_id=? AND addressee_user_id=?) OR (addressee_user_id=? AND sender_user_id=?)`, users, (err, confirmID) => {
