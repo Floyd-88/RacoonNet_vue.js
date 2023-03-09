@@ -1,48 +1,85 @@
 <template>
-    <div class="wrapper_under_comment">
+    <div class="wrapper_under_comment" v-for="comment in commentsComment" :key="comment.id">
         <div class="wrapper_block_under_comment_user">
             <div class="wrapper_under_comment_user">
                 <div class="under_comment_name_user">
                     <div class="under_comment_ava_user">
-                        <img src="../../assets/ava/ava_1.jpg" alt="ava">
+                        <img :src="pathAva(comment.ava)" alt="ava">
                     </div>
-                    <p class="under_comment_name">Илья Сазонов</p>
+                    <p class="under_comment_name">{{comment.name + " " + comment.surname}}</p>
                 </div>
                 <div class="under_comment_time">
-                    <p>2022-03-02</p>
+                    <p>{{ comment.date.slice(0, 10) }}</p>
                 </div>
             </div>
-            <div class="under_comment_text" @click.stop="showBtnsAnswUnder()">
+            <div class="under_comment_text" @click.stop="showBtnsAnswUnder(comment)">
                 <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing.. Lorem ipsum dolor sit amet consectetur adipisicing..
+                    {{ messageText(comment.comment_comment_text) }}
                 </p>
-                <div class="wrapper_answer_under_comment" v-if="isBtnsAnswUnder">
+                <div class="wrapper_answer_under_comment" v-if="comment.isBtnsAnswUnder">
                     <!-- <UIbtn class="answer_under_comment">Ответить</UIbtn> -->
-                    <UIbtn class="answer_under_comment answer_under_comment_del" @click.stop>Удалить</UIbtn>
+                    <UIbtn class="answer_under_comment answer_under_comment_del" v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment" @click.stop>Удалить</UIbtn>
                 </div>
             </div>
 
 
         </div>
 </div>
-<!-- -- --></template>
+<!-- -- -->
+</template>
 
 <script>
 import UIbtn from '../UI/UIbtn.vue';
-
+import { mapGetters } from 'vuex';
 
 export default {
     name: "UnderComment",
+
+    props: {
+        comment: {
+            type: Object,
+            default: () => {
+                return {}
+            }
+        }
+    },
+
     data() {
         return {
             isBtnsAnswUnder: false,
         };
     },
     methods: {
-        showBtnsAnswUnder() {
-            this.isBtnsAnswUnder = !this.isBtnsAnswUnder;
+        showBtnsAnswUnder(comment) {
+            comment.isBtnsAnswUnder = !comment.isBtnsAnswUnder;
+        },
+
+        pathAva(ava) {
+            try {
+                console.log('ava')
+                return require(`../../assets/photo/${ava}`);
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
+
+        messageText(value) {
+            let doc = new DOMParser().parseFromString(value, "text/html");
+            return doc.documentElement.textContent;
+        },
+    },
+
+    computed: {
+        ...mapGetters({
+            getUser: "authorizationStore/getUser",
+            getCommentsCommentArray: "commentsPost/getCommentsCommentArray"
+        }),
+
+        commentsComment() {
+          return this.getCommentsCommentArray.filter(comment => comment.comment_id === this.comment.id)
         }
     },
+
     components: { UIbtn }
 }
 

@@ -491,11 +491,24 @@ router.get('/dataBase.js', authenticateJWT, function(req, res) {
 router.get("/load_comments_post.js", authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
 
-    commentsPost.load_comments_DB([tokenID], (err, comments) => {
-        if (err) return res.status(500).send('Error on the server.' + " " + err);
-        if (!comments) return res.status(404).send('No comments found.' + " " + err);
+    commentsPost.load_comments_DB([req.query.postID], (err, comments) => {
+        if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
+        if (!comments) return res.status(404).send('Комментарии к постам отстутствуют' + " " + err);
 
-        console.log(comments);
+        res.status(200).json(comments);
+
+
+    })
+})
+
+//ПОДГРУЗКА КОММЕНТАРИЕВ К КОММЕНТАРИЮ
+router.get("/load_comments_comment.js", authenticateJWT, function(req, res) {
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    commentsPost.load_comments_comment_DB([req.query.postID], (err, comments) => {
+        if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
+        if (!comments) return res.status(404).send('Комментарии отстутствуют' + " " + err);
+
         res.status(200).json(comments);
 
 
@@ -503,21 +516,52 @@ router.get("/load_comments_post.js", authenticateJWT, function(req, res) {
 })
 
 //ДОБАВЛЕНИЕ КОММЕНТАРИЯ В БАЗУ ДАННЫХ
-router.post("/load_comments_post.js", authenticateJWT, function(req, res) {
-    //валидация поста
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //     return res.status(422).json({
-    //         errors: errors.array()
-    //     });
-    // }
-    console.log(req.body)
+router.post("/load_comments_post.js", authenticateJWT, messageValidate, function(req, res) {
+    //валидация комментария
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
 
     tokenID = req.tokenID; //id из сохраненного токена 
 
     commentsPost.add_commentPost_DB([
         req.body.postID,
-        req.body.text,
+        req.body.textMessage,
+        tokenID,
+        req.body.userPage,
+        req.body.date
+    ], (err, comment) => {
+        if (err) return res.status(500).send('При добавлении комментария произошла ошибка' + " " + err);
+
+        const newCommentID = comment.insertId
+            // возвращаем обновленный пост с информацие по автору поста
+        commentsPost.load_one_comment_DB(newCommentID, (err, newComment) => {
+            if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
+
+            res.status(200).send(newComment);
+        });
+    });
+})
+
+//ДОБАВЛЕНИЕ КОММЕНТАРИЯ К КОММЕНТАРИЮ В БАЗУ ДАННЫХ
+router.post("/load_comments_comment.js", authenticateJWT, messageValidate, function(req, res) {
+    //валидация комментария
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+    console.log(req.body)
+
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    commentsPost.add_commentComment_DB([
+        req.body.postID,
+        req.body.textMessage,
         tokenID,
         req.body.userPage,
         req.body.date
@@ -527,7 +571,7 @@ router.post("/load_comments_post.js", authenticateJWT, function(req, res) {
         console.log(comment);
         const newCommentID = comment.insertId
             // возвращаем обновленный пост с информацие по автору поста
-        commentsPost.load_one_comment_DB(newCommentID, (err, newComment) => {
+        commentsPost.load_one_comment_comment_DB(newCommentID, (err, newComment) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
 
             console.log(newComment);

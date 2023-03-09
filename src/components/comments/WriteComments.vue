@@ -1,22 +1,49 @@
 <template>
     <div class="write_comments">
-        
-        <div class="write_comments_text">
-            <div class="input-errors" v-for="(error, index) of v$.commentPost.$errors" :key="index">
-            <div class="error-msg" v-if="error.$message === 'Value is required'">
-                Вы не написали комментарий
-            </div>
-        </div>
-            <textarea 
-            placeholder="Оставить комментарий..." 
-            @click.stop v-model="commentText"  
-            :class="{invalid: (v$.commentPost.$error)}"></textarea>
+
+        <!-- блок с комментариями к комменатириям -->
+        <div class="write_comments_text" v-if="comment.isShowWriteUnderComment">
+                <div class="input-errors" v-for="(error, index) of v$.underCommentText.$errors" :key="index">
+                    <div class="error-msg" v-if="error.$message === 'Value is required'">
+                        Пустой комментарий
+                    </div>
+                </div>
+                <textarea 
+                placeholder="Оставить комментарий..." 
+                @click.stop v-model.trim="v$.underCommentText.$model"
+                :class="{ invalid: (v$.underCommentText.$error) }"></textarea>
         </div>
 
-        <div class="write_comments_btn" @click.stop>
-            <UIbtn @click="clickWriteCommentPost()" :disabled="v$.$invalid">Отправить</UIbtn>
+        <!-- блок с комментариями к постам -->
+        <div class="write_comments_text" v-else>
+            <div class="input-errors" v-for="(error, index) of v$.commentText.$errors" :key="index">
+                <div class="error-msg" v-if="error.$message === 'Value is required'">
+                    Вы не написали комментарий
+                </div>
+            </div>
+            <textarea 
+            placeholder="Оставить комментарий..." 
+            @click.stop  
+            v-model.trim="v$.commentText.$model"
+            :class="{ invalid: (v$.commentText.$error) }"></textarea>
         </div>
-    </div>
+
+        
+        
+        <div class="write_comments_btn" @click.stop>
+            <UIbtn 
+            v-if="comment.isShowWriteUnderComment" 
+            @click="clickWriteUnderCommentPost()" 
+            :disabled="v$.underCommentText.$invalid">
+            Отправить</UIbtn>
+
+            <UIbtn v-else 
+            @click="clickWriteCommentPost()" 
+            :disabled="v$.commentText.$invalid">
+            Отправить</UIbtn>
+
+        </div>
+</div>
 </template>
 
 <script>
@@ -35,6 +62,13 @@ export default {
             default: () => {
                 return {}
             }
+        },
+
+        comment: {
+            type: Object,
+            default: () => {
+                return {}
+            }
         }
     },
 
@@ -43,7 +77,12 @@ export default {
     },
 
     validations: {
-        commentPost: {
+        commentText: {
+            required,
+            min: minLength(1),
+            max: maxLength(200),
+        },
+        underCommentText: {
             required,
             min: minLength(1),
             max: maxLength(200),
@@ -51,38 +90,59 @@ export default {
     },
 
     data() {
-        return {  
-            // commentText: "",
+        return {
+            commentText: "",
+            underCommentText: "",
         }
     },
 
     methods: {
-        ...mapMutations({ 
+        ...mapMutations({
             setCommentPost: "commentsPost/setCommentPost",
+            setUnderCommentPost: "commentsPost/setUnderCommentPost",
             setCommentsArray: "commentsPost/setCommentsArray"
         }),
-        ...mapActions({SAVE_COMMENTS_POST: "commentsPost/SAVE_COMMENTS_POST"}),
+        ...mapActions({ 
+            SAVE_COMMENTS_POST: "commentsPost/SAVE_COMMENTS_POST",
+            SAVE_UNDER_COMMENTS_POST: "commentsPost/SAVE_UNDER_COMMENTS_POST"
+        }),
 
         clickWriteCommentPost() {
-            this.SAVE_COMMENTS_POST({postID: this.post.id, text: this.getCommentPost, userPage: this.$route.params.id});
+           this.SAVE_COMMENTS_POST({ postID: this.post.id, textMessage: this.commentText, userPage: this.$route.params.id });
             this.commentText = "";
-            this.v$.commentPost.$reset()
-        }
+            this.v$.commentText.$reset()
+        },
+
+        clickWriteUnderCommentPost() {
+            this.SAVE_UNDER_COMMENTS_POST({ postID: this.comment.id, textMessage: this.underCommentText, userPage: this.$route.params.id });
+            this.underCommentText = "";
+            this.v$.underCommentText.$reset()
+        },
+
+        // setCommentText(value) {
+        //         this.commentText = value;
+        //         this.v$.commentText.$touch();
+        //     }
     },
 
     computed: {
-        ...mapGetters({ getCommentPost: "commentsPost/getCommentPost" }),
-        ...mapState({ commentPost: (state) => state.commentsPost.commentPost }),
-
-        commentText: {
-            get() {
-                return this.getCommentPost;
-            },
-            set(value) {
-                this.setCommentPost(value);
-                this.v$.commentPost.$touch();
-            }
-        },
+        ...mapGetters({
+            // getCommentPost: "commentsPost/getCommentPost",
+            // getUnderCommentPost: "commentsPost/getUnderCommentPost"
+        }),
+        ...mapState({
+            // commentPost: (state) => state.commentsPost.commentPost,
+            // underCommentPost: (state) => state.commentsPost.underCommentPost
+        }),
+        // underCommentText: {
+        //     get() {
+        //         return this.getUnderCommentPost;
+        //     },
+        //     set(value) {
+        //         this.setUnderCommentPost(value);
+        //         this.v$.underCommentPost.$touch();
+        //     }
+        // }
     }
 }
 

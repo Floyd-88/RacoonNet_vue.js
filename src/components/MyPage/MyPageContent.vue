@@ -44,7 +44,8 @@ export default {
         ...mapActions({
             loadPostServer: "postsMyPageStore/loadPostServer",
             loadAllPhotos: "loadPhotoStore/loadAllPhotos",
-            LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST"
+            LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST",
+            LOAD_COMMENTS_COMMENT: "commentsPost/LOAD_COMMENTS_COMMENT"
         }),
         ...mapMutations({
             setPosts: "postsMyPageStore/setPosts",
@@ -91,7 +92,8 @@ export default {
         const observer = new IntersectionObserver(callback, options);
         observer.observe(this.$refs.observer);
 
-        this.LOAD_COMMENTS_POST();
+        this.LOAD_COMMENTS_POST(this.$route.params.id);
+        this.LOAD_COMMENTS_COMMENT(this.$route.params.id);
     },
 
     beforeUnmount() {

@@ -12,16 +12,19 @@
                     <p>{{ comment.date.slice(0, 10) }}</p>
                 </div>
             </div>
-            <div class="message_text" @click="showBtnsAnsw()">
+            <div class="message_text" @click="showBtnsAnsw(comment)">
                 <p>
-                    {{ comment.comment_post_text }}
+                    {{ messageText(comment.comment_post_text) }}
                 </p>
-                <div class="wrapper_answer_comment" v-if="isBtnsAnsw">
-                    <UIbtn class="answer_comment" @click.stop="showWriteUnderComments()" >Ответить</UIbtn>
-                    <UIbtn class="answer_comment answer_comment_del" @click.stop>Удалить</UIbtn>
+                <div class="wrapper_answer_comment" v-if="comment.isBtnsAnsw">
+                    <UIbtn class="answer_comment" @click.stop="showWriteUnderComments(comment)" >Ответить</UIbtn>
+                    <UIbtn class="answer_comment answer_comment_del" v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment_id" @click.stop>Удалить</UIbtn>
                 </div>
-                <div class="wrapper_under_write_comments" v-if="isShowWriteUnderComment">
-                    <WriteComments/>
+
+                <UnderComment :comment="comment"/>
+
+                <div class="wrapper_under_write_comments" v-if="comment.isShowWriteUnderComment">
+                    <WriteComments :comment="comment"/>
                 </div>
             </div>
         </div>
@@ -48,16 +51,16 @@ export default {
     data() {
         return {
             isBtnsAnsw: false,
-            isShowWriteUnderComment: false,
+            // isShowWriteUnderComment: false,
         };
     },
     methods: {
-        showBtnsAnsw() {
-            this.isBtnsAnsw = !this.isBtnsAnsw;
+        showBtnsAnsw(comment) {
+            comment.isBtnsAnsw = !comment.isBtnsAnsw;
         },
 
-        showWriteUnderComments() {
-            this.isShowWriteUnderComment = !this.isShowWriteUnderComment;
+        showWriteUnderComments(comment) {
+            comment.isShowWriteUnderComment = !comment.isShowWriteUnderComment;
         },
 
         pathAva(ava) {
@@ -68,13 +71,25 @@ export default {
                 return require(`../../assets/ava/ava_1.jpg`);
             }
         },
+
+        //в случае закодированных специсимволов в тектсе- переводим их обратно в читаемый вид
+        messageText(value) {
+            let doc = new DOMParser().parseFromString(value, "text/html");
+            return doc.documentElement.textContent;
+        },
     },
 
     computed: {
         ...mapGetters({
+            getUser: "authorizationStore/getUser",
+            getCommentsCommentArray: "commentsPost/getCommentsCommentArray"
             // getCommentsArray: "commentsPost/getCommentsArray",
             // getCommentPost: "commentsPost/getCommentPost"
         }),
+
+        // commentsComment() {
+        //   return this.getCommentsCommentArray.filter(comment => comment.comment_id === this.comment.id)
+        // }
     },
 
 
