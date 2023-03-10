@@ -12,10 +12,10 @@ import AddPost from "@/components/MyPage/AddPost";
 import PostMyPage from "@/components/MyPage/PostMyPage";
 import MyFriendsBlock from "@/components/MyPage/MyFriendsBlock";
 
-import CommentsPost from "@/components/comments/CommentsPost"
-import WriteComments from "@/components/comments/WriteComments"
-import CommentPost from "@/components/comments/CommentPost"
-import UnderComment from "@/components/comments/UnderComment"
+import CommentsPost from "@/components/commentsPost/CommentsPost"
+import WriteComments from "@/components/commentsPost/WriteComments"
+import CommentPost from "@/components/commentsPost/CommentPost"
+import UnderComment from "@/components/commentsPost/UnderComment"
 
 import AvatarEditor from "@/components/AvatarEditor";
 import EditProfile from "@/components/MyPage/EditProfile";
@@ -27,7 +27,10 @@ import FileUpload from "@/components/FileUpload";
 
 import AllPhotos from "@/components/AllPhotos";
 import SliderPhoto from "@/components/SliderPhoto";
-import CommentsPhoto from "@/components/CommentsPhoto";
+
+import CommentsPhoto from "@/components/commentsPhoto/CommentsPhoto";
+import CommentPhoto from "@/components/commentsPhoto/CommentPhoto";
+import WriteCommentPhoto from "@/components/commentsPhoto/WriteCommentPhoto";
 
 
 import UIbtn from "@/components/UI/UIbtn";
@@ -97,5 +100,7 @@ export default [
     CommentsPost,
     WriteComments,
     CommentPost,
-    UnderComment
+    UnderComment,
+    CommentPhoto,
+    WriteCommentPhoto
 ]

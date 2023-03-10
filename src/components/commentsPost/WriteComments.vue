@@ -11,6 +11,7 @@
                 <textarea 
                 placeholder="Оставить комментарий..." 
                 @click.stop v-model.trim="v$.underCommentText.$model"
+                @blur="v$.underCommentText.$reset()"
                 :class="{ invalid: (v$.underCommentText.$error) }"></textarea>
         </div>
 
@@ -25,6 +26,7 @@
             placeholder="Оставить комментарий..." 
             @click.stop  
             v-model.trim="v$.commentText.$model"
+            @blur="v$.commentText.$reset()"
             :class="{ invalid: (v$.commentText.$error) }"></textarea>
         </div>
 
