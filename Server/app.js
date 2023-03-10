@@ -651,6 +651,54 @@ router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
     }
 });
 
+//ЛАЙКАЕМ ПОСТ
+router.post('/likes_post', authenticateJWT, function(req, res) {
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    //проверяем лайкал ли ранее уже юзер данный пост
+    posts.not_double_likes_post_author([req.body.postID, tokenID], (err, row) => {
+        if (err) return res.status(500).send("При проверке на повторный лайк произошла ошибка" + " " + err);
+        console.log(row)
+        if (row.length > 0) {
+            //удаляем автора лайка из таблицы если ранее атор лайкал пост
+            posts.remove_author_like_post([row[0].id], (err) => {
+                if (err) return res.status(500).send("При исключении автора лайка из таблицы произошла ошибка" + " " + err);
+
+                //уменьшаем количество лайков в таблице с постами на 1
+                posts.remove_count_likes([req.body.postID], (err) => {
+                    if (err) return res.status(500).send("При отмене лайка поста произошла ошибка" + " " + err);
+
+                    //получаем количество лайков поста
+                    posts.get_count_likes_post([req.body.postID], (err, likes) => {
+                        if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
+                        res.status(200).send(likes)
+                    })
+                })
+            })
+        } else {
+            //добавляем автора лайка в таблицу лайков если ранее атор не лайкал пост
+            posts.add_author_likes_post([req.body.postID, tokenID], (err) => {
+                if (err) return res.status(500).send("При лайке поста произошла ошибка" + " " + err);
+
+                //увеличиваем количество лайков в таблице с постами на 1
+                posts.add_count_likes([req.body.postID], (err) => {
+                    if (err) return res.status(500).send("При лайке поста произошла ошибка" + " " + err);
+
+                    //получаем количество лайков поста
+                    posts.get_count_likes_post([req.body.postID], (err, likes) => {
+                        if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
+                        res.status(200).send(likes)
+                    })
+                })
+            })
+        }
+
+
+    })
+
+
+})
+
 //УДАЛЯЕМ КОММЕНТАРИ К КОММЕНТАРИЮ
 router.delete('/load_comments_comment.js', authenticateJWT, function(req, res) {
 

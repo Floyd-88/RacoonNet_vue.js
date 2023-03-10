@@ -5,6 +5,7 @@ class PostsDB {
     constructor() {
         this.connection = mysql.createConnection(config); // подключаем базу данных
         this.createTablePosts();
+        this.createTablePostsLikes();
     }
 
     //создаем таблицу БД с постами
@@ -15,7 +16,18 @@ class PostsDB {
             postText text, 
             page_userID integer,
             authorPost integer,
+            likes integer default 0,
             FOREIGN KEY (authorPost) REFERENCES users (userID) ON DELETE CASCADE)`;
+        this.connection.execute(sql);
+    }
+
+    //создаем таблицу БД с лайками к постам
+    createTablePostsLikes() {
+        const sql = `CREATE TABLE IF NOT EXISTS posts_likes (
+            id integer PRIMARY KEY AUTO_INCREMENT,
+            post_id integer, 
+            author_likes_post integer,
+            CONSTRAINT FK_PostID_Posts FOREIGN KEY (post_id) REFERENCES posts (id), CONSTRAINT FK_AuthorLike_Users  FOREIGN KEY (author_likes_post) REFERENCES users (userID) ON DELETE CASCADE)`;
         this.connection.execute(sql);
     }
 
@@ -26,6 +38,7 @@ class PostsDB {
         users.ava, 
         posts.date, 
         posts.postText, 
+        posts.likes,
         users.name, 
         users.surname,
         posts.authorPost FROM posts 
@@ -88,19 +101,62 @@ class PostsDB {
         });
     }
 
-    // // редактирование поста
+    // редактирование поста
     edit_post_DB(body, callback) {
         return this.connection.execute(`UPDATE posts SET postText=?, date=? WHERE id =?`, body, (err) => {
             callback(err);
         });
     }
 
-    // // удаление поста
+    // удаление поста
     remove_post_DB(postID, callback) {
-        return this.connection.execute(`DELETE from posts WHERE id = ?`, [postID], (err) => {
+        return this.connection.execute(`DELETE from posts_likes WHERE id = ?`, [postID], (err) => {
             callback(err);
         });
     }
+
+    //поверяем на повторный лайк поста
+    not_double_likes_post_author(params, callback) {
+        return this.connection.execute(`SELECT id FROM posts_likes WHERE post_id=? AND author_likes_post = ?`, params, (err, row) => {
+            callback(err, row)
+        });
+    }
+
+    //добавляем автора лайка поста в БД
+    add_author_likes_post(params, callback) {
+        return this.connection.execute(`INSERT INTO posts_likes (post_id, author_likes_post) VALUES (?,?)`, params, (err) => {
+            callback(err);
+        })
+    };
+
+    //убираем автора лайка поста при повторном клике
+    remove_author_like_post(id, callback) {
+        return this.connection.execute(`DELETE from posts_likes WHERE id = ?`, id, (err) => {
+            callback(err);
+        });
+    }
+
+    // лайкаем пост
+    add_count_likes(params, callback) {
+        return this.connection.execute(`UPDATE posts SET likes = likes + 1 WHERE id=?`, params, (err) => {
+            callback(err);
+        })
+    }
+
+    // отменяем лайк поста
+    remove_count_likes(params, callback) {
+        return this.connection.execute(`UPDATE posts SET likes = likes - 1 WHERE id=?`, params, (err) => {
+            callback(err);
+        })
+    }
+
+    //получаем количество лайков у поста
+    get_count_likes_post(id, callback) {
+        return this.connection.execute(`SELECT likes FROM posts WHERE id=?`, id, (err, likes) => {
+            callback(err, likes[0]);
+        })
+    }
+
 
     // //обновление имени и фамилии в постах при редактировании профиля
     // updateTitlePosts(name, callback) {

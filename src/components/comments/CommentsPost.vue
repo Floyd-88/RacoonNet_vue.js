@@ -1,8 +1,8 @@
 <template>
     <div class="wrapper_comments_post">
         <div class="wrapper_likes">
-            <p class="count_likes">100</p>
-            <img class="likes" src="../../assets/icons/like.svg" alt="like">
+            <p class="count_likes" v-if="post.likes !==0">{{ post.likes }}</p>
+            <img class="likes" src="../../assets/icons/like.svg" alt="like" @click="countLikes(post)">
         </div>
         <div class="wrapper_comments_show_btn" @click="showWriteComment(post)">
             <img class="comments_show_btn" src="../../assets/icons/comment.svg" alt="comments">
@@ -36,7 +36,10 @@ export default {
     },
     methods: {
         ...mapMutations({setIsShowWriteComment: "commentsPost/setIsShowWriteComment"}),
-        ...mapActions({LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST"}),
+        ...mapActions({
+            LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST",
+            SAVE_LIKE_COUNT_POST: "postsMyPageStore/SAVE_LIKE_COUNT_POST"
+        }),
 
         showWriteComment(post) {
             post.isShowWriteComment = !post.isShowWriteComment;
@@ -44,11 +47,21 @@ export default {
 
         comment(value) {
             console.log(value)
+        },
+
+       async countLikes(post) {
+            await this.SAVE_LIKE_COUNT_POST({postID: post.id});
+            post.likes = await this.getLikesPost;
+            console.log(post)
+
         }
     },
 
     computed: {
-        ...mapGetters({getCommentsArray: "commentsPost/getCommentsArray"}),
+        ...mapGetters({
+            getCommentsArray: "commentsPost/getCommentsArray",
+            getLikesPost: "postsMyPageStore/getLikesPost"
+        }),
 
         comments() {
           return this.getCommentsArray.filter(comment => comment.post_id === this.post.id)

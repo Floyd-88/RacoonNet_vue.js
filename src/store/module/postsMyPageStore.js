@@ -13,7 +13,8 @@ export const postsMyPageStore = {
         totalCount: 0, //всего страниц
         newsPostsFriends: [], //новостная лента от друзей
         countNews: 0, //с какой новости начинать вести счет
-        limitNews: 10 // лимит новостей на странице
+        limitNews: 10, // лимит новостей на странице
+        likesPost: ""
     }),
 
     getters: {
@@ -25,6 +26,7 @@ export const postsMyPageStore = {
             return rootGetters["authorizationStore/getUser"]
         },
         getNewsPostsFriends: state => state.newsPostsFriends,
+        getLikesPost: state => state.likesPost
     },
 
     mutations: {
@@ -83,6 +85,10 @@ export const postsMyPageStore = {
             state.countNews = 0;
         },
 
+        setLikesPost(state, value) {
+            state.likesPost = value
+        }
+
     },
 
     actions: {
@@ -101,7 +107,8 @@ export const postsMyPageStore = {
                 }).then((response) => {
                     if (response.data.length > 0) {
                         commit("setPosts", [...state.posts, ...response.data]);
-                        commit("setCountPosts", 10)
+                        commit("setCountPosts", 10);
+                        console.log(state.posts)
                     }
 
                 });
@@ -230,9 +237,22 @@ export const postsMyPageStore = {
                 console.error(err);
             }
         },
+
+        //лайкнуть пост
+        async SAVE_LIKE_COUNT_POST({ commit }, postID) {
+            try {
+                await axios.post('http://localhost:8000/likes_post', postID)
+                    .then((response) => {
+                        commit("setLikesPost", response.data.likes)
+                        console.log(this.getLikesPost)
+
+                        // console.log(response.data.likes)
+                    });
+            } catch (err) {
+                console.error(err);
+            }
+        }
     },
-
-
 
     namespaced: true
 }
