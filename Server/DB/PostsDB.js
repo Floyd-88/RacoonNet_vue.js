@@ -33,7 +33,18 @@ class PostsDB {
 
     // загрузка постов из базы данны
     load_posts_DB(params, callback) {
-        return this.connection.execute(`SELECT 
+        return this.connection.execute(`SELECT posts.id, 
+        users.ava, 
+        posts.date, 
+        posts.postText, 
+        posts.likes,
+        users.name, 
+        users.surname,
+        posts.authorPost,
+        SUM(CASE WHEN posts_likes.author_likes_post = ? THEN 1 ELSE 0 END) as like_post
+        FROM posts 
+        INNER JOIN users ON posts.authorPost = users.userID LEFT JOIN posts_likes ON posts_likes.post_id = posts.id
+        WHERE page_userID = ? GROUP BY 
         posts.id, 
         users.ava, 
         posts.date, 
@@ -41,9 +52,8 @@ class PostsDB {
         posts.likes,
         users.name, 
         users.surname,
-        posts.authorPost FROM posts 
-        INNER JOIN users ON posts.authorPost = users.userID 
-        WHERE page_userID = ? ORDER BY posts.id DESC LIMIT ?, ?`, params, (err, row) => {
+        posts.authorPost
+        ORDER BY posts.id DESC LIMIT ?, ?`, params, (err, row) => {
             callback(err, row)
         });
     }

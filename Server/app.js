@@ -468,7 +468,9 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
 
 //ПОДГРУЗКА ПОСТОВ ПОЛЬЗОВАТЕЛЯ ИЗ БАЗЫ ДАННЫХ
 router.get('/dataBase.js', authenticateJWT, function(req, res) {
+    tokenID = req.tokenID; //id из сохраненного токена 
     posts.load_posts_DB([
+        tokenID,
         req.query.userID,
         req.query._count,
         req.query._limit
@@ -658,7 +660,6 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
     //проверяем лайкал ли ранее уже юзер данный пост
     posts.not_double_likes_post_author([req.body.postID, tokenID], (err, row) => {
         if (err) return res.status(500).send("При проверке на повторный лайк произошла ошибка" + " " + err);
-        console.log(row)
         if (row.length > 0) {
             //удаляем автора лайка из таблицы если ранее атор лайкал пост
             posts.remove_author_like_post([row[0].id], (err) => {
@@ -671,7 +672,8 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
                     //получаем количество лайков поста
                     posts.get_count_likes_post([req.body.postID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
-                        res.status(200).send(likes)
+                        console.log(likes)
+                        res.status(200).json({ likes: likes, flag: false })
                     })
                 })
             })
@@ -687,7 +689,9 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
                     //получаем количество лайков поста
                     posts.get_count_likes_post([req.body.postID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
-                        res.status(200).send(likes)
+                        console.log(likes)
+
+                        res.status(200).json({ likes: likes, flag: true })
                     })
                 })
             })
@@ -695,8 +699,6 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
 
 
     })
-
-
 })
 
 //УДАЛЯЕМ КОММЕНТАРИ К КОММЕНТАРИЮ

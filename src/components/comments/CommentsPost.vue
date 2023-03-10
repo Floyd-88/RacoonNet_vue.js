@@ -2,7 +2,20 @@
     <div class="wrapper_comments_post">
         <div class="wrapper_likes">
             <p class="count_likes" v-if="post.likes !==0">{{ post.likes }}</p>
-            <img class="likes" src="../../assets/icons/like.svg" alt="like" @click="countLikes(post)">
+
+            <img class="likes"  
+                src="../../assets/icons/like.svg"  
+                alt="like" 
+                v-if="post.like_post == 0"
+                @click="countLikes(post)">
+
+            <!-- подкрашивать сердце если пост лайкнут -->
+            <img class="likes"  
+                src="../../assets/icons/like_full.png"  
+                alt="like" 
+                v-if="post.like_post == 1"
+                @click="countLikes(post)">
+
         </div>
         <div class="wrapper_comments_show_btn" @click="showWriteComment(post)">
             <img class="comments_show_btn" src="../../assets/icons/comment.svg" alt="comments">
@@ -34,11 +47,13 @@ export default {
     data() {
         return { };
     },
+
     methods: {
         ...mapMutations({setIsShowWriteComment: "commentsPost/setIsShowWriteComment"}),
         ...mapActions({
             LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST",
-            SAVE_LIKE_COUNT_POST: "postsMyPageStore/SAVE_LIKE_COUNT_POST"
+            SAVE_LIKE_COUNT_POST: "postsMyPageStore/SAVE_LIKE_COUNT_POST",
+            LOAD_AUTHOR_LIKES: "postsMyPageStore/LOAD_AUTHOR_LIKES"
         }),
 
         showWriteComment(post) {
@@ -51,8 +66,15 @@ export default {
 
        async countLikes(post) {
             await this.SAVE_LIKE_COUNT_POST({postID: post.id});
-            post.likes = await this.getLikesPost;
-            console.log(post)
+            let objectLikes = await this.getLikesPost;
+            post.likes = objectLikes.likes.likes
+
+            console.log(post.like_post) 
+            if(post.like_post == 0) {
+                post.like_post = 1;
+            } else {
+                post.like_post = 0
+            }
 
         }
     },
@@ -65,7 +87,7 @@ export default {
 
         comments() {
           return this.getCommentsArray.filter(comment => comment.post_id === this.post.id)
-        }
+        },
     },
 }
 

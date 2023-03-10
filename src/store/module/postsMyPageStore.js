@@ -243,15 +243,12 @@ export const postsMyPageStore = {
             try {
                 await axios.post('http://localhost:8000/likes_post', postID)
                     .then((response) => {
-                        commit("setLikesPost", response.data.likes)
-                        console.log(this.getLikesPost)
-
-                        // console.log(response.data.likes)
+                        commit("setLikesPost", response.data)
                     });
             } catch (err) {
                 console.error(err);
             }
-        }
+        },
     },
 
     namespaced: true
