@@ -33,6 +33,9 @@ const friends = new FriendsDB();
 const CommentsPostDB = require('./DB/CommentsPostDB');
 const commentsPost = new CommentsPostDB();
 
+const CommentsPhotoDB = require('./DB/CommentsPhotoDB');
+const commentsPhoto = new CommentsPhotoDB();
+
 
 //подключаем массивы с валидацией
 const loginValidate = require('./validate/loginValidate')
@@ -489,99 +492,6 @@ router.get('/dataBase.js', authenticateJWT, function(req, res) {
     });
 });
 
-//ПОДГРУЗКА КОММЕНТАРИЕВ К ПОСТУ
-router.get("/load_comments_post.js", authenticateJWT, function(req, res) {
-    tokenID = req.tokenID; //id из сохраненного токена 
-
-    commentsPost.load_comments_DB([req.query.postID], (err, comments) => {
-        if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
-        if (!comments) return res.status(404).send('Комментарии к постам отстутствуют' + " " + err);
-
-        res.status(200).json(comments);
-
-
-    })
-})
-
-//ПОДГРУЗКА КОММЕНТАРИЕВ К КОММЕНТАРИЮ
-router.get("/load_comments_comment.js", authenticateJWT, function(req, res) {
-    tokenID = req.tokenID; //id из сохраненного токена 
-
-    commentsPost.load_comments_comment_DB([req.query.postID], (err, comments) => {
-        if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
-        if (!comments) return res.status(404).send('Комментарии отстутствуют' + " " + err);
-
-        res.status(200).json(comments);
-
-
-    })
-})
-
-//ДОБАВЛЕНИЕ КОММЕНТАРИЯ В БАЗУ ДАННЫХ
-router.post("/load_comments_post.js", authenticateJWT, messageValidate, function(req, res) {
-    //валидация комментария
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({
-            errors: errors.array()
-        });
-    }
-
-    tokenID = req.tokenID; //id из сохраненного токена 
-
-    commentsPost.add_commentPost_DB([
-        req.body.postID,
-        req.body.textMessage,
-        tokenID,
-        req.body.userPage,
-        req.body.date
-    ], (err, comment) => {
-        if (err) return res.status(500).send('При добавлении комментария произошла ошибка' + " " + err);
-
-        const newCommentID = comment.insertId
-            // возвращаем обновленный пост с информацие по автору поста
-        commentsPost.load_one_comment_DB(newCommentID, (err, newComment) => {
-            if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
-
-            res.status(200).send(newComment);
-        });
-    });
-})
-
-//ДОБАВЛЕНИЕ КОММЕНТАРИЯ К КОММЕНТАРИЮ В БАЗУ ДАННЫХ
-router.post("/load_comments_comment.js", authenticateJWT, messageValidate, function(req, res) {
-    //валидация комментария
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({
-            errors: errors.array()
-        });
-    }
-    console.log(req.body)
-
-    tokenID = req.tokenID; //id из сохраненного токена 
-
-    commentsPost.add_commentComment_DB([
-        req.body.postID,
-        req.body.textMessage,
-        tokenID,
-        req.body.userPage,
-        req.body.date
-    ], (err, comment) => {
-        if (err) return res.status(500).send('При добавлении комментария произошла ошибка' + " " + err);
-
-        console.log(comment);
-        const newCommentID = comment.insertId
-            // возвращаем обновленный пост с информацие по автору поста
-        commentsPost.load_one_comment_comment_DB(newCommentID, (err, newComment) => {
-            if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
-
-            console.log(newComment);
-            res.status(200).send(newComment);
-        });
-    });
-})
-
 //ДОБАВЛЯЕМ НОВЫЙ ПОСТ
 router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
     //валидация поста
@@ -701,6 +611,97 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
     })
 })
 
+//ПОДГРУЗКА КОММЕНТАРИЕВ К ПОСТУ
+router.get("/load_comments_post.js", authenticateJWT, function(req, res) {
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    commentsPost.load_comments_DB([req.query.postID], (err, comments) => {
+        if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
+        if (!comments) return res.status(404).send('Комментарии к постам отстутствуют' + " " + err);
+
+        res.status(200).json(comments);
+    })
+})
+
+//ПОДГРУЗКА КОММЕНТАРИЕВ К КОММЕНТАРИЮ
+router.get("/load_comments_comment.js", authenticateJWT, function(req, res) {
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    commentsPost.load_comments_comment_DB([req.query.postID], (err, comments) => {
+        if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
+        if (!comments) return res.status(404).send('Комментарии отстутствуют' + " " + err);
+
+        res.status(200).json(comments);
+
+
+    })
+})
+
+//ДОБАВЛЕНИЕ КОММЕНТАРИЯ К ПОСТУ В БАЗУ ДАННЫХ
+router.post("/load_comments_post.js", authenticateJWT, messageValidate, function(req, res) {
+    //валидация комментария
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    commentsPost.add_commentPost_DB([
+        req.body.postID,
+        req.body.textMessage,
+        tokenID,
+        req.body.userPage,
+        req.body.date
+    ], (err, comment) => {
+        if (err) return res.status(500).send('При добавлении комментария произошла ошибка' + " " + err);
+
+        const newCommentID = comment.insertId
+            // возвращаем написанный комментарий
+        commentsPost.load_one_comment_DB(newCommentID, (err, newComment) => {
+            if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
+
+            res.status(200).send(newComment);
+        });
+    });
+})
+
+//ДОБАВЛЕНИЕ КОММЕНТАРИЯ К КОММЕНТАРИЮ В БАЗУ ДАННЫХ
+router.post("/load_comments_comment.js", authenticateJWT, messageValidate, function(req, res) {
+    //валидация комментария
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+    console.log(req.body)
+
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    commentsPost.add_commentComment_DB([
+        req.body.postID,
+        req.body.textMessage,
+        tokenID,
+        req.body.userPage,
+        req.body.date
+    ], (err, comment) => {
+        if (err) return res.status(500).send('При добавлении комментария произошла ошибка' + " " + err);
+
+        console.log(comment);
+        const newCommentID = comment.insertId
+            // возвращаем написанный комментарий
+        commentsPost.load_one_comment_comment_DB(newCommentID, (err, newComment) => {
+            if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
+
+            console.log(newComment);
+            res.status(200).send(newComment);
+        });
+    });
+})
+
 //УДАЛЯЕМ КОММЕНТАРИ К КОММЕНТАРИЮ
 router.delete('/load_comments_comment.js', authenticateJWT, function(req, res) {
 
@@ -715,7 +716,7 @@ router.delete('/load_comments_comment.js', authenticateJWT, function(req, res) {
     }
 });
 
-//УДАЛЯЕМ КОММЕНТАРИ К КОММЕНТАРИЮ
+//УДАЛЯЕМ КОММЕНТАРИ К ПОСТУ
 router.delete('/load_comments_post.js', authenticateJWT, function(req, res) {
 
     tokenID = req.tokenID; //id из сохраненного токена 
@@ -953,6 +954,65 @@ router.put('/remove_ava_photo', authenticateJWT, function(req, res) {
 
 
 })
+
+//ДОБАВЛЕНИЕ КОММЕНТАРИЯ К ФОТОГРАФИИ В БАЗУ ДАННЫХ
+router.post("/load_comments_photo.js", authenticateJWT, messageValidate, function(req, res) {
+    //валидация комментария
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    commentsPhoto.add_commentPhoto_DB([
+        req.body.photoID,
+        req.body.textMessage,
+        tokenID,
+        req.body.userPage,
+        req.body.date
+    ], (err, commentPhoto) => {
+        if (err) return res.status(500).send('При добавлении комментария произошла ошибка' + " " + err);
+
+        const newCommentID = commentPhoto.insertId
+
+        // возвращаем написанный комментарий
+        commentsPhoto.load_one_comment_photo_DB(newCommentID, (err, newCommentPhoto) => {
+            if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
+
+            res.status(200).send(newCommentPhoto);
+        });
+    });
+})
+
+//ПОДГРУЗКА КОММЕНТАРИЕВ К ФОТОГРАФИИ
+router.get("/load_comments_photo.js", authenticateJWT, function(req, res) {
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    commentsPhoto.load_commentsPhoto_DB([req.query.photoID], (err, comments) => {
+        if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
+        if (!comments) return res.status(404).send('Комментарии к постам отстутствуют' + " " + err);
+
+        console.log(comments)
+        res.status(200).json(comments);
+    })
+})
+
+//УДАЛЯЕМ КОММЕНТАРИ К ФОТО
+router.delete('/load_comments_photo.js', authenticateJWT, function(req, res) {
+
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    //удалять комментарии может только автор поста или хозяин страницы
+    if (tokenID === req.body.authorID || tokenID === req.body.pageID) {
+        commentsPhoto.remove_comment_photo_DB(req.body.commentID, (err) => {
+            if (err) return res.status(500).send('Произошла ошибка при удалении комментария' + " " + err);
+            res.status(200).send("Комментарий к фотографии был удален");
+        });
+    }
+});
 
 //ДОБАВЛЕНИЕ СООБЩЕНИЯ В БАЗУ ДАННЫХ
 router.post('/user_message', authenticateJWT, messageValidate, function(req, res) {

@@ -3,10 +3,14 @@
         <div class="wrapper_block_message_user">
             <div class="wrapper_message_user">
                 <div class="message_name_user">
-                    <div class="dialog_ava_user">
+                    <div class="dialog_ava_user" 
+                    @click="$router.push({ name: 'mypage', params: { id: comment.author_comment_id } })">
                         <img :src="pathAva(comment.ava)" alt="ava">
                     </div>
-                    <p class="message_name">{{ comment.name + " " + comment.surname }}</p>
+                    <p class="message_name"
+                        @click="$router.push({ name: 'mypage', params: { id: comment.author_comment_id } })">
+                        {{ comment.name + " " + comment.surname }}
+                    </p>
                 </div>
                 <div class="message_time">
                     <p>{{ comment.date.slice(0, 10) }}</p>
@@ -18,6 +22,7 @@
                 </p>
                 <div class="wrapper_answer_comment" v-if="comment.isBtnsAnsw">
                     <UIbtn class="answer_comment" @click.stop="showWriteUnderComments(comment)" >Ответить</UIbtn>
+
                     <UIbtn class="answer_comment answer_comment_del" v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment_id" @click.stop="DELETE_COMMENTS_POST({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id})">Удалить</UIbtn>
                 </div>
 

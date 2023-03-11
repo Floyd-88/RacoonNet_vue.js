@@ -12,6 +12,7 @@ import { messageStore } from "@/store/module/messageStore"
 import { friendsStore } from "@/store/module/friendsStore"
 import { galleryStore } from "@/store/module/galleryStore"
 import { commentsPost } from "@/store/module/commentsPost"
+import { commentsPhoto } from "@/store/module/commentsPhoto"
 
 
 
@@ -29,6 +30,7 @@ export default createStore({
         messageStore,
         friendsStore,
         galleryStore,
-        commentsPost
+        commentsPost,
+        commentsPhoto
     }
 });

@@ -2,17 +2,16 @@
     <div class="wrapper_block_comments">
         <div class="wrapper_block_comments_title">
             <div class="wrapper_block_comments_title_name_ava">
-                <div class="wrapper_block_comments_ava"
-                    @click="$router.push({ name: 'mypage', params: { id: `${dialog.userID}` } })">
-                    <img class="ava_posts" src="../../assets/ava/ava_1.jpg" alt="ava">
+                <div class="wrapper_block_comments_ava">
+                    <img class="ava_posts" :src="loadAva" alt="ava">
                 </div>
                 <div class="wrapper_block_comments_name">
-                    <p class="block_comments_name">Илья Сазонов</p>
+                    <p class="block_comments_name">{{ currentImg.name + " " + currentImg.surname }}</p>
                 </div>
             </div>
 
             <div class="wrapper_block_comments_date">
-                <p class="block_comments_date">2010-02-23</p>
+                <p class="block_comments_date">{{ currentImg.date.slice(0, 10) }}</p>
             </div>
         </div>
 
@@ -34,19 +33,61 @@
         </div>
 
         <!-- комментарии -->
-        <div class="wrapper_block_comments_comment">
-            <CommentPhoto />      
+        <div class="wrapper_block_comments_comment" ref="scrollToMe">
+            <CommentPhoto/>      
         </div>
 
         <div class="wrapper_under_write_comments">
-            <WriteCommentPhoto />
+            <WriteCommentPhoto :currentImg="currentImg" @scrollToMe="scrollToElement()"/>
         </div>
 </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
     name: "CommentsPhoto",
+
+    props: {
+        currentImg: {
+            type: Object,
+            default: () => {
+                return {}
+            }
+        }
+    },
+
+    methods: {
+        scrollToElement() {
+            try {
+                const el = this.$refs.scrollToMe;
+                if (el) {
+                    el.scrollTop = el.scrollHeight;
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        },
+    },
+
+    computed: {
+        ...mapGetters({getCommentsPhotoArray: "commentsPhoto/getCommentsPhotoArray"}),
+
+        loadAva() {
+            try {
+                return require(`../../assets/photo/${this.currentImg.ava}`)
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
+    },
+
+    watch: {
+            getCommentsPhotoArray() {
+                this.scrollToElement();
+            }
+        }
 
 }
 </script>
@@ -76,7 +117,6 @@ export default {
 .ava_posts {
     width: 50px;
     border-radius: 100%;
-    cursor: pointer;
 }
 
 .wrapper_block_comments_name {

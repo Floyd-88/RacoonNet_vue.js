@@ -76,7 +76,7 @@
 
                     <textarea class="new_message" id="name" placeholder="Введите сообщение" v-model="changeMessage"
                         :class="{ invalid: (v$.messageUser.$error) }">
-                                </textarea>
+                    </textarea>
                 </div>
             </div>
             <!-- -- -->

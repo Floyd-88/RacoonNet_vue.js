@@ -1,32 +1,31 @@
 <template>
-    <div class="wrapper_message_dialog_user">
+    <div class="wrapper_message_dialog_user" v-for="comment in getCommentsPhotoArray" :key="comment.id">
         <div class="wrapper_block_message_user">
             <div class="wrapper_message_user">
                 <div class="message_name_user">
-                    <div class="dialog_ava_user">
-                        <img src="../../assets/ava/ava_1.jpg" alt="ava">
+                    <div class="dialog_ava_user" 
+                    @click="$router.push({ name: 'mypage', params: { id: comment.author_comment_id } })">
+                        <img :src="pathAva(comment.ava)" alt="ava">
                     </div>
-                    <p class="message_name">Илья Сазонов</p>
+                    <p class="message_name"
+                    @click="$router.push({ name: 'mypage', params: { id: comment.author_comment_id } })"
+                    >{{ comment.name + " " + comment.surname }}</p>
                 </div>
                 <div class="message_time">
-                    <p>20.02.2023</p>
+                    <p>{{ comment.date.slice(0, 10) }}</p>
                 </div>
             </div>
-            <div class="message_text">
+            <div class="message_text" @click="showBtnDelete(comment)">
                 <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, quaerat?
+                   {{ messageText(comment.comment_photo_text) }}
                 </p>
-                <div class="wrapper_answer_comment" >
+                <div class="wrapper_answer_comment" v-if="comment.isBtnDelete">
                     <!-- <UIbtn class="answer_comment" >Ответить</UIbtn> -->
-                    <UIbtn class="answer_comment answer_comment_del">Удалить</UIbtn>
+                    <UIbtn class="answer_comment answer_comment_del"  v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment_id" @click="DELETE_COMMENTS_PHOTO({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id})">Удалить</UIbtn>
                 </div>
             </div>
         </div>
 </div>
-<!-- <div class="wrapper_under_write_comments">
-    <WriteCommentPhoto/>
-</div> -->
-<!-- -- -->
 </template>
 
 <script>
@@ -36,54 +35,48 @@ import UIbtn from '../UI/UIbtn.vue';
 export default {
     name: "CommentPhoto",
 
-    props: {
-        comments: {
-            type: Array,
-            default: () => {
-                return []
-            }
-        }
-    },
+    // props: {
+    //     comments: {
+    //         type: Array,
+    //         default: () => {
+    //             return []
+    //         }
+    //     }
+    // },
 
     data() {
         return {
-            // isBtnsAnsw: false,
-            // isShowWriteUnderComment: false,
+            isBtnDelete: false,
         };
     },
+
     methods: {
-        ...mapActions({DELETE_COMMENTS_POST: "commentsPost/DELETE_COMMENTS_POST"}),
-        
-        showBtnsAnsw(comment) {
-            comment.isBtnsAnsw = !comment.isBtnsAnsw;
+        ...mapActions({DELETE_COMMENTS_PHOTO: "commentsPhoto/DELETE_COMMENTS_PHOTO"}),
+
+        showBtnDelete(comment) {
+            comment.isBtnDelete = !comment.isBtnDelete;
         },
 
-        // showWriteUnderComments(comment) {
-        //     comment.isShowWriteUnderComment = !comment.isShowWriteUnderComment;
-        // },
-
-        // pathAva(ava) {
-        //     try {
-        //         console.log('ava')
-        //         return require(`../../assets/photo/${ava}`);
-        //     } catch {
-        //         return require(`../../assets/ava/ava_1.jpg`);
-        //     }
-        // },
+        pathAva(ava) {
+            try {
+                console.log('ava')
+                return require(`../../assets/photo/${ava}`);
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
 
         //в случае закодированных специсимволов в тектсе- переводим их обратно в читаемый вид
-        // messageText(value) {
-        //     let doc = new DOMParser().parseFromString(value, "text/html");
-        //     return doc.documentElement.textContent;
-        // },
+        messageText(value) {
+            let doc = new DOMParser().parseFromString(value, "text/html");
+            return doc.documentElement.textContent;
+        },
     },
 
     computed: {
         ...mapGetters({
             getUser: "authorizationStore/getUser",
-            getCommentsCommentArray: "commentsPost/getCommentsCommentArray"
-            // getCommentsArray: "commentsPost/getCommentsArray",
-            // getCommentPost: "commentsPost/getCommentPost"
+            getCommentsPhotoArray: "commentsPhoto/getCommentsPhotoArray"
         }),
 
         // commentsComment() {

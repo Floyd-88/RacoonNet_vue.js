@@ -30,7 +30,7 @@ class PhotosDB {
 
     //загрузка всех фото из базы данных
     load_all_photos_DB(params, callback) {
-        return this.connection.execute(`SELECT id, photo_name, category FROM photos WHERE userID = ? ORDER BY id DESC`, params, (err, row) => {
+        return this.connection.execute(`SELECT id, photo_name, category, name, surname, ava, date FROM photos INNER JOIN users ON photos.userID = users.userID WHERE photos.userID = ? ORDER BY id DESC`, params, (err, row) => {
             callback(err, row)
         });
     }

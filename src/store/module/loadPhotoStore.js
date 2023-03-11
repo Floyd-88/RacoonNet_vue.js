@@ -16,7 +16,7 @@ export const loadPhotoStore = {
 
         isModulePhotoRemove: false, //показывать-скрывать модальное окно с подтвержением удаления фото
 
-        limitAllPhoto: 8, //количествофотографий отображаемых каждый раз при прокрутке вниз
+        limitAllPhoto: 8, //количество фотографий отображаемых каждый раз при прокрутке вниз
 
         avaPhoto: "",
         progressLoadPhoto: 0,

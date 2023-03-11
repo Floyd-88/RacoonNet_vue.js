@@ -27,7 +27,7 @@
             </div>
 
             <!-- блок комментариев -->
-            <CommentsPhoto />
+            <CommentsPhoto :currentImg="currentImg"/>
 
 
         </div>
@@ -91,17 +91,24 @@ export default {
             }
         };
     },
+
+    beforeUnmount() {
+        this.setCommentsPhotoArray([])
+    },
+
     methods: {
         ...mapMutations({
             setIndexPhoto: "showFullPhotoStore/setIndexPhoto",
             setNextIndexPhoto: "showFullPhotoStore/setNextIndexPhoto",
             setPrevIndexPhoto: "showFullPhotoStore/setPrevIndexPhoto",
             setModulePhotoRemove: "loadPhotoStore/setModulePhotoRemove",
-            setPhotoId: "loadPhotoStore/setPhotoId"
+            setPhotoId: "loadPhotoStore/setPhotoId",
+            setCommentsPhotoArray: "commentsPhoto/setCommentsPhotoArray"
         }),
         ...mapActions({
             removePhoto: "loadPhotoStore/removePhoto",
-            closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
+            closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
+            LOAD_COMMENTS_PHOTO: "commentsPhoto/LOAD_COMMENTS_PHOTO"
         })
     },
     computed: {
@@ -114,6 +121,8 @@ export default {
         }),
         currentImg: function () {
             if (this.getAllPhotosMyPage.length > 0) {
+                this.setCommentsPhotoArray([])
+                
                 if (this.getIndexPhoto === -1) {
                     this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
                 }
@@ -125,6 +134,7 @@ export default {
                     this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
                 }
                 this.setPhotoId(photo.id);
+                this.LOAD_COMMENTS_PHOTO(photo.id)
                 return photo;
             }
             return [];

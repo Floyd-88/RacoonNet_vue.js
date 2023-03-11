@@ -3,7 +3,7 @@
 
         <!-- блок с комментариями к постам -->
         <div class="write_comments_text">
-            <div class="input-errors" v-for="(error, index) of v$.commentText.$errors" :key="index">
+            <div class="input-errors" v-for="(error, index) of v$.commentPhoto.$errors" :key="index">
                 <div class="error-msg" v-if="error.$message === 'Value is required'">
                     Вы не написали комментарий
                 </div>
@@ -11,16 +11,17 @@
             <textarea 
             placeholder="Оставить комментарий..." 
             @click.stop  
-            v-model.trim="v$.commentText.$model"
-            @blur="v$.commentText.$reset()"
-            :class="{ invalid: (v$.commentText.$error) }"></textarea>
+            v-model.trim="v$.commentPhoto.$model"
+            @blur="v$.commentPhoto.$reset()"
+            :class="{ invalid: (v$.commentPhoto.$error) }"></textarea>
         </div>
 
         
         
         <div class="write_comments_btn" @click.stop>
             <UIbtn
-            :disabled="v$.commentText.$invalid">
+            :disabled="v$.commentPhoto.$invalid"
+            @click="clickWriteCommentPhoto()">
             Отправить</UIbtn>
 
         </div>
@@ -37,13 +38,14 @@ export default {
     name: "WriteCommentPhoto",
     components: { UIbtn },
 
-    // props: {
-    //     post: {
-    //         type: Object,
-    //         default: () => {
-    //             return {}
-    //         }
-    //     },
+    props: {
+    
+        currentImg: {
+            type: Object,
+            default: () => {
+                return {}
+            }
+        }
 
     //     comment: {
     //         type: Object,
@@ -51,14 +53,14 @@ export default {
     //             return {}
     //         }
     //     }
-    // },
+    },
 
     setup() {
         return { v$: useVuelidate() }
     },
 
     validations: {
-        commentText: {
+        commentPhoto: {
             required,
             min: minLength(1),
             max: maxLength(200),
@@ -67,7 +69,7 @@ export default {
 
     data() {
         return {
-            commentText: "",
+            commentPhoto: "",
         }
     },
 
@@ -78,21 +80,22 @@ export default {
             setCommentsArray: "commentsPost/setCommentsArray"
         }),
         ...mapActions({ 
-            SAVE_COMMENTS_POST: "commentsPost/SAVE_COMMENTS_POST",
-            SAVE_UNDER_COMMENTS_POST: "commentsPost/SAVE_UNDER_COMMENTS_POST"
+            SAVE_COMMENTS_PHOTO: "commentsPhoto/SAVE_COMMENTS_PHOTO",
         }),
 
-        // clickWriteCommentPost() {
-        //    this.SAVE_COMMENTS_POST({ postID: this.post.id, textMessage: this.commentText, userPage: this.$route.params.id });
-        //     this.commentText = "";
-        //     this.v$.commentText.$reset()
-        // },
+        async clickWriteCommentPhoto() {
+            console.log(this.currentImg.id)
+           await this.SAVE_COMMENTS_PHOTO({ photoID: this.currentImg.id, textMessage: this.commentPhoto, userPage: this.$route.params.id });
+           this.$emit("scrollToMe");
+            this.commentPhoto = "";
+            this.v$.commentPhoto.$reset();
+        },
 
 
-        setCommentText(value) {
-                this.commentText = value;
-                this.v$.commentText.$touch();
-            }
+        // commentPhoto(value) {
+        //         this.commentPhoto = value;
+        //         this.v$.commentPhoto.$touch();
+        //     }
     },
 
     computed: {
@@ -104,15 +107,6 @@ export default {
             // commentPost: (state) => state.commentsPost.commentPost,
             // underCommentPost: (state) => state.commentsPost.underCommentPost
         }),
-        // underCommentText: {
-        //     get() {
-        //         return this.getUnderCommentPost;
-        //     },
-        //     set(value) {
-        //         this.setUnderCommentPost(value);
-        //         this.v$.underCommentPost.$touch();
-        //     }
-        // }
     }
 }
 
