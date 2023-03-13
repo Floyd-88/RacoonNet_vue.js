@@ -10,8 +10,11 @@
     </div>
 
     <div class="wrapper_btn_addPost">
+      <UIbtn class="btn_addPhoto"
+             @click="addPostPhoto(postText)"></UIbtn>
+
       <UIbtn class="btn_addPost"
-             @click="addPost(postText)"
+             @click="addPost()"
              :disabled="postText.length < 1">
         Добавить
       </UIbtn>
@@ -29,8 +32,18 @@ export default {
   },
 
   methods: {
-...mapMutations({setPostText: "postsMyPageStore/setPostText"}),
-...mapActions({addPost: "postsMyPageStore/addPost"})
+...mapMutations({
+  setPostText: "postsMyPageStore/setPostText",
+  setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
+  setIsLoadPhotoPost: "loadPhotoStore/setIsLoadPhotoPost"
+  }),
+...mapActions({addPost: "postsMyPageStore/addPost"}),
+
+   addPostPhoto() {
+    this.setIsLoadPhotoPost(true);
+    // this.addPost(postText)
+    this.setIsModalLoadPhoto(true);
+   }
   },
 
   computed: {
@@ -67,6 +80,15 @@ postText: {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 20px;
+}
+
+.btn_addPhoto {
+ background-image: url("../../assets/icons/camera_4.svg");
+    background-size: 58%;
+    background-repeat: no-repeat;
+    width: 60px;
+    background-position: center;
+    margin-right: 10px;
 }
 
 .btn_addPost {

@@ -21,8 +21,8 @@ export default {
     this.LOAD_DIALOGS();
     this.GET_USER_ADD_FRIENDS_ME();
     this.GET_USER_MY_FRIENDS();
+    // this.CHECK_REQUEST_FRIEND(this.$route.params.id);
    
-
 
 
     //вызываем метод для отправки сообщения всем участникам комнаты
@@ -90,7 +90,7 @@ export default {
       UPDATE_DIALOGS_SOCKETS: "messageStore/UPDATE_DIALOGS_SOCKETS",
       GET_USER_ADD_FRIENDS_ME: "friendsStore/GET_USER_ADD_FRIENDS_ME",
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
-      // CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND"
+      CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND"
 
       // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
       // loadPostServer: "postsMyPageStore/loadPostServer",
@@ -113,6 +113,8 @@ export default {
       if (id) {
         this.loadUser({ id })
           .then(() => {
+            this.CHECK_REQUEST_FRIEND(id);
+
             // this.LOAD_DIALOGS();
             // this.CHECK_CONFIRM_FRIEND();
             // console.log(this.getArrayDialogs.reduce((accum, item) => accum + item.unread, 0))

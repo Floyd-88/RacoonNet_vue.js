@@ -471,6 +471,7 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
 
 //ПОДГРУЗКА ПОСТОВ ПОЛЬЗОВАТЕЛЯ ИЗ БАЗЫ ДАННЫХ
 router.get('/dataBase.js', authenticateJWT, function(req, res) {
+    console.log('ok')
     tokenID = req.tokenID; //id из сохраненного токена 
     posts.load_posts_DB([
         tokenID,
@@ -492,8 +493,38 @@ router.get('/dataBase.js', authenticateJWT, function(req, res) {
     });
 });
 
+//ПОДГРУЗКА ФОТОГРАФИЙ К ПОСТАМ ПОЛЬЗОВАТЕЛЕЙ
+router.get('/post_photos.js', authenticateJWT, function(req, res) {
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    posts.load_photos_posts_DB([
+        req.query.postID
+    ], (err, photosPost) => {
+        if (err) return res.status(500).send('Error on the server.' + " " + err);
+        if (!photosPost) return res.status(404).send('No posts found.' + " " + err);
+
+        //массив с названиями фотографий
+        let arr = [];
+        //путь к папке где лежат фотографии
+        let path = "../src/assets/photo/";
+        //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
+        photosPost.forEach(element => {
+            try {
+                //синхронный метод проверки файла ??????????????
+                if (fs.existsSync(`${path + element.photo_name}`)) {
+                    arr.push(element)
+                }
+            } catch (err) {
+                console.error(err)
+            }
+        });
+        res.status(200).json(arr);
+    });
+});
+
 //ДОБАВЛЯЕМ НОВЫЙ ПОСТ
 router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
+
     //валидация поста
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -504,11 +535,19 @@ router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
     userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
 
+    let photo = "";
+    if (req.body.photo) {
+        photo = req.body.photo;
+    } else {
+        photo = false;
+    }
+
     posts.add_post_DB([
         req.body.date,
         req.body.postText,
         userID,
-        tokenID
+        tokenID,
+        photo
     ], (err, post) => {
         if (err) return res.status(500).send('Error on the server' + " " + err);
 
@@ -556,10 +595,18 @@ router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
 
     //удалять посты может только автор поста или хозяин страницы
     if (tokenID === req.body.authorPost || tokenID === req.body.pageID) {
-        posts.remove_post_DB(req.body.postID, (err) => {
-            if (err) return res.status(500).send('Error on the server' + " " + err);
-            res.status(200);
-        });
+
+        posts.remove_post_likes_DB(req.body.postID, (err) => {
+            if (err) return res.status(500).send('При удалении лайков поста возникли проблемы' + " " + err);
+
+            posts.remove_post_DB(req.body.postID, (err) => {
+                if (err) return res.status(500).send('Error on the server' + " " + err);
+                res.status(200).send("пост удален");
+            });
+
+        })
+
+
     }
 });
 
@@ -582,7 +629,7 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
                     //получаем количество лайков поста
                     posts.get_count_likes_post([req.body.postID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
-                        console.log(likes)
+
                         res.status(200).json({ likes: likes, flag: false })
                     })
                 })
@@ -599,7 +646,6 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
                     //получаем количество лайков поста
                     posts.get_count_likes_post([req.body.postID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
-                        console.log(likes)
 
                         res.status(200).json({ likes: likes, flag: true })
                     })
@@ -677,7 +723,6 @@ router.post("/load_comments_comment.js", authenticateJWT, messageValidate, funct
             errors: errors.array()
         });
     }
-    console.log(req.body)
 
     tokenID = req.tokenID; //id из сохраненного токена 
 
@@ -690,13 +735,11 @@ router.post("/load_comments_comment.js", authenticateJWT, messageValidate, funct
     ], (err, comment) => {
         if (err) return res.status(500).send('При добавлении комментария произошла ошибка' + " " + err);
 
-        console.log(comment);
         const newCommentID = comment.insertId
             // возвращаем написанный комментарий
         commentsPost.load_one_comment_comment_DB(newCommentID, (err, newComment) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
 
-            console.log(newComment);
             res.status(200).send(newComment);
         });
     });
@@ -711,7 +754,7 @@ router.delete('/load_comments_comment.js', authenticateJWT, function(req, res) {
     if (tokenID === req.body.authorID || tokenID === req.body.pageID) {
         commentsPost.remove_comment_comment_DB(req.body.commentID, (err) => {
             if (err) return res.status(500).send('Произошла ошибка при удалении комментария' + " " + err);
-            res.status(200);
+            res.status(200).send("комментарий удален");
         });
     }
 });
@@ -725,7 +768,7 @@ router.delete('/load_comments_post.js', authenticateJWT, function(req, res) {
     if (tokenID === req.body.authorID || tokenID === req.body.pageID) {
         commentsPost.remove_comment_post_DB(req.body.commentID, (err) => {
             if (err) return res.status(500).send('Произошла ошибка при удалении комментария' + " " + err);
-            res.status(200);
+            res.status(200).send("комментарий удален");
         });
     }
 });
@@ -790,10 +833,8 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
 
     userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
-
-    console.log(req.body.category)
-
-    if (userID === tokenID) {
+    console.log(req.body.post)
+    if (userID === tokenID || req.body.postIDLast) {
         //допустимые форматы
         const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
 
@@ -806,6 +847,12 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
         let category = "not category";
         if (req.body.category) {
             category = req.body.category;
+        }
+
+        //проверка на загрузку через пост
+        let post = 0;
+        if (req.body.postIDLast) {
+            post = req.body.postIDLast
         }
 
         let arrayPhotos = [];
@@ -828,7 +875,7 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
                         if (err) {
                             console.error(err);
                         } else {
-                            // console.log(info);
+                            console.log(info);
                         }
                     });
                 // myFile.mv(`../src/assets/photo/${updateName}`,
@@ -840,14 +887,14 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
                 // );
 
                 //добавляем в массив название фото и id юзера
-                arrayPhotos.push([updateName, tokenID, category]);
+                arrayPhotos.push([updateName, tokenID, userID, category, post]);
             }
         }
         //загрузка в БД
         photos.add_photo_DB(arrayPhotos, (err) => {
             if (err) return res.status(500).send('Error on the server' + " " + err);
+            res.status(200).send("Фото успешно загрузились на сервер");
         })
-        res.status(200).send("Фото успешно загрузились на сервер");
     }
 });
 
@@ -859,6 +906,7 @@ router.get('/upload_all_photo', authenticateJWT, function(req, res) {
     if (tokenID) {
 
         photos.load_all_photos_DB([
+            tokenID,
             req.query.id,
         ], (err, allPhotos) => {
             if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились' + " " + err);
@@ -895,7 +943,6 @@ router.get('/upload_all_photo', authenticateJWT, function(req, res) {
 
     }
 
-
 })
 
 //УДАЛЕНИЕ ФОТОГРАФИИ
@@ -909,14 +956,20 @@ router.delete('/remove_photo', authenticateJWT, function(req, res) {
             if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее' + " " + err);
         });
 
-        photos.remove_photo([
-            req.query.idPhoto,
-            tokenID,
-        ], (err) => {
-            if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err);
+        console.log(req.query.idPhoto)
+        photos.remove_photo_likes([req.query.idPhoto], (err) => {
+            if (err) return res.status(500).send('Ошибка на сервере при удалении лайков' + " " + err);
 
-            res.status(200).send("Фотография удалена");;
+            photos.remove_photo([
+                req.query.idPhoto,
+                tokenID,
+            ], (err) => {
+                if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err);
+
+                res.status(200).send("Фотография удалена");;
+            })
         })
+
     }
 
 })
@@ -953,6 +1006,54 @@ router.put('/remove_ava_photo', authenticateJWT, function(req, res) {
     }
 
 
+})
+
+//ЛАЙКАЕМ ФОТОГРАФИЮ
+router.post('/likes_photo', authenticateJWT, function(req, res) {
+    tokenID = req.tokenID; //id из сохраненного токена 
+
+    //проверяем лайкал ли ранее уже юзер данное фото
+    photos.not_double_likes_photo_author([req.body.photoID, tokenID], (err, row) => {
+        if (err) return res.status(500).send("При проверке на повторный лайк произошла ошибка" + " " + err);
+        if (row.length > 0) {
+            //удаляем автора лайка из таблицы если ранее атор лайкал фото
+            photos.remove_author_like_photo([row[0].id], (err) => {
+                if (err) return res.status(500).send("При исключении автора лайка из таблицы произошла ошибка" + " " + err);
+
+                //уменьшаем количество лайков в таблице с фотографиями на 1
+                photos.remove_count_likes([req.body.photoID], (err) => {
+                    if (err) return res.status(500).send("При отмене лайка фотографии произошла ошибка" + " " + err);
+
+                    //получаем количество лайков фотогафии
+                    photos.get_count_likes_photo([req.body.photoID], (err, likes) => {
+                        if (err) return res.status(500).send("При получении лайков произошла ошибка" + " " + err);
+
+                        res.status(200).json({ likes: likes, flag: false })
+                    })
+                })
+            })
+        } else {
+            //добавляем автора лайка в таблицу лайков если ранее атор не лайкал фото
+            photos.add_author_likes_photo([req.body.photoID, tokenID], (err) => {
+                if (err) return res.status(500).send("При лайке фото произошла ошибка" + " " + err);
+
+                //увеличиваем количество лайков в таблице с постами на 1
+                photos.add_count_likes([req.body.photoID], (err) => {
+                    if (err) return res.status(500).send("При лайке фото произошла ошибка" + " " + err);
+
+                    //получаем количество лайков поста
+                    photos.get_count_likes_photo([req.body.photoID], (err, likes) => {
+                        if (err) return res.status(500).send("При получении лайков произошла ошибка" + " " + err);
+                        console.log(likes)
+
+                        res.status(200).json({ likes: likes, flag: true })
+                    })
+                })
+            })
+        }
+
+
+    })
 })
 
 //ДОБАВЛЕНИЕ КОММЕНТАРИЯ К ФОТОГРАФИИ В БАЗУ ДАННЫХ
@@ -995,7 +1096,6 @@ router.get("/load_comments_photo.js", authenticateJWT, function(req, res) {
         if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
         if (!comments) return res.status(404).send('Комментарии к постам отстутствуют' + " " + err);
 
-        console.log(comments)
         res.status(200).json(comments);
     })
 })
@@ -1329,12 +1429,13 @@ router.post("/add_friend", authenticateJWT, function(req, res) {
 router.get("/check_request_friend", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
 
-    if (tokenID != req.query.id) {
-        //проверка на ранее отправленную заявку
-        friends.get_confirm_friend_DB([tokenID, req.query.id, tokenID, req.query.id], (err, confirmID) => {
+    // if (tokenID != req.query.id) {
+    //проверка на ранее отправленную заявку
+    friends.get_confirm_friend_DB([tokenID, req.query.id, tokenID, req.query.id], (err, confirmID) => {
             if (err) return res.status(500).send("При поиске приглашения в друзья, произошла ошибка" + " " + err);
             //если запроса небыло - оставляем как есть
             if (confirmID.length === 0) {
+
                 res.status(200).send("Добавить в друзья");
             } else {
                 if (confirmID[0].confirm_sender === 1 && confirmID[0].confirm_addressee === 0) {
@@ -1345,11 +1446,14 @@ router.get("/check_request_friend", authenticateJWT, function(req, res) {
                     }
                 } else if (confirmID[0].confirm_sender === 1 && confirmID[0].confirm_addressee === 1) {
                     res.status(200).send("Это Ваш друг");
-
+                } else {
+                    res.status(200).send("Моя страница");
                 }
+
             }
+
         })
-    }
+        // }
 })
 
 //ПРОВЕРКА НА ПОЛУЧЕНИЕ ЗАПРОСОВ В ДРУЗЬЯ
@@ -1385,7 +1489,7 @@ router.get("/add_friends_me", authenticateJWT, function(req, res) {
     }
 })
 
-//ПОЛУЧЕНИЕ ПЛЬЗОВАТЕЛЕЙvКОТОРЫМ Я ОТПРАВИЛ ЗАПРОС В ДРУЗЬЯ
+//ПОЛУЧЕНИЕ ПЛЬЗОВАТЕЛЕЙ КОТОРЫМ Я ОТПРАВИЛ ЗАПРОС В ДРУЗЬЯ
 router.get("/add_friends_from_me", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
     if (tokenID) {

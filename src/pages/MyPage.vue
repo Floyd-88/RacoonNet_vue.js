@@ -72,6 +72,7 @@ export default {
     ...mapMutations({
     setPosts: "postsMyPageStore/setPosts",
     setCountPostsNull: "postsMyPageStore/setCountPostsNull",
+    setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
     // setArrayMessages: "messageStore/setArrayMessages"
   })
 
@@ -89,8 +90,9 @@ export default {
 
   mounted() {
     this.loadAllPhotos(this.$route.params.id);
-
+    console.log('gogogo222')
     this.setPosts([])
+    this.setPhotosPostsArray([]);
     this.setCountPostsNull()
     // this.loadPostServer(this.$route.params.id);
     // this.LOAD_DIALOGS();

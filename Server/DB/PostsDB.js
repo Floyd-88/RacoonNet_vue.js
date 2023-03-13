@@ -17,7 +17,8 @@ class PostsDB {
             page_userID integer,
             authorPost integer,
             likes integer default 0,
-            FOREIGN KEY (authorPost) REFERENCES users (userID) ON DELETE CASCADE)`;
+            photos varchar(10) default 'false',
+            CONSTRAINT FK_Posts_Users FOREIGN KEY (authorPost) REFERENCES users (userID) ON DELETE CASCADE)`;
         this.connection.execute(sql);
     }
 
@@ -41,6 +42,7 @@ class PostsDB {
         users.name, 
         users.surname,
         posts.authorPost,
+        posts.photos,
         SUM(CASE WHEN posts_likes.author_likes_post = ? THEN 1 ELSE 0 END) as like_post
         FROM posts 
         INNER JOIN users ON posts.authorPost = users.userID LEFT JOIN posts_likes ON posts_likes.post_id = posts.id
@@ -52,8 +54,22 @@ class PostsDB {
         posts.likes,
         users.name, 
         users.surname,
-        posts.authorPost
+        posts.authorPost,
+        posts.photos
         ORDER BY posts.id DESC LIMIT ?, ?`, params, (err, row) => {
+            callback(err, row)
+        });
+    }
+
+    //загрузка фотографий к постам 
+    load_photos_posts_DB(params, callback) {
+        return this.connection.execute(`SELECT 
+        posts.id, 
+        photos.photo_name,
+        photos.id as photoID
+        FROM posts 
+        INNER JOIN photos ON photos.post_id_photo = posts.id
+        WHERE posts.id = ?`, params, (err, row) => {
             callback(err, row)
         });
     }
@@ -106,7 +122,7 @@ class PostsDB {
 
     //добавление поста в базу данных
     add_post_DB(body, callback) {
-        return this.connection.execute(`INSERT INTO posts (date, postText, page_userID, authorPost) VALUES (?,?,?,?)`, body, (err, row) => {
+        return this.connection.execute(`INSERT INTO posts (date, postText, page_userID, authorPost, photos) VALUES (?,?,?,?,?)`, body, (err, row) => {
             callback(err, row);
         });
     }
@@ -118,9 +134,17 @@ class PostsDB {
         });
     }
 
+
+    // удаление лайков поста
+    remove_post_likes_DB(postID, callback) {
+        return this.connection.execute(`DELETE from posts_likes WHERE post_id = ?`, [postID], (err) => {
+            callback(err);
+        });
+    }
+
     // удаление поста
     remove_post_DB(postID, callback) {
-        return this.connection.execute(`DELETE from posts_likes WHERE id = ?`, [postID], (err) => {
+        return this.connection.execute(`DELETE from posts WHERE id = ?`, [postID], (err) => {
             callback(err);
         });
     }

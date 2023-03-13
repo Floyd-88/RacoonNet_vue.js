@@ -21,7 +21,7 @@
                 </p>
                 <div class="wrapper_answer_comment" v-if="comment.isBtnDelete">
                     <!-- <UIbtn class="answer_comment" >Ответить</UIbtn> -->
-                    <UIbtn class="answer_comment answer_comment_del"  v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment_id" @click="DELETE_COMMENTS_PHOTO({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id})">Удалить</UIbtn>
+                    <UIbtn class="answer_comment answer_comment_del"  v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment_id" @click="DELETE_COMMENTS_PHOTO({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id || getUser.userID})">Удалить</UIbtn>
                 </div>
             </div>
         </div>
@@ -78,10 +78,6 @@ export default {
             getUser: "authorizationStore/getUser",
             getCommentsPhotoArray: "commentsPhoto/getCommentsPhotoArray"
         }),
-
-        // commentsComment() {
-        //   return this.getCommentsCommentArray.filter(comment => comment.comment_id === this.comment.id)
-        // }
     },
 
 
@@ -93,7 +89,7 @@ export default {
 <style scoped>
 .wrapper_message_dialog_user {
     display: flex;
-    margin-bottom: 15px;
+    margin-bottom: 22px;
 }
 
 .dialog_ava_user img {
@@ -145,7 +141,7 @@ export default {
 .wrapper_answer_comment {
     display: flex;
     justify-content: flex-end;
-    margin-top: 9px;
+    /* margin-top: 9px; */
 }
 
 .answer_comment {

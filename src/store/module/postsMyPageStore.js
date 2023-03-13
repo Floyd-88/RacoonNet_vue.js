@@ -14,7 +14,10 @@ export const postsMyPageStore = {
         newsPostsFriends: [], //новостная лента от друзей
         countNews: 0, //с какой новости начинать вести счет
         limitNews: 10, // лимит новостей на странице
-        likesPost: ""
+        likesPost: "",
+        // isLoadPhotoPost: "" //загрузка фотографий в пост
+        photosPostsArray: [] //фотографии к постам
+
     }),
 
     getters: {
@@ -26,7 +29,10 @@ export const postsMyPageStore = {
             return rootGetters["authorizationStore/getUser"]
         },
         getNewsPostsFriends: state => state.newsPostsFriends,
-        getLikesPost: state => state.likesPost
+        getLikesPost: state => state.likesPost,
+        // getIsLoadPhotoPost: (state) => state.isLoadPhotoPost
+        getPhotosPostsArray: (state) => state.photosPostsArray
+
     },
 
     mutations: {
@@ -87,7 +93,22 @@ export const postsMyPageStore = {
 
         setLikesPost(state, value) {
             state.likesPost = value
-        }
+        },
+
+        // setIsLoadPhotoPost(state, bool) {
+        //     state.isLoadPhotoPost = bool
+        // }
+
+        setPhotosPostsArray(state, value) {
+            state.photosPostsArray = value
+        },
+
+        //удаление картинки из массива
+        removePhotosPostsArray(state, id) {
+            console.log(id)
+            state.photosPostsArray = state.photosPostsArray.filter(photo => photo.photoID !== id);
+            console.log(state.photosPostsArray)
+        },
 
     },
 
@@ -95,7 +116,8 @@ export const postsMyPageStore = {
         //загрузка постов с базы данных
         async loadPostServer({
             state,
-            commit
+            commit,
+            dispatch
         }, id) {
             try {
                 await axios.get('http://localhost:8000/dataBase.js', {
@@ -108,7 +130,14 @@ export const postsMyPageStore = {
                     if (response.data.length > 0) {
                         commit("setPosts", [...state.posts, ...response.data]);
                         commit("setCountPosts", 10);
-                        console.log(state.posts)
+
+                        response.data.forEach(post => {
+                            if (post.photos === "1") {
+                                dispatch("LOAD_POST_PHOTOS", post.id);
+                            }
+                        });
+
+                        console.log(response.data)
                     }
 
                 });
@@ -121,16 +150,21 @@ export const postsMyPageStore = {
         async addPost({
             dispatch,
             getters,
-            commit
-        }, postText) {
+            commit,
+            state
+        }, isPhoto) {
             const newPost = {
                 id: getters.getUser.userID,
-                postText: postText.trim(),
+                postText: state.postText.trim(),
             }
-            newPost.date = await dispatch("newDate"),
+            newPost.date = await dispatch("newDate");
 
-                await axios.post('http://localhost:8000/dataBase.js', newPost)
+            newPost.photo = isPhoto;
+
+            await axios.post('http://localhost:8000/dataBase.js', newPost)
                 .then(function(response) {
+
+
                     // newPost.id = response.data.user.postID;
                     // newPost.name = response.data.user.name;
                     // newPost.surname = response.data.user.surname;
@@ -239,7 +273,9 @@ export const postsMyPageStore = {
         },
 
         //лайкнуть пост
-        async SAVE_LIKE_COUNT_POST({ commit }, postID) {
+        async SAVE_LIKE_COUNT_POST({
+            commit
+        }, postID) {
             try {
                 await axios.post('http://localhost:8000/likes_post', postID)
                     .then((response) => {
@@ -249,7 +285,28 @@ export const postsMyPageStore = {
                 console.error(err);
             }
         },
+
+        //загрузка фотографий к постам
+        async LOAD_POST_PHOTOS({ state, commit }, id) {
+            try {
+                await axios.get('http://localhost:8000/post_photos.js', {
+                    params: {
+                        postID: id
+                    }
+                }).then((response) => {
+                    if (response.data.length > 0) {
+                        console.log(response.data)
+                        commit("setPhotosPostsArray", [...state.photosPostsArray, ...response.data]);
+                        // console.log(state.photosPostsArray)
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
     },
+
+
 
     namespaced: true
 }

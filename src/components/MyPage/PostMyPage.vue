@@ -24,17 +24,23 @@
         </div>
 
         <div class="wrapper_text_post">
-          <p class="text_post">{{ postText(post.postText) }}</p>
+          <p class="text_post">{{ postText(post.postText) }}</p>     
         </div>
+
+        <div class="wrapper_block_photo_post">
+            <template v-for="photo in getPhotosPostsArray" :key="photo.id">
+            <div class="wrapper_photo_post" v-if="post.id === photo.id">
+              <img class="photo_post" :src="require(`../../assets/photo/${photo.photo_name}`)" :alt="'photo' + photo.id">
+            </div>
+          </template>
+          </div>
 
       </div>
     </div>
 
     <!-- комментарии к посту -->
-    
     <CommentsPost :post="post" />
-    
-    <!-- -------------------- -->
+    <!-- ------------------ -->
 
     <div class="btn_post" v-show="post.isPostDel">
       <UIbtn class="redaction_post_btn" v-if="getUser.enterUser == post.authorPost"
@@ -107,6 +113,7 @@ export default {
       // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
     };
   },
+
   methods: {
     ...mapMutations({
       setBeforePostText: "postsMyPageStore/setBeforePostText",
@@ -115,7 +122,8 @@ export default {
     }),
     ...mapActions({
       editPost: "postsMyPageStore/editPost",
-      removePost: "postsMyPageStore/removePost"
+      removePost: "postsMyPageStore/removePost",
+      // LOAD_POST_PHOTOS: "postsMyPageStore/LOAD_POST_PHOTOS"
     }),
     // onImgLoad() {
     //   console.log(this.$refs)
@@ -153,7 +161,8 @@ export default {
       getModulePost: "postsMyPageStore/getModulePost",
       getUser: "authorizationStore/getUser",
       // getCommentsArray: "commentsPost/getCommentsArray",
-      getCommentsArray: "commentsPost/getCommentsArray"
+      getCommentsArray: "commentsPost/getCommentsArray",
+      getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray"
     }),
     beforeModelPostText: {
       get() {
@@ -298,5 +307,24 @@ export default {
 .wrapper_write_comments {
     border-top: 1px solid;
     padding: 0px 8px 13px 8px;
+}
+.wrapper_block_photo_post {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.wrapper_photo_post {
+  width: 150px;
+    height: 150px;
+    margin: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.photo_post {
+  width: inherit;
+    height: inherit;
+    -o-object-fit: cover;
+    object-fit: cover;
+    cursor: pointer;
 }
 </style>

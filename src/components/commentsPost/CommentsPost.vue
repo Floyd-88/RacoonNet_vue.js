@@ -69,7 +69,6 @@ export default {
             let objectLikes = await this.getLikesPost;
             post.likes = objectLikes.likes.likes
 
-            console.log(post.like_post) 
             if(post.like_post == 0) {
                 post.like_post = 1;
             } else {

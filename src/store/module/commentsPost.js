@@ -99,7 +99,6 @@ export const commentsPost = {
             commit
         }, id) {
             try {
-                console.log(id)
                 await axios.get('http://localhost:8000/load_comments_post.js', {
                     params: {
                         postID: id
@@ -107,7 +106,6 @@ export const commentsPost = {
                 }).then((response) => {
                     if (response.data.length > 0) {
                         commit("setCommentsArray", [...state.commentsArray, ...response.data]);
-                        console.log(state.commentsArray);
                     }
                 });
             } catch (err) {
@@ -128,7 +126,6 @@ export const commentsPost = {
                 }).then((response) => {
                     if (response.data.length > 0) {
                         commit("setCommentsCommentArray", [...state.commentsCommentArray, ...response.data]);
-                        console.log(state.commentsCommentArray);
                     }
                 });
             } catch (err) {

@@ -119,6 +119,8 @@ export const friendsStore = {
                         } else if (res.data === "Рассмотреть заявку") {
                             commit("setTextBtnFfriend", res.data);
                             commit("setIsFriend", true)
+                        } else {
+                            commit("setTextBtnFfriend", res.data);
                         }
 
                     })
@@ -134,7 +136,6 @@ export const friendsStore = {
             try {
                 await axios.get("http://localhost:8000/add_friends_me")
                     .then(function(res) {
-                        console.log(res.data)
                         commit("setUsersFriendsMe", res.data);
                     })
             } catch (err) {
@@ -165,7 +166,6 @@ export const friendsStore = {
                 await axios.get("http://localhost:8000/my_friends")
                     .then(function(res) {
                         commit("setUsersMyFriends", res.data);
-                        console.log(res.data)
                     })
             } catch (err) {
                 console.log(err)

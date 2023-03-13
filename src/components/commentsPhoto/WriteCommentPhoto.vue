@@ -46,13 +46,6 @@ export default {
                 return {}
             }
         }
-
-    //     comment: {
-    //         type: Object,
-    //         default: () => {
-    //             return {}
-    //         }
-    //     }
     },
 
     setup() {
@@ -84,8 +77,7 @@ export default {
         }),
 
         async clickWriteCommentPhoto() {
-            console.log(this.currentImg.id)
-           await this.SAVE_COMMENTS_PHOTO({ photoID: this.currentImg.id, textMessage: this.commentPhoto, userPage: this.$route.params.id });
+           await this.SAVE_COMMENTS_PHOTO({ photoID: this.currentImg.id, textMessage: this.commentPhoto, userPage: this.$route.params.id || this.getUser.userID});
            this.$emit("scrollToMe");
             this.commentPhoto = "";
             this.v$.commentPhoto.$reset();
@@ -100,6 +92,7 @@ export default {
 
     computed: {
         ...mapGetters({
+            getUser: "authorizationStore/getUser",
             // getCommentPost: "commentsPost/getCommentPost",
             // getUnderCommentPost: "commentsPost/getUnderCommentPost"
         }),

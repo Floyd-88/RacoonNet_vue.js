@@ -15,7 +15,7 @@ class CommentsPhotoDB {
 
     //получаем комментарии к фотографиям
     load_commentsPhoto_DB(id, callback) {
-        return this.connection.query(`SELECT id, name, surname, ava, photo_id, comment_photo_text, author_comment_id, date FROM comments_photo INNER JOIN users ON author_comment_id = userID WHERE photo_id=?`, id, (err, comments) => {
+        return this.connection.query(`SELECT id, name, surname, ava, photo_id, comment_photo_text, author_comment_id, date FROM comments_photo INNER JOIN users ON author_comment_id = userID WHERE photo_id=? ORDER BY id ASC`, id, (err, comments) => {
             callback(err, comments);
         })
     }

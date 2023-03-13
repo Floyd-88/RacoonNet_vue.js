@@ -15,36 +15,33 @@
             </div>
         </div>
 
-
         <div class="wrapper_block_comments_item">
             <div class="wrapper_block_comments_item_like">
-                <p class="count_likes">10</p>
+                <p class="count_likes" v-if="currentImg.likes !== 0">{{ currentImg.likes }}</p>
 
-                <img class="likes" src="../../assets/icons/like.svg" alt="like">
+                <img class="likes" src="../../assets/icons/like.svg" alt="like" v-if="currentImg.like_photo == 0"
+                    @click="countLikes(currentImg)">
 
                 <!-- подкрашивать сердце если пост лайкнут -->
-                <!-- <img class="likes"  
-                    src="../../assets/icons/like_full.png"  
-                    alt="like" 
-                    v-if="post.like_post == 1"
-                    @click="countLikes(post)"> -->
+                <img class="likes" src="../../assets/icons/like_full.png" alt="like" v-if="currentImg.like_photo == 1"
+                    @click="countLikes(currentImg)">
 
             </div>
         </div>
 
         <!-- комментарии -->
         <div class="wrapper_block_comments_comment" ref="scrollToMe">
-            <CommentPhoto/>      
+            <CommentPhoto />
         </div>
 
         <div class="wrapper_under_write_comments">
-            <WriteCommentPhoto :currentImg="currentImg" @scrollToMe="scrollToElement()"/>
+            <WriteCommentPhoto :currentImg="currentImg" @scrollToMe="scrollToElement()" />
         </div>
 </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
     name: "CommentsPhoto",
@@ -59,6 +56,9 @@ export default {
     },
 
     methods: {
+        ...mapActions({SAVE_LIKE_COUNT_PHOTO: "loadPhotoStore/SAVE_LIKE_COUNT_PHOTO"}),
+
+        //пролистывать вниз при написании поста
         scrollToElement() {
             try {
                 const el = this.$refs.scrollToMe;
@@ -69,10 +69,28 @@ export default {
                 console.log(err)
             }
         },
+
+        //сохраняем лайк фотографии
+        async countLikes(currentImg) {
+            await this.SAVE_LIKE_COUNT_PHOTO({photoID: currentImg.id});
+            let objectLikes = await this.getLikesPhoto;
+            currentImg.likes = objectLikes.likes.likes
+
+            console.log(currentImg.like_photo) 
+            if(currentImg.like_photo == 0) {
+                currentImg.like_photo = 1;
+            } else {
+                currentImg.like_photo = 0
+            }
+
+        }
     },
 
     computed: {
-        ...mapGetters({getCommentsPhotoArray: "commentsPhoto/getCommentsPhotoArray"}),
+        ...mapGetters({ 
+            getCommentsPhotoArray: "commentsPhoto/getCommentsPhotoArray",
+            getLikesPhoto: "loadPhotoStore/getLikesPhoto"
+        }),
 
         loadAva() {
             try {
@@ -84,10 +102,10 @@ export default {
     },
 
     watch: {
-            getCommentsPhotoArray() {
-                this.scrollToElement();
-            }
+        getCommentsPhotoArray() {
+            this.scrollToElement();
         }
+    }
 
 }
 </script>

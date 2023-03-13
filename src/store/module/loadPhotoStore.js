@@ -20,7 +20,10 @@ export const loadPhotoStore = {
 
         avaPhoto: "",
         progressLoadPhoto: 0,
-        request: null //прерывание запроса
+        request: null, //прерывание запроса
+
+        likesPhoto: "", //количество лайков фото
+        isLoadPhotoPost: "" //загрузка фотографий в пост
 
     }),
 
@@ -38,6 +41,8 @@ export const loadPhotoStore = {
         getLimitAllPhoto: (state) => state.limitAllPhoto,
         getAvaPhoto: (state) => state.avaPhoto,
         getProgressLoadPhoto: (state) => state.progressLoadPhoto,
+        getLikesPhoto: (state) => state.likesPhoto,
+        getIsLoadPhotoPost: (state) => state.isLoadPhotoPost
 
     },
 
@@ -116,6 +121,14 @@ export const loadPhotoStore = {
 
         setProgressLoadPhoto(state, value) {
             state.progressLoadPhoto = value;
+        },
+
+        setLikesPhoto(state, value) {
+            state.likesPhoto = value
+        },
+
+        setIsLoadPhotoPost(state, bool) {
+            state.isLoadPhotoPost = bool
         }
     },
 
@@ -163,15 +176,18 @@ export const loadPhotoStore = {
         },
 
         //загрузка картинок на сервер
-        addPhotoServer: function({
+        addPhotoServer: async function({
             getters,
             commit,
             state,
-            rootGetters
+            rootGetters,
+            dispatch
         }, event) {
             //остановка загрузки картинок
             const axiosSource = axios.CancelToken.source();
-            state.request = { cancel: axiosSource.cancel };
+            state.request = {
+                cancel: axiosSource.cancel
+            };
 
             //сокрытие кнопки загрузить картинки после ее нажатия
             event.target.style.opacity = '0'
@@ -182,17 +198,28 @@ export const loadPhotoStore = {
                 let file = getters.getArrayLoadImage[i];
                 formData.append('files[' + i + ']', file);
             }
-            formData.append('id', JSON.parse(localStorage.getItem('user')).userID);
+            formData.append('id', getters.getUser.userID);
+            // formData.append('id', JSON.parse(localStorage.getItem('user')).userID);
 
             //добавляем категорию к фотографии если она есть
             if (rootGetters["galleryStore/getSelectedLoadThemaPhoto"]) {
                 formData.append('category', rootGetters["galleryStore/getSelectedLoadThemaPhoto"])
             }
 
+            //проверяем отправлены ли фотографии через пост
+            if (state.isLoadPhotoPost) {
+                await dispatch("postsMyPageStore/addPost", state.isLoadPhotoPost, { root: true });
+
+                const posts = rootGetters["postsMyPageStore/getPosts"]
+                formData.append('postIDLast', posts[0].id)
+            }
+
             axios.post(
                     'http://localhost:8000/upload_photo',
                     formData, {
-                        headers: { 'Content-Type': 'multipart/form-data' },
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        },
                         cancelToken: axiosSource.token,
                         onUploadProgress: ProgressEvent => {
                             let progress =
@@ -210,13 +237,18 @@ export const loadPhotoStore = {
                     //     root: true
                     // });
                     commit("setProgressLoadPhoto", 0);
-                    window.location.href = `/id${JSON.parse(localStorage.getItem('user')).userID}`;
+                    commit("setIsLoadPhotoPost", false);
+                    window.location.href = `/id${JSON.parse(getters.getUser.userID)}`;
+
+                    // dispatch("postsMyPageStore/LOAD_POST_PHOTOS", rootGetters["postsMyPageStore/getPosts"][0].id, { root: true });
+                    // window.location.href = `/id${JSON.parse(localStorage.getItem('user')).userID}`;
                 })
                 .catch((err) => {
                     if (axios.isCancel(err)) {
                         console.info("Загрузка фотографий была прервана");
                         return
                     }
+                    commit("setIsLoadPhotoPost", false);
                     commit("setArrayLoadImage", []);
                     commit("setUrlsImages", []);
                     commit("setMessageLoadPhoto", err);
@@ -224,7 +256,10 @@ export const loadPhotoStore = {
         },
 
         //остановка загрузки картиновк на сервер
-        cancelLoadPhoto({ state, commit }) {
+        cancelLoadPhoto({
+            state,
+            commit
+        }) {
             if (state.request) {
                 state.request.cancel();
             }
@@ -244,7 +279,6 @@ export const loadPhotoStore = {
         async loadAllPhotos({
             commit
         }, id) {
-            console.log(id)
             try {
                 await axios.get('http://localhost:8000/upload_all_photo', {
                     params: {
@@ -253,7 +287,9 @@ export const loadPhotoStore = {
                 }).then((response) => {
                     commit("setMyPhotosMyPage", response.data);
                     commit("setAllMyPhotosMyPage", response.data);
-                    commit("galleryStore/setArrayFilterPhotos", response.data, { root: true });
+                    commit("galleryStore/setArrayFilterPhotos", response.data, {
+                        root: true
+                    });
                 });
             } catch (err) {
                 console.log(err);
@@ -284,6 +320,7 @@ export const loadPhotoStore = {
                     }
                 }).then((response) => {
                     commit("removeAllPhotos", getters.getIdPhoto);
+                    commit("postsMyPageStore/removePhotosPostsArray", getters.getIdPhoto, { root: true })
                     commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                         root: true
                     });
@@ -307,15 +344,34 @@ export const loadPhotoStore = {
                     id: getters.getUser.userID,
                     nameAva: getters.getUser.ava
                 }).then((res) => {
-                    commit("authorizationStore/setUserAva", res.data.user.ava, { root: true });
-                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, { root: true });
+                    commit("authorizationStore/setUserAva", res.data.user.ava, {
+                        root: true
+                    });
+                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                        root: true
+                    });
                     commit("setModulePhotoRemove", false)
                     window.location.href = '/';
                 });
             } catch (err) {
                 console.log(err);
             }
-        }
+        },
+
+
+        //лайкнуть фото
+        async SAVE_LIKE_COUNT_PHOTO({ commit }, photoID) {
+            try {
+                await axios.post('http://localhost:8000/likes_photo', photoID)
+                    .then((response) => {
+                        console.log(response.data)
+                        commit("setLikesPhoto", response.data)
+                    });
+            } catch (err) {
+                console.error(err);
+            }
+        },
+
     },
     namespaced: true
 }

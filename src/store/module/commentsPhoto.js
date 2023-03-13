@@ -69,7 +69,6 @@ export const commentsPhoto = {
                 }).then((response) => {
                     if (response.data.length > 0) {
                         commit("setCommentsPhotoArray", [...state.commentsPhotoArray, ...response.data]);
-                        console.log(state.commentsPhotoArray);
                     }
                 });
             } catch (err) {

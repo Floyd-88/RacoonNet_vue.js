@@ -9,7 +9,7 @@
                     </div>
                     <p class="message_name"
                         @click="$router.push({ name: 'mypage', params: { id: comment.author_comment_id } })">
-                        {{ comment.name + " " + comment.surname }}
+                    {{ comment.name + " " + comment.surname }}
                     </p>
                 </div>
                 <div class="message_time">

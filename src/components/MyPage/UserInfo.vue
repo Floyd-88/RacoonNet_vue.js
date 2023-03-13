@@ -92,9 +92,9 @@ export default {
     };
   },
 
-  created() {
-    this.CHECK_REQUEST_FRIEND(this.$route.params.id);
-  },
+  // created() {
+  //   this.CHECK_REQUEST_FRIEND(this.$route.params.id);
+  // },
 
   methods: {
     ...mapMutations({
