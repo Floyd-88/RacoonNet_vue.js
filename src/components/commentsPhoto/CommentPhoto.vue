@@ -59,7 +59,6 @@ export default {
 
         pathAva(ava) {
             try {
-                console.log('ava')
                 return require(`../../assets/photo/${ava}`);
             } catch {
                 return require(`../../assets/ava/ava_1.jpg`);
