@@ -12,7 +12,7 @@
 
         <!-- карточка с другом -->
         <template v-if="getUsersMyFriends.length > 0">
-            <div class="wrapper_my_friends_list" v-for="user in getUsersMyFriends" :key="user.id">
+            <div class="wrapper_my_friends_list" v-for="user in getUsersMyFriendsFilter" :key="user.id">
             <div class="my_friend_card">
                 <CardFriend :user="user"/>
                 
@@ -48,7 +48,10 @@ export default {
     },
 
     computed: {
-        ...mapGetters({ getUsersMyFriends: "friendsStore/getUsersMyFriends" }),
+        ...mapGetters({ 
+            getUsersMyFriends: "friendsStore/getUsersMyFriends",
+            getUsersMyFriendsFilter: "friendsStore/getUsersMyFriendsFilter" 
+        }),
     }
     
 }

@@ -1,12 +1,42 @@
 <template>
     <div class="my_friends_filter">
-        <input type="text" placeholder="Поиск среди ваших друзей">
+        <input type="text" placeholder="Поиск среди ваших друзей" v-model="filterFriends">
 </div>
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex';
+
 export default {
     name: "FilterName",
+
+    data() {
+        return {
+            nameFriendUser: "",
+        }
+    },
+
+    methods: {
+        ...mapMutations({setNameFriendUser: "friendsStore/setNameFriendUser"})
+    },
+
+    computed: {
+        ...mapGetters({
+            getUsersMyFriends: "friendsStore/getUsersMyFriends",
+            getNameFriendUser: "friendsStore/getNameFriendUser"
+        }),
+
+        //двухстороннее связывние со store
+        filterFriends: {
+        get() {
+            return this.getNameFriendUser;
+        },
+        set(value) {
+            this.setNameFriendUser(value);
+        }
+    },
+    }
+
 
 }
 </script>

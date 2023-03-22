@@ -10,7 +10,9 @@ export const friendsStore = {
         usersFriendsMe: [], //пользователи которые хотят дружить со мной
         usersFriendsFromMe: [], //пользователи с которыми я хочу дружить
         usersMyFriends: [], //массив моих друзей
+        usersMyFriendsFilter: [], //массив моих друзей отфильтрованный по имени
         isFriendShow: "allFriends", //какую вкладку показывать - все друзья или заявки
+        nameFriendUser: "", //имя друга в поле поиска среди друзей 
     }),
 
     getters: {
@@ -19,8 +21,12 @@ export const friendsStore = {
         // getNotificationAddFriends: (state) => state.notificationAddFriends,
         getUsersFriendsMe: (state) => state.usersFriendsMe,
         getUsersMyFriends: (state) => state.usersMyFriends,
+        getUsersMyFriendsFilter: (state) => {
+            return state.usersMyFriendsFilter.filter((users) => users.name.toLowerCase().includes(state.nameFriendUser.toLowerCase()) || users.surname.toLowerCase().includes(state.nameFriendUser.toLowerCase()));
+        },
         getIsFriendShow: (state) => state.isFriendShow,
         getUsersFriendsFromMe: (state) => state.usersFriendsFromMe,
+        getNameFriendUser: (state) => state.nameFriendUser
     },
 
     mutations: {
@@ -44,6 +50,9 @@ export const friendsStore = {
         setUsersMyFriends(state, users) {
             state.usersMyFriends = users;
         },
+        setUsersMyFriendsFilter(state, users) {
+            state.usersMyFriendsFilter = users;
+        },
 
         setIsFriendShow(state, value) {
             state.isFriendShow = value;
@@ -51,6 +60,10 @@ export const friendsStore = {
 
         setUsersFriendsFromMe(state, users) {
             state.usersFriendsFromMe = users;
+        },
+
+        setNameFriendUser(state, value) {
+            state.nameFriendUser = value;
         }
 
 
@@ -166,6 +179,7 @@ export const friendsStore = {
                 await axios.get("http://localhost:8000/my_friends")
                     .then(function(res) {
                         commit("setUsersMyFriends", res.data);
+                        commit("setUsersMyFriendsFilter", res.data);
                     })
             } catch (err) {
                 console.log(err)
