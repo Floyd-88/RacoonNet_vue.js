@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
-const config = require('./config')
+const config = require('./config');
+const { between } = require('@vuelidate/validators');
 
 class FriendsDB {
     constructor() {
@@ -15,7 +16,7 @@ class FriendsDB {
 
     //проверяем на наличие ранее отправленных заявок в друзья
     get_confirm_friend_DB(users, callback) {
-        return this.connection.query(`SELECT id, sender_user_id, addressee_user_id, confirm_sender, confirm_addressee FROM friends WHERE (sender_user_id=? AND addressee_user_id=?) OR (addressee_user_id=? AND sender_user_id=?)`, users, (err, confirmID) => {
+        return this.connection.query(`SELECT id, sender_user_id, addressee_user_id, confirm_sender, confirm_addressee FROM friends WHERE (sender_user_id=? AND addressee_user_id=?) OR (sender_user_id=? AND addressee_user_id=?)`, users, (err, confirmID) => {
             callback(err, confirmID)
         })
     }
@@ -89,6 +90,29 @@ class FriendsDB {
         })
     }
 
-
+    // поиск среди пользователй друзей
+    get_users(params, callback) {
+        return this.connection.query(`SELECT userID, name, surname, country, city, ava, friends.id, 
+        (SELECT
+                CASE 
+                    WHEN confirm_sender = 1 AND confirm_addressee = 1
+                        THEN 'друзья'
+                    WHEN sender_user_id = ?  AND confirm_sender = 1 AND confirm_addressee = 0
+                        THEN 'я отправил заявку'
+                    WHEN sender_user_id = userID  AND confirm_sender = 1 AND confirm_addressee = 0
+                        THEN 'мне отправили заявку'
+                END
+                FROM friends  WHERE (sender_user_id = userID AND addressee_user_id = ?) OR (sender_user_id = ? AND addressee_user_id = userID)  
+            ) type_user FROM users LEFT JOIN friends ON (sender_user_id = userID AND addressee_user_id = ?) OR (sender_user_id = ? AND addressee_user_id = userID) WHERE 
+        userID NOT IN (?) AND
+        name LIKE ? AND 
+        surname LIKE ? AND
+        country LIKE ? AND
+        city LIKE ? AND
+        selectedGender LIKE ? AND
+        ((YEAR(CURRENT_DATE)-year_user)-(RIGHT(CURRENT_DATE,5)<RIGHT( CONCAT(year_user,"-", month_user,"-", day_user),5))) BETWEEN ? AND ?`, params, (err, users) => {
+            callback(err, users)
+        })
+    }
 }
 module.exports = FriendsDB;

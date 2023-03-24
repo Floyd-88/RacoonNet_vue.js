@@ -6,11 +6,12 @@ export const friendsStore = {
     state: () => ({
         textBtnFfriend: "Добавить в друзья",
         isFriend: false,
-        // notificationAddFriends: [], //заявки в друзья или друзья
+        titleFriend: "Мои друзья", //заголовок на странице друзей
         usersFriendsMe: [], //пользователи которые хотят дружить со мной
         usersFriendsFromMe: [], //пользователи с которыми я хочу дружить
         usersMyFriends: [], //массив моих друзей
         usersMyFriendsFilter: [], //массив моих друзей отфильтрованный по имени
+        searchUsersFriends: [], //массив пользователй при поиске
         isFriendShow: "allFriends", //какую вкладку показывать - все друзья или заявки
         nameFriendUser: "", //имя друга в поле поиска среди друзей 
     }),
@@ -18,12 +19,14 @@ export const friendsStore = {
     getters: {
         getTextBtnFfriend: (state) => state.textBtnFfriend,
         getIsFriend: (state) => state.isFriend,
+        getTitleFriend: (state) => state.titleFriend,
         // getNotificationAddFriends: (state) => state.notificationAddFriends,
         getUsersFriendsMe: (state) => state.usersFriendsMe,
         getUsersMyFriends: (state) => state.usersMyFriends,
         getUsersMyFriendsFilter: (state) => {
             return state.usersMyFriendsFilter.filter((users) => users.name.toLowerCase().includes(state.nameFriendUser.toLowerCase()) || users.surname.toLowerCase().includes(state.nameFriendUser.toLowerCase()));
         },
+        getSearchUsersFriends: (state) => state.searchUsersFriends,
         getIsFriendShow: (state) => state.isFriendShow,
         getUsersFriendsFromMe: (state) => state.usersFriendsFromMe,
         getNameFriendUser: (state) => state.nameFriendUser
@@ -43,6 +46,10 @@ export const friendsStore = {
         //     state.notificationAddFriends = value
         // },
 
+        setTitleFriend(state, value) {
+            state.titleFriend = value
+        },
+
         setUsersFriendsMe(state, users) {
             state.usersFriendsMe = users;
         },
@@ -52,6 +59,10 @@ export const friendsStore = {
         },
         setUsersMyFriendsFilter(state, users) {
             state.usersMyFriendsFilter = users;
+        },
+
+        setSearchUsersFriends(state, users) {
+            state.searchUsersFriends = users;
         },
 
         setIsFriendShow(state, value) {
@@ -188,7 +199,6 @@ export const friendsStore = {
 
         //удалить друга
         async DELETE_FRIEND({ state, commit }, id) {
-            console.log(id)
             try {
                 await axios.delete("http://localhost:8000/delete_friends", { data: { id } })
                     .then(function() {
@@ -212,8 +222,25 @@ export const friendsStore = {
                 console.log(err)
             }
         },
-    },
 
+        //поиск пользователей
+        async SEARCH_USERS_FRIENDS({ commit }, params) {
+            try {
+                //если возрастной диапазон не указан, по умолчанию от 0 до 100
+                (!params.ageAfter) ? params.ageAfter = 0: params.ageAfter;
+                (!params.ageBefore) ? params.ageBefore = 100: params.ageBefore;
+
+                await axios.get("http://localhost:8000/search_friends", { params })
+                    .then(function(res) {
+                        commit("setTitleFriend", "Поиск друзей");
+                        commit("setSearchUsersFriends", res.data)
+                        console.log(res.data)
+                    })
+            } catch (err) {
+                console.log(err)
+            }
+        }
+    },
 
     namespaced: true,
 }

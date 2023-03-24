@@ -1405,7 +1405,7 @@ router.post("/add_friend", authenticateJWT, function(req, res) {
     if (tokenID != req.body.id) {
 
         //проверка на ранее отправленную заявку
-        friends.get_confirm_friend_DB([tokenID, req.body.id, tokenID, req.query.id], (err, confirmID) => {
+        friends.get_confirm_friend_DB([tokenID, req.body.id, req.body.id, tokenID], (err, confirmID) => {
             if (err) return res.status(500).send("При поиске приглашения в друзья, произошла ошибка" + " " + err);
 
             //если запроса ранее небыло создаем его
@@ -1511,6 +1511,18 @@ router.get("/my_friends", authenticateJWT, function(req, res) {
 
             res.status(200).send(users);
 
+        })
+    }
+})
+
+//ПОИСК ДРУЗЕЙ СРЕДИ ПОЛЬЗОВАТЕЛЕЙ
+router.get("/search_friends", authenticateJWT, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+    if (tokenID) {
+        console.log(req.query)
+        friends.get_users([tokenID, tokenID, tokenID, tokenID, tokenID, tokenID, `%${req.query.name}%`, `%${req.query.surname}%`, `%${req.query.country}%`, `%${req.query.city}%`, `%${req.query.sex}%`, req.query.ageAfter, req.query.ageBefore], (err, users) => {
+            if (err) return res.status(500).send("При получении пользователей, произошла ошибка" + " " + err);
+            res.status(200).send(users);
         })
     }
 })
