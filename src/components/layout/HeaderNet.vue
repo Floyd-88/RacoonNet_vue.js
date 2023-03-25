@@ -3,11 +3,16 @@
 
       <div class="header_wrapper_logo_title">
         <div class="header_wrapper_logo">
-          <img class="header_logo" src="../../assets/logo/logo.png" alt="logo">
+          <img 
+            class="header_logo"   
+            src="../../assets/logo/logo.png" 
+            alt="logo"
+            @click="$router.push(`/id${userID}`)" 
+            >
         </div>
 
         <div class="header_wrapper_title">
-          <button class="btn_title">RacсoonNet</button>
+          <button class="btn_title"  @click="$router.push(`/id${userID}`)" >RacсoonNet</button>
         </div>
       </div>
 
@@ -26,6 +31,12 @@ import {mapGetters, mapActions} from "vuex";
 
 export default {
   name: "HeaderNet",
+
+  data() {
+    return {
+      userID: (localStorage.getItem('user')) ? JSON.parse(localStorage.getItem('user')).userID : "",
+    }
+  },
 
   methods: {
     ...mapActions({logout: "authorizationStore/logout"}),
@@ -67,11 +78,13 @@ export default {
 }
 .header_logo {
 width: 100px;
+cursor: pointer;
 }
 .header_wrapper_title {
   display: flex;
   align-items: center;
   margin-left: 20px;
+  
 }
 .btn_title {
   border: none;
@@ -81,6 +94,7 @@ width: 100px;
   align-items: center;
   font-size: 40px;
   font-family: fantasy;
+  cursor: pointer;
 }
 .header_wrapper_exit {
   display: flex;

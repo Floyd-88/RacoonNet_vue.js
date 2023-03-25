@@ -1,6 +1,6 @@
 <template>
     <!-- Мои друзья -->
-    <template v-if="getTitleFriend === 'Мои друзья'">
+    <template v-if="getTitleFriend === 'Друзья'">
         <div class="wrapper_my_friends_header">
             <div class="my_friends_header">
                 <h3>{{ getTitleFriend }}</h3>
@@ -19,7 +19,10 @@
                     <CardFriend :user="user" />
 
                     <!-- блок с кнопками -->
-                    <FriendCardBtns :user="user" @getUserInfo="getUserInfo" />
+                    <FriendCardBtns 
+                        v-if="userTokenID == this.$route.query.id"
+                        :user="user" 
+                        @getUserInfo="getUserInfo" />
                 </div>
             </div>
         </template>
@@ -176,14 +179,14 @@ export default {
     name: "MyFriends",
     emits: ["getUserInfo"],
 
-    // data() {
-    //     return {
-    //         nameBTN: "Добавить в друзья",
-    //     }
-    // },
+    data() {
+        return {
+            userTokenID: JSON.parse(localStorage.getItem('user')).userID,
+        }
+    },
 
     beforeUnmount() {
-        this.setTitleFriend("Мои друзья");
+        this.setTitleFriend("Друзья");
     },
 
     methods: {
@@ -252,6 +255,7 @@ export default {
             getTitleFriend: "friendsStore/getTitleFriend",
             getSearchUsersFriends: "friendsStore/getSearchUsersFriends",
             getTextBtnFfriend: "friendsStore/getTextBtnFfriend",
+            getUser: "authorizationStore/getUser",
         }),
     }
 

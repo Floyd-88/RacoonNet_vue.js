@@ -1,6 +1,6 @@
 <template>
     <div class="my_friends_filter">
-        <input type="text" placeholder="Поиск среди ваших друзей" v-model="filterFriends">
+        <input type="text" placeholder="Поиск среди друзей" v-model="filterFriends">
 </div>
 </template>
 

@@ -63,7 +63,7 @@
             <!-- ------------- -->
         </div>
         <div class="wrapper_search_new_friends_btn">
-            <UIbtn class="search_new_friends_btn" @click="search_users()">Найти друзей</UIbtn>
+            <UIbtn class="search_new_friends_btn" @click="search_users()">Найти новых друзей</UIbtn>
         </div>
     </div>
 </template>

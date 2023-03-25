@@ -1505,8 +1505,9 @@ router.get("/add_friends_from_me", authenticateJWT, function(req, res) {
 //ПОЛУЧЕНИЕ МОИХ ДРУЗЕЙ
 router.get("/my_friends", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
+    console.log(req.query.id)
     if (tokenID) {
-        friends.get_my_friends_DB([tokenID, tokenID], (err, users) => {
+        friends.get_my_friends_DB([req.query.id, req.query.id], (err, users) => {
             if (err) return res.status(500).send("При получении моих друзей, произошла ошибка" + " " + err);
 
             res.status(200).send(users);
@@ -1543,8 +1544,9 @@ router.put("/add_friends_me", authenticateJWT, function(req, res) {
 //УДАЛИТЬ ИЗ ДРУЗЕЙ
 router.delete("/delete_friends", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
-    if (tokenID) {
-        friends.delete_friend_DB([req.body.id], (err) => {
+    console.log(req.body.params.query)
+    if (tokenID == req.body.params.query) {
+        friends.delete_friend_DB([req.body.params.id], (err) => {
             if (err) return res.status(500).send("При удалении пользователя из друзей, произошла ошибка" + " " + err);
             res.status(200).send("Пользователь удален из ваших друзей");
 

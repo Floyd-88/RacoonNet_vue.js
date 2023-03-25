@@ -11,7 +11,7 @@
       <p :class="{'new_message': newMessage}"></p>
     </div>
     <div class="wrapper_nav_link">
-      <button class="link" @click="$router.push('/friends')"> Мои друзья</button>
+      <button class="link"  @click="$router.push({name: 'friendspage', query: {id: userID} })"> Мои друзья</button>
       <p :class="{'new_message': getUsersFriendsMe.length > 0}"></p>
     </div>
     <div class="wrapper_nav_link">
@@ -42,7 +42,8 @@ export default {
     ...mapGetters({
       // getCountNewMessage: "messageStore/getCountNewMessage",
       getArrayDialogs: "messageStore/getArrayDialogs",
-      getUsersFriendsMe: "friendsStore/getUsersFriendsMe"
+      getUsersFriendsMe: "friendsStore/getUsersFriendsMe",
+      getUser: "authorizationStore/getUser",
   }),
 
     newMessage() {

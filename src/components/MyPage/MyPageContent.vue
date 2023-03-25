@@ -20,10 +20,12 @@
 
     <MyFriendsBlock>
         <div class="wrapper_my_friends_title">
-            <h4>Список друзей</h4>
+            <h4 class="titleMyFriendsBlock" @click="$router.push({name: 'friendspage', query: {id: getUser.userID} })">
+                Список друзей
+            </h4>
         </div>
         <div class="list_my_friends">
-            <div class="my_friend" v-for="friend in getUsersMyFriends" :key="friend.id">
+            <div class="my_friend" v-for="friend in getUsersMyFriends.slice(0, 8)" :key="friend.id">
                 <div class="my_friend_ava" @click="$router.push({name: 'mypage', params: {id: `${friend.userID}`}})">
                     <img :src="loadAva(friend.ava)" alt="ava">
                 </div>
@@ -66,7 +68,8 @@ export default {
     computed: {
         ...mapGetters({
             getPosts: "postsMyPageStore/getPosts",
-            getUsersMyFriends: "friendsStore/getUsersMyFriends"
+            getUsersMyFriends: "friendsStore/getUsersMyFriends",
+            getUser: "authorizationStore/getUser",
         }),
     },
     watch: {
@@ -171,5 +174,12 @@ export default {
 }
 .my_friend_name {
     cursor: pointer;
+}
+
+.titleMyFriendsBlock {
+    cursor: pointer;
+}
+.titleMyFriendsBlock:hover {
+    color: rgb(0 0 0 / 50%);
 }
 </style>

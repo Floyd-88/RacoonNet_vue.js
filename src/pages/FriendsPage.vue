@@ -6,7 +6,8 @@
 
       <div class="wrapper_my_friends">
 
-        <div class="my_friends">
+        <div class="my_friends" 
+             :class="{myfriends_active: userTokenID != this.$route.query.id}">
           <template v-if="getIsFriendShow === 'allFriends'">
             <MyFriends @getUserInfo="getUserInfo"/>
           </template>
@@ -19,7 +20,7 @@
         </div>
 
 
-        <MyFriendsBlock class="wrapper_my_friends_params">
+        <MyFriendsBlock class="wrapper_my_friends_params" v-if="userTokenID == this.$route.query.id">
 
           <!-- Переключение между уведомлениями -->
           <div class="my_friends_params_choice"  
@@ -78,7 +79,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "FriendsPage",
@@ -87,7 +88,13 @@ export default {
   data() {
     return {
       btnFone: "allFriends",
+      userTokenID: JSON.parse(localStorage.getItem('user')).userID,
     };
+  },
+
+  mounted() {
+    console.log(222)
+    this.GET_USER_MY_FRIENDS(this.$route.query.id);
   },
 
   beforeUnmount() {
@@ -97,6 +104,8 @@ export default {
   methods: {
 
     ...mapMutations({setIsFriendShow: "friendsStore/setIsFriendShow"}),
+
+    ...mapActions({GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",}),
 
     getUserInfo(user) {
       this.user = user;
@@ -108,9 +117,21 @@ export default {
     ...mapGetters({
       isLoggedIn: "authorizationStore/isLoggedIn",
       getIsFriendShow: "friendsStore/getIsFriendShow",
-      getModalWriteMessage: "messageStore/getModalWriteMessage"
+      getModalWriteMessage: "messageStore/getModalWriteMessage",
+      getUser: "authorizationStore/getUser",
     }),
   },
+
+  watch: {
+    $route() {
+      const id = this.$route.query.id;
+      if (id) {
+        console.log(111)
+          this.GET_USER_MY_FRIENDS(id);
+      }
+    }
+
+  }
 }
 </script>
 
@@ -139,7 +160,9 @@ export default {
   box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
 }
 
-
+.myfriends_active {
+  flex: 0 0 100%;
+}
 
 
 .wrapper_my_friends_params {

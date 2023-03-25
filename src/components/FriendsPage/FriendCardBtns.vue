@@ -5,7 +5,7 @@
                     <UIbtn class="btn_write_message" @click="writeMessageMyFriend(user)">Написать сообщение</UIbtn>
                 </div>
                 <div class="my_friend_card_btn_delete_friend">
-                    <UIbtn class="btn_delete_friend" @click="DELETE_FRIEND(user.id)">Удалить из друзей</UIbtn>
+                    <UIbtn class="btn_delete_friend" @click="DELETE_FRIEND({id: user.id, query: this.$route.query.id})">Удалить из друзей</UIbtn>
                 </div>
             </div>
 

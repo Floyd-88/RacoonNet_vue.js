@@ -6,7 +6,7 @@ export const friendsStore = {
     state: () => ({
         textBtnFfriend: "Добавить в друзья",
         isFriend: false,
-        titleFriend: "Мои друзья", //заголовок на странице друзей
+        titleFriend: "Друзья", //заголовок на странице друзей
         usersFriendsMe: [], //пользователи которые хотят дружить со мной
         usersFriendsFromMe: [], //пользователи с которыми я хочу дружить
         usersMyFriends: [], //массив моих друзей
@@ -112,8 +112,8 @@ export const friendsStore = {
                     .then(function() {
                         const users = getters.getUsersFriendsMe.filter(user => user.id != id)
                         commit("setUsersFriendsMe", users);
-
-                        dispatch("GET_USER_MY_FRIENDS");
+                        console.log(id)
+                        dispatch("GET_USER_MY_FRIENDS", JSON.parse(localStorage.getItem('user')).userID);
                     })
             } catch (err) {
                 console.log(err)
@@ -185,10 +185,11 @@ export const friendsStore = {
         //получить пользователей которые являются моими друзьями
         async GET_USER_MY_FRIENDS({
             commit
-        }) {
+        }, id) {
             try {
-                await axios.get("http://localhost:8000/my_friends")
+                await axios.get("http://localhost:8000/my_friends", { params: { id } })
                     .then(function(res) {
+                        console.log(1212)
                         commit("setUsersMyFriends", res.data);
                         commit("setUsersMyFriendsFilter", res.data);
                     })
@@ -198,22 +199,28 @@ export const friendsStore = {
         },
 
         //удалить друга
-        async DELETE_FRIEND({ state, commit }, id) {
+        async DELETE_FRIEND({ state, commit }, params) {
             try {
-                await axios.delete("http://localhost:8000/delete_friends", { data: { id } })
+                await axios.delete("http://localhost:8000/delete_friends", { data: { params } })
                     .then(function() {
+                        console.log(params.id)
                         if (state.usersMyFriends) {
-                            let friends = state.usersMyFriends.filter(user => user.id !== id);
+                            let friends = state.usersMyFriends.filter(user => user.id !== params.id);
                             commit("setUsersMyFriends", friends)
                         }
 
+                        if (state.usersMyFriendsFilter) {
+                            let friendsFilter = state.usersMyFriendsFilter.filter(user => user.id !== params.id);
+                            commit("setUsersMyFriendsFilter", friendsFilter)
+                        }
+
                         if (state.usersFriendsMe) {
-                            let friendsMe = state.usersFriendsMe.filter(user => user.id !== id)
+                            let friendsMe = state.usersFriendsMe.filter(user => user.id !== params.id)
                             commit("setUsersFriendsMe", friendsMe)
                         }
 
                         if (state.usersFriendsFromMe) {
-                            let friendsFromMe = state.usersFriendsFromMe.filter(user => user.id !== id)
+                            let friendsFromMe = state.usersFriendsFromMe.filter(user => user.id !== params.id)
                             commit("setUsersFriendsFromMe", friendsFromMe)
                         }
 
