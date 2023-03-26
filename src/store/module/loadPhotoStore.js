@@ -101,6 +101,7 @@ export const loadPhotoStore = {
         removeAllPhotos(state, id) {
             state.allPhotos = state.allPhotos.filter(photo => photo.id !== id);
             state.myPhotosMyPage = state.myPhotosMyPage.filter(photo => photo.id !== id);
+            console.log(state.myPhotosMyPage)
         },
 
         setPhotoId(state, id) {
@@ -319,8 +320,10 @@ export const loadPhotoStore = {
                         namePhoto: name,
                     }
                 }).then((response) => {
+
                     commit("removeAllPhotos", getters.getIdPhoto);
                     commit("postsMyPageStore/removePhotosPostsArray", getters.getIdPhoto, { root: true })
+
                     commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                         root: true
                     });

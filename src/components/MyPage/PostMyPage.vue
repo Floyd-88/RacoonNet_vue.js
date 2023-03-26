@@ -28,9 +28,12 @@
         </div>
 
         <div class="wrapper_block_photo_post">
-            <template v-for="photo in getPhotosPostsArray" :key="photo.id">
+            <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id ===post.id)" :key="index">
             <div class="wrapper_photo_post" v-if="post.id === photo.id">
-              <img class="photo_post" :src="require(`../../assets/photo/${photo.photo_name}`)" :alt="'photo' + photo.id">
+              <img class="photo_post" 
+              :src="require(`../../assets/photo/${photo.photo_name}`)" 
+              :alt="'photo' + photo.id"
+              @click="FULL_SIZE_PHOTO_POST({'bool': true, 'elem': index, id: photo.id, postID: post.id})">
             </div>
           </template>
           </div>
@@ -123,6 +126,8 @@ export default {
     ...mapActions({
       editPost: "postsMyPageStore/editPost",
       removePost: "postsMyPageStore/removePost",
+      fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
+      FULL_SIZE_PHOTO_POST: "showFullPhotoStore/FULL_SIZE_PHOTO_POST"
       // LOAD_POST_PHOTOS: "postsMyPageStore/LOAD_POST_PHOTOS"
     }),
     // onImgLoad() {

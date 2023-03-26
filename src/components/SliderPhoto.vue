@@ -4,8 +4,9 @@
             <!-- <transition-group name='fade' tag='div'> -->
             <div class="wrapper_block_full_size_img">
                 <div class="wrapper_full_size_img">
-                    <img class="full_size_img" v-if="currentImg.photo_name"
-                        :src="require(`../assets/photo/${currentImg.photo_name}`)" :alt="currentImg.photo_name" />
+                    <img class="full_size_img" v-if="currentImg.photo.photo_name"
+                        :src="require(`../assets/photo/${currentImg.photo.photo_name}`)"
+                        :alt="currentImg.photo.photo_name" />
 
                 </div>
                 <!-- </transition-group> -->
@@ -16,18 +17,20 @@
                 <div class="wrapper_block_info_photo">
                     <div class="wrapper_block_info_name_count_photo">
                         <div class="wrapper_block_info_name">
-                            <p>Фотографии: {{ getIndexPhoto + 1 }} из {{ getAllPhotosMyPage.length }}</p>
+                            <p>Фотографии: {{ getIndexPhoto + 1 }} из {{ currentImg.photosPostArray?.length || getAllPhotosMyPage.length }}</p>
                         </div>
                     </div>
                     <div class="wrapper_block_info_remove_photo">
-                        <button class="remove_photo" v-if="getUser.is_editProfile" @click="isEditAva = true">Сделать главной</button>
-                        <button class="remove_photo" v-if="getUser.is_editProfile" @click="setModulePhotoRemove(true)">Удалить</button>
+                        <button class="remove_photo" v-if="getUser.is_editProfile" @click="isEditAva = true">Сделать
+                            главной</button>
+                        <button class="remove_photo" v-if="getUser.is_editProfile"
+                            @click="setModulePhotoRemove(true)">Удалить</button>
                     </div>
                 </div>
             </div>
 
             <!-- блок комментариев -->
-            <CommentsPhoto :currentImg="currentImg"/>
+            <CommentsPhoto :currentImg="currentImg.photo" />
 
 
         </div>
@@ -40,7 +43,7 @@
                     </div>
 
                     <div class="wrapper_save_editPost_btn">
-                        <UIbtn class="save_editPost_btn" type="submit" @click="removePhoto(currentImg.photo_name)">
+                        <UIbtn class="save_editPost_btn" type="submit" @click="removePhoto(currentImg.photo.photo_name)">
                             Удалить
                         </UIbtn>
 
@@ -57,12 +60,12 @@
 
     <template v-else>
         <div class="wrapper_block_full_size_ava">
-        <div class="wrapper_block_full_size_img_ava">
-            <div class="wrapper_full_size_img_ava">
-                <AvatarEditor :photo_name="currentImg.photo_name"/>
-              </div>
-        </div>      
-    </div>
+            <div class="wrapper_block_full_size_img_ava">
+                <div class="wrapper_full_size_img_ava">
+                    <AvatarEditor :photo_name="currentImg.photo.photo_name" />
+                </div>
+            </div>
+        </div>
     </template>
 </template>
 
@@ -72,7 +75,7 @@ export default {
     name: "SliderPhoto",
     data() {
         return {
-            isEditAva: false
+            isEditAva: false,
         };
     },
     created() {
@@ -91,8 +94,6 @@ export default {
             }
         };
     },
-
-
 
     beforeUnmount() {
         this.setCommentsPhotoArray([])
@@ -119,29 +120,55 @@ export default {
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
             getIndexPhoto: "showFullPhotoStore/getIndexPhoto",
             getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
-            getIdPhoto: "loadPhotoStore/getIdPhoto"
+            getIdPhoto: "loadPhotoStore/getIdPhoto",
+            getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
+            getPostID: "showFullPhotoStore/getPostID"
         }),
-        currentImg: function () {
-            if (this.getAllPhotosMyPage.length > 0) {
-                this.setCommentsPhotoArray([])
-                
-                if (this.getIndexPhoto === -1) {
-                    this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
-                }
-                let photo = this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length];
 
-                if(this.getIndexPhoto >= this.getAllPhotosMyPage.length) {
-                    this.setIndexPhoto(0);
-                } else if(this.getIndexPhoto < 0) {
-                    this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
+        currentImg: function () {
+
+            if (this.getPostID === "") {
+                if (this.getAllPhotosMyPage.length > 0) {
+                    this.setCommentsPhotoArray([])
+
+                    if (this.getIndexPhoto === -1) {
+                        this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
+                    }
+                    let photo = this.getAllPhotosMyPage[Math.abs(this.getIndexPhoto) % this.getAllPhotosMyPage.length];
+                    if (this.getIndexPhoto >= this.getAllPhotosMyPage.length) {
+                        this.setIndexPhoto(0);
+                    } else if (this.getIndexPhoto < 0) {
+                        this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
+                    }
+                    this.setPhotoId(photo.id);
+                    this.LOAD_COMMENTS_PHOTO(photo.id)
+                    return { photo };
                 }
-                this.setPhotoId(photo.id);
-                this.LOAD_COMMENTS_PHOTO(photo.id)
-                return photo;
+                return [];
+            } else {
+                if (this.getPhotosPostsArray.length > 0) {
+                    let photosPostArray = this.getPhotosPostsArray.filter(photo => photo.id === this.getPostID)
+                    this.setCommentsPhotoArray([])
+
+                    if (this.getIndexPhoto === -1) {
+                        this.setIndexPhoto(photosPostArray.length - 1);
+                    }
+                    let photo = photosPostArray[Math.abs(this.getIndexPhoto) % photosPostArray.length];
+
+                    if (this.getIndexPhoto >= photosPostArray.length) {
+                        this.setIndexPhoto(0);
+                    } else if (this.getIndexPhoto < 0) {
+                        this.setIndexPhoto(photosPostArray.length - 1);
+                    }
+                    this.setPhotoId(photo.photoID);
+                    this.LOAD_COMMENTS_PHOTO(photo.photoID)
+                    return { photo, photosPostArray };
+                }
+                return [];
             }
-            return [];
         }
-    },
+
+    }
 }
 </script>
 
@@ -161,6 +188,7 @@ export default {
     flex-direction: row;
     overflow: hidden;
 }
+
 .wrapper_block_full_size_img_ava {
     width: 100%;
     position: relative;
@@ -311,5 +339,4 @@ export default {
     width: 70px;
     margin-left: 5px;
     margin-right: 5px;
-}
-</style>
+}</style>

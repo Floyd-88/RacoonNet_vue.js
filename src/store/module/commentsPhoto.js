@@ -42,7 +42,6 @@ export const commentsPhoto = {
 
                 await axios.post('http://localhost:8000/load_comments_photo.js', newCommentsPhoto)
                 .then(function(response) {
-                    console.log(response.data)
                     commit("setCommentsPhotoArray", [...state.commentsPhotoArray, response.data]);
 
                     // commit("setAddPosts", response.data);

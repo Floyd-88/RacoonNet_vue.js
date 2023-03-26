@@ -8,6 +8,7 @@ export const showFullPhotoStore = {
         indexPhoto: 0, //ключ массива с фото для слайдера
         isShowFullAvaPhoto: false, //открытие модального окна для редактирования автарки
         isEditAva: "", //загрузка аватарки или ее редактирование
+        postID: "" //номер поста в которм есть фотографии
     }),
 
     getters: {
@@ -16,6 +17,7 @@ export const showFullPhotoStore = {
         getAllPhotosMyPage: (state, _, rootState) => rootState.loadPhotoStore.isModalAllPhotos,
         getShowFullAvaPhoto: (state) => state.isShowFullAvaPhoto,
         getEditAva: (state) => state.isEditAva,
+        getPostID: (state) => state.postID
     },
 
     mutations: {
@@ -45,6 +47,10 @@ export const showFullPhotoStore = {
 
         setEditAva(state, load) {
             state.isEditAva = load;
+        },
+
+        setPostID(state, id) {
+            state.postID = id;
         }
 
     },
@@ -69,9 +75,23 @@ export const showFullPhotoStore = {
             document.body.style.overflow = "hidden";
         },
 
+        async FULL_SIZE_PHOTO_POST({ commit }, body) {
+            const bool = body.bool;
+            const index = body.elem;
+            const id = body.id;
+
+            commit("setIsModalFullSize", bool);
+            commit("setIndexPhoto", index);
+            commit('loadPhotoStore/setPhotoId', id, { root: true });
+            commit('setPostID', body.postID);
+
+            document.body.style.overflow = "hidden";
+        },
+
         //закрытие картинки по которой кликнули
         closeModalFullSize({ commit, getters }, bool) {
             commit("setIsModalFullSize", bool);
+            commit('setPostID', "");
             if (bool === false && getters.getAllPhotosMyPage === false) {
                 document.body.style.overflow = "auto";
             }

@@ -105,7 +105,6 @@ export const postsMyPageStore = {
 
         //удаление картинки из массива
         removePhotosPostsArray(state, id) {
-            console.log(id)
             state.photosPostsArray = state.photosPostsArray.filter(photo => photo.photoID !== id);
             console.log(state.photosPostsArray)
         },
@@ -117,7 +116,8 @@ export const postsMyPageStore = {
         async loadPostServer({
             state,
             commit,
-            dispatch
+            dispatch,
+            getters
         }, id) {
             try {
                 await axios.get('http://localhost:8000/dataBase.js', {
@@ -133,7 +133,7 @@ export const postsMyPageStore = {
 
                         response.data.forEach(post => {
                             if (post.photos === "1") {
-                                dispatch("LOAD_POST_PHOTOS", post.id);
+                                dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: getters.getUser.userID });
                             }
                         });
 
@@ -287,12 +287,10 @@ export const postsMyPageStore = {
         },
 
         //загрузка фотографий к постам
-        async LOAD_POST_PHOTOS({ state, commit }, id) {
+        async LOAD_POST_PHOTOS({ state, commit }, params) {
             try {
                 await axios.get('http://localhost:8000/post_photos.js', {
-                    params: {
-                        postID: id
-                    }
+                    params
                 }).then((response) => {
                     if (response.data.length > 0) {
                         console.log(response.data)

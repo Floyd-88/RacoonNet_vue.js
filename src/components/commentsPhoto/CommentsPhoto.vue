@@ -72,11 +72,35 @@ export default {
 
         //сохраняем лайк фотографии
         async countLikes(currentImg) {
-            await this.SAVE_LIKE_COUNT_PHOTO({photoID: currentImg.id});
+            await this.SAVE_LIKE_COUNT_PHOTO({photoID: (currentImg.photoID) ? currentImg.photoID : currentImg.id});
             let objectLikes = await this.getLikesPhoto;
-            currentImg.likes = objectLikes.likes.likes
+            currentImg.likes = objectLikes.likes.likes;
 
-            console.log(currentImg.like_photo) 
+            //если я лайкнул фото из поста, также лайкается фото из массива фотографий
+            if(currentImg.photoID) {
+                this.getAllPhotosMyPage.map( photo => {
+                if(photo.id === currentImg.photoID) {
+                photo.likes = objectLikes.likes.likes;
+
+                if(photo.like_photo == 0) {
+                    photo.like_photo = 1;
+            } else {
+                photo.like_photo = 0;
+            }
+            }});
+            } else {
+                this.getPhotosPostsArray.map( photo => {
+                if(photo.photoID === currentImg.id ) {
+                photo.likes = objectLikes.likes.likes;
+
+                if(photo.like_photo == 0) {
+                    photo.like_photo = 1;
+            } else {
+                photo.like_photo = 0;
+            }
+            }}); 
+            }
+            
             if(currentImg.like_photo == 0) {
                 currentImg.like_photo = 1;
             } else {
@@ -89,7 +113,9 @@ export default {
     computed: {
         ...mapGetters({ 
             getCommentsPhotoArray: "commentsPhoto/getCommentsPhotoArray",
-            getLikesPhoto: "loadPhotoStore/getLikesPhoto"
+            getLikesPhoto: "loadPhotoStore/getLikesPhoto",
+            getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
+            getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
         }),
 
         loadAva() {

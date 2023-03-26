@@ -77,7 +77,7 @@ export default {
         }),
 
         async clickWriteCommentPhoto() {
-           await this.SAVE_COMMENTS_PHOTO({ photoID: this.currentImg.id, textMessage: this.commentPhoto, userPage: this.$route.params.id || this.getUser.userID});
+           await this.SAVE_COMMENTS_PHOTO({ photoID: this.currentImg?.photoID || this.currentImg.id, textMessage: this.commentPhoto, userPage: this.$route.params.id || this.getUser.userID});
            this.$emit("scrollToMe");
             this.commentPhoto = "";
             this.v$.commentPhoto.$reset();

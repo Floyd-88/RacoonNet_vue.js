@@ -64,12 +64,30 @@ class PostsDB {
     //загрузка фотографий к постам 
     load_photos_posts_DB(params, callback) {
         return this.connection.execute(`SELECT 
+        photos.category, 
+        users.name, 
+        users.surname, 
+        users.ava, 
+        photos.date, 
+        photos.likes,
+        SUM(CASE WHEN photos_likes.author_likes_photo = ? THEN 1 ELSE 0 END) as like_photo, 
         posts.id, 
         photos.photo_name,
         photos.id as photoID
         FROM posts 
-        INNER JOIN photos ON photos.post_id_photo = posts.id
-        WHERE posts.id = ?`, params, (err, row) => {
+        INNER JOIN photos ON photos.post_id_photo = posts.id INNER JOIN users ON photos.userID = users.userID LEFT JOIN photos_likes ON photos_likes.photo_id = photos.id
+        WHERE posts.id = ? AND
+        pageID = ? AND pageID = photos.userID GROUP BY 
+        photos.id, 
+        photos.photo_name, 
+        photos.category, 
+        users.name, 
+        users.surname, 
+        users.ava, 
+        photos.date, 
+        photos.likes,
+        photos.id
+        `, params, (err, row) => {
             callback(err, row)
         });
     }

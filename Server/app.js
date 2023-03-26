@@ -496,9 +496,11 @@ router.get('/dataBase.js', authenticateJWT, function(req, res) {
 //ПОДГРУЗКА ФОТОГРАФИЙ К ПОСТАМ ПОЛЬЗОВАТЕЛЕЙ
 router.get('/post_photos.js', authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
-
+    console.log(req.query)
     posts.load_photos_posts_DB([
-        req.query.postID
+        tokenID,
+        req.query.postID,
+        req.query.userID
     ], (err, photosPost) => {
         if (err) return res.status(500).send('Error on the server.' + " " + err);
         if (!photosPost) return res.status(404).send('No posts found.' + " " + err);
