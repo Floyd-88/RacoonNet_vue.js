@@ -35,15 +35,21 @@ export default {
     this.setCountNewsNull();
     this.setNewsPostsFriends([]);
     this.setPhotosPostsArray([]);
+    this.setCommentsArray([]);
+    this.setCommentsCommentArray([]);
   },
 
   methods: {
     ...mapMutations({
       setCountNewsNull: "postsMyPageStore/setCountNewsNull",
       setNewsPostsFriends: "postsMyPageStore/setNewsPostsFriends",
-      setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
+      setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray",
+      setCommentsArray: "commentsPost/setCommentsArray",
+      setCommentsCommentArray: "commentsPost/setCommentsCommentArray"
     }),
-    ...mapActions({ LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS" })
+    ...mapActions({ 
+      LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS",
+    })
   },
 
   computed: {

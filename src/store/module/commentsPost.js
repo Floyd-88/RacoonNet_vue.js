@@ -113,6 +113,33 @@ export const commentsPost = {
             }
         },
 
+        //загрузка комментариев из БД к конкретному посту
+        async LOAD_COMMENTS_ONE_POST({
+            state,
+            commit,
+            dispatch
+        }, id) {
+            try {
+                await axios.get('http://localhost:8000/load_comments_one_post.js', {
+                    params: {
+                        postID: id
+                    }
+                }).then((response) => {
+                    if (response.data.length > 0) {
+                        commit("setCommentsArray", [...state.commentsArray, ...response.data]);
+
+                        response.data.forEach(comment => {
+                            if (comment.id) {
+                                dispatch("LOAD_COMMENTS_COMMENT_ONE_POST", comment.id);
+                            }
+                        });
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        },
+
         //загрузка комментариев к комментариям из БД
         async LOAD_COMMENTS_COMMENT({
             state,
@@ -120,6 +147,26 @@ export const commentsPost = {
         }, id) {
             try {
                 await axios.get('http://localhost:8000/load_comments_comment.js', {
+                    params: {
+                        postID: id
+                    }
+                }).then((response) => {
+                    if (response.data.length > 0) {
+                        commit("setCommentsCommentArray", [...state.commentsCommentArray, ...response.data]);
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        },
+
+        //загрузка комментариев к комментариям из БД к конкретному посту
+        async LOAD_COMMENTS_COMMENT_ONE_POST({
+            state,
+            commit
+        }, id) {
+            try {
+                await axios.get('http://localhost:8000/load_comments_comment_one_post.js', {
                     params: {
                         postID: id
                     }

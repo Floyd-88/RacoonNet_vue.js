@@ -18,7 +18,11 @@
                 </p>
                 <div class="wrapper_answer_under_comment" v-if="comment.isBtnsAnswUnder">
                     <!-- <UIbtn class="answer_under_comment">Ответить</UIbtn> -->
-                    <UIbtn class="answer_under_comment answer_under_comment_del" v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment" @click.stop = "DELETE_COMMENTS_COMMENT({commentID: comment.id, authorID: comment.author_comment, pageID: +$route.params.id})">Удалить</UIbtn>
+                    <UIbtn class="answer_under_comment answer_under_comment_del" 
+                        v-if="getUser.is_editProfile || userID == comment.author_comment" 
+                        @click.stop = "DELETE_COMMENTS_COMMENT({commentID: comment.id, authorID: comment.author_comment, pageID: +$route.params.id})">
+                        Удалить
+                    </UIbtn>
                 </div>
             </div>
 
@@ -47,6 +51,7 @@ export default {
     data() {
         return {
             isBtnsAnswUnder: false,
+            userID: JSON.parse(localStorage.getItem('user')).userID,
         };
     },
     methods: {

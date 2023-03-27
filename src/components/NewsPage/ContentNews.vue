@@ -42,25 +42,16 @@
       </div>
     </div>
 
-    <!-- <div class="btn_post" v-show="post.isPostDel">
-            <UIbtn class="redaction_post_btn" 
-                v-if="getUser.enterUser == post.authorPost"
-                @click="setModulePost({ task: 'edit', id: post.id, text: post.postText })">
-              Редактировать
-            </UIbtn>
-                        
-            <UIbtn class="delete_post_btn" v-if="getUser.is_editProfile || getUser.enterUser == post.authorPost"
-                @click="setModulePost({ task: 'remove', id: post.id })">
-              Удалить
-            </UIbtn>
-          </div> -->
+    <!-- комментарии к посту -->
+    <CommentsPost :post="post" />
+    <!-- ------------------ -->
   </div>
 
-    <div @click="closeModalFullSize(false)">
-      <UImodal v-if="getIsModalFullSize">
-        <SliderPhoto/>
-      </UImodal>
-    </div>
+  <div @click="closeModalFullSize(false)">
+    <UImodal v-if="getIsModalFullSize">
+      <SliderPhoto />
+    </UImodal>
+  </div>
 
   <div class="wrapper_not_news" v-if="getNewsPostsFriends.length < 1">
     <p class="not_news">
@@ -111,7 +102,7 @@ export default {
     },
     btnPost(post) {
       post.isPostDel = !post.isPostDel;
-    }
+    },
 
   },
 

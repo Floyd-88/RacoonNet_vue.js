@@ -34,15 +34,17 @@
         
         <div class="write_comments_btn" @click.stop>
             <UIbtn 
-            v-if="comment.isShowWriteUnderComment" 
-            @click="clickWriteUnderCommentPost()" 
-            :disabled="v$.underCommentText.$invalid">
-            Отправить</UIbtn>
+                v-if="comment.isShowWriteUnderComment" 
+                @click="clickWriteUnderCommentPost()" 
+                :disabled="v$.underCommentText.$invalid">
+                Отправить
+            </UIbtn>
 
             <UIbtn v-else 
-            @click="clickWriteCommentPost()" 
-            :disabled="v$.commentText.$invalid">
-            Отправить</UIbtn>
+                @click="clickWriteCommentPost()" 
+                :disabled="v$.commentText.$invalid">
+                Отправить
+            </UIbtn>
 
         </div>
 </div>
@@ -110,13 +112,13 @@ export default {
         }),
 
         clickWriteCommentPost() {
-           this.SAVE_COMMENTS_POST({ postID: this.post.id, textMessage: this.commentText, userPage: this.$route.params.id });
+           this.SAVE_COMMENTS_POST({ postID: this.post.id, textMessage: this.commentText, userPage: this.$route.params.id || this.post.authorPost});
             this.commentText = "";
             this.v$.commentText.$reset()
         },
 
         clickWriteUnderCommentPost() {
-            this.SAVE_UNDER_COMMENTS_POST({ postID: this.comment.id, textMessage: this.underCommentText, userPage: this.$route.params.id });
+            this.SAVE_UNDER_COMMENTS_POST({ postID: this.comment.id, textMessage: this.underCommentText, userPage: this.$route.params.id || this.comment.author_comment_id});
             this.underCommentText = "";
             this.v$.underCommentText.$reset()
         },

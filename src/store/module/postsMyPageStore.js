@@ -263,12 +263,17 @@ export const postsMyPageStore = {
                         commit("setNewsPostsFriends", [...state.newsPostsFriends, ...response.data])
                         commit("setCountNews", 10)
 
+                        // response.data.forEach(post => {
+                        //     dispatch("commentsPost/LOAD_COMMENTS_POST", post.authorPost, { root: true });
+                        //     dispatch("commentsPost/LOAD_COMMENTS_COMMENT", post.authorPost, { root: true });
+                        // })
                         console.log(response.data)
 
                         response.data.forEach(post => {
                             if (post.photos === "1") {
                                 dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: post.authorPost });
                             }
+                            dispatch("commentsPost/LOAD_COMMENTS_ONE_POST", post.id, { root: true });
                         });
                     }
 

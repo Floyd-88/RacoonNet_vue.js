@@ -27,9 +27,23 @@ class CommentsPostDB {
         })
     }
 
+    //получаем комментарии к одномк посту
+    load_comments_one_DB(id, callback) {
+        return this.connection.query(`SELECT id, name, surname, ava, post_id, comment_post_text, author_comment_id, date FROM comments_post INNER JOIN users ON author_comment_id = userID WHERE post_id=?`, id, (err, comments) => {
+            callback(err, comments);
+        })
+    }
+
     //получаем комментарии к комментарию
     load_comments_comment_DB(id, callback) {
         return this.connection.query(`SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date FROM comments_comment INNER JOIN users ON author_comment = userID WHERE user_page=?`, id, (err, comment) => {
+            callback(err, comment);
+        })
+    }
+
+    //получаем комментарии к комментарию к одному посту
+    load_comments_comment_one_DB(id, callback) {
+        return this.connection.query(`SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date FROM comments_comment INNER JOIN users ON author_comment = userID WHERE comment_id=?`, id, (err, comment) => {
             callback(err, comment);
         })
     }

@@ -23,7 +23,7 @@
                 <div class="wrapper_answer_comment" v-if="comment.isBtnsAnsw">
                     <UIbtn class="answer_comment" @click.stop="showWriteUnderComments(comment)" >Ответить</UIbtn>
 
-                    <UIbtn class="answer_comment answer_comment_del" v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment_id" @click.stop="DELETE_COMMENTS_POST({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id})">Удалить</UIbtn>
+                    <UIbtn class="answer_comment answer_comment_del" v-if="getUser.is_editProfile || userID == comment.author_comment_id" @click.stop="DELETE_COMMENTS_POST({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id})">Удалить</UIbtn>
                 </div>
 
                 <UnderComment :comment="comment"/>
@@ -56,6 +56,7 @@ export default {
     data() {
         return {
             isBtnsAnsw: false,
+            userID: JSON.parse(localStorage.getItem('user')).userID,
             // isShowWriteUnderComment: false,
         };
     },
@@ -72,7 +73,6 @@ export default {
 
         pathAva(ava) {
             try {
-                console.log('ava')
                 return require(`../../assets/photo/${ava}`);
             } catch {
                 return require(`../../assets/ava/ava_1.jpg`);

@@ -165,7 +165,6 @@ export default {
       getBeforePostText: "postsMyPageStore/getBeforePostText",
       getModulePost: "postsMyPageStore/getModulePost",
       getUser: "authorizationStore/getUser",
-      // getCommentsArray: "commentsPost/getCommentsArray",
       getCommentsArray: "commentsPost/getCommentsArray",
       getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray"
     }),
