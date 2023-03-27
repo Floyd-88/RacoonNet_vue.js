@@ -53,8 +53,8 @@ export default {
             setPosts: "postsMyPageStore/setPosts",
             setCountPostsNull: "postsMyPageStore/setCountPostsNull",
             setCommentsArray: "commentsPost/setCommentsArray",
-            setCommentsCommentArray: "commentsPost/setCommentsCommentArray"
-            // setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
+            setCommentsCommentArray: "commentsPost/setCommentsCommentArray",
+            setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
         }),
 
         loadAva(ava) {
@@ -104,7 +104,7 @@ export default {
     beforeUnmount() {
         this.setCommentsArray([]);
         this.setCommentsCommentArray([]);
-        // this.setPhotosPostsArray([]);
+        this.setPhotosPostsArray([]);
     },
 
 

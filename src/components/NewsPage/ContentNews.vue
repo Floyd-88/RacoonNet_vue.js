@@ -28,15 +28,36 @@
 
       </div>
 
-      <div class="wrapper_text_post">
-        <p class="text_post">{{ postText(post.postText) }}</p>
-      </div>
+       <!-- текст поста -->
+       <div class="wrapper_text_post" v-if="post.postText.length < 800">
+          <p class="text_post">
+            {{ postText(post.postText)}}
+          </p>
+        </div>
+        <div class="wrapper_text_post" v-else>
+          <p class="text_post" v-if="!post.isFullText">
+            {{ postText(post.postText).slice(0, 800)}}
+          </p>
+          <p class="text_post" v-else>
+            {{ postText(post.postText)}}
+          </p>
+          <p class="more_text_post" 
+            v-if="!post.isFullText" 
+            @click="moreTextPost(post)">
+            Показать еще
+          </p>
+        </div>
 
       <div class="wrapper_block_photo_post">
-        <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id)" :key="index">
-          <div class="wrapper_photo_post" v-if="post.id === photo.id">
-            <img class="photo_post" :src="require(`../../assets/photo/${photo.photo_name}`)" :alt="'photo' + photo.id"
-              @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
+        <template 
+            v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id)" 
+            :key="index">
+          <div class="wrapper_photo_post" v-if="post.id === photo.id"
+            :class="{ 'size_photo_1': index === 0 }">
+              <img class="photo_post" 
+                :src="require(`../../assets/photo/${photo.photo_name}`)" 
+                :alt="'photo' + photo.id"
+                @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
           </div>
         </template>
       </div>
@@ -103,6 +124,10 @@ export default {
     btnPost(post) {
       post.isPostDel = !post.isPostDel;
     },
+
+    moreTextPost(post) {
+      post.isFullText = true;
+    }
 
   },
 
@@ -197,6 +222,13 @@ export default {
   word-break: break-word;
 }
 
+.more_text_post {
+  font-weight: 600;
+    cursor: pointer;
+    display: inline-block;
+    color: #008edb;
+}
+
 .btn_post {
   display: flex;
   display: flex;
@@ -235,10 +267,11 @@ export default {
 .wrapper_block_photo_post {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .wrapper_photo_post {
-  width: 150px;
+  width: 21%;
   height: 150px;
   margin: 10px;
   border-radius: 8px;
@@ -246,10 +279,15 @@ export default {
 }
 
 .photo_post {
-  width: inherit;
-  height: inherit;
+  width: 100%;
+  height: 100%;
   -o-object-fit: cover;
   object-fit: cover;
   cursor: pointer;
+}
+.size_photo_1 {
+  width: 100%;
+  height: auto;
+  max-height: 450px;
 }
 </style>

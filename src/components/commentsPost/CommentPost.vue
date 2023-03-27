@@ -16,8 +16,8 @@
                     <p>{{ comment.date.slice(0, 10) }}</p>
                 </div>
             </div>
-            <div class="message_text" @click="showBtnsAnsw(comment)">
-                <p>
+            <div class="message_text" >
+                <p @click="showBtnsAnsw(comment)">
                     {{ messageText(comment.comment_post_text) }}
                 </p>
                 <div class="wrapper_answer_comment" v-if="comment.isBtnsAnsw">
@@ -145,7 +145,6 @@ export default {
 }
 
 .message_text {
-    cursor: pointer;
     margin-left: 10px;
     font-size: 15px;
     border-bottom: 1px solid;
@@ -154,6 +153,7 @@ export default {
 
 .message_text p {
     word-break: break-word;
+    cursor: pointer;
 }
 
 .wrapper_answer_comment {

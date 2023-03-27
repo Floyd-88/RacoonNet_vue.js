@@ -12,8 +12,8 @@
                     <p>{{ comment.date.slice(0, 10) }}</p>
                 </div>
             </div>
-            <div class="under_comment_text" @click.stop="showBtnsAnswUnder(comment)">
-                <p>
+            <div class="under_comment_text" >
+                <p @click.stop="showBtnsAnswUnder(comment)">
                     {{ messageText(comment.comment_comment_text) }}
                 </p>
                 <div class="wrapper_answer_under_comment" v-if="comment.isBtnsAnswUnder">
@@ -133,13 +133,13 @@ export default {
 }
 
 .under_comment_text {
-    cursor: pointer;
     margin-left: 10px;
     font-size: 14px;
 }
 
 .under_comment_text p {
     word-break: break-word;
+    cursor: pointer;
 }
 
 .wrapper_answer_under_comment {
