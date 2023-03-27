@@ -4,7 +4,7 @@
        <button class="link" @click="$router.push(`/id${userID}`)" > Моя страница </button>
     </div>
     <div class="wrapper_nav_link">
-      <button class="link" @click="$router.push('/news')"> Новости </button>
+      <button class="link" @click="goNews()"> Новости </button>
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/message')">Сообщения</button>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 export default {
   name: "NavigationNet",
   
@@ -33,9 +33,14 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      loadUser: "authorizationStore/loadUser"
-    }),
+    ...mapActions({loadUser: "authorizationStore/loadUser"}),
+
+    ...mapMutations({setUserEditProfile: "authorizationStore/setUserEditProfile"}),
+
+    goNews() {
+      this.setUserEditProfile(false)
+      this.$router.push('/news');
+    }
   },
 
   computed: {

@@ -32,14 +32,16 @@ export default {
 
   beforeUnmount() {
     //при уходе со страницы обнулять список новостей
-    this.setCountNewsNull()
-    this.setNewsPostsFriends([])
+    this.setCountNewsNull();
+    this.setNewsPostsFriends([]);
+    this.setPhotosPostsArray([]);
   },
 
   methods: {
     ...mapMutations({
       setCountNewsNull: "postsMyPageStore/setCountNewsNull",
-      setNewsPostsFriends: "postsMyPageStore/setNewsPostsFriends"
+      setNewsPostsFriends: "postsMyPageStore/setNewsPostsFriends",
+      setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
     }),
     ...mapActions({ LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS" })
   },

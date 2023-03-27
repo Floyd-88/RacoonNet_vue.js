@@ -78,6 +78,7 @@ export const commentsPhoto = {
         //удаление комментария к посту
         async DELETE_COMMENTS_PHOTO({ commit }, paramsComment) {
             try {
+
                 commit("setRemoveCommentsPhoto", paramsComment.commentID)
                 await axios.delete('http://localhost:8000/load_comments_photo.js', {
                     data: paramsComment

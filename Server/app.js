@@ -471,7 +471,6 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
 
 //ПОДГРУЗКА ПОСТОВ ПОЛЬЗОВАТЕЛЯ ИЗ БАЗЫ ДАННЫХ
 router.get('/dataBase.js', authenticateJWT, function(req, res) {
-    console.log('ok')
     tokenID = req.tokenID; //id из сохраненного токена 
     posts.load_posts_DB([
         tokenID,
@@ -496,7 +495,7 @@ router.get('/dataBase.js', authenticateJWT, function(req, res) {
 //ПОДГРУЗКА ФОТОГРАФИЙ К ПОСТАМ ПОЛЬЗОВАТЕЛЕЙ
 router.get('/post_photos.js', authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
-    console.log(req.query)
+    // console.log(req.query)
     posts.load_photos_posts_DB([
         tokenID,
         req.query.postID,
@@ -1368,39 +1367,6 @@ router.put('/user_messages', authenticateJWT, function(req, res) {
     })
 })
 
-//ОБНОВЛЕНИЕ ФЛАГА НЕПРОЧИТАННЫХ СООБЩЕНИЙ ПРИ ВЫХДОЕ ИЗ ПЕРЕПИСКИ
-// router.put('/unread_messages', authenticateJWT, function(req, res) {
-
-//     tokenID = req.tokenID //id из сохраненного токена
-
-//     //получаем количество непрочитанных сообщений
-//     messages.get_unread_messages([
-//         req.body.conv_id,
-//         tokenID
-//     ], (err, row) => {
-//         if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
-//         console.log(row)
-//             // Обновляем флаг просмотров сообщений
-//         messages.update_flag_unread_messages([
-//             req.body.conv_id,
-//             tokenID
-//         ], (err) => {
-//             if (err) return res.status(500).send('При обновлении флага в таблице сообщений произошла ошибка:' + ' ' + err);
-
-//             //обновляем флаг с непрочитанными сообщениями в таблице диалогов
-//             messages.update_flag_unread_conersation_exit([
-//                 req.body.conv_id,
-//                 tokenID,
-//                 req.body.conv_id,
-//             ], (err) => {
-//                 if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
-//                 res.status(200).send(row);
-//             })
-//         })
-//     })
-// })
-
-
 //ОТПРАВЛЕНИЕ ЗАПРОСА В ДРУЗЬЯ
 router.post("/add_friend", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
@@ -1561,6 +1527,7 @@ router.get('/news_friends.js', authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
 
     posts.load_news_friens_DB([
+        tokenID,
         tokenID,
         tokenID,
         req.query._count,

@@ -100,6 +100,8 @@ export default {
         },
 
         choosePhotoInput() {
+            let photoFiles = {};
+
             //указываем допустимые форматы картинки
             const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
 
@@ -108,9 +110,16 @@ export default {
                 return
             }
 
+            if(this.$refs.files.files.length > 5) {
+                this.setMessageLoadPhoto("Вы не можете загрузить больше 5 фотографий за один раз");
+                photoFiles = Array.prototype.slice.call(this.$refs.files.files, 0, 5);
+            } else {
+                photoFiles = this.$refs.files.files;
+            }
+            
             //трансформируем выбранные картинки в массив
-            this.setArrayLoadImage(Array.from(this.$refs.files.files));          
-
+            this.setArrayLoadImage(Array.from(photoFiles));  
+            
             //переберам массив выбранных картинок
             this.getArrayLoadImage.forEach(file => {
                 //если картинка не соответствует формату или размеру показываем сообщение

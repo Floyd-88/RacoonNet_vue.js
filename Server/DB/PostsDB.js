@@ -34,7 +34,8 @@ class PostsDB {
 
     // загрузка постов из базы данны
     load_posts_DB(params, callback) {
-        return this.connection.execute(`SELECT posts.id, 
+        return this.connection.execute(`SELECT 
+        posts.id, 
         users.ava, 
         posts.date, 
         posts.postText, 
@@ -68,6 +69,7 @@ class PostsDB {
         users.name, 
         users.surname, 
         users.ava, 
+        users.userID,
         photos.date, 
         photos.likes,
         SUM(CASE WHEN photos_likes.author_likes_photo = ? THEN 1 ELSE 0 END) as like_photo, 
@@ -77,12 +79,13 @@ class PostsDB {
         FROM posts 
         INNER JOIN photos ON photos.post_id_photo = posts.id INNER JOIN users ON photos.userID = users.userID LEFT JOIN photos_likes ON photos_likes.photo_id = photos.id
         WHERE posts.id = ? AND
-        pageID = ? AND pageID = photos.userID GROUP BY 
+        pageID = ? GROUP BY 
         photos.id, 
         photos.photo_name, 
         photos.category, 
         users.name, 
         users.surname, 
+        users.userID,
         users.ava, 
         photos.date, 
         photos.likes,
@@ -101,8 +104,12 @@ class PostsDB {
         posts.postText, 
         users.name, 
         users.surname,
-        posts.authorPost FROM posts 
-        INNER JOIN users ON posts.authorPost = users.userID 
+        posts.authorPost, 
+        posts.likes,
+        posts.photos,
+        SUM(CASE WHEN posts_likes.author_likes_post = ? THEN 1 ELSE 0 END) as like_post
+        FROM posts 
+        INNER JOIN users ON posts.authorPost = users.userID LEFT JOIN posts_likes ON posts_likes.post_id = posts.id
         WHERE page_userID IN (SELECT 
                              U.userID FROM users U 
                              INNER JOIN friends F ON 
@@ -116,7 +123,17 @@ class PostsDB {
                              U.userID=addressee_user_id
                                  END
                              WHERE (confirm_addressee=1 AND confirm_sender=1))
-         AND posts.authorPost = page_userID
+         AND posts.authorPost = page_userID 
+         GROUP BY 
+         posts.id, 
+         users.ava, 
+         posts.date, 
+         posts.postText, 
+         posts.likes,
+         users.name, 
+         users.surname,
+         posts.authorPost,
+         posts.photos
          ORDER BY posts.id DESC LIMIT ?, ?`, params, (err, row) => {
             callback(err, row)
         });
@@ -208,14 +225,6 @@ class PostsDB {
             callback(err, likes[0]);
         })
     }
-
-
-    // //обновление имени и фамилии в постах при редактировании профиля
-    // updateTitlePosts(name, callback) {
-    //     return this.connection.execute(`UPDATE posts SET name=?, surname=? WHERE userID =?`, name, (err) => {
-    //         callback(err);
-    //     })
-    // }
 
 }
 module.exports = PostsDB;

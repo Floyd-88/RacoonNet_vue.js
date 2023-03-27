@@ -49,7 +49,12 @@ export const authorizationStore = {
 
         setUserAva(state, ava) {
             state.user.ava = ava;
-        }
+        },
+
+        setUserEditProfile(state, bool) {
+            state.user.is_editProfile = bool;
+        },
+
 
     },
 

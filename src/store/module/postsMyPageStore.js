@@ -106,7 +106,6 @@ export const postsMyPageStore = {
         //удаление картинки из массива
         removePhotosPostsArray(state, id) {
             state.photosPostsArray = state.photosPostsArray.filter(photo => photo.photoID !== id);
-            console.log(state.photosPostsArray)
         },
 
     },
@@ -130,14 +129,13 @@ export const postsMyPageStore = {
                     if (response.data.length > 0) {
                         commit("setPosts", [...state.posts, ...response.data]);
                         commit("setCountPosts", 10);
+                        console.log(response.data)
 
                         response.data.forEach(post => {
                             if (post.photos === "1") {
                                 dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: getters.getUser.userID });
                             }
                         });
-
-                        console.log(response.data)
                     }
 
                 });
@@ -251,7 +249,8 @@ export const postsMyPageStore = {
         //получение постов от друзей для отображения в новостях
         async LOAD_NEWS_FRIENDS_USERS({
             state,
-            commit
+            commit,
+            dispatch
         }) {
             try {
                 await axios.get('http://localhost:8000/news_friends.js', {
@@ -263,7 +262,14 @@ export const postsMyPageStore = {
                     if (response.data.length > 0) {
                         commit("setNewsPostsFriends", [...state.newsPostsFriends, ...response.data])
                         commit("setCountNews", 10)
-                        console.log(state.newsPostsFriends)
+
+                        console.log(response.data)
+
+                        response.data.forEach(post => {
+                            if (post.photos === "1") {
+                                dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: post.authorPost });
+                            }
+                        });
                     }
 
                 });
@@ -293,7 +299,6 @@ export const postsMyPageStore = {
                     params
                 }).then((response) => {
                     if (response.data.length > 0) {
-                        console.log(response.data)
                         commit("setPhotosPostsArray", [...state.photosPostsArray, ...response.data]);
                         // console.log(state.photosPostsArray)
                     }

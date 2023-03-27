@@ -21,7 +21,11 @@
                 </p>
                 <div class="wrapper_answer_comment" v-if="comment.isBtnDelete">
                     <!-- <UIbtn class="answer_comment" >Ответить</UIbtn> -->
-                    <UIbtn class="answer_comment answer_comment_del"  v-if="getUser.is_editProfile || getUser.enterUser == comment.author_comment_id" @click="DELETE_COMMENTS_PHOTO({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id || getUser.userID})">Удалить</UIbtn>
+                    <UIbtn class="answer_comment answer_comment_del"  
+                        v-if="getUser.is_editProfile || userID == comment.author_comment_id" 
+                        @click="DELETE_COMMENTS_PHOTO({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id || getUser.userID})">
+                            Удалить
+                    </UIbtn>
                 </div>
             </div>
         </div>
@@ -47,6 +51,7 @@ export default {
     data() {
         return {
             isBtnDelete: false,
+            userID: JSON.parse(localStorage.getItem('user')).userID,
         };
     },
 

@@ -1,8 +1,5 @@
 <template>
-  <div class="post" 
-    v-for="post in getNewsPostsFriends" 
-    :key="post.id" 
-    @mouseover="showBtnPost(post)"
+  <div class="post" v-for="post in getNewsPostsFriends" :key="post.id" @mouseover="showBtnPost(post)"
     @mouseleave="notShowBtnPost(post)">
 
     <div class="wrapper_post">
@@ -25,7 +22,7 @@
 
         <div class="wrapper_params_post">
           <p class="post_show_btn" @click="btnPost(post)">
-            ...
+            <!-- ... -->
           </p>
         </div>
 
@@ -33,6 +30,15 @@
 
       <div class="wrapper_text_post">
         <p class="text_post">{{ postText(post.postText) }}</p>
+      </div>
+
+      <div class="wrapper_block_photo_post">
+        <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id)" :key="index">
+          <div class="wrapper_photo_post" v-if="post.id === photo.id">
+            <img class="photo_post" :src="require(`../../assets/photo/${photo.photo_name}`)" :alt="'photo' + photo.id"
+              @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
+          </div>
+        </template>
       </div>
     </div>
 
@@ -50,12 +56,18 @@
           </div> -->
   </div>
 
+    <div @click="closeModalFullSize(false)">
+      <UImodal v-if="getIsModalFullSize">
+        <SliderPhoto/>
+      </UImodal>
+    </div>
+
   <div class="wrapper_not_news" v-if="getNewsPostsFriends.length < 1">
     <p class="not_news">
       Список Вашей новостной ленты пуст. Попробуйте обзавестись новыми знакомыми что бы получать свежие новости.
     </p>
   </div>
-  </template>
+</template>
   
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
@@ -64,7 +76,7 @@ export default {
   name: "ContentNews",
 
   data() {
-    return { }
+    return {}
   },
 
   methods: {
@@ -72,7 +84,9 @@ export default {
       // setModulePost: "postsMyPageStore/setModulePost",
     }),
     ...mapActions({
-      LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS"
+      LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS",
+      FULL_SIZE_PHOTO_POST: "showFullPhotoStore/FULL_SIZE_PHOTO_POST",
+      closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
     }),
 
     loadAva(ava) {
@@ -104,7 +118,9 @@ export default {
   computed: {
     ...mapGetters({
       // getUser: "authorizationStore/getUser",
-      getNewsPostsFriends: "postsMyPageStore/getNewsPostsFriends"
+      getNewsPostsFriends: "postsMyPageStore/getNewsPostsFriends",
+      getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
+      getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
     }),
   }
 }
@@ -223,5 +239,26 @@ export default {
   opacity: .7;
   font-family: fantasy;
   color: dimgray;
+}
+
+.wrapper_block_photo_post {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.wrapper_photo_post {
+  width: 150px;
+  height: 150px;
+  margin: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.photo_post {
+  width: inherit;
+  height: inherit;
+  -o-object-fit: cover;
+  object-fit: cover;
+  cursor: pointer;
 }
 </style>

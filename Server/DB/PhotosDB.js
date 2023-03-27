@@ -50,6 +50,7 @@ class PhotosDB {
         users.name, 
         users.surname, 
         users.ava, 
+        users.userID,
         photos.date, 
         photos.likes,
         SUM(CASE WHEN photos_likes.author_likes_photo = ? THEN 1 ELSE 0 END) as like_photo 
@@ -62,6 +63,7 @@ class PhotosDB {
         users.name, 
         users.surname, 
         users.ava, 
+        users.userID,
         photos.date, 
         photos.likes
         ORDER BY id DESC`, params, (err, row) => {
