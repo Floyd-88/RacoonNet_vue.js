@@ -9,7 +9,7 @@ class AuthorizationUserDB {
 
     // создаем таблицу с зарегистрированными пользователями
     createTableUsers() {
-        const sql = `CREATE TABLE IF NOT EXISTS users (userID integer PRIMARY KEY AUTO_INCREMENT, ava varchar(100) DEFAULT 'ava_1.jpg', name varchar(50) NOT NULL, surname varchar(50) NOT NULL, email varchar(50) UNIQUE NOT NULL, user_pass text NOT NULL, year_user integer NOT NULL, month_user integer NOT NULL, day_user integer NOT NULL, selectedGender varchar(20) NOT NULL, country varchar(50), city varchar(50),  is_admin integer)`;
+        const sql = `CREATE TABLE IF NOT EXISTS users (userID integer PRIMARY KEY AUTO_INCREMENT, ava varchar(100) DEFAULT 'ava_1.jpg', name varchar(50) NOT NULL, surname varchar(50) NOT NULL, email varchar(50) UNIQUE, user_pass text NOT NULL, year_user integer NOT NULL, month_user integer NOT NULL, day_user integer NOT NULL, selectedGender varchar(20) NOT NULL, country varchar(50), city varchar(50),  is_admin integer, delete_user integer default 0)`;
         this.connection.execute(sql);
     }
 
@@ -40,7 +40,7 @@ class AuthorizationUserDB {
     //возвращаем информацию по пользователю
     loadUser(id, callback) {
         return this.connection.execute(
-            `SELECT userID,ava,email, name,surname,year_user,month_user,day_user,selectedGender,country,city FROM users WHERE userID = ?`, [id],
+            `SELECT userID,ava,email, name,surname,year_user,month_user,day_user,selectedGender,country,city,delete_user FROM users WHERE userID = ?`, [id],
             function(err, row) {
                 callback(err, row[0]);
             })
@@ -87,11 +87,16 @@ class AuthorizationUserDB {
     }
 
     //удаление пользователя
-    deleteUserDB(id, callback) {
-        return this.connection.execute('DELETE FROM `users` WHERE userID = ?', id, (err) => {
-            callback(err);
-        })
-    }
+    deleteUserDB(user, callback) {
+            return this.connection.execute(`UPDATE users SET name='УДАЛЕН', surname='', email=NULL, year_user=0, month_user=0, day_user=0, selectedGender='', country='', city='', delete_user=1 WHERE userID =?`, user, (err) => {
+                callback(err);
+            });
+        }
+        // deleteUserDB(id, callback) {
+        //     return this.connection.execute('DELETE FROM `users` WHERE userID = ?', id, (err) => {
+        //         callback(err);
+        //     })
+        // }
 
     // меняем аватарку пользователя
     updateAva(ava, callback) {

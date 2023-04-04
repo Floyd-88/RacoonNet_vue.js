@@ -3,6 +3,8 @@
   <div class="wrapper">
     <router-view></router-view>
     <UInewMessage />
+
+    <UImodal v-if="getisModalFeedBack"> <FeedBack/> </UImodal>
 </div>
 </template>
 
@@ -102,6 +104,7 @@ export default {
     ...mapGetters({
       getArrayMessages: "messageStore/getArrayMessages",
       getArrayDialogs: "messageStore/getArrayDialogs",
+      getisModalFeedBack: "feedBackStore/getisModalFeedBack"
     })
   },
 

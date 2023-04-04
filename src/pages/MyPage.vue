@@ -2,7 +2,8 @@
 
   <NavigationNet v-if="isLoggedIn" />
 
-  <div class="wrapper_main">
+  <template v-if="getUser.delete === 0">
+    <div class="wrapper_main">
     <div class="main">
       <!-- модальное окно для редактирования профиля -->
       <template v-if="getModulEditProfile">
@@ -34,6 +35,13 @@
 
     </div>
   </div>
+  </template>
+  <template v-else>
+    <div class="wrapper_delete_user">
+      <p>Профиль пользователя был удален</p>
+    </div>
+  </template>
+ 
 
 
 
@@ -168,5 +176,23 @@ export default {
 
 .title_warning_auth {
   text-align: center;
+}
+
+.wrapper_delete_user{
+  padding: 120px 20px 5px;
+  margin-left: 180px;
+}
+
+.wrapper_delete_user p {
+  font-size: 16px;
+    line-height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    font-size: 20px;
+    opacity: .8;
+    font-family: fantasy;
+    color: dimgray;
 }
 </style>

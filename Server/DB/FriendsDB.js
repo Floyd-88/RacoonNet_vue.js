@@ -114,5 +114,12 @@ class FriendsDB {
             callback(err, users)
         })
     }
+
+    //удаление всех друзей пользователя при удалении профиля
+    delete_user_friends_DB(body, callback) {
+        return this.connection.execute(`DELETE from friends WHERE sender_user_id=? OR addressee_user_id=?`, body, (err) => {
+            callback(err)
+        })
+    }
 }
 module.exports = FriendsDB;

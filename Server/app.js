@@ -8,6 +8,9 @@ const {
     validationResult
 } = require('express-validator');
 
+//отправка сообщений на почту
+const mailer = require('./nodemailer');
+
 //используем токен JWT
 const jwt = require('jsonwebtoken');
 const tokenKey = require('./tokenKey');
@@ -122,6 +125,22 @@ router.post('/register', registerValidate, function(req, res) {
         }
         if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err);
 
+        //отправляем сообщение с логином и паролем на почту юзера 
+        const message = {
+            to: req.body.email,
+            subject: 'Congratulations! You are successfully registred on our site',
+            html: `
+                <h2>Поздравляем, Вы успешно зарегистрировались в социальной сети RaccoonNet!</h2>  
+                <i>данные вашей учетной записи:</i>
+                <ul>
+                    <li>login: ${req.body.email}</li>
+                    <li>password: ${req.body.password}</li>
+                </ul>
+                <p>Данное письмо не требует ответа.<p>`
+        }
+        mailer(message);
+
+        //после регистрации происходит автоматическая авторизация пользователя
         authorization.selectByEmail(req.body.email, (err, user) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
 
@@ -187,6 +206,22 @@ router.post('/register-admin', registerValidate, function(req, res) {
         }
         if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err)
 
+        //отправляем сообщение с логином и паролем на почту юзера 
+        const message = {
+            to: req.body.email,
+            subject: 'Congratulations! You are successfully registred on our site',
+            html: `
+                <h2>Поздравляем, Вы успешно зарегистрировались в социальной сети RaccoonNet!</h2>  
+                <i>данные вашей учетной записи:</i>
+                <ul>
+                    <li>login: ${req.body.email}</li>
+                    <li>password: ${req.body.pass}</li>
+                </ul>
+                <p>Данное письмо не требует ответа.<p>`
+        }
+        mailer(message);
+
+        //после регистрации происходит автоматическая авторизация пользователя
         authorization.selectByEmail(req.body.email, (err, user) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err)
 
@@ -299,6 +334,7 @@ router.post('/load_user', authenticateJWT, function(req, res) {
                     city: user.city,
                     is_admin: user.is_admin,
                     is_editProfile: is_editProfile,
+                    delete: user.delete_user,
                     enterUser: tokenID //давать возможность редактироват и удалять посты если ты их автор
                 }
             });
@@ -314,6 +350,7 @@ router.post('/load_user', authenticateJWT, function(req, res) {
                     surname: user.surname,
                     country: user.country,
                     city: user.city,
+                    delete: user.delete_user,
                 }
             });
         });
@@ -427,7 +464,7 @@ router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
 //УДАЛЕНИЕ ПРОФИЛЯ ПОЛЬЗОВАТЕЛЯ
 router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req, res) {
 
-
+    userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
 
     if (userID === tokenID) {
@@ -460,11 +497,50 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
                 if (err) console.log(err)
             });
 
-            //удаление пользователя
-            authorization.deleteUserDB([tokenID], (err) => {
-                if (err) return res.status(500).send("При удалении пользователя возникли проблемы" + " " + err);
-                res.status(200).send("Пользователь успешно удален");
+            // удаление пользователя из друзей у других пользователей
+            friends.delete_user_friends_DB([tokenID, tokenID], (err) => {
+                if (err) return res.status(500).send("При удалении пользователя из друзей, произошла ошибка" + " " + err);
+
+                //удаление фотографий пользователя
+                photos.remove_all_photos([
+                    tokenID
+                ], (err) => {
+                    if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err);
+
+                    //удаление постов пользователя на его странице
+                    posts.remove_all_posts_DB(tokenID, (err) => {
+                        if (err) return res.status(500).send('Error on the server' + " " + err);
+                    })
+
+                    //обновляем флаги удаления сообщений у пользователей
+                    messages.update_all_messages_flag_delete([
+                        tokenID,
+                        tokenID
+                    ], (err) => {
+                        if (err) return res.status(500).send("Сообщениея в диалоге небыли удалены" + " " + err);
+
+                        //обновляем флаги удаления диалога у пользователя
+                        messages.update_all_conversation_flag_delete([
+                            tokenID,
+                            tokenID,
+                        ], (err) => {
+                            if (err) return res.status(500).send("Диалог небыл удален" + " " + err);
+
+                            //удаление данных пользователя
+                            authorization.deleteUserDB([tokenID], (err) => {
+                                if (err) return res.status(500).send("При удалении пользователя возникли проблемы" + " " + err);
+                                res.status(200).send("Пользователь успешно удален");
+                            })
+                        })
+                    })
+                })
             })
+
+            //удаление пользователя
+            // authorization.deleteUserDB([tokenID], (err) => {
+            //     if (err) return res.status(500).send("При удалении пользователя возникли проблемы" + " " + err);
+            //     res.status(200).send("Пользователь успешно удален");
+            // })
         })
     }
 })
@@ -983,7 +1059,6 @@ router.delete('/remove_photo', authenticateJWT, function(req, res) {
             if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее' + " " + err);
         });
 
-        console.log(req.query.idPhoto)
         photos.remove_photo_likes([req.query.idPhoto], (err) => {
             if (err) return res.status(500).send('Ошибка на сервере при удалении лайков' + " " + err);
 

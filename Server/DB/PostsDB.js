@@ -28,7 +28,7 @@ class PostsDB {
             id integer PRIMARY KEY AUTO_INCREMENT,
             post_id integer, 
             author_likes_post integer,
-            CONSTRAINT FK_PostID_Posts FOREIGN KEY (post_id) REFERENCES posts (id), CONSTRAINT FK_AuthorLike_Users  FOREIGN KEY (author_likes_post) REFERENCES users (userID) ON DELETE CASCADE)`;
+            CONSTRAINT FK_PostID_Posts FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE, CONSTRAINT FK_AuthorLike_Users  FOREIGN KEY (author_likes_post) REFERENCES users (userID) ON DELETE CASCADE)`;
         this.connection.execute(sql);
     }
 
@@ -180,6 +180,13 @@ class PostsDB {
     // удаление поста
     remove_post_DB(postID, callback) {
         return this.connection.execute(`DELETE from posts WHERE id = ?`, [postID], (err) => {
+            callback(err);
+        });
+    }
+
+    // удаление постов на странице пользователя перед удалением профиля
+    remove_all_posts_DB(user, callback) {
+        return this.connection.execute(`DELETE from posts WHERE page_userID = ?`, [user], (err) => {
             callback(err);
         });
     }

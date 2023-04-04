@@ -17,8 +17,12 @@
     <div class="wrapper_nav_link">
       <button class="link" @click="$router.push('/gallery')"> Галерея</button>
     </div>
- 
+    <div class="wrapper_nav_link_help">
+       <button class="link_help" @click="setIsModalFeedBack(true)" > Обратная связь </button>
   </div>
+  </div>
+
+  
 </template>
 
 <script>
@@ -35,7 +39,10 @@ export default {
   methods: {
     ...mapActions({loadUser: "authorizationStore/loadUser"}),
 
-    ...mapMutations({setUserEditProfile: "authorizationStore/setUserEditProfile"}),
+    ...mapMutations({
+      setUserEditProfile: "authorizationStore/setUserEditProfile",
+      setIsModalFeedBack: "feedBackStore/setIsModalFeedBack"
+    }),
 
     goNews() {
       this.setUserEditProfile(false)
@@ -133,6 +140,24 @@ align-items: center;
 }
 .link:hover{
   filter:contrast(30%)
+}
+
+.wrapper_nav_link_help {
+  border-top: 1px solid black;
+    padding-top: 10px;
+    margin-top: 5px;
+}
+.link_help {
+  background: none;
+    border: none;
+    font-family: fantasy;
+    font-size: 13px;
+    color: #636363;
+    cursor: pointer;
+}
+
+.link_help:hover {
+filter: brightness(80%);
 }
 </style>
 

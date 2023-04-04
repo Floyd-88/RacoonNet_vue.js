@@ -21,7 +21,7 @@ class PhotosDB {
             id integer PRIMARY KEY AUTO_INCREMENT,
             photo_id integer, 
             author_likes_photo integer,
-            CONSTRAINT FK_PhotosLikes_Photos FOREIGN KEY (photo_id) REFERENCES photos (id),
+            CONSTRAINT FK_PhotosLikes_Photos FOREIGN KEY (photo_id) REFERENCES photos (id) ON DELETE CASCADE,
             CONSTRAINT FK_PhotosLikes_Users FOREIGN KEY (author_likes_photo) REFERENCES users (userID) ON DELETE CASCADE)`;
         this.connection.execute(sql);
     }
@@ -80,6 +80,13 @@ class PhotosDB {
         // удаление фотографии
     remove_photo(photo, callback) {
         return this.connection.execute(`DELETE from photos WHERE id = ? and userID = ?`, photo, (err) => {
+            callback(err);
+        });
+    }
+
+    // удаление фотографий перед удалением профиля
+    remove_all_photos(user, callback) {
+        return this.connection.execute(`DELETE from photos WHERE pageID=?`, user, (err) => {
             callback(err);
         });
     }

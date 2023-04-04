@@ -259,6 +259,27 @@ class MessagesDB {
         })
     }
 
+    //обновляем флаги удаления для всех сообщений во всех диалоах у пользователя перед удалением профиля
+    update_all_messages_flag_delete(params, callback) {
+        return this.connection.execute(`UPDATE messages SET
+        sender_delete =
+            CASE sender
+                WHEN ?
+                    THEN '1'
+                ELSE
+                    sender_delete
+                END,
+        addressee_delete = 
+            CASE addressee
+                WHEN ?
+                    THEN '1'
+                ELSE
+                    addressee_delete
+                END`, params, (err) => {
+            callback(err)
+        })
+    }
+
     //обновляем флаг удаления для диалога у пользователя что бы он не отображался
     update_conversation_flag_delete(params, callback) {
         return this.connection.execute(`UPDATE conversation SET
@@ -277,6 +298,27 @@ class MessagesDB {
                     second_delete
                 END
         WHERE id = ?`, params, (err) => {
+            callback(err)
+        })
+    }
+
+    //обновляем флаг удаления для всех диалогов у пользователя что бы он не отображался перед удалением профиля 
+    update_all_conversation_flag_delete(params, callback) {
+        return this.connection.execute(`UPDATE conversation SET
+        first_delete = 
+            CASE first
+                WHEN ?
+                    THEN '1'
+                ELSE
+                    first_delete
+                END,
+        second_delete = 
+            CASE second
+                WHEN ?
+                    THEN '1'
+                ELSE
+                    second_delete
+                END`, params, (err) => {
             callback(err)
         })
     }
@@ -357,20 +399,5 @@ class MessagesDB {
     //         callback(err, row);
     //     });
     // }
-
-    // // // редактирование поста
-    // edit_post_DB(body, callback) {
-    //     return this.connection.execute(`UPDATE posts SET postText=?, date=? WHERE id =?`, body, (err) => {
-    //         callback(err);
-    //     });
-    // }
-
-    // // // удаление поста
-    // remove_post_DB(postID, callback) {
-    //     return this.connection.execute(`DELETE from posts WHERE id = ?`, [postID], (err) => {
-    //         callback(err);
-    //     });
-    // }
-
 }
 module.exports = MessagesDB;

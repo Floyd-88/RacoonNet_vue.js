@@ -55,7 +55,9 @@ import FriendCardBtns from "@/components/FriendsPage/FriendCardBtns";
 import HeaderGallery from "@/components/GalleryPage/HeaderGallery";
 import CategoryFilter from "@/components/GalleryPage/CategoryFilter";
 
-import ContentNews from "@/components/NewsPage/ContentNews"
+import ContentNews from "@/components/NewsPage/ContentNews";
+
+import FeedBack from "@/components/FeedBack";
 
 
 export default [
@@ -102,5 +104,6 @@ export default [
     CommentPost,
     UnderComment,
     CommentPhoto,
-    WriteCommentPhoto
+    WriteCommentPhoto,
+    FeedBack
 ]
