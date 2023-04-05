@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
+    pool: true,
     host: 'smtp.mail.ru',
     port: 465,
     secure: true,
@@ -10,6 +11,12 @@ const transporter = nodemailer.createTransport({
     },
 }, {
     from: "RaccoonNet <raccoonnet@mail.ru>",
+})
+
+//проверка подключения к почтовому серверу
+transporter.verify((error, success) => {
+    error ? console.log(error) :
+        console.log('Server is ready to take our messages: ', success)
 })
 
 const mailer = message => {

@@ -46,6 +46,24 @@ class AuthorizationUserDB {
             })
     }
 
+    //возвращаем электронную почту пользователя
+    loadUserEmail(id, callback) {
+        return this.connection.execute(
+            `SELECT email FROM users WHERE userID = ?`, [id],
+            function(err, user) {
+                callback(err, user[0]);
+            })
+    }
+
+    //возвращаем данные пользователя при обращении его в поддержку
+    loadUserInfo(id, callback) {
+        return this.connection.execute(
+            `SELECT email, name, surname FROM users WHERE userID = ?`, id,
+            function(err, user) {
+                callback(err, user[0]);
+            })
+    }
+
     // добавляем пользователя в базу данных без метки админ
     insert(user, callback) {
         return this.connection.execute(

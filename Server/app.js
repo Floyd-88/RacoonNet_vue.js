@@ -39,6 +39,9 @@ const commentsPost = new CommentsPostDB();
 const CommentsPhotoDB = require('./DB/CommentsPhotoDB');
 const commentsPhoto = new CommentsPhotoDB();
 
+const FeedBackDB = require('./DB/FeedBackDB');
+const feedBack = new FeedBackDB();
+
 
 //подключаем массивы с валидацией
 const loginValidate = require('./validate/loginValidate')
@@ -48,6 +51,7 @@ const updateUserValidate = require('./validate/updateUserValidate')
 const passwordValidate = require('./validate/passwordValidate')
 const passwordDelValidate = require('./validate/passwordDelValidate');
 const messageValidate = require('./validate/messageValidate');
+const feedBackUser = require('./validate/feedBackUser');
 
 const {
     resolve
@@ -215,7 +219,7 @@ router.post('/register-admin', registerValidate, function(req, res) {
                 <i>данные вашей учетной записи:</i>
                 <ul>
                     <li>login: ${req.body.email}</li>
-                    <li>password: ${req.body.pass}</li>
+                    <li>password: ${req.body.password}</li>
                 </ul>
                 <p>Данное письмо не требует ответа.<p>`
         }
@@ -393,6 +397,22 @@ router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, re
             }
             if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы" + " " + err);
 
+            //отправляем сообщение с логином на новую почту если юзер ее поменял 
+            if (req.body.email) {
+                const message = {
+                    to: req.body.email,
+                    subject: 'You have changed your mail',
+                    html: `
+                        <h2>Вы изменили адрес своей электронной почты!</h2>  
+                        <i>данные вашей учетной записи были изменены:</i>
+                        <ul>
+                            <li>login: ${req.body.email}</li>
+                        </ul>
+                        <p>Данное письмо не требует ответа.<p>`
+                }
+                mailer(message);
+            }
+
             //обновление имени и фамилии пользователя в постах при редактировании профиля
             // posts.updateTitlePosts([req.body.name, req.body.surname, req.body.id], (err) => {
             //     if (err) return res.status(500).send("Ошибка при обновдении title в постах.");
@@ -454,9 +474,25 @@ router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
                 (err) => {
                     if (err) return res.status(500).send("При изменении пароля возникли проблемы" + " " + err);
 
-                    res.status(200).send("Пароль успешно обновлен");
-                })
+                    //получение почты пользователя
+                    authorization.loadUserEmail(tokenID, (err, user) => {
+                        if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
 
+                        // отправляем сообщение на новую почту если юзер поменял пароль 
+                        const message = {
+                            to: user.email,
+                            subject: 'You have changed your password',
+                            html: `
+                            <h2>Вы изменили пароль своей учетной записи на сайте raccoonnet.ru!</h2>  
+                            <i>Если вы этого не делали, обратитесь в службу поддержки</i>
+                            <p>Данное письмо не требует ответа.<p>`
+                        }
+                        mailer(message);
+
+                        res.status(200).send("Пароль успешно обновлен");
+
+                    });
+                })
         })
     }
 })
@@ -707,7 +743,10 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
                     posts.get_count_likes_post([req.body.postID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
 
-                        res.status(200).json({ likes: likes, flag: false })
+                        res.status(200).json({
+                            likes: likes,
+                            flag: false
+                        })
                     })
                 })
             })
@@ -724,7 +763,10 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
                     posts.get_count_likes_post([req.body.postID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
 
-                        res.status(200).json({ likes: likes, flag: true })
+                        res.status(200).json({
+                            likes: likes,
+                            flag: true
+                        })
                     })
                 })
             })
@@ -1130,7 +1172,10 @@ router.post('/likes_photo', authenticateJWT, function(req, res) {
                     photos.get_count_likes_photo([req.body.photoID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошла ошибка" + " " + err);
 
-                        res.status(200).json({ likes: likes, flag: false })
+                        res.status(200).json({
+                            likes: likes,
+                            flag: false
+                        })
                     })
                 })
             })
@@ -1148,7 +1193,10 @@ router.post('/likes_photo', authenticateJWT, function(req, res) {
                         if (err) return res.status(500).send("При получении лайков произошла ошибка" + " " + err);
                         console.log(likes)
 
-                        res.status(200).json({ likes: likes, flag: true })
+                        res.status(200).json({
+                            likes: likes,
+                            flag: true
+                        })
                     })
                 })
             })
@@ -1641,6 +1689,46 @@ router.get('/news_friends.js', authenticateJWT, function(req, res) {
     });
 });
 
+//ОБРАТНАЯ СВЯЗЬ С ПОЛЬЗОВАТЕЛЕМ
+router.post('/problem_user', authenticateJWT, feedBackUser, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+
+    //валидация заполнения полей
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+
+    authorization.loadUserInfo([tokenID], (err, user) => {
+        if (err) return res.status(500).send('Error on the server.' + " " + err);
+
+        feedBack.add_new_problem([tokenID, user.name, user.surname, user.email, req.body.cause, req.body.title, req.body.description], (err) => {
+            if (err) return res.status(500).send('Error on the server.' + " " + err);
+
+            //отправляем сообщение на почту юзера после его обращения в поддержку
+            const message = {
+                to: user.email,
+                subject: 'FeedBack RaccoonNet.ru',
+                html: `
+                <h2>Добрый день, Ваше обращение принято в обработку службой технической поддержки сайта RaccoonNet.ru</h2>  
+                <i>данные по Вашему обращению:</i>
+                <ul>
+                    <li>Причина обращения: ${req.body.cause}</li>
+                    <li>Краткое наименование: ${req.body.title}</li>
+                    <li>Подробное описание: ${req.body.description}</li>
+                </ul>
+                <p>Данное письмо не требует ответа.<p>`
+            }
+            mailer(message);
+
+            res.status(200).send("Ваша заявка принята");
+        })
+    })
+
+
+})
 
 
 //ПОЛУЧЕНИЕ СООБЩЕНИЙ БЕЗ ПЕРЕЗАГРУЗКИ
