@@ -7,6 +7,9 @@ export const authorizationStore = {
         token: localStorage.getItem('token') || '', //получаем токен создаваемый при авторизации
         user: {}, //получаем данные юзера при авторизаци
         errorLogin: "", //ошибка возникающая при вводе неверного пароля или почты
+        isForgetPassword: true, //показывать ввод логина и пароля или восстановление пароля
+        messageEmailPassword: "" //сообщение о восстановлении пароля
+
     }),
 
     getters: {
@@ -14,6 +17,8 @@ export const authorizationStore = {
         isLoggedIn: (state) => !!state.token, //показываем кнопку выход в header
         getUser: (state) => state.user,
         getErrorLogin: (state) => state.errorLogin,
+        getIsForgetPassword: (state) => state.isForgetPassword,
+        getMessageEmailPassword: (state) => state.messageEmailPassword
     },
 
     mutations: {
@@ -55,6 +60,13 @@ export const authorizationStore = {
             state.user.is_editProfile = bool;
         },
 
+        setIsForgetPassword(state, bool) {
+            state.isForgetPassword = bool;
+        },
+
+        setMessageEmailPassword(state, value) {
+            state.messageEmailPassword = value;
+        }
 
     },
 
@@ -155,6 +167,23 @@ export const authorizationStore = {
                         commit('auth_error');
                         // localStorage.removeItem('token');
                         // localStorage.removeItem('user');
+                        reject(err);
+                    })
+            })
+        },
+
+        //отправка почты для восстановление пароля
+        RESSTORE_PASSWORD_USER(context, email) {
+            return new Promise((resolve, reject) => {
+                axios({
+                        url: "http://localhost:8000/restore_password",
+                        data: email,
+                        method: "POST"
+                    })
+                    .then(resp => {
+                        resolve(resp);
+                    })
+                    .catch((err) => {
                         reject(err);
                     })
             })

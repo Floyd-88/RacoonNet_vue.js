@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="getIsForgetPassword">
     <form @submit.prevent="handleSubmit" novalidate>
 
       <div class="form_login">
@@ -35,7 +35,7 @@
       </div>
 
       <div class="wrapper_form_not_password">
-        <button class="form_not_password" @click="$router.push('/')">
+        <button class="form_not_password" @click.prevent="forgetPassword()">
           Забыли пароль?
         </button>
       </div>
@@ -47,6 +47,48 @@
       </div>
     </form>
   </div>
+
+  <div v-else>
+    <form @submit.prevent="restorePassword()" novalidate>
+
+      <div class="form_login">
+        <p class="form_restore_text">Введите электронную почту указанную при регестрации</p>
+        <div class="input-errors" v-for="(error, index) of v$.email.$errors" :key="index">
+          <div class="error-msg" v-if="error.$message === 'Value is not a valid email address'">
+            Некорректный адрес электронной почты
+          </div>
+          <div class="error-msg" v-if="error.$message === 'Value is required'">
+            Введите электронную почту указанную при регистрации
+          </div>
+        </div>
+        <input class="form_login_input" id="email" type="text" placeholder="Введите электронный адрес"
+          v-model="v$.email.$model" :class="{ invalid: (v$.email.$error) }">
+      </div>
+
+      <div class="wrapper_error_login" v-if="getErrorLogin">
+        <p class="error_login">{{ getErrorLogin }}</p>
+      </div>
+      <div class="wrapper_message_email" v-if="getMessageEmailPassword">
+        <p class="message_email">{{ getMessageEmailPassword }}</p>
+      </div>
+
+      <div class="wrapper_form_login_btn">
+        <button class="form_register_btn"
+        :disabled="v$.$invalid"
+          >
+          Восстановить пароль
+        </button>
+      </div>
+
+      <div class="wrapper_form_not_password">
+        <button class="form_not_password" 
+          @click.prevent="enterLogin()">
+          Ввести логин и пароль
+        </button>
+      </div>
+    </form>
+  </div>
+  
 </template>
 
 <script>
@@ -77,11 +119,16 @@ export default {
   },
 
   methods: {
-    ...mapActions({ login: "authorizationStore/login" }),
+    ...mapActions({ 
+      login: "authorizationStore/login",
+      RESSTORE_PASSWORD_USER: "authorizationStore/RESSTORE_PASSWORD_USER"
+    }),
 
     ...mapMutations({
       setModulRegister: "registrationStore/setModulRegister",
       setErrorLogin: "authorizationStore/setErrorLogin",
+      setIsForgetPassword: "authorizationStore/setIsForgetPassword",
+      setMessageEmailPassword: "authorizationStore/setMessageEmailPassword"
     }),
 
     handleSubmit() {
@@ -99,18 +146,52 @@ export default {
             }
           })
           .catch((err) => {
-              let messageErr = err.response.data.err;
-              this.setErrorLogin(JSON.stringify(messageErr).slice(1, -1)) 
-              console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(messageErr))
-            }
+            let messageErr = err.response.data.err;
+            this.setErrorLogin(JSON.stringify(messageErr).slice(1, -1))
+            console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(messageErr))
+          }
           )
       }
+    },
+
+    forgetPassword() {
+      this.email = "";
+      this.password ="1";
+      this.v$.$reset();
+      this.setErrorLogin("");
+      this.setMessageEmailPassword("");
+      this.setIsForgetPassword(false)
+    },
+
+    enterLogin() {
+      this.email = "";
+      this.password ="";
+      this.v$.$reset();
+      this.setErrorLogin("");
+      this.setMessageEmailPassword("");
+      this.setIsForgetPassword(true)
+    },
+
+    restorePassword() {
+      let email = this.email;
+      this.RESSTORE_PASSWORD_USER({email})
+      .then((resp) => {
+        this.setMessageEmailPassword(resp.data);
+          })
+          .catch((err) => {
+            let messageErr = err.response.data.err;
+            this.setErrorLogin(JSON.stringify(messageErr).slice(1, -1));
+            console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(messageErr));
+          }
+          )
     }
   },
 
   computed: {
     ...mapGetters({
       getErrorLogin: "authorizationStore/getErrorLogin",
+      getIsForgetPassword: "authorizationStore/getIsForgetPassword",
+      getMessageEmailPassword: "authorizationStore/getMessageEmailPassword"
     }),
 
   }
@@ -199,5 +280,16 @@ export default {
 
 .error_login {
   color: red;
+}
+
+.message_email {
+  font-weight: 600;
+}
+
+.form_restore_text {
+  text-align: center;
+  font-size: 16px;
+  width: 340px;
+  margin-bottom: 10px;
 }
 </style>

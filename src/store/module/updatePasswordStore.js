@@ -82,6 +82,25 @@ export const updatePasswordStore = {
                     })
             })
         },
+
+        //обновление пароля при входе в свой профиль
+        UPDATE_PASSWORD_RESTORE(context, pass) {
+            return new Promise((resolve, reject) => {
+                let url = "http://localhost:8000/update_password_restore";
+                axios({
+                        url: url,
+                        data: pass,
+                        method: 'PUT'
+                    })
+                    .then((resp) => {
+                        resolve(resp);
+                        window.location.href = "/";
+                    })
+                    .catch((err) => {
+                        reject(err.response.data)
+                    })
+            })
+        }
     },
 
 

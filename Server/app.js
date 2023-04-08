@@ -11,6 +11,8 @@ const {
 //отправка сообщений на почту
 const mailer = require('./nodemailer');
 
+const randtoken = require('rand-token');
+
 //используем токен JWT
 const jwt = require('jsonwebtoken');
 const tokenKey = require('./tokenKey');
@@ -1726,8 +1728,110 @@ router.post('/problem_user', authenticateJWT, feedBackUser, function(req, res) {
             res.status(200).send("Ваша заявка принята");
         })
     })
+})
 
+//ЗАПРОС НА ВОССТАНОВЛЕНИЕ ПАРОЛЯ
+router.post('/restore_password', loginValidate, function(req, res) {
 
+        //валидация заполнения полей
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({
+                errors: errors.array()
+            });
+        }
+
+        authorization.selectByEmail(req.body.email, (err, user) => {
+            if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
+            if (!user) return res.status(200).send("Ссылка для сброса пароля отправлена на Ваш почтовый ящик");
+
+            let randomToken = randtoken.generate(20);
+            let tokenLink = jwt.sign({
+                    email: req.body.email,
+                },
+                randomToken, {
+                    expiresIn: 600
+                },
+            );
+
+            authorization.add_token_pass_user([randomToken, req.body.email], (err) => {
+                if (err) return res.status(500).send('Error on the server.' + " " + err);
+
+                const message = {
+                    to: req.body.email,
+                    subject: 'Сброс пароля RaccoonNet',
+                    html: `
+                    <p>Для сброса пароля от вашего профиля на сайте RaccoonNet перейдите по ссылке и следуйте дальнейшим инструкциям</p>  
+                   <a href='http://192.168.0.101:8080/reset-password?token=${tokenLink}'>ссылка для сброса пароля</a>
+
+                   <p>Если Вы не пытались сбросить пароль, просто проигнорируйте это письмо.</p>
+               
+                    <p>Данное письмо не требует ответа.<p>`
+                }
+                mailer(message);
+
+                res.status(200).send("Ссылка для сброса пароля отправлена на Ваш почтовый ящик");
+            })
+        })
+    })
+    // })
+
+//ИЗМЕНЕНИЕ ПАРОЛЯ ПОСЛЕ ЕГО ОБНОВЛЕНИЯ
+router.put('/update_password_restore', passwordValidate, function(req, res) {
+
+    //валидация полей
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors)
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+
+    const decoded = jwt.decode(req.body.token).email
+
+    //проверка ссылки с токеном на токен в БД
+    authorization.get_user_token(decoded, (err, user) => {
+        if (err) return res.status(500).send("Ошибка на сервере" + " " + err);
+        if (!user.pass_token) return res.status(401).send({
+            err: 'Cсылка по которой Вы перешли устарела'
+        });
+
+        jwt.verify(req.body.token, user.pass_token, (err) => {
+            if (err) {
+                return res.status(403).send({ err: 'Cсылка по которой Вы перешли устарела' });
+            }
+
+            if (!req.body.new_password) return res.status(500).send("Поле с новым паролем не заполнено");
+
+            //обновление старого пароля
+            authorization.updateUserPassword([
+                bcrypt.hashSync(req.body.new_password, 8),
+                user.userID
+            ], (err) => {
+                if (err) return res.status(500).send("При изменении пароля возникли проблемы" + " " + err);
+
+                //получение почты пользователя
+                authorization.loadUserEmail(user.userID, (err, user) => {
+                    if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
+
+                    // отправляем сообщение на новую почту если юзер поменял пароль 
+                    const message = {
+                        to: user.email,
+                        subject: 'You have changed your password',
+                        html: `
+                                <h2>Вы изменили пароль своей учетной записи на сайте raccoonnet.ru!</h2>  
+                                <i>Если вы этого не делали, обратитесь в службу поддержки</i>
+                                <p>Данное письмо не требует ответа.<p>`
+                    }
+                    mailer(message);
+
+                    res.status(200).send("Пароль успешно обновлен");
+
+                });
+            })
+        })
+    })
 })
 
 

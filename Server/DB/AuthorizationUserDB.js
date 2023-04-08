@@ -79,6 +79,22 @@ class AuthorizationUserDB {
         });
     }
 
+    //добавляем токен для восстановления пароля пользователя
+    add_token_pass_user(body, callback) {
+        return this.connection.execute(`UPDATE users SET pass_token=? WHERE email =?`, body, (err) => {
+            callback(err);
+        });
+    }
+
+    //проверяем токен перед изменением пароля
+    get_user_token(token, callback) {
+        return this.connection.execute(
+            `SELECT userID, pass_token FROM users WHERE email = ?`, [token],
+            function(err, user) {
+                callback(err, user[0]);
+            })
+    }
+
     // //
     // selectByEmail(email, callback) {
     //     this.connection.execute(
@@ -99,9 +115,18 @@ class AuthorizationUserDB {
 
     //обновление пароля
     updateUserPassword(body, callback) {
-        return this.connection.execute(`UPDATE users SET user_pass=? WHERE userID =?`, body, (err) => {
+        return this.connection.execute(`UPDATE users SET user_pass=?, pass_token=NULL WHERE userID =?`, body, (err) => {
             callback(err);
         });
+    }
+
+    //отправка пароля пользователю по запросу
+    get_password_email(email, callback) {
+        this.connection.execute(
+            `SELECT user_pass FROM users WHERE email = ?`, [email],
+            function(err, row) {
+                callback(err, row[0]);
+            })
     }
 
     //удаление пользователя

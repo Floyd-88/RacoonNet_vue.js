@@ -14,6 +14,8 @@ import AdminNet from "@/components/authorizationUser/AdminNet";
 import NotFound from "@/components/authorizationUser/NotFound";
 import AllUsersMessages from "@/components/MessagePage/AllUsersMessages";
 import DialogUser from "@/components/MessagePage/DialogUser";
+import ResetPassword from "@/components/authorizationUser/ResetPassword";
+
 
 
 const routes = [{
@@ -96,6 +98,14 @@ const routes = [{
         meta: {
             requiresAuth: true,
             is_admin: true
+        }
+    },
+    {
+        path: "/reset-password",
+        component: ResetPassword,
+        name: "resetpassword",
+        meta: {
+            // requiresAuth: true,
         }
     },
     {

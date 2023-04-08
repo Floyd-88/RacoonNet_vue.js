@@ -3,6 +3,7 @@ import HeaderNet from "@/components/layout/HeaderNet";
 
 import LoginNet from "@/components/authorizationUser/LoginNet";
 import RegisterNet from "@/components/authorizationUser/RegisterNet";
+import ResetPassword from "@/components/authorizationUser/ResetPassword";
 
 import UserInfo from "@/components/MyPage/UserInfo";
 import MainPhoto from "@/components/MainPhoto";
@@ -105,5 +106,6 @@ export default [
     UnderComment,
     CommentPhoto,
     WriteCommentPhoto,
-    FeedBack
+    FeedBack,
+    ResetPassword
 ]
