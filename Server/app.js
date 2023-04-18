@@ -102,6 +102,8 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+
+
 // РЕГЕСТРИРУЕМ ПРОСТОГО ПОЛЬЗОВАТЕЛЯ
 router.post('/register', registerValidate, function(req, res) {
     //валидация полей
@@ -156,12 +158,21 @@ router.post('/register', registerValidate, function(req, res) {
                     id: user.userID,
                 },
                 tokenKey.secret, {
-                    expiresIn: 86400
-                }, // expires in 24 hours
+                    expiresIn: 60 * 60
+                },
             );
+
+            const refreshToken = jwt.sign({
+                name: user.name,
+                id: user.userID,
+            }, tokenKey.refreshTokenSecret);
+
+            tokenKey.refreshTokens.push(refreshToken);
+
             res.status(200).send({
                 auth: true,
                 token: token,
+                refreshToken: refreshToken,
                 user: {
                     userID: user.userID,
                     // name: user.name,
@@ -237,13 +248,21 @@ router.post('/register-admin', registerValidate, function(req, res) {
                     id: user.userID,
                 },
                 tokenKey.secret, {
-                    expiresIn: 86400
-                }, // expires in 24 hours
+                    expiresIn: 60 * 60
+                },
             );
+
+            const refreshToken = jwt.sign({
+                name: user.name,
+                id: user.userID,
+            }, tokenKey.refreshTokenSecret);
+
+            tokenKey.refreshTokens.push(refreshToken);
 
             res.status(200).send({
                 auth: true,
                 token: token,
+                refreshToken: refreshToken,
                 user: {
                     userID: user.userID,
                     // name: user.name,
@@ -272,6 +291,7 @@ router.post('/login', loginValidate, function(req, res) {
             errors: errors.array()
         });
     }
+
     //проверка на существование пользователя
     authorization.selectByEmail(req.body.email, (err, user) => {
         if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
@@ -284,6 +304,7 @@ router.post('/login', loginValidate, function(req, res) {
         if (!passwordIsValid) return res.status(401).send({
             auth: false,
             token: null,
+            refreshToken: null,
             err: 'Вы указали не правильный пароль'
         });
 
@@ -293,13 +314,21 @@ router.post('/login', loginValidate, function(req, res) {
                 id: user.userID,
             },
             tokenKey.secret, {
-                expiresIn: 86400 // срок действия in 24 hours
+                expiresIn: 60 * 60 //срок действия токена
             },
         );
+
+        const refreshToken = jwt.sign({
+            name: user.name,
+            id: user.userID,
+        }, tokenKey.refreshTokenSecret);
+
+        tokenKey.refreshTokens.push(refreshToken);
 
         res.status(200).send({
             auth: true,
             token: token,
+            refreshToken: refreshToken,
             user: {
                 userID: user.userID,
                 is_admin: user.is_admin,
@@ -308,8 +337,53 @@ router.post('/login', loginValidate, function(req, res) {
     });
 })
 
+//УДАЛЕНИЕ РЕФРЭШ-ТОКЕНА ПРИ ПРИ ВЫХОДЕ ИЗ ПРОФИЛЯ
+router.post('/del_refresh_token', (req, res) => {
+    const refresh = req.body.refreshToken;
+
+    if (!refresh) return res.status(400).send("refresh-token не найден");
+
+    if (tokenKey.refreshTokens.includes(refresh)) {
+        tokenKey.refreshTokens = tokenKey.refreshTokens.filter(token => refresh !== token);
+        return res.status(200).send("refresh-token удален");
+    } else {
+        if (!refresh) return res.status(400).send("refresh-token не найден");
+    }
+});
+
+//ОБНОВЛЕНИЕ ТОКЕНА ПРИ ИСТЕЧЕНИИ СРОКА
+router.post('/refresh', (req, res) => {
+    const refresh = req.body.refreshToken;
+
+    if (!refresh) return res.status(400).send("refresh-token не найден");
+
+    if (tokenKey.refreshTokens.includes(refresh)) {
+        jwt.verify(refresh, tokenKey.refreshTokenSecret, (err, user) => {
+            if (err) {
+                console.log(err)
+                return res.status(400).send("Неверный refresh-token");
+            }
+            let token = jwt.sign({
+                    name: user.name,
+                    id: user.id
+                },
+                tokenKey.secret, {
+                    expiresIn: 60 * 60
+                },
+            );
+            res.json({ token });
+        });
+    } else {
+        return res.status(400).send("refresh-token не найден");
+    }
+});
+
+
+
+
 //ПОДГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ ПРИ ПОСЕЩЕНИИ ЕГО СТРАНИЦЫ
 router.post('/load_user', authenticateJWT, function(req, res) {
+    console.log(req.body.id)
     userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
 
@@ -1799,7 +1873,9 @@ router.put('/update_password_restore', passwordValidate, function(req, res) {
 
         jwt.verify(req.body.token, user.pass_token, (err) => {
             if (err) {
-                return res.status(403).send({ err: 'Cсылка по которой Вы перешли устарела' });
+                return res.status(401).send({
+                    err: 'Cсылка по которой Вы перешли устарела'
+                });
             }
 
             if (!req.body.new_password) return res.status(500).send("Поле с новым паролем не заполнено");

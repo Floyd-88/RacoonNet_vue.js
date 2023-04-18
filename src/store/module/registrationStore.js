@@ -116,10 +116,12 @@ export const registrationStore = {
                     })
                     .then(resp => {
                         const token = resp.data.token;
+                        const refreshToken = resp.data.refreshToken;
                         const user = resp.data.user;
 
                         if (token !== null && user !== null) {
                             localStorage.setItem('token', token);
+                            localStorage.setItem('refreshToken', refreshToken);
                             localStorage.setItem('user', JSON.stringify(user));
 
                             window.location.href = `/id${user.userID}`;
@@ -151,7 +153,8 @@ export const registrationStore = {
                         commit('authorizationStore/auth_error', null, {
                             root: true
                         });
-                        localStorage.removeItem('token')
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('refreshToken');
                         localStorage.removeItem('user');
                         reject(err);
                     })

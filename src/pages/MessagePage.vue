@@ -20,6 +20,7 @@ import { mapGetters } from "vuex";
 
 export default {
     name: "MessagePage",
+    
     computed: {
         ...mapGetters({
             isLoggedIn: "authorizationStore/isLoggedIn",

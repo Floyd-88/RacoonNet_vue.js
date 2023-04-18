@@ -1,3 +1,5 @@
 module.exports = {
-    'secret': 'supersecret'
+    'secret': 'supersecret',
+    'refreshTokenSecret': 'yourrefreshtokesecrethe',
+    refreshTokens: []
 };

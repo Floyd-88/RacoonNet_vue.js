@@ -129,7 +129,6 @@ export const postsMyPageStore = {
                     if (response.data.length > 0) {
                         commit("setPosts", [...state.posts, ...response.data]);
                         commit("setCountPosts", 10);
-                        console.log(response.data)
 
                         response.data.forEach(post => {
                             if (post.photos === "1") {

@@ -7,8 +7,7 @@ const authenticateJWT = (req, res, next) => {
     if (authHeader) {
         jwt.verify(authHeader, tokenKey.secret, (err, user) => {
             if (err) {
-                console.log(err)
-                return res.status(403).send("Неверный токен");
+                return res.status(302).send("Неверный токен");
             }
             req.tokenID = user.id;
             next();

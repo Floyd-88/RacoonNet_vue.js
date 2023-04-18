@@ -99,6 +99,7 @@ export const messageStore = {
             try {
                 await axios.get("http://localhost:8000/user_dialogs", { params: body })
                     .then(function(resp) {
+                        console.log(111)
                         commit("setArrayDialogs", resp.data);
                         // let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
                         // commit("setCountNewMessage", count)

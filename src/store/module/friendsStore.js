@@ -131,7 +131,6 @@ export const friendsStore = {
                         }
                     })
                     .then(function(res) {
-                        console.log(res.data)
                         if (res.data === "Это Ваш друг") {
                             commit("setIsFriend", false);
                         } else if (res.data === "Добавить в друзья") {
@@ -189,7 +188,6 @@ export const friendsStore = {
             try {
                 await axios.get("http://localhost:8000/my_friends", { params: { id } })
                     .then(function(res) {
-                        console.log(1212)
                         commit("setUsersMyFriends", res.data);
                         commit("setUsersMyFriendsFilter", res.data);
                     })

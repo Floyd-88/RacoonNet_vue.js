@@ -4,16 +4,16 @@ import pages from '@/pages'
 import components from "@/components"
 import router from "@/router/router"
 import store from "@/store/index";
-import axios from "axios";
+// import axios from "axios";
 
 
 
 const app = createApp(App);
 
-const token = localStorage.getItem('token');
-if (token) {
-    axios.defaults.headers.common['Authorization'] = token;
-}
+// const token = localStorage.getItem('token');
+// if (token) {
+//     axios.defaults.headers.common['Authorization'] = token;
+// }
 
 pages.forEach(page => {
     app.component(page.name, page);

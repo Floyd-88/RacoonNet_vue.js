@@ -4,27 +4,62 @@
     <router-view></router-view>
     <UInewMessage />
 
-    <UImodal v-if="getisModalFeedBack"> <FeedBack/> </UImodal>
-</div>
+    <UImodal v-if="getisModalFeedBack">
+      <FeedBack />
+    </UImodal>
+  </div>
 </template>
 
 <script>
 import { mapActions, mapMutations, mapGetters } from "vuex";
 import SocketioService from "./services/socketio.service"
-
-// import axios from "axios";
+import axios from "axios";
 
 export default {
   name: 'App',
 
   created() {
 
-    // this.CHECK_CONFIRM_FRIEND();
-    this.LOAD_DIALOGS();
+    axios.interceptors.request.use(
+      function (config) {
+        const token = localStorage.getItem('token');
+        if (token) {
+          config.headers.Authorization = token;
+        }
+        return config;
+      },
+      function (error) {
+        return Promise.reject(error);
+      }
+    );
+
+    axios.interceptors.response.use(config => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = token;
+      }
+      return config
+    }, error => {
+      if (error.response.data === "Неверный токен") {
+        this.UPDATE_TOKEN()
+          .then(res => {
+            if (res.data.token) {
+              error.config.headers.Authorization = res.data.token;
+            }
+          })
+          .catch(() => {
+            return window.location.href = '/'
+          })
+        return axios.request(error.config)
+      }
+      return Promise.reject(error);
+    }),
+
+
+      // this.CHECK_CONFIRM_FRIEND();
+      this.LOAD_DIALOGS();
     this.GET_USER_ADD_FRIENDS_ME();
     // this.CHECK_REQUEST_FRIEND(this.$route.params.id);
-   
-
 
     //вызываем метод для отправки сообщения всем участникам комнаты
     SocketioService.setupSocketConnection();
@@ -42,35 +77,9 @@ export default {
         this.setIsNewMessageNotify(true);
 
       }
-      // console.log(this.getArrayDialogs);
-      // console.log(data.conv_id)
-
-      //  this.getArrayDialogs.map((dialog) => {
-      //   if(dialog.convId == data.conv_id) {
-      //    this.setArrayDialogs(data);
-      //     // dialog.message = data.message
-      //   }
-      // })
 
     });
-
-    //       axios.interceptors.response.use(undefined, function (err) {
-    //         // this.logout()
-    //         return new Promise(function (resolve) {
-    //       if (err.status === 403 && err.config 
-    //           && !err.config.__isRetryRequest 
-    //       ) {
-    //         // this.logout()
-    //         resolve()
-    //       }
-    //       throw err; 
-    //     }); 
-    //   });  
   },
-
-  // mounted() {
-  //   this.CHECK_REQUEST_FRIEND(this.$route.params.id);
-  // },
 
   beforeUnmount() {
     SocketioService.disconnect();
@@ -91,7 +100,8 @@ export default {
       UPDATE_DIALOGS_SOCKETS: "messageStore/UPDATE_DIALOGS_SOCKETS",
       GET_USER_ADD_FRIENDS_ME: "friendsStore/GET_USER_ADD_FRIENDS_ME",
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
-      CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND"
+      CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND",
+      UPDATE_TOKEN: "authorizationStore/UPDATE_TOKEN"
 
       // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
       // loadPostServer: "postsMyPageStore/loadPostServer",
@@ -117,16 +127,15 @@ export default {
           .then(() => {
             this.CHECK_REQUEST_FRIEND(id);
             this.GET_USER_MY_FRIENDS(id);
-
-
             // this.LOAD_DIALOGS();
             // this.CHECK_CONFIRM_FRIEND();
-            // console.log(this.getArrayDialogs.reduce((accum, item) => accum + item.unread, 0))
+            // console.log(this.getArrayDialogs.reduce((accum, item) => accum + item.unread, 0));
             // this.loadAllPhotos();
             // this.loadPostServer(this.$route.params.id);
           })
           .catch(() => {
-            this.$router.push('notFound')
+            // console.log(err)
+            // this.$router.push('notFound')
           })
       }
     }

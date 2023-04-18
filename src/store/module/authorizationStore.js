@@ -26,12 +26,10 @@ export const authorizationStore = {
             state.status = status;
         },
         auth_success(state, {
-            // user,
-            token,
+            token
         }) {
             state.status = 'success';
             state.token = token;
-            // state.user = user;
         },
         auth_error(state) {
             state.status = 'error';
@@ -84,10 +82,13 @@ export const authorizationStore = {
                     })
                     .then(resp => {
                         const token = resp.data.token;
+                        const refreshToken = resp.data.refreshToken;
                         const user = resp.data.user;
 
                         if (token !== null && user !== null) {
                             localStorage.setItem('token', token);
+                            localStorage.setItem('refreshToken', refreshToken);
+
                             localStorage.setItem('user', JSON.stringify(user));
 
                             window.location.href = `/id${user.userID}`;
@@ -120,6 +121,7 @@ export const authorizationStore = {
                     .catch((err) => {
                         commit('auth_error');
                         localStorage.removeItem('token');
+                        localStorage.removeItem('refreshToken');
                         localStorage.removeItem('user');
                         reject(err);
                     })
@@ -131,8 +133,19 @@ export const authorizationStore = {
             commit
         }) {
             return new Promise((resolve) => {
+                axios({
+                        url: "http://localhost:8000/del_refresh_token",
+                        data: { refreshToken: localStorage.getItem('refreshToken') },
+                        method: "POST"
+                    }).then(resp => {
+                        console.log(resp)
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
                 commit('logout');
                 localStorage.removeItem('token');
+                localStorage.removeItem('refreshToken');
                 localStorage.removeItem('user');
                 delete axios.defaults.headers.common['Authorization'];
                 resolve();
@@ -164,9 +177,10 @@ export const authorizationStore = {
                         }
                     })
                     .catch((err) => {
-                        commit('auth_error');
-                        // localStorage.removeItem('token');
-                        // localStorage.removeItem('user');
+                        // commit('auth_error');
+                        console.log(err)
+                            // localStorage.removeItem('token');
+                            // localStorage.removeItem('user');
                         reject(err);
                     })
             })
@@ -188,6 +202,36 @@ export const authorizationStore = {
                     })
             })
         },
+
+        //обновление токена
+        UPDATE_TOKEN({ commit }) {
+
+            return new Promise((resolve) => {
+                axios({
+                        url: "http://localhost:8000/refresh",
+                        data: { refreshToken: localStorage.getItem('refreshToken') },
+                        method: "POST"
+                    })
+                    .then(response => {
+                        const token = response.data.token;
+
+                        if (token !== null) {
+                            localStorage.setItem('token', token);
+                            resolve(response)
+                        }
+                    })
+                    .catch((err) => {
+                        if (err) {
+                            commit('logout');
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('refreshToken');
+                            localStorage.removeItem('user');
+                            delete axios.defaults.headers.common['Authorization'];
+                            return window.location.href = '/'
+                        }
+                    })
+            })
+        }
 
     },
 
