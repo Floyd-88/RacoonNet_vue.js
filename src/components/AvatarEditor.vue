@@ -3,10 +3,17 @@
         <div class="block_vue_avatar">
             <vue-avatar class="vue_avatar" :width="400" :height="400" :borderRadius="borderRadius" :scale="scale" ref="vueavatar"
                 @vue-avatar-editor:image-ready="onImageReady"
-                :image="pathAva"
-                
-                >
+                :image="pathAva">
             </vue-avatar>
+            <div class="preview_info" :class="{'active_load': getProgressLoadPhoto}">              
+                   <!-- полоса загрузки фото -->
+                   <template v-if="getProgressLoadPhoto">
+                    <div class="preview_info_progress" 
+                         :style="{'width': getProgressLoadPhoto}">
+                        {{getProgressLoadPhoto}}
+                    </div>
+                   </template>
+                </div>
         </div>
         <div class="block_scale">
             <label>
@@ -33,7 +40,7 @@
 <script>
 import { VueAvatar } from 'vue-avatar-editor-improved'
 import UIbtn from './UI/UIbtn.vue';
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
     name: "AvatarEditor",
@@ -75,6 +82,8 @@ export default {
     },
 
     computed: {
+
+        ...mapGetters({getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto"}),
      
         pathAva() {
       try {
@@ -135,4 +144,35 @@ export default {
 .block_btn_save_ava {}
 
 .result_image {}
+
+.preview_info {
+    position: absolute;
+    right: 0;
+    bottom: -30px;
+    left: 0;
+    height: 24px;
+    font-size: .8rem;
+    background: rgba(255, 255, 255, .5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    transition: bottom .22s;
+}
+
+.preview_info_progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: #42b983;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width .22s;
+    /* bottom: 4px; */
+}
+.active_load {
+    bottom: 4px;
+}
 </style>

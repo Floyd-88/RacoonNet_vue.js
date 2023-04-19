@@ -36,15 +36,12 @@
     </div>
   </div>
   </template>
-  <template v-else>
+  <template v-else-if = "getUser.delete === 1">
     <div class="wrapper_delete_user">
       <p>Профиль пользователя был удален</p>
     </div>
   </template>
  
-
-
-
 </template>
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";

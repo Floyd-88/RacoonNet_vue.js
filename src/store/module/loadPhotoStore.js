@@ -140,13 +140,7 @@ export const loadPhotoStore = {
             commit
         }, img) {
 
-            commit("setIsModalLoadPhoto", false);
-            commit("showFullPhotoStore/setIsModalFullSize", false, {
-                root: true
-            });
-            commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                root: true
-            });
+
 
             axios.post(
                     'http://localhost:8000/upload_ava', {
@@ -154,24 +148,36 @@ export const loadPhotoStore = {
                         nameAva: getters.getUser.ava,
                         id: getters.getUser.userID
 
+                    }, {
+                        onUploadProgress: ProgressEvent => {
+                            let progress = Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) + "%";
+                            commit("setProgressLoadPhoto", progress);
+                        },
                     }
                 ).then((res) => {
+                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                        root: true
+                    });
+                    commit("setIsModalLoadPhoto", false);
+                    commit("showFullPhotoStore/setIsModalFullSize", false, {
+                        root: true
+                    });
                     commit("authorizationStore/setUserAva", res.data.ava, {
-                            root: true
-                        })
-                        // commit("setIsModalLoadPhoto", false);
-                        // commit("showFullPhotoStore/setIsModalFullSize", false, {
-                        //     root: true
-                        // });
-                        // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                        //     root: true
-                        // });
-                        // router.push(`/id${getters.getUser.userID}/info`)
-                        // this.$router.push('/')
-                        // window.location.href = `/id${getters.getUser.userID}`;
+                        root: true
+                    })
+                    commit("setProgressLoadPhoto", 0);
+                    // commit("setIsModalLoadPhoto", false);
+                    // commit("showFullPhotoStore/setIsModalFullSize", false, {
+                    //     root: true
+                    // });
+                    // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                    //     root: true
+                    // });
+                    // router.push(`/id${getters.getUser.userID}/info`)
+                    // this.$router.push('/')
+                    // window.location.href = `/id${getters.getUser.userID}`;
                 })
                 .catch((err) => {
-
                     console.log(err);
                 })
         },
