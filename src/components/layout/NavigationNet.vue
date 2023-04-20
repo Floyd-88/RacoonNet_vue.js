@@ -11,7 +11,7 @@
       <p :class="{'new_message': newMessage}"></p>
     </div>
     <div class="wrapper_nav_link">
-      <button class="link"  @click="$router.push({name: 'friendspage', query: {id: userID} })"> Мои друзья</button>
+      <button class="link"  @click="goMyFriend()"> Мои друзья</button>
       <p :class="{'new_message': getUsersFriendsMe.length > 0}"></p>
     </div>
     <div class="wrapper_nav_link">
@@ -41,13 +41,25 @@ export default {
 
     ...mapMutations({
       setUserEditProfile: "authorizationStore/setUserEditProfile",
-      setIsModalFeedBack: "feedBackStore/setIsModalFeedBack"
+      setIsModalFeedBack: "feedBackStore/setIsModalFeedBack",
+      setUsersMyFriends: "friendsStore/setUsersMyFriends",
+      setCountFriendsNull: "friendsStore/setCountFriendsNull",
+      setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter",
+      setIsFriendShow: "friendsStore/setIsFriendShow", 
     }),
 
     goNews() {
       this.setUserEditProfile(false)
       this.$router.push('/news');
+    },
+    goMyFriend() {
+      this.setUsersMyFriends([]);
+      this.setUsersMyFriendsFilter([]);
+      this.setCountFriendsNull();
+      this.$router.push({name: 'friendspage', query: {id: this.userID} })
+      
     }
+
   },
 
   computed: {

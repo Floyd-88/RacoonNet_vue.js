@@ -6,10 +6,9 @@
 
       <div class="wrapper_my_friends">
 
-        <div class="my_friends" 
-             :class="{myfriends_active: userTokenID != this.$route.query.id}">
+        <div class="my_friends" :class="{ myfriends_active: userTokenID != this.$route.query.id }">
           <template v-if="getIsFriendShow === 'allFriends'">
-            <MyFriends @getUserInfo="getUserInfo"/>
+            <MyFriends @getUserInfo="getUserInfo" />
           </template>
           <template v-else-if="getIsFriendShow === 'friendsMe'">
             <InviteFriendsMe />
@@ -17,40 +16,28 @@
           <template v-else-if="getIsFriendShow === 'friendsFromMe'">
             <InviteFriendsFromMe />
           </template>
+          <div ref="observer" class="observer"></div>
         </div>
-
 
         <MyFriendsBlock class="wrapper_my_friends_params" v-if="userTokenID == this.$route.query.id">
 
           <!-- Переключение между уведомлениями -->
-          <div class="my_friends_params_choice"  
-               @mouseleave="btnFone = getIsFriendShow">
-               
-            <button class="my_friends_params_choice_btn" 
-                    @click="setIsFriendShow('allFriends')" 
-                    :class="{ activeBtn:  btnFone === 'allFriends' }"
-                    @mouseenter="btnFone = 'allFriends'" 
-              
-                    >
-            Все мои друзья
+          <div class="my_friends_params_choice" @mouseleave="btnFone = getIsFriendShow">
+
+            <button class="my_friends_params_choice_btn" @click="getAllFriends()"
+              :class="{ activeBtn: btnFone === 'allFriends' }" @mouseenter="btnFone = 'allFriends'">
+              Все мои друзья
             </button>
 
-            <button class="my_friends_params_choice_btn" 
-                    @click="setIsFriendShow('friendsMe')" 
-                    :class="{ activeBtn:  btnFone === 'friendsMe' }"
-                    @mouseenter="btnFone = 'friendsMe'" 
-        
-                    >
-            Входящие заявки
+            <button class="my_friends_params_choice_btn" @click="setIsFriendShow('friendsMe')"
+              :class="{ activeBtn: btnFone === 'friendsMe' }" @mouseenter="btnFone = 'friendsMe'">
+              Входящие заявки
             </button>
 
-            <button class="my_friends_params_choice_btn my_friends_params_choice_btn_end" 
-                    @click="setIsFriendShow('friendsFromMe')" 
-                    :class="{ activeBtn:  btnFone === 'friendsFromMe' }"
-                    @mouseenter="btnFone = 'friendsFromMe'" 
-       
-                    >
-            Исходящие заявки
+            <button class="my_friends_params_choice_btn my_friends_params_choice_btn_end"
+              @click="setIsFriendShow('friendsFromMe')" :class="{ activeBtn: btnFone === 'friendsFromMe' }"
+              @mouseenter="btnFone = 'friendsFromMe'">
+              Исходящие заявки
             </button>
           </div>
 
@@ -75,7 +62,7 @@
 
 
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -93,23 +80,52 @@ export default {
   },
 
   mounted() {
-    console.log(222)
-    this.GET_USER_MY_FRIENDS(this.$route.query.id);
+    //подгрузка новой партии новостей при скроле страницы
+    const options = {
+      rootMargin: "0px",
+      threshold: 1
+    };
+    const callback = (entries) => {
+      if (entries[0].isIntersecting) {
+        if(this.getIsFriendShow === 'allFriends') {
+          this.GET_USER_MY_FRIENDS(this.$route.query.id);
+        }
+      }
+    };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
   },
 
   beforeUnmount() {
-    this.setIsFriendShow("allFriends")
+    this.setIsFriendShow("allFriends");
+    this.setUsersMyFriends([]);
+    this.setUsersMyFriendsFilter([]);
+    this.setCountFriendsNull();
   },
 
   methods: {
+    ...mapMutations({
+      setIsFriendShow: "friendsStore/setIsFriendShow",
+      setUsersMyFriends: "friendsStore/setUsersMyFriends",
+      setCountFriendsNull: "friendsStore/setCountFriendsNull",
+      setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter"
+    }),
 
-    ...mapMutations({setIsFriendShow: "friendsStore/setIsFriendShow"}),
-
-    ...mapActions({GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",}),
+    ...mapActions({ GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS", }),
 
     getUserInfo(user) {
       this.user = user;
       // console.log(user)
+    },
+
+    getAllFriends() {
+
+      if (this.getIsFriendShow !=='allFriends') {
+      console.log(this.getIsFriendShow)
+
+      this.GET_USER_MY_FRIENDS(this.$route.query.id);
+      }
+      this.setIsFriendShow('allFriends');
     }
   },
 
@@ -126,8 +142,7 @@ export default {
     $route() {
       const id = this.$route.query.id;
       if (id) {
-        console.log(111)
-          this.GET_USER_MY_FRIENDS(id);
+        this.GET_USER_MY_FRIENDS(id);
       }
     }
 
@@ -149,7 +164,7 @@ export default {
   display: flex;
 }
 
-.my_friends  {
+.my_friends {
   /* white-space: nowrap; */
   display: flex;
   flex-direction: column;

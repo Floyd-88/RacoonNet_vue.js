@@ -14,6 +14,19 @@ export const friendsStore = {
         searchUsersFriends: [], //массив пользователй при поиске
         isFriendShow: "allFriends", //какую вкладку показывать - все друзья или заявки
         nameFriendUser: "", //имя друга в поле поиска среди друзей 
+
+        countFriends: 0, //с какого пользователя начинать вести счет
+        limitFriends: 7, // лимит пользователей на странице
+
+        searchFriend: {
+            name: "", //имя в фильтре поиска
+            surname: "", //фамилия в фильтре поиска
+            country: "", //страна в фильтре поиска
+            city: "", //город в фильтре поиска
+            ageAfter: "", //возраст от в фильтре поиска
+            ageBefore: "", //возраст до в фильтре поиска
+            sex: "" //пол в фильтре поиска
+        }
     }),
 
     getters: {
@@ -29,7 +42,17 @@ export const friendsStore = {
         getSearchUsersFriends: (state) => state.searchUsersFriends,
         getIsFriendShow: (state) => state.isFriendShow,
         getUsersFriendsFromMe: (state) => state.usersFriendsFromMe,
-        getNameFriendUser: (state) => state.nameFriendUser
+        getNameFriendUser: (state) => state.nameFriendUser,
+
+        getSearchFriendName: (state) => state.searchFriend.name,
+        getSearchFriendSurname: (state) => state.searchFriend.surname,
+        getSearchFriendCountry: (state) => state.searchFriend.country,
+        getSearchFriendCity: (state) => state.searchFriend.city,
+        getSearchFriendAgeAfter: (state) => state.searchFriend.ageAfter,
+        getSearchFriendAgeBefore: (state) => state.searchFriend.ageBefore,
+        getSearchFriendSex: (state) => state.searchFriend.sex,
+
+
     },
 
     mutations: {
@@ -75,8 +98,47 @@ export const friendsStore = {
 
         setNameFriendUser(state, value) {
             state.nameFriendUser = value;
-        }
+        },
 
+
+        setSearchFriendName(state, value) {
+            state.searchFriend.name = value;
+        },
+        setSearchFriendSurname(state, value) {
+            state.searchFriend.surname = value;
+        },
+        setSearchFriendCountry(state, value) {
+            state.searchFriend.country = value;
+        },
+        setSearchFriendCity(state, value) {
+            state.searchFriend.city = value;
+        },
+        setSearchFriendAgeAfter(state, value) {
+            state.searchFriend.ageAfter = value;
+        },
+        setSearchFriendAgeBefore(state, value) {
+            state.searchFriend.ageBefore = value;
+        },
+        setSearchFriendSex(state, value) {
+            state.searchFriend.sex = value;
+        },
+
+        setSearchFriend(state) {
+            state.searchFriend.name = ""
+            state.searchFriend.surname = ""
+            state.searchFriend.country = ""
+            state.searchFriend.city = ""
+            state.searchFriend.ageAfter = ""
+            state.searchFriend.ageBefore = ""
+            state.searchFriend.sex = ""
+        },
+
+        setCountFriends(state, count) {
+            state.countFriends += count
+        },
+        setCountFriendsNull(state) {
+            state.countFriends = 0;
+        },
 
     },
 
@@ -183,13 +245,23 @@ export const friendsStore = {
 
         //получить пользователей которые являются моими друзьями
         async GET_USER_MY_FRIENDS({
-            commit
+            commit,
+            state
         }, id) {
             try {
-                await axios.get("http://localhost:8000/my_friends", { params: { id } })
+                await axios.get("http://localhost:8000/my_friends", {
+                        params: {
+                            id,
+                            _count: state.countFriends,
+                            _limit: state.limitFriends,
+                        }
+                    })
                     .then(function(res) {
-                        commit("setUsersMyFriends", res.data);
-                        commit("setUsersMyFriendsFilter", res.data);
+                        commit("setUsersMyFriends", [...state.usersMyFriends, ...res.data]);
+                        commit("setUsersMyFriendsFilter", [...state.usersMyFriendsFilter, ...res.data]);
+                        if (res.data.length > 0) {
+                            commit("setCountFriends", 7);
+                        }
                     })
             } catch (err) {
                 console.log(err)

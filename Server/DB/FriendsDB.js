@@ -41,7 +41,7 @@ class FriendsDB {
         THEN
             U.userID=addressee_user_id
         END
-        WHERE (confirm_addressee=1 AND confirm_sender=1)`, userID, (err, users) => {
+        WHERE (confirm_addressee=1 AND confirm_sender=1) LIMIT ?, ?`, userID, (err, users) => {
             callback(err, users)
         })
     }
@@ -109,7 +109,7 @@ class FriendsDB {
         country LIKE ? AND
         city LIKE ? AND
         selectedGender LIKE ? AND
-        ((YEAR(CURRENT_DATE)-year_user)-(RIGHT(CURRENT_DATE,5)<RIGHT( CONCAT(year_user,"-", month_user,"-", day_user),5))) BETWEEN ? AND ?`, params, (err, users) => {
+        (TIMESTAMPDIFF(year, CONCAT(year_user,"-", month_user,"-", day_user), now())) BETWEEN ? AND ?`, params, (err, users) => {
             callback(err, users)
         })
     }

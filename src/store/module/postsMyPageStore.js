@@ -266,7 +266,6 @@ export const postsMyPageStore = {
                         //     dispatch("commentsPost/LOAD_COMMENTS_POST", post.authorPost, { root: true });
                         //     dispatch("commentsPost/LOAD_COMMENTS_COMMENT", post.authorPost, { root: true });
                         // })
-                        console.log(response.data)
 
                         response.data.forEach(post => {
                             if (post.photos === "1") {

@@ -187,13 +187,15 @@ export default {
 
     beforeUnmount() {
         this.setTitleFriend("Друзья");
+        this.setSearchFriend();
     },
 
     methods: {
         ...mapMutations({ 
             setTitleFriend: "friendsStore/setTitleFriend",
             setModalWriteMessage: "messageStore/setModalWriteMessage",
-            setIsFriendShow: "friendsStore/setIsFriendShow"
+            setIsFriendShow: "friendsStore/setIsFriendShow",
+            setSearchFriend: "friendsStore/setSearchFriend"
         }),
 
         ...mapActions({

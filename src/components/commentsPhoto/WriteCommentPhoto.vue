@@ -10,9 +10,9 @@
             </div>
             <textarea 
             placeholder="Оставить комментарий..." 
-            @click.stop  
+            @focus="setIsFocusComment(true)"  
             v-model.trim="v$.commentPhoto.$model"
-            @blur="v$.commentPhoto.$reset()"
+            @blur="notFocusCommentPhoto()"
             :class="{ invalid: (v$.commentPhoto.$error) }"></textarea>
         </div>
 
@@ -70,11 +70,17 @@ export default {
         ...mapMutations({
             setCommentPost: "commentsPost/setCommentPost",
             setUnderCommentPost: "commentsPost/setUnderCommentPost",
-            setCommentsArray: "commentsPost/setCommentsArray"
+            setCommentsArray: "commentsPost/setCommentsArray",
+            setIsFocusComment: "commentsPhoto/setIsFocusComment"
         }),
         ...mapActions({ 
             SAVE_COMMENTS_PHOTO: "commentsPhoto/SAVE_COMMENTS_PHOTO",
         }),
+
+        notFocusCommentPhoto() {
+            this.v$.commentPhoto.$reset();
+            this.setIsFocusComment(false);
+        },
 
         async clickWriteCommentPhoto() {
            await this.SAVE_COMMENTS_PHOTO({ photoID: this.currentImg?.photoID || this.currentImg.id, textMessage: this.commentPhoto, userPage: this.$route.params.id || this.getUser.userID || this.currentImg.userID});

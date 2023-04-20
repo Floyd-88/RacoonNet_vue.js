@@ -95,7 +95,6 @@ export default {
 
   mounted() {
     this.loadAllPhotos(this.$route.params.id);
-    console.log('gogogo222')
     this.setPosts([])
     this.setPhotosPostsArray([]);
     this.setCountPostsNull()

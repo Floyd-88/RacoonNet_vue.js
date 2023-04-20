@@ -54,10 +54,9 @@ const passwordValidate = require('./validate/passwordValidate')
 const passwordDelValidate = require('./validate/passwordDelValidate');
 const messageValidate = require('./validate/messageValidate');
 const feedBackUser = require('./validate/feedBackUser');
+const searchNewFriendsValidate = require('./validate/searchNewFriendsValidate');
 
-const {
-    resolve
-} = require('path');
+const { resolve } = require('path');
 
 
 const app = express();
@@ -587,6 +586,7 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
                 errors: errors.array()
             });
         }
+        console.log(req.body)
         if (!req.body.password) return res.status(500).send("Поле с паролем не заполнено");
 
         //проверка старого пароля
@@ -1698,9 +1698,9 @@ router.get("/add_friends_from_me", authenticateJWT, function(req, res) {
 //ПОЛУЧЕНИЕ МОИХ ДРУЗЕЙ
 router.get("/my_friends", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
-    console.log(req.query.id)
+    console.log(req.query)
     if (tokenID) {
-        friends.get_my_friends_DB([req.query.id, req.query.id], (err, users) => {
+        friends.get_my_friends_DB([req.query.id, req.query.id, +req.query._count, +req.query._limit], (err, users) => {
             if (err) return res.status(500).send("При получении моих друзей, произошла ошибка" + " " + err);
 
             res.status(200).send(users);
@@ -1710,7 +1710,15 @@ router.get("/my_friends", authenticateJWT, function(req, res) {
 })
 
 //ПОИСК ДРУЗЕЙ СРЕДИ ПОЛЬЗОВАТЕЛЕЙ
-router.get("/search_friends", authenticateJWT, function(req, res) {
+router.get("/search_friends", authenticateJWT, searchNewFriendsValidate, function(req, res) {
+    //валидация фильтра поиска
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+
     tokenID = req.tokenID //id из сохраненного токена
     if (tokenID) {
         console.log(req.query)
@@ -1836,7 +1844,7 @@ router.post('/restore_password', loginValidate, function(req, res) {
                     subject: 'Сброс пароля RaccoonNet',
                     html: `
                     <p>Для сброса пароля от вашего профиля на сайте RaccoonNet перейдите по ссылке и следуйте дальнейшим инструкциям</p>  
-                   <a href='http://192.168.0.101:8080/reset-password?token=${tokenLink}'>ссылка для сброса пароля</a>
+                   <a href='http://localhost:8080/reset-password?token=${tokenLink}'>ссылка для сброса пароля</a>
 
                    <p>Если Вы не пытались сбросить пароль, просто проигнорируйте это письмо.</p>
                
@@ -1861,7 +1869,6 @@ router.put('/update_password_restore', passwordValidate, function(req, res) {
             errors: errors.array()
         });
     }
-
     const decoded = jwt.decode(req.body.token).email
 
     //проверка ссылки с токеном на токен в БД

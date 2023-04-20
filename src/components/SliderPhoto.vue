@@ -83,10 +83,14 @@ export default {
         document.onkeydown = (e) => {
             switch (e.keyCode) {
                 case 37:
-                    this.setPrevIndexPhoto();
+                    if(!this.getIsFocusComment) {
+                        this.setPrevIndexPhoto();
+                    }
                     break;
                 case 39:
+                if(!this.getIsFocusComment) {
                     this.setNextIndexPhoto();
+                }
                     break;
                 case 27:
                     this.closeModalFullSize(false);
@@ -122,7 +126,8 @@ export default {
             getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
             getIdPhoto: "loadPhotoStore/getIdPhoto",
             getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
-            getPostID: "showFullPhotoStore/getPostID"
+            getPostID: "showFullPhotoStore/getPostID",
+            getIsFocusComment: "commentsPhoto/getIsFocusComment"
         }),
 
         currentImg: function () {

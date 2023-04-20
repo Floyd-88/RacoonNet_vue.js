@@ -6,12 +6,14 @@ export const commentsPhoto = {
         // isShowWriteComment: false, //показывать комментарии с textarea
         commentPhoto: "", //текст комментария
         commentsPhotoArray: [], //массив комментариев к фотографии
+        isFocusComment: false, //если фокус не сделан на поле ввода комментария  
     }),
 
     getters: {
         // getIsShowWriteComment: state => state.isShowWriteComment,
         getCommentPhoto: state => state.commentPost,
         getCommentsPhotoArray: state => state.commentsPhotoArray,
+        getIsFocusComment: state => state.isFocusComment
     },
 
     mutations: {
@@ -30,6 +32,9 @@ export const commentsPhoto = {
         //удалить комментарий к посту
         setRemoveCommentsPhoto(state, id) {
             state.commentsPhotoArray = state.commentsPhotoArray.filter(comment => comment.id !== id);
+        },
+        setIsFocusComment(state, value) {
+            state.isFocusComment = value
         },
     },
 
