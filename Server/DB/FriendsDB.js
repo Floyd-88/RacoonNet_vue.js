@@ -109,7 +109,7 @@ class FriendsDB {
         country LIKE ? AND
         city LIKE ? AND
         selectedGender LIKE ? AND
-        (TIMESTAMPDIFF(year, CONCAT(year_user,"-", month_user,"-", day_user), now())) BETWEEN ? AND ?`, params, (err, users) => {
+        (TIMESTAMPDIFF(year, CONCAT(year_user,"-", month_user,"-", day_user), now())) BETWEEN ? AND ? LIMIT ?, ?`, params, (err, users) => {
             callback(err, users)
         })
     }

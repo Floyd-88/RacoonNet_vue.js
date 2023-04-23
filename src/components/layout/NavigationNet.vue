@@ -37,7 +37,10 @@ export default {
   },
 
   methods: {
-    ...mapActions({loadUser: "authorizationStore/loadUser"}),
+    ...mapActions({
+      loadUser: "authorizationStore/loadUser",
+      GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
+    }),
 
     ...mapMutations({
       setUserEditProfile: "authorizationStore/setUserEditProfile",
@@ -55,9 +58,14 @@ export default {
     goMyFriend() {
       this.setUsersMyFriends([]);
       this.setUsersMyFriendsFilter([]);
-      this.setCountFriendsNull();
-      this.$router.push({name: 'friendspage', query: {id: this.userID} })
-      
+      this.setCountFriendsNull()
+      if(this.getCountFriends === 0) {
+          this.GET_USER_MY_FRIENDS(this.userID). 
+          then(() => {
+            this.$router.push({name: 'friendspage', query: {id: this.userID} });
+          })
+        }
+
     }
 
   },
@@ -68,6 +76,9 @@ export default {
       getArrayDialogs: "messageStore/getArrayDialogs",
       getUsersFriendsMe: "friendsStore/getUsersFriendsMe",
       getUser: "authorizationStore/getUser",
+      getIsFriendShow: "friendsStore/getIsFriendShow",
+      getTitleFriend: "friendsStore/getTitleFriend",
+      getCountFriends: "friendsStore/getCountFriends"
   }),
 
     newMessage() {

@@ -79,7 +79,14 @@ export default {
     };
   },
 
-  mounted() {
+//   beforeMount() {
+//     this.GET_USER_MY_FRIENDS(this.$route.query.id);
+// },
+
+   mounted() {
+    if(this.getCountFriends === 0) {
+     this.GET_USER_MY_FRIENDS(this.$route.query.id);
+    }
     //подгрузка новой партии новостей при скроле страницы
     const options = {
       rootMargin: "0px",
@@ -87,8 +94,19 @@ export default {
     };
     const callback = (entries) => {
       if (entries[0].isIntersecting) {
-        if(this.getIsFriendShow === 'allFriends') {
+        if(this.getIsFriendShow === 'allFriends' && this.getTitleFriend === 'Друзья' && this.getCountFriends !== 0) {
           this.GET_USER_MY_FRIENDS(this.$route.query.id);
+        }
+        if(this.getIsFriendShow === 'allFriends' && this.getTitleFriend === 'Поиск друзей' && this.getCountFriends !== 0) {
+          this.SEARCH_USERS_FRIENDS({
+                name: this.getSearchFriendName,
+                surname: this.getSearchFriendSurname,
+                country: this.getSearchFriendCountry,
+                city: this.getSearchFriendCity,
+                ageAfter: this.getSearchFriendAgeAfter,
+                ageBefore: this.getSearchFriendAgeBefore,
+                sex: this.getSearchFriendSex,
+            });
         }
       }
     };
@@ -101,6 +119,7 @@ export default {
     this.setUsersMyFriends([]);
     this.setUsersMyFriendsFilter([]);
     this.setCountFriendsNull();
+    this.setSearchUsersFriends([]);
   },
 
   methods: {
@@ -108,10 +127,16 @@ export default {
       setIsFriendShow: "friendsStore/setIsFriendShow",
       setUsersMyFriends: "friendsStore/setUsersMyFriends",
       setCountFriendsNull: "friendsStore/setCountFriendsNull",
-      setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter"
+      setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter",
+      setSearchUsersFriends: "friendsStore/setSearchUsersFriends",
+      setTitleFriend: "friendsStore/setTitleFriend",
+      setSearchFriend: "friendsStore/setSearchFriend",
     }),
 
-    ...mapActions({ GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS", }),
+    ...mapActions({ 
+      GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
+      SEARCH_USERS_FRIENDS: "friendsStore/SEARCH_USERS_FRIENDS"
+    }),
 
     getUserInfo(user) {
       this.user = user;
@@ -119,11 +144,13 @@ export default {
     },
 
     getAllFriends() {
-
-      if (this.getIsFriendShow !=='allFriends') {
-      console.log(this.getIsFriendShow)
-
-      this.GET_USER_MY_FRIENDS(this.$route.query.id);
+      if (this.getIsFriendShow !=='allFriends' || this.getTitleFriend === 'Поиск друзей') {
+        this.setTitleFriend("Друзья");
+        this.setSearchFriend();
+        this.setUsersMyFriends([]);
+        this.setUsersMyFriendsFilter([]);
+        this.setCountFriendsNull();
+        this.GET_USER_MY_FRIENDS(this.$route.query.id);
       }
       this.setIsFriendShow('allFriends');
     }
@@ -135,6 +162,16 @@ export default {
       getIsFriendShow: "friendsStore/getIsFriendShow",
       getModalWriteMessage: "messageStore/getModalWriteMessage",
       getUser: "authorizationStore/getUser",
+      getTitleFriend: "friendsStore/getTitleFriend",
+
+      getSearchFriendName: "friendsStore/getSearchFriendName",
+      getSearchFriendSurname: "friendsStore/getSearchFriendSurname",
+      getSearchFriendCountry: "friendsStore/getSearchFriendCountry",
+      getSearchFriendCity: "friendsStore/getSearchFriendCity",
+      getSearchFriendAgeAfter: "friendsStore/getSearchFriendAgeAfter",
+      getSearchFriendAgeBefore: "friendsStore/getSearchFriendAgeBefore",
+      getSearchFriendSex: "friendsStore/getSearchFriendSex",
+      getCountFriends: "friendsStore/getCountFriends"
     }),
   },
 
@@ -210,5 +247,9 @@ export default {
 } */
 .activeBtn {
   filter: brightness(90%);
+}
+
+.observer {
+  border: 1px solid black
 }
 </style>

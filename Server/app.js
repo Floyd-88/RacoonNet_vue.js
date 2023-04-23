@@ -247,7 +247,7 @@ router.post('/register-admin', registerValidate, function(req, res) {
                     id: user.userID,
                 },
                 tokenKey.secret, {
-                    expiresIn: 60 * 60
+                    expiresIn: 60 * 5
                 },
             );
 
@@ -313,7 +313,7 @@ router.post('/login', loginValidate, function(req, res) {
                 id: user.userID,
             },
             tokenKey.secret, {
-                expiresIn: 60 * 60 //срок действия токена
+                expiresIn: 60 * 5 //срок действия токена
             },
         );
 
@@ -1722,7 +1722,7 @@ router.get("/search_friends", authenticateJWT, searchNewFriendsValidate, functio
     tokenID = req.tokenID //id из сохраненного токена
     if (tokenID) {
         console.log(req.query)
-        friends.get_users([tokenID, tokenID, tokenID, tokenID, tokenID, tokenID, `%${req.query.name}%`, `%${req.query.surname}%`, `%${req.query.country}%`, `%${req.query.city}%`, `%${req.query.sex}%`, req.query.ageAfter, req.query.ageBefore], (err, users) => {
+        friends.get_users([tokenID, tokenID, tokenID, tokenID, tokenID, tokenID, `%${req.query.name}%`, `%${req.query.surname}%`, `%${req.query.country}%`, `%${req.query.city}%`, `%${req.query.sex}%`, req.query.ageAfter, req.query.ageBefore, +req.query._count, +req.query._limit], (err, users) => {
             if (err) return res.status(500).send("При получении пользователей, произошла ошибка" + " " + err);
             res.status(200).send(users);
         })

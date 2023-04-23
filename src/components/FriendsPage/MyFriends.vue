@@ -188,6 +188,8 @@ export default {
     beforeUnmount() {
         this.setTitleFriend("Друзья");
         this.setSearchFriend();
+        this.setCountFriendsNull();
+        this.setSearchUsersFriends([]);
     },
 
     methods: {
@@ -195,7 +197,9 @@ export default {
             setTitleFriend: "friendsStore/setTitleFriend",
             setModalWriteMessage: "messageStore/setModalWriteMessage",
             setIsFriendShow: "friendsStore/setIsFriendShow",
-            setSearchFriend: "friendsStore/setSearchFriend"
+            setSearchFriend: "friendsStore/setSearchFriend",
+            setSearchUsersFriends: "friendsStore/setSearchUsersFriends",
+            setCountFriendsNull: "friendsStore/setCountFriendsNull",
         }),
 
         ...mapActions({

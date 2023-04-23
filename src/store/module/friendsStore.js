@@ -52,6 +52,8 @@ export const friendsStore = {
         getSearchFriendAgeBefore: (state) => state.searchFriend.ageBefore,
         getSearchFriendSex: (state) => state.searchFriend.sex,
 
+        getCountFriends: (state) => state.countFriends,
+
 
     },
 
@@ -291,7 +293,7 @@ export const friendsStore = {
 
                         if (state.usersFriendsFromMe) {
                             let friendsFromMe = state.usersFriendsFromMe.filter(user => user.id !== params.id)
-                            commit("setUsersFriendsFromMe", friendsFromMe)
+                            commit("setUsersFriendsFromMe", friendsFromMe);
                         }
 
                     })
@@ -301,17 +303,22 @@ export const friendsStore = {
         },
 
         //поиск пользователей
-        async SEARCH_USERS_FRIENDS({ commit }, params) {
+        async SEARCH_USERS_FRIENDS({ commit, state }, params) {
             try {
                 //если возрастной диапазон не указан, по умолчанию от 0 до 100
                 (!params.ageAfter) ? params.ageAfter = 0: params.ageAfter;
                 (!params.ageBefore) ? params.ageBefore = 100: params.ageBefore;
 
+                params._count = state.countFriends,
+                    params._limit = state.limitFriends
+
                 await axios.get("http://localhost:8000/search_friends", { params })
                     .then(function(res) {
                         commit("setTitleFriend", "Поиск друзей");
-                        commit("setSearchUsersFriends", res.data)
-                        console.log(res.data)
+                        commit("setSearchUsersFriends", [...state.searchUsersFriends, ...res.data]);
+                        if (res.data.length > 0) {
+                            commit("setCountFriends", 7);
+                        }
                     })
             } catch (err) {
                 console.log(err)

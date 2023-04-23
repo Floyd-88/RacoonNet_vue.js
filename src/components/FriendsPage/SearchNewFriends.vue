@@ -167,17 +167,21 @@ export default {
             setSearchFriendCity: "friendsStore/setSearchFriendCity",
             setSearchFriendAgeAfter: "friendsStore/setSearchFriendAgeAfter",
             setSearchFriendAgeBefore: "friendsStore/setSearchFriendAgeBefore",
-            setSearchFriendSex: "friendsStore/setSearchFriendSex"
+            setSearchFriendSex: "friendsStore/setSearchFriendSex",
+            setCountFriendsNull: "friendsStore/setCountFriendsNull",
+            setSearchUsersFriends: "friendsStore/setSearchUsersFriends"
         }),
         ...mapActions({ SEARCH_USERS_FRIENDS: "friendsStore/SEARCH_USERS_FRIENDS" }),
 
         search_users() {
+            this.setCountFriendsNull();
+            this.setSearchUsersFriends([]);
+
             this.SEARCH_USERS_FRIENDS({
                 name: this.getSearchFriendName,
                 surname: this.getSearchFriendSurname,
                 country: this.getSearchFriendCountry,
                 city: this.getSearchFriendCity,
-
                 ageAfter: this.getSearchFriendAgeAfter,
                 ageBefore: this.getSearchFriendAgeBefore,
                 sex: this.getSearchFriendSex,
