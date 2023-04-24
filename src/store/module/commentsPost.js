@@ -3,7 +3,7 @@ import axios from "axios";
 export const commentsPost = {
 
     state: () => ({
-        isShowWriteComment: false, //показывать комментарии с textarea
+        isShowWriteComment: true, //показывать комментарии с textarea
         commentPost: "", //текст комментария
         underCommentPost: "", //текст комментария под комментарием
         commentsArray: [], //массив комментариев к посту
@@ -60,7 +60,7 @@ export const commentsPost = {
                 await axios.post('http://localhost:8000/load_comments_post.js', newCommentsPost)
                 .then(function(response) {
                     console.log(response.data);
-                    commit("setCommentsArray", [...state.commentsArray, response.data]);
+                    commit("setCommentsArray", [response.data, ...state.commentsArray]);
 
                     // commit("setAddPosts", response.data);
                     // commit("setCountPosts", 1);
@@ -81,7 +81,7 @@ export const commentsPost = {
                 await axios.post('http://localhost:8000/load_comments_comment.js', newCommentsComment)
                 .then(function(response) {
                     console.log(response.data);
-                    commit("setCommentsCommentArray", [...state.commentsCommentArray, response.data]);
+                    commit("setCommentsCommentArray", [response.data, ...state.commentsCommentArray]);
 
                     // commit("setAddPosts", response.data);
                     // commit("setCountPosts", 1);

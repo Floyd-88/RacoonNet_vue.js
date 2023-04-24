@@ -17,15 +17,29 @@
                 @click="countLikes(post)">
 
         </div>
-        <div class="wrapper_comments_show_btn" @click="showWriteComment(post)">
+        <div class="wrapper_comments_show_btn" @click="showWriteComment(post, 'comment' + post.id)">
             <img class="comments_show_btn" src="../../assets/icons/comment.svg" alt="comments">
         </div>
     </div>
 
-    <div class="wrapper_write_comments" v-if="post.isShowWriteComment">
-               
-        <CommentPost :comments="comments"/>
-        <WriteComments :post="post"/>
+    <div class="wrapper_write_comments" :class="{'active_border_top':comments.length > 0}"  >
+        <template v-if="comments.length > 0">
+            <CommentPost :comments="comments.slice(0, countComments)"/>
+        <div class="wrapper_show_add_comments"
+             v-if="comments.length > countComments">
+            <p class="show_add_comments" @click="showComments(3)">Показать еще комментарии</p>
+        </div>
+        </template>
+
+        <div :ref="'comment' + post.id">
+            <div v-show="post.isShowWriteComment" >
+            <WriteComments 
+            :post="post"
+            @showComments="showComments"/>
+            </div>
+        </div>
+        
+      
     </div>
 </template>
 
@@ -45,7 +59,9 @@ export default {
     },
 
     data() {
-        return { };
+        return {
+            countComments: 3
+         };
     },
 
     methods: {
@@ -56,8 +72,15 @@ export default {
             LOAD_AUTHOR_LIKES: "postsMyPageStore/LOAD_AUTHOR_LIKES"
         }),
 
-        showWriteComment(post) {
+       async showWriteComment(post, ref) {
             post.isShowWriteComment = !post.isShowWriteComment;
+            console.log(this.$refs[ref])
+
+            if(post.isShowWriteComment) {
+                let top = window.scrollY + this.$refs[ref].getBoundingClientRect().y - document.documentElement.clientHeight + 60;
+                window.scrollTo({top, behavior: 'smooth'})
+            }
+          
         },
 
         comment(value) {
@@ -74,7 +97,11 @@ export default {
             } else {
                 post.like_post = 0
             }
+        },
 
+        showComments(n) {
+            console.log(n)
+            this.countComments += n;
         }
     },
 
@@ -124,7 +151,21 @@ export default {
 }
 
 .wrapper_write_comments {
-    border-top: 1px solid;
     padding: 0px 8px 13px 8px;
+}
+.active_border_top {
+    border-top: 1px solid;
+}
+.wrapper_show_add_comments {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 5px;
+}
+
+.show_add_comments {
+    font-weight: 600;
+    font-family: cursive;
+    font-size: 13px;
+    cursor: pointer;
 }
 </style>

@@ -113,6 +113,7 @@ export default {
 
         clickWriteCommentPost() {
            this.SAVE_COMMENTS_POST({ postID: this.post.id, textMessage: this.commentText, userPage: this.$route.params.id || this.post.authorPost});
+            this.$emit("showComments", 1);
             this.commentText = "";
             this.v$.commentText.$reset()
         },
@@ -157,7 +158,7 @@ export default {
     display: flex;
     width: 100%;
     align-items: center;
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 .write_comments_text {

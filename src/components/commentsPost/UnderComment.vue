@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper_under_comment" v-for="comment in commentsComment" :key="comment.id">
+    <div class="wrapper_under_comment" v-for="comment in commentsComment.slice(0, countUnderComments)" :key="comment.id">
         <div class="wrapper_block_under_comment_user">
             <div class="wrapper_under_comment_user">
                 <div class="under_comment_name_user">
@@ -25,9 +25,11 @@
                     </UIbtn>
                 </div>
             </div>
-
-
         </div>
+</div>
+
+<div class="wrapper_show_add_comments" v-if="commentsComment.length > countUnderComments">
+    <p class="show_add_comments" @click="showUnderComments(3)">Показать еще комментарии</p>
 </div>
 <!-- -- -->
 </template>
@@ -52,10 +54,10 @@ export default {
         return {
             isBtnsAnswUnder: false,
             userID: JSON.parse(localStorage.getItem('user')).userID,
+            countUnderComments: 3,
         };
     },
     methods: {
-
         ...mapActions({DELETE_COMMENTS_COMMENT: "commentsPost/DELETE_COMMENTS_COMMENT"}),
 
         showBtnsAnswUnder(comment) {
@@ -75,6 +77,9 @@ export default {
             let doc = new DOMParser().parseFromString(value, "text/html");
             return doc.documentElement.textContent;
         },
+        showUnderComments(n) {
+            this.countUnderComments += n;
+        }
     },
 
     computed: {
@@ -87,6 +92,12 @@ export default {
           return this.getCommentsCommentArray.filter(comment => comment.comment_id === this.comment.id)
         }
     },
+
+    // watch: {
+    //     commentsComment() {
+    //         this.showUnderComments(1)
+    //     }
+    // },
 
     components: { UIbtn }
 }
@@ -158,6 +169,19 @@ export default {
 .answer_under_comment_del {
     margin-left: 10px;
     opacity: 0.7;
+}
+
+.wrapper_show_add_comments {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 5px;
+}
+
+.show_add_comments {
+    font-weight: 600;
+    font-family: cursive;
+    font-size: 11px;
+    cursor: pointer;
 }
 
 /* .message_btn_delete {

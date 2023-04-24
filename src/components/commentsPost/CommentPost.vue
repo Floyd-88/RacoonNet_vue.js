@@ -21,16 +21,19 @@
                     {{ messageText(comment.comment_post_text) }}
                 </p>
                 <div class="wrapper_answer_comment" v-if="comment.isBtnsAnsw">
-                    <UIbtn class="answer_comment" @click.stop="showWriteUnderComments(comment)" >Ответить</UIbtn>
+                    <UIbtn class="answer_comment" @click.stop="showWriteUnderComments(comment, 'underComment' + comment.id)" >Ответить</UIbtn>
 
                     <UIbtn class="answer_comment answer_comment_del" v-if="getUser.is_editProfile || userID == comment.author_comment_id" @click.stop="DELETE_COMMENTS_POST({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id})">Удалить</UIbtn>
                 </div>
 
                 <UnderComment :comment="comment"/>
-
-                <div class="wrapper_under_write_comments" v-if="comment.isShowWriteUnderComment">
-                    <WriteComments :comment="comment"/>
+                
+                <div :ref="'underComment' + comment.id">
+                    <div class="wrapper_under_write_comments" v-show="comment.isShowWriteUnderComment">
+                        <WriteComments :comment="comment"/>
+                    </div>
                 </div>
+               
             </div>
         </div>
 </div>
@@ -65,10 +68,16 @@ export default {
         
         showBtnsAnsw(comment) {
             comment.isBtnsAnsw = !comment.isBtnsAnsw;
+            comment.isShowWriteUnderComment = false;
         },
 
-        showWriteUnderComments(comment) {
+        showWriteUnderComments(comment, ref) {
             comment.isShowWriteUnderComment = !comment.isShowWriteUnderComment;
+            if(comment.isShowWriteUnderComment) {
+                let topWriteUnderComment = window.scrollY + this.$refs[ref][0].getBoundingClientRect().y - document.documentElement.clientHeight + 60;
+                window.scrollTo(0, topWriteUnderComment)
+                comment.isBtnsAnsw = false;
+            }
         },
 
         pathAva(ava) {
