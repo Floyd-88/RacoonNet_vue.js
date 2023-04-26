@@ -67,13 +67,11 @@
       ref = addFriendBtn
       class="add_friend_btn"
       :class="{'add_friend_btn_togle': getTextBtnFfriend === 'Заявка отправлена'}" 
-      @click="addFriend(getTextBtnFfriend)"
-      >
+      @click="addFriend(getTextBtnFfriend)">
       {{ getTextBtnFfriend }}
       </UIbtn>
     </div>
       
-
   </div>
 </template>
 

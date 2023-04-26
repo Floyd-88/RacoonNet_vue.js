@@ -22,8 +22,10 @@
 
         <div class="wrapper_main_messages" ref="scrollToMe">
             <!-- message -->
+            <div ref="observer" class="observer"></div>
+
             <div class="wrapper_message_dialog_user" v-for="(message, index) in getArrayMessages" :key="message.id">
-                <div class="dialog_ava_user" @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
+                <div class="dialog_ava_user" :ref="'message'+ message.id" @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
                     <template v-if="message.sender == $route.params.id">
                         <img :src="pathAva" alt="ava">
                     </template>
@@ -54,6 +56,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- -- -->
             <div class="wrapper_not_messages" v-if="getArrayMessages.length < 1">
                 <p class="not_messages">
@@ -120,27 +123,69 @@ export default {
     },
     mounted() {
         // this.scrollToElement();
+
         this.id = this.$route.params.id;
-        this.LOAD_MESSAGES_USER(this.id);
+        this.LOAD_MESSAGES_USER(this.id)
+            .then(() => {
+                if (this.$refs.scrollToMe) {
+            this.$nextTick(function () {
+                this.scrollToElement();
+            })
+        }
+            })
+
+        
         // this.scrollToElement();
+
         // console.log(this.getArrayMessages)
         // SocketioService.subscribeToMessages((err, data) => {
         //     if (err) return console.log(err)
         //     this.setArrayMessages([...this.getArrayMessages, data])
         // });
-    },
-    updated() {
-        if (this.$refs.scrollToMe) {
+
+    //подгрузка новой партии сообщений при скроле страницы
+     const options = {
+      rootMargin: "0px",
+      threshold: 1
+    };
+    const callback = (entries) => {
+      if (entries[0].isIntersecting) {
+        if(this.getArrayMessages.length !== 0) {
+            this.LOAD_MESSAGES_USER(this.id)
+            .then((resp) => {
+                let ref = 'message' + resp.id
+                console.log(resp)
+                let topWriteUnderComment = this.$refs[ref][0].getBoundingClientRect().y;
+                if (this.$refs.scrollToMe) {
             this.$nextTick(function () {
-                this.scrollToElement();
+                this.scrollToElementUP(topWriteUnderComment);
             })
         }
+            })
+        }
+      }
+    };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
     },
 
-    unmounted() {
+    // updated() {
+    //     if (this.$refs.scrollToMe) {
+    //         console.log(this.entries[0].isIntersecting)
+    //         this.$nextTick(function () {
+    //             this.scrollToElement();
+    //         })
+    //     }
+    // },
+
+   async unmounted() {
         if(this.getArrayMessages.length > 0) {
+           this.setCountDialogsNull();
+           this.setArrayDialogs([]);
             this.LOAD_DIALOGS({isExitMessage: true, convID: this.getArrayMessages[0].conv_id});
         }
+        this.setCountMessagesNull()
+        this.setArrayMessages([])
     },
 
     methods: {
@@ -155,14 +200,23 @@ export default {
         ...mapMutations({
             setModalWriteMessage: "messageStore/setModalWriteMessage",
             setMessageUser: "messageStore/setMessageUser",
-            setArrayMessagesUnread: "messageStore/setArrayMessagesUnread"
+            setArrayMessagesUnread: "messageStore/setArrayMessagesUnread",
+            setCountMessagesNull: "messageStore/setCountMessagesNull",
+            setArrayMessages: "messageStore/setArrayMessages",
+            setCountDialogsNull: "messageStore/setCountDialogsNull",
+            setArrayDialogs: "messageStore/setArrayDialogs"
         }),
         //отправляем сообщение
         async submitMessage() {
             // при отпарвке сообщения убирать фон с непрачитанных
             this.setArrayMessagesUnread()
             //сохраянем сообщение в БД
-            this.WRITE_MESSAGE_USER(this.$route.params.id);
+            this.WRITE_MESSAGE_USER(this.$route.params.id)
+                .then(() => {
+                    this.$nextTick(function () {
+                    this.scrollToElement();
+                    })
+                });
         },
         showBtnDelete(message) {
             message.isMesssageDel = !message.isMesssageDel
@@ -178,6 +232,19 @@ export default {
                 console.log(err)
             }
         },
+        
+        //прокрутка сообщений вверх
+        scrollToElementUP(top) {
+            try {
+                const el = this.$refs.scrollToMe;
+                if (el) {
+                    el.scrollTop = top;
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        },
+
         //в случае закодированных специсимволов в тектсе- переводим их обратно в читаемый вид
         messageText(value) {
             let doc = new DOMParser().parseFromString(value, "text/html");
@@ -277,6 +344,7 @@ export default {
     flex-grow: 1;
     overflow: auto;
     position: relative;
+    /* border: 1px solid; */
 }
 .wrapper_message_dialog_user {
     display: flex;

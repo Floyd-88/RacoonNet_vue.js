@@ -382,7 +382,6 @@ router.post('/refresh', (req, res) => {
 
 //ПОДГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ ПРИ ПОСЕЩЕНИИ ЕГО СТРАНИЦЫ
 router.post('/load_user', authenticateJWT, function(req, res) {
-    console.log(req.body.id)
     userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
 
@@ -586,7 +585,6 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
                 errors: errors.array()
             });
         }
-        console.log(req.body)
         if (!req.body.password) return res.status(500).send("Поле с паролем не заполнено");
 
         //проверка старого пароля
@@ -1054,7 +1052,6 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
 
     userID = +req.body.id; //id из строки запроса
     tokenID = req.tokenID; //id из сохраненного токена 
-    console.log(req.body.post)
     if (userID === tokenID || req.body.postIDLast) {
         //допустимые форматы
         const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
@@ -1421,12 +1418,12 @@ router.post('/user_message', authenticateJWT, messageValidate, function(req, res
 
 //  ПОЛУЧЕНИЕ ВСЕХ ДИАЛОГОВ С ДРУГИМИ ПОЛЬЗОВАТЕЛЯМИ
 router.get('/user_dialogs', authenticateJWT, function(req, res) {
-
+    console.log(req.query)
     tokenID = req.tokenID //id из сохраненного токена   
 
     if (tokenID) {
         // Вывод диалогов пользователя
-        messages.get_all_conversation_DB(tokenID, (err, dialogs) => {
+        messages.get_all_conversation_DB({ tokenID, _count: req.query._count, _limit: req.query._limit }, (err, dialogs) => {
             if (err) return res.status(500).send('При получении диалогов из БД произошла ошибка:' + ' ' + err);
 
             //определяем количство непрочитанных сообщений для адресата
@@ -1484,13 +1481,15 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
             if (row_conversation.length == 0) {
                 return res.status(200);
             } else {
-                //возвращаем переписку из БД
+                //иначе возвращаем переписку из БД
                 messages.get_messages_user_DB([
                     row_conversation[0].id,
                     tokenID,
                     row_conversation[0].id,
                     tokenID,
-                    tokenID
+                    tokenID,
+                    req.query._count,
+                    req.query._limit
                 ], (err, messages_user) => {
                     if (err) return res.status(500).send('При получении сообщений из БД произошла ошибка:' + ' ' + err);
 
@@ -1624,11 +1623,11 @@ router.get("/check_request_friend", authenticateJWT, function(req, res) {
 
     // if (tokenID != req.query.id) {
     //проверка на ранее отправленную заявку
-    friends.get_confirm_friend_DB([tokenID, req.query.id, tokenID, req.query.id], (err, confirmID) => {
+    friends.get_confirm_friend_DB([tokenID, req.query.id, req.query.id, tokenID], (err, confirmID) => {
             if (err) return res.status(500).send("При поиске приглашения в друзья, произошла ошибка" + " " + err);
-            //если запроса небыло - оставляем как есть
+            console.log(confirmID)
+                //если запроса небыло - оставляем как есть
             if (confirmID.length === 0) {
-
                 res.status(200).send("Добавить в друзья");
             } else {
                 if (confirmID[0].confirm_sender === 1 && confirmID[0].confirm_addressee === 0) {
@@ -1698,7 +1697,6 @@ router.get("/add_friends_from_me", authenticateJWT, function(req, res) {
 //ПОЛУЧЕНИЕ МОИХ ДРУЗЕЙ
 router.get("/my_friends", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
-    console.log(req.query)
     if (tokenID) {
         friends.get_my_friends_DB([req.query.id, req.query.id, +req.query._count, +req.query._limit], (err, users) => {
             if (err) return res.status(500).send("При получении моих друзей, произошла ошибка" + " " + err);
@@ -1721,7 +1719,6 @@ router.get("/search_friends", authenticateJWT, searchNewFriendsValidate, functio
 
     tokenID = req.tokenID //id из сохраненного токена
     if (tokenID) {
-        console.log(req.query)
         friends.get_users([tokenID, tokenID, tokenID, tokenID, tokenID, tokenID, `%${req.query.name}%`, `%${req.query.surname}%`, `%${req.query.country}%`, `%${req.query.city}%`, `%${req.query.sex}%`, req.query.ageAfter, req.query.ageBefore, +req.query._count, +req.query._limit], (err, users) => {
             if (err) return res.status(500).send("При получении пользователей, произошла ошибка" + " " + err);
             res.status(200).send(users);

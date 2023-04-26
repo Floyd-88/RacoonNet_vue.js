@@ -10,8 +10,13 @@ export const messageStore = {
         arrayDialogs: [],
         arrayMessages: [],
         countNewMessage: "",
-        isNewMessageNotify: false
+        isNewMessageNotify: false,
 
+        countDialogs: 0, //с какого диалога начинать вести счет
+        limitDialogs: 10, // лимит диалогов на странице
+
+        countMessages: 0, // с какого сообщения начинать вести счет
+        limitMessages: 10, // лимит сообщений на странице
     }),
     getters: {
         getModalWriteMessage: (state) => state.modalWriteMessage,
@@ -20,7 +25,10 @@ export const messageStore = {
         getArrayMessages: (state) => state.arrayMessages,
         getCountNewMessage: (state) => state.countNewMessage,
         userAva: (state, _, rootState) => rootState.authorizationStore.user.ava,
-        getIsNewMessageNotify: (state) => state.isNewMessageNotify
+        getIsNewMessageNotify: (state) => state.isNewMessageNotify,
+
+        getCountDialogs: (state) => state.countDialogs,
+
 
     },
 
@@ -56,7 +64,21 @@ export const messageStore = {
 
         setIsNewMessageNotify(state, bool) {
             state.isNewMessageNotify = bool;
-        }
+        },
+
+        setCountDialogs(state, count) {
+            state.countDialogs += count
+        },
+        setCountDialogsNull(state) {
+            state.countDialogs = 0;
+        },
+
+        setCountMessages(state, count) {
+            state.countMessages += count
+        },
+        setCountMessagesNull(state) {
+            state.countMessages = 0;
+        },
 
     },
 
@@ -95,12 +117,20 @@ export const messageStore = {
         },
 
         //получение всех диалогов пользователя
-        async LOAD_DIALOGS({ commit }, body) {
+        async LOAD_DIALOGS({ commit, state }, body) {
             try {
-                await axios.get("http://localhost:8000/user_dialogs", { params: body })
+                await axios.get("http://localhost:8000/user_dialogs", {
+                        params: {
+                            body,
+                            _count: state.countDialogs,
+                            _limit: state.limitDialogs,
+                        }
+                    })
                     .then(function(resp) {
-                        console.log(111)
-                        commit("setArrayDialogs", resp.data);
+                        commit("setArrayDialogs", [...state.arrayDialogs, ...resp.data]);
+                        if (resp.data.length > 0) {
+                            commit("setCountDialogs", 10);
+                        }
                         // let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
                         // commit("setCountNewMessage", count)
                         // commit("setMessageUser", "")
@@ -112,17 +142,29 @@ export const messageStore = {
         },
 
         //получение переписки с конкретным пользователем
-        async LOAD_MESSAGES_USER({ commit }, id) {
-            try {
-                await axios.get("http://localhost:8000/user_messages", {
-                        params: { user_companion: id }
-                    })
-                    .then(function(resp) {
-                        commit("setArrayMessages", resp.data);
-                    })
-            } catch (err) {
-                console.log(err)
-            }
+        LOAD_MESSAGES_USER({ commit, state }, id) {
+            return new Promise((resolve) => {
+                try {
+                    axios.get("http://localhost:8000/user_messages", {
+                            params: {
+                                user_companion: id,
+                                _count: state.countMessages,
+                                _limit: state.limitMessages,
+                            }
+                        })
+                        .then(function(resp) {
+                            let arrayMessage = resp.data.reverse();
+                            commit("setArrayMessages", [...arrayMessage, ...state.arrayMessages]);
+                            if (resp.data.length > 0) {
+                                commit("setCountMessages", 10);
+                            }
+                            resolve(resp.data[resp.data.length - 4])
+                        })
+                } catch (err) {
+                    console.log(err)
+                }
+            })
+
         },
 
         //удаление сообщения

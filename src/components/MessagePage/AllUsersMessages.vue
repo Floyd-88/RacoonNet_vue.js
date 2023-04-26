@@ -3,6 +3,7 @@
     <div v-for="dialog in getArrayDialogs" :key="dialog.convId" class="wrapper_all_messages_users">
       <UserMessage :dialog="dialog" />
     </div>
+
   </template>
   <template v-else>
     <div class="wrapper_not_messages">
@@ -11,6 +12,8 @@
       </p>
     </div>
 </template>
+<div ref="observer" class="observer"></div>
+
 </template>
     
 <script>
@@ -19,14 +22,31 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   name: "AllUsersMessages",
 
-  //не обнавляем диалоги в случае перехода со страницы с перепиской
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      if (from.name !== 'dialoguser') {
-        vm.LOAD_DIALOGS()
+  mounted() {
+     //подгрузка новой партии диалогов при скроле страницы
+     const options = {
+      rootMargin: "0px",
+      threshold: 1
+    };
+    const callback = (entries) => {
+      if (entries[0].isIntersecting) {
+        if(this.getArrayDialogs.length !== 0) {
+          this.LOAD_DIALOGS()
+        }
       }
-    })
+    };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
   },
+
+  //не обнавляем диалоги в случае перехода со страницы с перепиской
+  // beforeRouteEnter(to, from, next) {
+  //   next(vm => {
+  //     if (from.name !== 'dialoguser') {
+  //       vm.LOAD_DIALOGS()
+  //     }
+  //   })
+  // },
 
 
   methods: {

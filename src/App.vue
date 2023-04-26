@@ -56,8 +56,8 @@ export default {
     }),
 
 
-      // this.CHECK_CONFIRM_FRIEND();
-      this.LOAD_DIALOGS();
+    // this.CHECK_CONFIRM_FRIEND();
+    this.LOAD_DIALOGS();
     this.GET_USER_ADD_FRIENDS_ME();
     // this.CHECK_REQUEST_FRIEND(this.$route.params.id);
 
@@ -114,7 +114,8 @@ export default {
     ...mapGetters({
       getArrayMessages: "messageStore/getArrayMessages",
       getArrayDialogs: "messageStore/getArrayDialogs",
-      getisModalFeedBack: "feedBackStore/getisModalFeedBack"
+      getisModalFeedBack: "feedBackStore/getisModalFeedBack",
+      getCountFriends: "friendsStore/getCountFriends"
     })
   },
 
@@ -126,7 +127,9 @@ export default {
         this.loadUser({ id })
           .then(() => {
             this.CHECK_REQUEST_FRIEND(id);
-            this.GET_USER_MY_FRIENDS(id);
+            if(this.getCountFriends === 0) {
+              this.GET_USER_MY_FRIENDS(id);
+            }
             // this.LOAD_DIALOGS();
             // this.CHECK_CONFIRM_FRIEND();
             // console.log(this.getArrayDialogs.reduce((accum, item) => accum + item.unread, 0));

@@ -100,7 +100,7 @@ class MessagesDB {
     }
 
     //получаем диалоги пользователя
-    get_all_conversation_DB(tokenID, callback) {
+    get_all_conversation_DB(body, callback) {
         return this.connection.execute(`SELECT
         M.id,
         U.userID,
@@ -115,27 +115,27 @@ class MessagesDB {
             FROM 
                 users U, conversation C
                 LEFT JOIN messages M ON (C.id = M.conv_id)
-                    WHERE (M.sender = ${tokenID} OR M.addressee = ${tokenID})
+                    WHERE (M.sender = ${body.tokenID} OR M.addressee = ${body.tokenID})
                         AND CASE 
-                            WHEN M.sender = ${tokenID}
+                            WHEN M.sender = ${body.tokenID}
                         THEN M.sender_delete = '0' AND M.addressee = U.userID 
-                            WHEN M.addressee = ${tokenID}
+                            WHEN M.addressee = ${body.tokenID}
                         THEN M.addressee_delete = '0' AND M.sender = U.userID 
                     END
                     AND M.id IN (SELECT
                         MAX(M.id) as last_message
                             FROM users U, conversation C
                             LEFT JOIN messages M ON (C.id = M.conv_id)
-                                WHERE (M.sender = ${tokenID} OR M.addressee = ${tokenID})
+                                WHERE (M.sender = ${body.tokenID} OR M.addressee = ${body.tokenID})
                                 AND CASE 
-                                WHEN M.sender = ${tokenID}
+                                WHEN M.sender = ${body.tokenID}
                                     THEN M.sender_delete = '0' AND M.addressee = U.userID 
-                                WHEN M.addressee = ${tokenID}
+                                WHEN M.addressee = ${body.tokenID}
                                     THEN M.addressee_delete = '0' AND M.sender = U.userID 
                                 END
                                 GROUP BY U.userID
                             ORDER BY last_message DESC) 
-                        ORDER BY case when C.unread = 0 then 1 else 0 end, M.id  DESC`, (err, dialogs) => {
+                        ORDER BY case when C.unread = 0 then 1 else 0 end, M.id  DESC LIMIT ${body._count}, ${body._limit}`, (err, dialogs) => {
             callback(err, dialogs)
         })
     }
@@ -158,7 +158,7 @@ class MessagesDB {
                 THEN sender_delete = '0'
             WHEN M.addressee = ?
                 THEN addressee_delete = '0'
-            END ORDER BY id ASC`, params, (err, messages_user) => {
+            END ORDER BY id DESC LIMIT ?, ?`, params, (err, messages_user) => {
             callback(err, messages_user)
         })
     }

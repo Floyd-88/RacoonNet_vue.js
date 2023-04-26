@@ -31,13 +31,15 @@
                 <p class="show_btn_delete" v-if="dialog.isShowBtnDelete" @click="btnDialogDel(dialog)">...</p>
             </div>
         </div>
-
+        <!-- <div ref="observer" class="observer"></div> -->
     </div>
+    
+
 
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import UIbtn from '../UI/UIbtn.vue';
 export default {
     name: "UserMessage",
@@ -55,8 +57,29 @@ export default {
             // isDialogDel: false,
         }
     },
+
+//     mounted() {
+//      //подгрузка новой партии диалогов при скроле страницы
+//      const options = {
+//       rootMargin: "0px",
+//       threshold: 1
+//     };
+//     const callback = (entries) => {
+//       if (entries[0].isIntersecting) {
+//         if(this.getArrayDialogs.length !== 0) {
+//           this.LOAD_DIALOGS()
+//         }
+//       }
+//     };
+//     const observer = new IntersectionObserver(callback, options);
+//     observer.observe(this.$refs.observer);
+//   },
+
     methods: {
-        ...mapActions({ DELETE_DIALOGS: "messageStore/DELETE_DIALOGS" }),
+        ...mapActions({ 
+            DELETE_DIALOGS: "messageStore/DELETE_DIALOGS",
+            LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
+        }),
         openDialogUser(id) {
             this.$router.push({
                 name: `dialoguser`, 
@@ -85,7 +108,11 @@ export default {
             let doc = new DOMParser().parseFromString(value, "text/html");
             return doc.documentElement.textContent;
         }
-    }
+    },
+
+    computed: {
+    ...mapGetters({ getArrayDialogs: "messageStore/getArrayDialogs" })
+  }
 }
 </script>
 
@@ -158,4 +185,7 @@ export default {
 .new_message_color {
   background: #ddffe6b3;
 }
+/* .observer {
+    border: 1px solid;
+} */
 </style>

@@ -16,7 +16,7 @@ export const friendsStore = {
         nameFriendUser: "", //имя друга в поле поиска среди друзей 
 
         countFriends: 0, //с какого пользователя начинать вести счет
-        limitFriends: 7, // лимит пользователей на странице
+        limitFriends: 8, // лимит пользователей на странице
 
         searchFriend: {
             name: "", //имя в фильтре поиска
@@ -202,10 +202,10 @@ export const friendsStore = {
                             commit("setTextBtnFfriend", res.data);
                         } else if (res.data === "Заявка отправлена") {
                             commit("setTextBtnFfriend", res.data);
-                            commit("setIsFriend", true)
+                            commit("setIsFriend", true);
                         } else if (res.data === "Рассмотреть заявку") {
                             commit("setTextBtnFfriend", res.data);
-                            commit("setIsFriend", true)
+                            commit("setIsFriend", true);
                         } else {
                             commit("setTextBtnFfriend", res.data);
                         }
@@ -262,7 +262,7 @@ export const friendsStore = {
                         commit("setUsersMyFriends", [...state.usersMyFriends, ...res.data]);
                         commit("setUsersMyFriendsFilter", [...state.usersMyFriendsFilter, ...res.data]);
                         if (res.data.length > 0) {
-                            commit("setCountFriends", 7);
+                            commit("setCountFriends", 8);
                         }
                     })
             } catch (err) {
@@ -317,7 +317,7 @@ export const friendsStore = {
                         commit("setTitleFriend", "Поиск друзей");
                         commit("setSearchUsersFriends", [...state.searchUsersFriends, ...res.data]);
                         if (res.data.length > 0) {
-                            commit("setCountFriends", 7);
+                            commit("setCountFriends", 8);
                         }
                     })
             } catch (err) {

@@ -250,6 +250,6 @@ export default {
 }
 
 .observer {
-  border: 1px solid black
+  /* border: 1px solid black */
 }
 </style>

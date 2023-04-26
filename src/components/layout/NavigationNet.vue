@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper_nav">
     <div class="wrapper_nav_link">
-       <button class="link" @click="$router.push(`/id${userID}`)" > Моя страница </button>
+       <button class="link" @click="goMyPage()" > Моя страница </button>
     </div>
     <div class="wrapper_nav_link">
       <button class="link" @click="goNews()"> Новости </button>
@@ -50,6 +50,14 @@ export default {
       setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter",
       setIsFriendShow: "friendsStore/setIsFriendShow", 
     }),
+
+    goMyPage() {
+      this.$router.push(`/id${this.userID}`);
+      this.setUsersMyFriends([]);
+      this.setUsersMyFriendsFilter([]);
+      this.setCountFriendsNull()
+      this.GET_USER_MY_FRIENDS(this.userID);
+    },
 
     goNews() {
       this.setUserEditProfile(false)
