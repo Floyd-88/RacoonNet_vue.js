@@ -233,5 +233,12 @@ class PostsDB {
         })
     }
 
+    //получаем пользоватей лайкнувших пост
+    get_users_likes(postID, callback) {
+        return this.connection.execute(`SELECT author_likes_post, ava, name, surname FROM posts_likes INNER JOIN users ON author_likes_post = userID WHERE post_id=?`, postID, (err, users) => {
+            callback(err, users);
+        })
+    }
+
 }
 module.exports = PostsDB;

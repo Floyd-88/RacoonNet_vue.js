@@ -7,7 +7,9 @@ export const commentsPost = {
         commentPost: "", //текст комментария
         underCommentPost: "", //текст комментария под комментарием
         commentsArray: [], //массив комментариев к посту
-        commentsCommentArray: [] //массив комментариев к комментариям
+        commentsCommentArray: [], //массив комментариев к комментариям
+        usersLikesPost: [], //пользователи лайкнувшие пост
+        showModalBlockUsersLikesPost: false //показывать блок с пользователями лайкнувшими пост
     }),
 
     getters: {
@@ -15,7 +17,9 @@ export const commentsPost = {
         getCommentPost: state => state.commentPost,
         getUnderCommentPost: state => state.underCommentPost,
         getCommentsArray: state => state.commentsArray,
-        getCommentsCommentArray: state => state.commentsCommentArray
+        getCommentsCommentArray: state => state.commentsCommentArray,
+        getUsersLikesPost: state => state.usersLikesPost,
+        getShowModalBlockUsersLikesPost: state => state.showModalBlockUsersLikesPost
     },
 
     mutations: {
@@ -48,6 +52,14 @@ export const commentsPost = {
         setRemoveCommentsPost(state, id) {
             state.commentsArray = state.commentsArray.filter(comment => comment.id !== id);
         },
+
+        setUsersLikesPost(state, value) {
+            state.usersLikesPost = value
+        },
+
+        setShowModalBlockUsersLikesPost(state, bool) {
+            state.showModalBlockUsersLikesPost = bool
+        }
     },
 
     actions: {
@@ -208,7 +220,23 @@ export const commentsPost = {
                 console.log(err)
             }
 
+        },
+
+        async GET_USER_LIKES_POST({ commit }, post) {
+            try {
+                await axios.get('http://localhost:8000/get_users_likes', {
+                    params: {
+                        postID: post.id
+                    }
+                }).then((response) => {
+                    commit("setUsersLikesPost", response.data)
+                    console.log(response.data);
+                })
+            } catch (err) {
+                console.log(err)
+            }
         }
+
     },
 
 

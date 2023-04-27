@@ -34,6 +34,7 @@ export default {
   align-items: center;
   justify-content: center;
   z-index: 3;
+  /* opacity: 0.1; */
 }
 .modal_window {
   position: relative;

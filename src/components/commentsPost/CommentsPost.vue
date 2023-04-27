@@ -1,21 +1,38 @@
 <template>
     <div class="wrapper_comments_post">
-        <div class="wrapper_likes">
+        <div class="wrapper_likes" @mouseleave="closeUserLikes(post)">
             <p class="count_likes" v-if="post.likes !==0">{{ post.likes }}</p>
 
             <img class="likes"  
                 src="../../assets/icons/like.svg"  
                 alt="like" 
                 v-if="post.like_post == 0"
-                @click="countLikes(post)">
+                @click="countLikes(post)"
+                @mouseover="getUserLike(post)">
 
             <!-- подкрашивать сердце если пост лайкнут -->
             <img class="likes"  
                 src="../../assets/icons/like_full.png"  
                 alt="like" 
                 v-if="post.like_post == 1"
-                @click="countLikes(post)">
+                @click="countLikes(post)"
+                @mouseover="getUserLike(post)">
 
+                <!-- при наведении всплывающее окно с теми кто лайкнул -->
+                <div class="wrapper_likes_users" v-show="post.activeLikesUsers">
+                    <div class="likes_users" v-for="user in getUsersLikesPost.slice(0, 4)" :key="user.author_likes_post">
+                        <div class="my_friend_ava" @mouseover.stop="user.isNameUserLike=true" @mouseleave.stop="user.isNameUserLike=false" @click="$router.push({name: 'mypage', params: {id: `${user.author_likes_post}`}})">
+                            <img :src="loadAva(user.ava)" alt="ava">
+                        </div>
+                        <div class="wrapper_like_user_name" v-if="user.isNameUserLike">
+                            <p class="like_user_name">{{ user.name +" "+ user.surname }}</p>
+                        </div>
+                    </div>
+
+                    <div class="wrapper_more_users_likes" v-if="getUsersLikesPost.length > 4">
+                        <p class="more_users_likes" @click="setShowModalBlockUsersLikesPost(true)">еще</p>
+                    </div>
+                </div>
         </div>
         <div class="wrapper_comments_show_btn" @click="showWriteComment(post, 'comment' + post.id)">
             <img class="comments_show_btn" src="../../assets/icons/comment.svg" alt="comments">
@@ -38,9 +55,17 @@
             @showComments="showComments"/>
             </div>
         </div>
-        
-      
     </div>
+
+      <!-- модальное окно c пользователями лайкнувшими пост  -->
+      <div @click.stop="closeModalWindowLikesUser()">
+        <div class="modal_show_users_likes_fone" v-if="getShowModalBlockUsersLikesPost">
+            <div class="modal_show_users_likes_window">
+                <UIUsersLikes/>
+            </div>
+        </div>
+      </div>
+
 </template>
 
 <script>
@@ -60,16 +85,23 @@ export default {
 
     data() {
         return {
-            countComments: 3
+            countComments: 3,
+            isNameUserLike: false,
+            // activeLikesUsers: false
          };
     },
 
     methods: {
-        ...mapMutations({setIsShowWriteComment: "commentsPost/setIsShowWriteComment"}),
+        ...mapMutations({
+            setIsShowWriteComment: "commentsPost/setIsShowWriteComment",
+            setUsersLikesPost: "commentsPost/setUsersLikesPost",
+            setShowModalBlockUsersLikesPost: "commentsPost/setShowModalBlockUsersLikesPost"
+        }),
         ...mapActions({
             LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST",
             SAVE_LIKE_COUNT_POST: "postsMyPageStore/SAVE_LIKE_COUNT_POST",
-            LOAD_AUTHOR_LIKES: "postsMyPageStore/LOAD_AUTHOR_LIKES"
+            LOAD_AUTHOR_LIKES: "postsMyPageStore/LOAD_AUTHOR_LIKES",
+            GET_USER_LIKES_POST: "commentsPost/GET_USER_LIKES_POST"
         }),
 
        async showWriteComment(post, ref) {
@@ -100,15 +132,43 @@ export default {
         },
 
         showComments(n) {
-            console.log(n)
             this.countComments += n;
+        },
+
+        getUserLike(post) {
+            if(post.likes > 0) {
+                post.activeLikesUsers = true;
+            this.GET_USER_LIKES_POST(post);
+            } 
+        },
+
+        closeUserLikes(post) {
+            post.activeLikesUsers = false;
+            if(!this.getShowModalBlockUsersLikesPost) {
+                this.setUsersLikesPost([]);
+            }
+        },
+
+        loadAva(ava) {
+            try {
+                return require(`../../assets/photo/${ava}`)
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
+
+        closeModalWindowLikesUser() {
+            this.setShowModalBlockUsersLikesPost(false)
+            this.setUsersLikesPost([]);
         }
     },
 
     computed: {
         ...mapGetters({
             getCommentsArray: "commentsPost/getCommentsArray",
-            getLikesPost: "postsMyPageStore/getLikesPost"
+            getLikesPost: "postsMyPageStore/getLikesPost",
+            getUsersLikesPost: "commentsPost/getUsersLikesPost",
+            getShowModalBlockUsersLikesPost: "commentsPost/getShowModalBlockUsersLikesPost"
         }),
 
         comments() {
@@ -167,5 +227,75 @@ export default {
     font-family: cursive;
     font-size: 13px;
     cursor: pointer;
+}
+.wrapper_likes_users {
+    display: flex;
+    max-width: 170px;
+    height: 32px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px 0px rgb(0 0 0 / 40%);
+}
+.likes_users {
+    position: relative;
+}
+.my_friend_ava {
+    height: 100%;
+    padding: 2px;
+    
+}
+.my_friend_ava img {
+    height: 100%;
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+.wrapper_more_users_likes {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+.more_users_likes {
+    cursor: pointer;
+}
+.more_users_likes:hover{
+    font-weight: 600;
+}
+.modal_show_users_likes_fone {
+  display: flex;
+  position: fixed;
+  background: rgba(0,0,0,0.03);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  /* opacity: 0.1; */
+}
+.modal_show_users_likes_window {
+    position: relative;
+  width: max-content;
+  height: max-content;
+  /* padding-bottom: 10px; */
+  border-radius: 5px;
+  background: whitesmoke;
+  box-shadow: 3px 6px 5px 1px rgb(0 0 0 / 5%);
+  overflow: auto;
+}
+.wrapper_like_user_name {
+    position: absolute;
+    width: max-content;
+    font-weight: 600;
+    font-size: 13px;
+    font-family: emoji;
+    background: gainsboro;
+    padding: 0px 2px 0px 2px;
+    left: -50%;
+    bottom: -20px;
+}
+.like_user_name {
 }
 </style>

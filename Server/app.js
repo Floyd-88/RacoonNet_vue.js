@@ -845,9 +845,16 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
                 })
             })
         }
-
-
     })
+})
+
+//ПОЛУЧАЕМ ВСЕХ КТО ЛАЙКНУЛ ПОСТ
+router.get('/get_users_likes', authenticateJWT, function(req, res) {
+    posts.get_users_likes([req.query.postID], (err, users) => {
+        if (err) return res.status(500).send("При получении пользователй лайкнувших пост произошла ошибка" + " " + err);
+        res.status(200).send(users);
+    })
+
 })
 
 //ПОДГРУЗКА КОММЕНТАРИЕВ К ПОСТУ

@@ -17,6 +17,7 @@ import CommentsPost from "@/components/commentsPost/CommentsPost"
 import WriteComments from "@/components/commentsPost/WriteComments"
 import CommentPost from "@/components/commentsPost/CommentPost"
 import UnderComment from "@/components/commentsPost/UnderComment"
+import UIUsersLikes from "@/components/UI/UIUsersLikes"
 
 import AvatarEditor from "@/components/AvatarEditor";
 import EditProfile from "@/components/MyPage/EditProfile";
@@ -107,5 +108,6 @@ export default [
     CommentPhoto,
     WriteCommentPhoto,
     FeedBack,
-    ResetPassword
+    ResetPassword,
+    UIUsersLikes
 ]
