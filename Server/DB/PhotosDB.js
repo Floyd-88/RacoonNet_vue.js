@@ -133,5 +133,12 @@ class PhotosDB {
         })
     }
 
+    //получаем пользоватей лайкнувших фото
+    get_users_likes_photo(photoID, callback) {
+        return this.connection.execute(`SELECT author_likes_photo, ava, name, surname FROM photos_likes INNER JOIN users ON author_likes_photo = userID WHERE photo_id=?`, photoID, (err, users) => {
+            callback(err, users);
+        })
+    }
+
 }
 module.exports = PhotosDB;

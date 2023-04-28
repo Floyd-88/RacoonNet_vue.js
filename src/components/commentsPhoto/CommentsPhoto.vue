@@ -15,17 +15,35 @@
             </div>
         </div>
 
-        <div class="wrapper_block_comments_item">
+        <div class="wrapper_block_comments_item" @mouseleave="closeUserLikes(currentImg)">
             <div class="wrapper_block_comments_item_like">
                 <p class="count_likes" v-if="currentImg.likes !== 0">{{ currentImg.likes }}</p>
 
                 <img class="likes" src="../../assets/icons/like.svg" alt="like" v-if="currentImg.like_photo == 0"
-                    @click="countLikes(currentImg)">
+                    @click="countLikes(currentImg)" @mouseover="getUserLike(currentImg)">
 
                 <!-- подкрашивать сердце если пост лайкнут -->
                 <img class="likes" src="../../assets/icons/like_full.png" alt="like" v-if="currentImg.like_photo == 1"
-                    @click="countLikes(currentImg)">
+                    @click="countLikes(currentImg)" @mouseover="getUserLike(currentImg)">
+            </div>
 
+            <!-- при наведении всплывающее окно с теми кто лайкнул -->
+            <div class="wrapper_likes_users" v-show="currentImg.activeLikesUsers">
+                <div class="likes_users" v-for="user in getUsersLikesPhoto.slice(0, 4)" :key="user.author_likes_photo">
+                    <div class="my_friend_ava" @mouseover.stop="user.isNameUserLike = true"
+                        @mouseleave.stop="user.isNameUserLike = false"
+                        @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
+                        <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava">
+                    </div>
+                    <div class="wrapper_like_user_name" v-if="user.isNameUserLike">
+                        <p class="like_user_name" @mouseleave="closeUserLikes(currentImg)">{{ user.name + " " + user.surname
+                        }}</p>
+                    </div>
+                </div>
+
+                <div class="wrapper_more_users_likes" v-if="getUsersLikesPhoto.length > 4">
+                    <p class="more_users_likes" @click="setShowModalBlockUsersLikesPhoto(true)">еще</p>
+                </div>
             </div>
         </div>
 
@@ -37,11 +55,32 @@
         <div class="wrapper_under_write_comments">
             <WriteCommentPhoto :currentImg="currentImg" @scrollToMe="scrollToElement()" />
         </div>
-</div>
+    </div>
+
+    <!-- модальное окно c пользователями лайкнувшими фото  -->
+    <div @click.stop="closeModalWindowLikesUserPhoto()">
+        <div class="modal_show_users_likes_fone" v-if="getShowModalBlockUsersLikesPhoto">
+            <div class="modal_show_users_likes_window">
+                <UIUsersLikes> 
+                    <div class="my_friend" v-for="user in getUsersLikesPhoto" :key="user.author_likes_photo">
+                        <div class="my_friend_ava_full"
+                            @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
+                            <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava">
+                        </div>
+                        <div class="my_friend_name"
+                            @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
+                            <p>{{ user.name }}</p>
+                            <p>{{ user.surname }}</p>
+                        </div>
+                    </div>
+                </UIUsersLikes>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 export default {
     name: "CommentsPhoto",
@@ -56,7 +95,14 @@ export default {
     },
 
     methods: {
-        ...mapActions({SAVE_LIKE_COUNT_PHOTO: "loadPhotoStore/SAVE_LIKE_COUNT_PHOTO"}),
+        ...mapMutations({
+            setShowModalBlockUsersLikesPhoto: "commentsPhoto/setShowModalBlockUsersLikesPhoto",
+            setUsersLikesPhoto: "commentsPhoto/setUsersLikesPhoto"
+        }),
+        ...mapActions({
+            SAVE_LIKE_COUNT_PHOTO: "loadPhotoStore/SAVE_LIKE_COUNT_PHOTO",
+            GET_USER_LIKES_PHOTO: "commentsPhoto/GET_USER_LIKES_PHOTO",
+        }),
 
         //пролистывать вниз при написании поста
         scrollToElement() {
@@ -72,50 +118,82 @@ export default {
 
         //сохраняем лайк фотографии
         async countLikes(currentImg) {
-            await this.SAVE_LIKE_COUNT_PHOTO({photoID: (currentImg.photoID) ? currentImg.photoID : currentImg.id});
+            await this.SAVE_LIKE_COUNT_PHOTO({ photoID: (currentImg.photoID) ? currentImg.photoID : currentImg.id });
             let objectLikes = await this.getLikesPhoto;
             currentImg.likes = objectLikes.likes.likes;
 
             //если я лайкнул фото из поста, также лайкается фото из массива фотографий
-            if(currentImg.photoID) {
-                this.getAllPhotosMyPage.map( photo => {
-                if(photo.id === currentImg.photoID) {
-                photo.likes = objectLikes.likes.likes;
+            if (currentImg.photoID) {
+                this.getAllPhotosMyPage.map(photo => {
+                    if (photo.id === currentImg.photoID) {
+                        photo.likes = objectLikes.likes.likes;
 
-                if(photo.like_photo == 0) {
-                    photo.like_photo = 1;
+                        if (photo.like_photo == 0) {
+                            photo.like_photo = 1;
+                        } else {
+                            photo.like_photo = 0;
+                        }
+                    }
+                });
             } else {
-                photo.like_photo = 0;
-            }
-            }});
-            } else {
-                this.getPhotosPostsArray.map( photo => {
-                if(photo.photoID === currentImg.id ) {
-                photo.likes = objectLikes.likes.likes;
+                this.getPhotosPostsArray.map(photo => {
+                    if (photo.photoID === currentImg.id) {
+                        photo.likes = objectLikes.likes.likes;
 
-                if(photo.like_photo == 0) {
-                    photo.like_photo = 1;
-            } else {
-                photo.like_photo = 0;
+                        if (photo.like_photo == 0) {
+                            photo.like_photo = 1;
+                        } else {
+                            photo.like_photo = 0;
+                        }
+                    }
+                });
             }
-            }}); 
-            }
-            
-            if(currentImg.like_photo == 0) {
+
+            if (currentImg.like_photo == 0) {
                 currentImg.like_photo = 1;
             } else {
                 currentImg.like_photo = 0
             }
 
-        }
+        },
+
+        getUserLike(currentImg) {
+            if (currentImg.likes > 0) {
+                console.log(111)
+                currentImg.activeLikesUsers = true;
+                this.GET_USER_LIKES_PHOTO(currentImg);
+            }
+        },
+
+        closeUserLikes(currentImg) {
+            currentImg.activeLikesUsers = false;
+            if (!this.getShowModalBlockUsersLikesPhoto) {
+                this.setUsersLikesPhoto([]);
+            }
+        },
+
+        loadAvaUserLikePhoto(ava) {
+            try {
+                return require(`../../assets/photo/${ava}`)
+            } catch {
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
+
+        closeModalWindowLikesUserPhoto() {
+            this.setShowModalBlockUsersLikesPhoto(false)
+            this.setUsersLikesPhoto([]);
+        },
     },
 
     computed: {
-        ...mapGetters({ 
+        ...mapGetters({
             getCommentsPhotoArray: "commentsPhoto/getCommentsPhotoArray",
             getLikesPhoto: "loadPhotoStore/getLikesPhoto",
             getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
+            getUsersLikesPhoto: "commentsPhoto/getUsersLikesPhoto",
+            getShowModalBlockUsersLikesPhoto: "commentsPhoto/getShowModalBlockUsersLikesPhoto"
         }),
 
         loadAva() {
@@ -176,7 +254,10 @@ export default {
 
 .block_comments_date {}
 
-.wrapper_block_comments_item {}
+.wrapper_block_comments_item {
+    display: flex;
+    width: max-content;
+}
 
 .wrapper_block_comments_item_like {
     display: flex;
@@ -208,4 +289,94 @@ export default {
 }
 
 .block_comments_comment {}
+
+.wrapper_likes_users {
+    display: flex;
+    max-width: 170px;
+    height: 32px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px 0px rgb(0 0 0 / 40%);
+}
+.likes_users {
+    position: relative;
+}
+.my_friend_ava {
+    height: 100%;
+    padding: 2px;
+    
+}
+.my_friend_ava img {
+    height: 100%;
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+.wrapper_more_users_likes {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+.more_users_likes {
+    cursor: pointer;
+}
+.more_users_likes:hover{
+    font-weight: 600;
+}
+.modal_show_users_likes_fone {
+  display: flex;
+  position: fixed;
+  background: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  /* opacity: 0.1; */
+}
+.modal_show_users_likes_window {
+    position: relative;
+  width: max-content;
+  height: max-content;
+  /* padding-bottom: 10px; */
+  border-radius: 5px;
+  background: whitesmoke;
+  box-shadow: 3px 6px 5px 1px rgb(0 0 0 / 5%);
+  overflow: auto;
+}
+.wrapper_like_user_name {
+    position: absolute;
+    width: max-content;
+    font-weight: 600;
+    font-size: 13px;
+    font-family: emoji;
+    background: gainsboro;
+    padding: 0px 2px 0px 2px;
+    left: -50%;
+    bottom: -20px;
+}
+.like_user_name {
+}
+.my_friend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+}
+
+.my_friend_ava_full {}
+
+.my_friend_ava_full img {
+    width: 64px;
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+.my_friend_name {
+    cursor: pointer;
+    text-align: center;
+}
 </style>

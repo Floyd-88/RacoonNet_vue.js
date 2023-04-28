@@ -230,7 +230,6 @@ export const commentsPost = {
                     }
                 }).then((response) => {
                     commit("setUsersLikesPost", response.data)
-                    console.log(response.data);
                 })
             } catch (err) {
                 console.log(err)

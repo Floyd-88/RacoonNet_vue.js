@@ -6,14 +6,18 @@ export const commentsPhoto = {
         // isShowWriteComment: false, //показывать комментарии с textarea
         commentPhoto: "", //текст комментария
         commentsPhotoArray: [], //массив комментариев к фотографии
-        isFocusComment: false, //если фокус не сделан на поле ввода комментария  
+        isFocusComment: false, //если фокус не сделан на поле ввода комментария 
+        usersLikesPhoto: [], //пользователи лайкнувшие фото
+        showModalBlockUsersLikesPhoto: false //показывать блок с пользователями лайкнувшими фото 
     }),
 
     getters: {
         // getIsShowWriteComment: state => state.isShowWriteComment,
         getCommentPhoto: state => state.commentPost,
         getCommentsPhotoArray: state => state.commentsPhotoArray,
-        getIsFocusComment: state => state.isFocusComment
+        getIsFocusComment: state => state.isFocusComment,
+        getUsersLikesPhoto: state => state.usersLikesPhoto,
+        getShowModalBlockUsersLikesPhoto: state => state.showModalBlockUsersLikesPhoto
     },
 
     mutations: {
@@ -33,9 +37,18 @@ export const commentsPhoto = {
         setRemoveCommentsPhoto(state, id) {
             state.commentsPhotoArray = state.commentsPhotoArray.filter(comment => comment.id !== id);
         },
+
         setIsFocusComment(state, value) {
             state.isFocusComment = value
         },
+
+        setUsersLikesPhoto(state, value) {
+            state.usersLikesPhoto = value
+        },
+
+        setShowModalBlockUsersLikesPhoto(state, bool) {
+            state.showModalBlockUsersLikesPhoto = bool
+        }
     },
 
     actions: {
@@ -89,6 +102,21 @@ export const commentsPhoto = {
                     data: paramsComment
                 }).then((response) => {
                     console.log(response.data);
+                })
+            } catch (err) {
+                console.log(err)
+            }
+        },
+
+        async GET_USER_LIKES_PHOTO({ commit }, photo) {
+            try {
+                console.log(photo)
+                await axios.get('http://localhost:8000/get_users_likes_photo', {
+                    params: {
+                        photoID: photo.id
+                    }
+                }).then((response) => {
+                    commit("setUsersLikesPhoto", response.data)
                 })
             } catch (err) {
                 console.log(err)

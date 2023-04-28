@@ -1286,6 +1286,15 @@ router.post('/likes_photo', authenticateJWT, function(req, res) {
     })
 })
 
+//ПОЛУЧАЕМ ВСЕХ КТО ЛАЙКНУЛ ФОТО
+router.get('/get_users_likes_photo', authenticateJWT, function(req, res) {
+    photos.get_users_likes_photo([req.query.photoID], (err, users) => {
+        if (err) return res.status(500).send("При получении пользователй лайкнувших фото произошла ошибка" + " " + err);
+        res.status(200).send(users);
+    })
+
+})
+
 //ДОБАВЛЕНИЕ КОММЕНТАРИЯ К ФОТОГРАФИИ В БАЗУ ДАННЫХ
 router.post("/load_comments_photo.js", authenticateJWT, messageValidate, function(req, res) {
     //валидация комментария
