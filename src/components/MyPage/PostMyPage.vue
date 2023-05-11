@@ -14,31 +14,43 @@
           <p class="post_name" @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
             {{ post.name + " " + post.surname }}
           </p>
-          <p class="post_show_btn" v-show="post.isShowBtn" @click="btnPost(post)">
-            ...
-          </p>
+          <div class="wrapper_post_redaction_btn">
+            <div class="btn_post" v-show="post.isPostDel">
+            <UIbtn class="redaction_post_btn" v-if="getUser.enterUser == post.authorPost"
+              @click="setModulePost({ task: 'edit', id: post.id, text: post.postText })">
+              Редактировать
+            </UIbtn>
+
+            <UIbtn class="delete_post_btn" v-if="getUser.is_editProfile || getUser.enterUser == post.authorPost"
+              @click="setModulePost({ task: 'remove', id: post.id })">
+              Удалить
+            </UIbtn>
+          </div>
+          <div>
+            <p class="post_show_btn" v-show="post.isShowBtn" @click="btnPost(post)">...</p>
+          </div>
+          </div>
+          
         </div>
 
         <div class="wrapper_data_post">
           <p class="data_post">{{ post.date }}</p>
         </div>
-        
+
         <!-- текст поста -->
         <div class="wrapper_text_post" v-if="post.postText.length < 800">
           <p class="text_post">
-            {{ postText(post.postText)}}
+            {{ postText(post.postText) }}
           </p>
         </div>
         <div class="wrapper_text_post" v-else>
           <p class="text_post" v-if="!post.isFullText">
-            {{ postText(post.postText).slice(0, 800)}}
+            {{ postText(post.postText).slice(0, 800) }}
           </p>
           <p class="text_post" v-else>
-            {{ postText(post.postText)}}
+            {{ postText(post.postText) }}
           </p>
-          <p class="more_text_post" 
-            v-if="!post.isFullText" 
-            @click="moreTextPost(post)">
+          <p class="more_text_post" v-if="!post.isFullText" @click="moreTextPost(post)">
             Показать еще
           </p>
         </div>
@@ -48,35 +60,19 @@
 
     <!-- фотографии к посту -->
     <div class="wrapper_block_photo_post">
-          <template 
-              v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id)" 
-              :key="index">
-            <div class="wrapper_photo_post" 
-              v-if="post.id === photo.id" 
-              :class="{ 'size_photo_1': index === 0 }">
-              <img class="photo_post" 
-                :src="require(`../../assets/photo/${photo.photo_name}`)" 
-                :alt="'photo' + photo.id"
-                @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
-            </div>
-          </template>
+      <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id)" :key="index">
+        <div class="wrapper_photo_post" v-if="post.id === photo.id" :class="{ 'size_photo_1': index === 0 }">
+          <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
+            @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
+        </div>
+      </template>
     </div>
 
     <!-- комментарии к посту -->
     <CommentsPost :post="post" />
     <!-- ------------------ -->
 
-    <div class="btn_post" v-show="post.isPostDel">
-      <UIbtn class="redaction_post_btn" v-if="getUser.enterUser == post.authorPost"
-        @click="setModulePost({ task: 'edit', id: post.id, text: post.postText })">
-        Редактировать
-      </UIbtn>
 
-      <UIbtn class="delete_post_btn" v-if="getUser.is_editProfile || getUser.enterUser == post.authorPost"
-        @click="setModulePost({ task: 'remove', id: post.id })">
-        Удалить
-      </UIbtn>
-    </div>
 
   </div>
 
@@ -166,6 +162,16 @@ export default {
         return require(`../../assets/ava/ava_1.jpg`);
       }
     },
+
+    myPhotos(photo) {
+      try {
+        return require(`../../assets/photo/${photo.photo_name}`);
+      } catch(err) {
+        console.log(err)
+        return require(`../../assets/ava/ava_1.jpg`);
+      }
+    },
+
     postText(value) {
       let doc = new DOMParser().parseFromString(value, "text/html");
       return doc.documentElement.textContent;
@@ -220,6 +226,10 @@ export default {
   /* margin-bottom: 10px; */
   width: 100%;
   justify-content: flex-start;
+}
+
+.wrapper_post_redaction_btn {
+  display: flex;
 }
 
 .wrapper_ava_posts {
@@ -278,9 +288,9 @@ export default {
 
 .more_text_post {
   font-weight: 600;
-    cursor: pointer;
-    display: inline-block;
-    color: #008edb;
+  cursor: pointer;
+  display: inline-block;
+  color: #008edb;
 }
 
 .more_text_post:hover {

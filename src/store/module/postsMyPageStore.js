@@ -105,7 +105,9 @@ export const postsMyPageStore = {
 
         //удаление картинки из массива
         removePhotosPostsArray(state, id) {
-            state.photosPostsArray = state.photosPostsArray.filter(photo => photo.photoID !== id);
+            if (id) {
+                state.photosPostsArray = state.photosPostsArray.filter(photo => photo.photoID !== id);
+            }
         },
 
     },
@@ -283,9 +285,11 @@ export const postsMyPageStore = {
 
         //лайкнуть пост
         async SAVE_LIKE_COUNT_POST({
-            commit
+            commit,
+            dispatch
         }, postID) {
             try {
+                postID.date = await dispatch("newDate");
                 await axios.post('http://localhost:8000/likes_post', postID)
                     .then((response) => {
                         commit("setLikesPost", response.data)
@@ -303,7 +307,6 @@ export const postsMyPageStore = {
                 }).then((response) => {
                     if (response.data.length > 0) {
                         commit("setPhotosPostsArray", [...state.photosPostsArray, ...response.data]);
-                        // console.log(state.photosPostsArray)
                     }
                 });
             } catch (err) {

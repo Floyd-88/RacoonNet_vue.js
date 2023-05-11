@@ -229,9 +229,8 @@ export default {
     },
 
     removeFriend(user) {
-        console.log(user.textBTN)
         if(user.textBTN === "Удалить из друзей") {
-            this.DELETE_FRIEND(user.id);
+            this.DELETE_FRIEND({id: user.id, query: this.$route.query.id, userID: user.userID});
             user.textBTN = "Добавить в друзья";
         } else if(user.textBTN === "Добавить в друзья") {
             user.textBTN = "Отменить заявку";
@@ -249,7 +248,7 @@ export default {
 
     refusalFriend(user) {
         user.acceptBTN = 'addFriend';
-        this.DELETE_FRIEND(user.id);
+        this.DELETE_FRIEND({id: user.id, query: this.$route.query.id, userID: user.userID});
     }
 
     },

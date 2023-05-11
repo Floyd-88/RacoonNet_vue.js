@@ -19,7 +19,6 @@ export default {
   name: 'App',
 
   created() {
-
     axios.interceptors.request.use(
       function (config) {
         const token = localStorage.getItem('token');
@@ -53,12 +52,15 @@ export default {
         return axios.request(error.config)
       }
       return Promise.reject(error);
-    }),
+    });
 
 
     // this.CHECK_CONFIRM_FRIEND();
-    this.LOAD_DIALOGS();
-    this.GET_USER_ADD_FRIENDS_ME();
+    if(localStorage.getItem('token')) {
+      this.LOAD_DIALOGS();
+      this.GET_USER_ADD_FRIENDS_ME();
+      this.GET_NEW_NOTICE();
+    }
     // this.CHECK_REQUEST_FRIEND(this.$route.params.id);
 
     //вызываем метод для отправки сообщения всем участникам комнаты
@@ -101,7 +103,8 @@ export default {
       GET_USER_ADD_FRIENDS_ME: "friendsStore/GET_USER_ADD_FRIENDS_ME",
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
       CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND",
-      UPDATE_TOKEN: "authorizationStore/UPDATE_TOKEN"
+      UPDATE_TOKEN: "authorizationStore/UPDATE_TOKEN",
+      GET_NEW_NOTICE: "noticeStore/GET_NEW_NOTICE"
 
       // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
       // loadPostServer: "postsMyPageStore/loadPostServer",

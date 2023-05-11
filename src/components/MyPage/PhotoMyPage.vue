@@ -6,7 +6,7 @@
            v-for="(photo, index) in getMyPhotosMyPage.slice(0, 8)" 
            :key="index">
           <img class="myPhoto" 
-          :src="require(`../../assets/photo/${photo.photo_name}`)" 
+          :src="myPhotos(photo.photo_name)" 
           :alt="photo.photo_name" @click="fullSizePhoto({'bool': true, 'elem': index, id: photo.id})">     
       </div>
     </div>
@@ -69,6 +69,14 @@ export default {
       closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
     }),
 
+    myPhotos(photo) {
+      try {
+        return require(`../../assets/photo/${photo}`);
+      } catch(err) {
+        return require(`../../assets/ava/ava_1.jpg`);
+      }
+    },
+
   },
 
   computed: {
@@ -79,6 +87,8 @@ export default {
       getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",
       getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
     }),
+
+    
   }
 
 }

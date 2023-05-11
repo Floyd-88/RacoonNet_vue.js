@@ -29,7 +29,7 @@ class CommentsPhotoDB {
 
     //получаем новый комментарий из БД
     load_one_comment_photo_DB(newCommentID, callback) {
-        return this.connection.execute(`SELECT id, name, surname, ava, photo_id, comment_photo_text, author_comment_id, date FROM comments_photo INNER JOIN users ON author_comment_id = userID WHERE id = ?`, [newCommentID], (err, row) => {
+        return this.connection.execute(`SELECT comments_photo.id, name, surname, ava, photo_id, comment_photo_text, author_comment_id, photos.userID, comments_photo.date FROM comments_photo INNER JOIN users ON author_comment_id = users.userID INNER JOIN photos ON comments_photo.photo_id = photos.id  WHERE comments_photo.id=?`, [newCommentID], (err, row) => {
             callback(err, row[0])
         });
     }

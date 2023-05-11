@@ -147,12 +147,14 @@ export const friendsStore = {
     actions: {
         //добавление в друзья
         async ADD_FRIEND({
-            commit
+            commit,
+            dispatch
         }, id) {
-            console.log(id)
             try {
+                let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
                 await axios.post("http://localhost:8000/add_friend", {
-                        id
+                        id,
+                        date
                     })
                     .then(function(res) {
                         console.log(res.data)
@@ -168,15 +170,17 @@ export const friendsStore = {
             getters,
             commit,
             dispatch
-        }, id) {
+        }, value) {
             try {
+                let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
                 await axios.put("http://localhost:8000/add_friends_me", {
-                        id
+                        id: value.id,
+                        userID: value.userID,
+                        date
                     })
                     .then(function() {
-                        const users = getters.getUsersFriendsMe.filter(user => user.id != id)
+                        const users = getters.getUsersFriendsMe.filter(user => user.id != value.id)
                         commit("setUsersFriendsMe", users);
-                        console.log(id)
                         dispatch("GET_USER_MY_FRIENDS", JSON.parse(localStorage.getItem('user')).userID);
                     })
             } catch (err) {
@@ -275,7 +279,6 @@ export const friendsStore = {
             try {
                 await axios.delete("http://localhost:8000/delete_friends", { data: { params } })
                     .then(function() {
-                        console.log(params.id)
                         if (state.usersMyFriends) {
                             let friends = state.usersMyFriends.filter(user => user.id !== params.id);
                             commit("setUsersMyFriends", friends)

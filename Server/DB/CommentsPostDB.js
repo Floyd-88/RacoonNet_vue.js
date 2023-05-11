@@ -57,7 +57,7 @@ class CommentsPostDB {
 
     //получаем новый комментарий из БД
     load_one_comment_DB(newCommentID, callback) {
-        return this.connection.execute(`SELECT id, name, surname, ava, post_id, comment_post_text, author_comment_id, date FROM comments_post INNER JOIN users ON author_comment_id = userID WHERE id = ?`, [newCommentID], (err, row) => {
+        return this.connection.execute(`SELECT comments_post.id, name, surname, ava, post_id, comment_post_text, author_comment_id, authorPost, comments_post.date FROM comments_post INNER JOIN users ON author_comment_id = userID INNER JOIN posts ON comments_post.post_id = posts.id WHERE comments_post.id = ?`, [newCommentID], (err, row) => {
             callback(err, row[0])
         });
     }
@@ -71,7 +71,7 @@ class CommentsPostDB {
 
     //получаем новый комментарий из БД
     load_one_comment_comment_DB(newCommentID, callback) {
-        return this.connection.execute(`SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date FROM comments_comment INNER JOIN users ON author_comment = userID WHERE id = ?`, [newCommentID], (err, row) => {
+        return this.connection.execute(`SELECT comments_comment.id, name, surname, ava, comment_id, comment_comment_text, author_comment, author_comment_id, comments_comment.date FROM comments_comment INNER JOIN users ON author_comment = userID INNER JOIN comments_post ON comment_id = comments_post.id WHERE comments_comment.id = ?`, [newCommentID], (err, row) => {
             callback(err, row[0])
         });
     }

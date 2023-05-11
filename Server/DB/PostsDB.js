@@ -228,7 +228,7 @@ class PostsDB {
 
     //получаем количество лайков у поста
     get_count_likes_post(id, callback) {
-        return this.connection.execute(`SELECT likes FROM posts WHERE id=?`, id, (err, likes) => {
+        return this.connection.execute(`SELECT likes, authorPost FROM posts WHERE id=?`, id, (err, likes) => {
             callback(err, likes[0]);
         })
     }

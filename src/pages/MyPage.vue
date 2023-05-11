@@ -8,7 +8,7 @@
       <!-- модальное окно для редактирования профиля -->
       <template v-if="getModulEditProfile">
         <UImodal>
-          <EditProfile />
+          <EditProfile/>
         </UImodal>
       </template>
 

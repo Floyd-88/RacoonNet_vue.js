@@ -44,6 +44,9 @@ const commentsPhoto = new CommentsPhotoDB();
 const FeedBackDB = require('./DB/FeedBackDB');
 const feedBack = new FeedBackDB();
 
+const NoticeDB = require('./DB/NoticeDB');
+const notice = new NoticeDB();
+
 
 //подключаем массивы с валидацией
 const loginValidate = require('./validate/loginValidate')
@@ -376,9 +379,6 @@ router.post('/refresh', (req, res) => {
         return res.status(400).send("refresh-token не найден");
     }
 });
-
-
-
 
 //ПОДГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ ПРИ ПОСЕЩЕНИИ ЕГО СТРАНИЦЫ
 router.post('/load_user', authenticateJWT, function(req, res) {
@@ -742,9 +742,14 @@ router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
             //возвращаем обновленный пост с информацие по автору поста
         posts.load_one_post_DB(postID, (err, post) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
-            res.status(200).send(
-                post
-            );
+
+            //уведомление о новом посте
+            if (tokenID !== userID) {
+                notice.add_notice_DB([userID, post.authorPost, "написал что то на Вашей стене", post.id, 0, 0, 0, 0, post.date], (err) => {
+                    if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
+                })
+            }
+            res.status(200).send(post);
         });
     });
 });
@@ -788,12 +793,21 @@ router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
 
             posts.remove_post_DB(req.body.postID, (err) => {
                 if (err) return res.status(500).send('Error on the server' + " " + err);
+
+                //удаление уведомления о новом посте
+                console.log(req.body.authorPost);
+                console.log(tokenID);
+                console.log(req.body.postID);
+
+                notice.delete_notice_post_DB([req.body.postID], (err) => {
+                    if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+                })
+
+
                 res.status(200).send("пост удален");
             });
 
         })
-
-
     }
 });
 
@@ -817,6 +831,12 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
                     posts.get_count_likes_post([req.body.postID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
 
+                        if (tokenID !== likes.authorPost) {
+                            notice.delete_notice_like_DB([likes.authorPost, tokenID, req.body.postID, 0], (err) => {
+                                if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+                            })
+                        }
+
                         res.status(200).json({
                             likes: likes,
                             flag: false
@@ -836,6 +856,12 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
                     //получаем количество лайков поста
                     posts.get_count_likes_post([req.body.postID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
+
+                        if (tokenID !== likes.authorPost) {
+                            notice.add_notice_DB([likes.authorPost, tokenID, "отметил Вашу запись", req.body.postID, 0, 0, 0, 0, req.body.date], (err) => {
+                                if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
+                            })
+                        }
 
                         res.status(200).json({
                             likes: likes,
@@ -904,8 +930,6 @@ router.get("/load_comments_comment_one_post.js", authenticateJWT, function(req, 
         if (!comments) return res.status(404).send('Комментарии отстутствуют' + " " + err);
 
         res.status(200).json(comments);
-
-
     })
 })
 
@@ -934,7 +958,12 @@ router.post("/load_comments_post.js", authenticateJWT, messageValidate, function
             // возвращаем написанный комментарий
         commentsPost.load_one_comment_DB(newCommentID, (err, newComment) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
-
+            console.log(newComment)
+            if (tokenID !== newComment.authorPost) {
+                notice.add_notice_DB([newComment.authorPost, tokenID, "добавил комментарий к Вашей записи", newComment.post_id, 0, newComment.id, 0, 0, newComment.date], (err) => {
+                    if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
+                })
+            }
             res.status(200).send(newComment);
         });
     });
@@ -966,6 +995,13 @@ router.post("/load_comments_comment.js", authenticateJWT, messageValidate, funct
         commentsPost.load_one_comment_comment_DB(newCommentID, (err, newComment) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
 
+            console.log(newComment)
+            if (tokenID !== newComment.author_comment_id) {
+                notice.add_notice_DB([newComment.author_comment_id, tokenID, "ответил на Ваш комментарий", req.body.postID, 0, newComment.comment_id, newComment.id, 0, newComment.date], (err) => {
+                    if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
+                })
+            }
+
             res.status(200).send(newComment);
         });
     });
@@ -980,6 +1016,11 @@ router.delete('/load_comments_comment.js', authenticateJWT, function(req, res) {
     if (tokenID === req.body.authorID || tokenID === req.body.pageID) {
         commentsPost.remove_comment_comment_DB(req.body.commentID, (err) => {
             if (err) return res.status(500).send('Произошла ошибка при удалении комментария' + " " + err);
+            console.log(req.body.commentID)
+            notice.delete_notice_comment_comments_post_DB([req.body.commentID], (err) => {
+                if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+            })
+
             res.status(200).send("комментарий удален");
         });
     }
@@ -994,6 +1035,11 @@ router.delete('/load_comments_post.js', authenticateJWT, function(req, res) {
     if (tokenID === req.body.authorID || tokenID === req.body.pageID) {
         commentsPost.remove_comment_post_DB(req.body.commentID, (err) => {
             if (err) return res.status(500).send('Произошла ошибка при удалении комментария' + " " + err);
+
+            notice.delete_notice_comment_post_DB([req.body.commentID], (err) => {
+                if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+            })
+
             res.status(200).send("комментарий удален");
         });
     }
@@ -1190,13 +1236,32 @@ router.delete('/remove_photo', authenticateJWT, function(req, res) {
             ], (err) => {
                 if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err);
 
-                res.status(200).send("Фотография удалена");;
+                //удаляем уведомление о лайке фото и комментарие
+                notice.delete_notice_photo_DB([req.query.idPhoto], (err) => {
+                    if (err) return res.status(500).send('При удалении уведомления о лайке и комментарие произошла ошибка' + " " + err);
+                })
+                res.status(200).send("Фотография удалена");
             })
         })
-
     }
-
 })
+
+//УДАЛЕНИЕ ФОТОГАФИИ ИЗ ПОСТА
+router.put('/remove_photo_post', authenticateJWT, function(req, res) {
+
+    userID = +req.body.id; //id из строки запроса
+    tokenID = req.tokenID; //id из сохраненного токена 
+    if (userID === tokenID) {
+        photos.remove_photo_post([
+            req.body.idPhoto,
+            tokenID,
+        ], (err) => {
+            if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась из поста' + " " + err);
+            res.status(200).send("Фотография удалена из поста");;
+        })
+    }
+})
+
 
 //УДАЛЕНИЕ АВАТАРКИ
 router.put('/remove_ava_photo', authenticateJWT, function(req, res) {
@@ -1252,6 +1317,13 @@ router.post('/likes_photo', authenticateJWT, function(req, res) {
                     photos.get_count_likes_photo([req.body.photoID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошла ошибка" + " " + err);
 
+                        //удаляем уведомление о лайке фото
+                        if (tokenID !== likes.userID) {
+                            notice.delete_notice_like_DB([likes.userID, tokenID, 0, req.body.photoID], (err) => {
+                                if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+                            })
+                        }
+
                         res.status(200).json({
                             likes: likes,
                             flag: false
@@ -1271,8 +1343,12 @@ router.post('/likes_photo', authenticateJWT, function(req, res) {
                     //получаем количество лайков поста
                     photos.get_count_likes_photo([req.body.photoID], (err, likes) => {
                         if (err) return res.status(500).send("При получении лайков произошла ошибка" + " " + err);
-                        console.log(likes)
 
+                        if (tokenID !== likes.userID) {
+                            notice.add_notice_DB([likes.userID, tokenID, "отметил Вашу фотографию", 0, req.body.photoID, 0, 0, 0, req.body.date], (err) => {
+                                if (err) return res.status(500).send('При добавлении уведомления о новой отметка фотографии произошла ошибка' + " " + err);
+                            })
+                        }
                         res.status(200).json({
                             likes: likes,
                             flag: true
@@ -1281,8 +1357,6 @@ router.post('/likes_photo', authenticateJWT, function(req, res) {
                 })
             })
         }
-
-
     })
 })
 
@@ -1321,6 +1395,12 @@ router.post("/load_comments_photo.js", authenticateJWT, messageValidate, functio
         // возвращаем написанный комментарий
         commentsPhoto.load_one_comment_photo_DB(newCommentID, (err, newCommentPhoto) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
+            console.log(newCommentPhoto)
+            if (tokenID !== newCommentPhoto.userID) {
+                notice.add_notice_DB([newCommentPhoto.userID, tokenID, "добавил комментарий к Вашей фотографии", 0, newCommentPhoto.photo_id, 0, 0, newCommentPhoto.id, newCommentPhoto.date], (err) => {
+                    if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
+                })
+            }
 
             res.status(200).send(newCommentPhoto);
         });
@@ -1339,7 +1419,7 @@ router.get("/load_comments_photo.js", authenticateJWT, function(req, res) {
     })
 })
 
-//УДАЛЯЕМ КОММЕНТАРИ К ФОТО
+//УДАЛЯЕМ КОММЕНТАРИЙ К ФОТО
 router.delete('/load_comments_photo.js', authenticateJWT, function(req, res) {
 
     tokenID = req.tokenID; //id из сохраненного токена 
@@ -1348,6 +1428,11 @@ router.delete('/load_comments_photo.js', authenticateJWT, function(req, res) {
     if (tokenID === req.body.authorID || tokenID === req.body.pageID) {
         commentsPhoto.remove_comment_photo_DB(req.body.commentID, (err) => {
             if (err) return res.status(500).send('Произошла ошибка при удалении комментария' + " " + err);
+
+            notice.delete_notice_comment_photo_DB([req.body.commentID], (err) => {
+                if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+            })
+
             res.status(200).send("Комментарий к фотографии был удален");
         });
     }
@@ -1620,12 +1705,23 @@ router.post("/add_friend", authenticateJWT, function(req, res) {
             if (confirmID.length === 0) {
                 friends.add_friend_DB([tokenID, req.body.id], (err) => {
                     if (err) return res.status(500).send("При отправке запроса в друзья, произошла ошибка" + " " + err);
-                    res.status(200).send("Заявка отправлена")
+                    res.status(200).send("Заявка отправлена");
+
+                    notice.add_notice_DB([req.body.id, tokenID, "пригласил Вас в друзья", 0, 0, 0, 0, 0, req.body.date], (err) => {
+                        if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
+                    })
+
                 })
             } else {
                 //если запрос ранее был - отменяем его
                 friends.cancel_add_friend_DB([confirmID[0].id], (err) => {
                     if (err) return res.status(500).send("При отмене заявки в друзья произошла ошибка" + " " + err);
+
+                    //убераем уведомление
+                    notice.delete_notice_like_DB([req.body.id, tokenID, 0, 0], (err) => {
+                        if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+                    })
+
                     res.status(200).send("Добавить в друзья")
                 })
             }
@@ -1749,6 +1845,16 @@ router.put("/add_friends_me", authenticateJWT, function(req, res) {
         friends.agree_add_friend_DB([req.body.id], (err) => {
             if (err) return res.status(500).send("При получении пользователей приглашающих меня в друзья, произошла ошибка" + " " + err);
 
+            //добавляем уведомление
+            notice.add_notice_DB([req.body.userID, tokenID, "принял Вашу заявку в друзья", 0, 0, 0, 0, 0, req.body.date], (err) => {
+                if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
+
+                //убераем уведомление о приглашении в друзья
+                notice.delete_notice_like_DB([tokenID, req.body.userID, 0, 0], (err) => {
+                    if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+                })
+            })
+
             res.status(200).send("Пользователь добавлен в Ваши друзья");
 
         })
@@ -1762,8 +1868,15 @@ router.delete("/delete_friends", authenticateJWT, function(req, res) {
     if (tokenID == req.body.params.query) {
         friends.delete_friend_DB([req.body.params.id], (err) => {
             if (err) return res.status(500).send("При удалении пользователя из друзей, произошла ошибка" + " " + err);
-            res.status(200).send("Пользователь удален из ваших друзей");
 
+            console.log(tokenID)
+            console.log(req.body.params.userID)
+                //  //убераем уведомление о приглашении в друзья
+            notice.delete_notice_friend_DB([tokenID, req.body.params.userID, tokenID, req.body.params.userID], (err) => {
+                if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+            })
+
+            res.status(200).send("Пользователь удален из ваших друзей");
         })
     }
 })
@@ -1780,7 +1893,7 @@ router.get('/news_friends.js', authenticateJWT, function(req, res) {
         req.query._limit
     ], (err, newsFriends) => {
         if (err) return res.status(500).send('Error on the server.' + " " + err);
-        if (!newsFriends) return res.status(404).send('No news found.' + " " + err);
+        if (!newsFriends) return res.status(404).send('No news found.');
         // console.log(newsFriends)
         res.status(200).json(newsFriends);
     });
@@ -1930,6 +2043,29 @@ router.put('/update_password_restore', passwordValidate, function(req, res) {
     })
 })
 
+//ПОЛУЧЕНИЕ НОВЫХ УВЕДОМЛЕНИЙ
+router.get('/new_notice', authenticateJWT, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+
+    notice.get_notice_DB([
+        tokenID
+    ], (err, newNotice) => {
+        if (err) return res.status(500).send('При получении уведомлений произошла ошибка' + " " + err);
+        res.status(200).json(newNotice);
+    });
+});
+
+//УДАЛЕНИЕ УВЕДОМЛЕНИЙ ИЗ СПИСКА
+router.delete('/notice_delete', authenticateJWT, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+
+    notice.delete_notice_DB([
+        req.body.noticeID
+    ], (err) => {
+        if (err) return res.status(500).send('При удалении уведомления произошла ошибка' + " " + err);
+        res.status(200).send("уведомление удалено");
+    });
+})
 
 //ПОЛУЧЕНИЕ СООБЩЕНИЙ БЕЗ ПЕРЕЗАГРУЗКИ
 io.use(async(socket, next) => {

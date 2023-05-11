@@ -61,6 +61,8 @@ import ContentNews from "@/components/NewsPage/ContentNews";
 
 import FeedBack from "@/components/FeedBack";
 
+import NoticeUser from "@/components/NoticeUser";
+
 
 export default [
     UserInfo,
@@ -109,5 +111,6 @@ export default [
     WriteCommentPhoto,
     FeedBack,
     ResetPassword,
-    UIUsersLikes
+    UIUsersLikes,
+    NoticeUser
 ]

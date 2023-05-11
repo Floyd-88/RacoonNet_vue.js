@@ -16,6 +16,9 @@
           <div class="wrapper_preview_allPhotos">
             <div class="all_photos" id="preview_myPhoto"
               v-for="(photo, index) in getArrayFilterPhotos.slice(0, getLimitAllPhoto)" :key="index">
+              <div>
+                <p>{{ `дата ${photo.date}` }}</p>
+              </div>
               <img class="photo" :src="require(`../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name"
                 @click="fullSizePhoto({ bool: true, elem: index, id: photo.id })">
 

@@ -80,8 +80,6 @@ export const showFullPhotoStore = {
             const index = body.elem;
             const id = body.id;
 
-            console.log(body)
-
             commit("setIsModalFullSize", bool);
             commit("setIndexPhoto", index);
             commit('loadPhotoStore/setPhotoId', id, { root: true });

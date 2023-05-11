@@ -104,9 +104,8 @@ export default {
     beforeUnmount() {
         this.setCommentsArray([]);
         this.setCommentsCommentArray([]);
-        this.setPhotosPostsArray([]);
+        // this.setPhotosPostsArray([]);
     },
-
 
     components: { MyFriendsBlock }
 }

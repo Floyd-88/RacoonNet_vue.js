@@ -15,7 +15,7 @@
                 <div class="wrapper_my_friend_card_show_btns">
                     <div class="wrapper_my_friend_card_btns">
                         <div class="my_friend_card_btn_write_message">
-                            <UIbtn class="btn_write_message" @click="DELETE_FRIEND(user.id)">Отменить заявку</UIbtn>
+                            <UIbtn class="btn_write_message" @click="DELETE_FRIEND({id: user.id, query: this.$route.query.id, userID: user.userID})">Отменить заявку</UIbtn>
                         </div>
                     </div>
                 </div>

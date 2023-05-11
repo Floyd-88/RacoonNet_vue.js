@@ -6,7 +6,7 @@
         <div class="wrapper_preview_allPhotos">
             <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage.slice(0, getLimitAllPhoto)" :key="index">
                 <img class="photo" 
-                :src="require(`../assets/photo/${photo.photo_name}`)" 
+                :src="myPhotos(photo.photo_name)" 
                 :alt="photo.photo_name"
                 @click="fullSizePhoto({bool: true, elem: index, id: photo.id})">
 
@@ -57,6 +57,14 @@ export default {
             loadAllPhotos: "loadPhotoStore/loadAllPhotos",
             fullSizePhoto: "showFullPhotoStore/fullSizePhoto"
         }),
+
+        myPhotos(photo) {
+      try {
+        return require(`../assets/photo/${photo}`);
+      } catch(err) {
+        return require(`../assets/ava/ava_1.jpg`);
+      }
+    },
     },
     computed: {
         ...mapGetters({

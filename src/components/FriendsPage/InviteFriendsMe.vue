@@ -15,10 +15,10 @@
             <div class="wrapper_my_friend_card_show_btns">
                 <div class="wrapper_my_friend_card_btns">
                     <div class="my_friend_card_btn_write_message">
-                        <UIbtn class="btn_write_message" @click="AGREE_ADD_FRIEND_USER(user.id)">Принять приглашение</UIbtn>
+                        <UIbtn class="btn_write_message" @click="AGREE_ADD_FRIEND_USER({id: user.id, userID: user.userID})">Принять приглашение</UIbtn>
                     </div>
                 <div class="my_friend_card_btn_delete_friend">
-                    <UIbtn class="btn_delete_friend" @click="DELETE_FRIEND(user.id)">Отказаться от дружбы</UIbtn>
+                    <UIbtn class="btn_delete_friend" @click="DELETE_FRIEND({id: user.id, query: this.$route.query.id, userID: user.userID})">Отказаться от дружбы</UIbtn>
                 </div>
                 </div>
             </div>

@@ -84,58 +84,73 @@ class PhotosDB {
         });
     }
 
+    remove_photo_post(photo, callback) {
+        return this.connection.execute(`UPDATE photos SET post_id_photo=0 WHERE id = ? and userID = ?`, photo, (err) => {
+            callback(err);
+        });
+    }
+
     // удаление фотографий перед удалением профиля
     remove_all_photos(user, callback) {
-        return this.connection.execute(`DELETE from photos WHERE pageID=?`, user, (err) => {
+        return this.connection.execute(`
+                    DELETE from photos WHERE pageID = ? `, user, (err) => {
             callback(err);
         });
     }
 
     //поверяем на повторный лайк фото
     not_double_likes_photo_author(params, callback) {
-        return this.connection.execute(`SELECT id FROM photos_likes WHERE photo_id=? AND author_likes_photo = ?`, params, (err, row) => {
+        return this.connection.execute(`
+                    SELECT id FROM photos_likes WHERE photo_id = ? AND author_likes_photo = ? `, params, (err, row) => {
             callback(err, row)
         });
     }
 
     //добавляем автора лайка фото в БД
     add_author_likes_photo(params, callback) {
-        return this.connection.execute(`INSERT INTO photos_likes (photo_id, author_likes_photo) VALUES (?,?)`, params, (err) => {
+        return this.connection.execute(`
+                    INSERT INTO photos_likes(photo_id, author_likes_photo) VALUES( ? , ? )
+                    `, params, (err) => {
             callback(err);
         })
     };
 
     //убираем автора лайка фото при повторном клике
     remove_author_like_photo(id, callback) {
-        return this.connection.execute(`DELETE from photos_likes WHERE id = ?`, id, (err) => {
+        return this.connection.execute(`
+                    DELETE from photos_likes WHERE id = ? `, id, (err) => {
             callback(err);
         });
     }
 
     // лайкаем фото
     add_count_likes(params, callback) {
-        return this.connection.execute(`UPDATE photos SET likes = likes + 1 WHERE id=?`, params, (err) => {
+        return this.connection.execute(`
+                    UPDATE photos SET likes = likes + 1 WHERE id = ? `, params, (err) => {
             callback(err);
         })
     }
 
     // отменяем лайк фото
     remove_count_likes(params, callback) {
-        return this.connection.execute(`UPDATE photos SET likes = likes - 1 WHERE id=?`, params, (err) => {
+        return this.connection.execute(`
+                    UPDATE photos SET likes = likes - 1 WHERE id = ? `, params, (err) => {
             callback(err);
         })
     }
 
     //получаем количество лайков у фото
     get_count_likes_photo(id, callback) {
-        return this.connection.execute(`SELECT likes FROM photos WHERE id=?`, id, (err, likes) => {
+        return this.connection.execute(`
+                    SELECT likes, userID FROM photos WHERE id = ? `, id, (err, likes) => {
             callback(err, likes[0]);
         })
     }
 
     //получаем пользоватей лайкнувших фото
     get_users_likes_photo(photoID, callback) {
-        return this.connection.execute(`SELECT author_likes_photo, ava, name, surname FROM photos_likes INNER JOIN users ON author_likes_photo = userID WHERE photo_id=?`, photoID, (err, users) => {
+        return this.connection.execute(`
+                    SELECT author_likes_photo, ava, name, surname FROM photos_likes INNER JOIN users ON author_likes_photo = userID WHERE photo_id = ? `, photoID, (err, users) => {
             callback(err, users);
         })
     }

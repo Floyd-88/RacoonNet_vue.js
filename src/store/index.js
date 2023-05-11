@@ -14,6 +14,8 @@ import { galleryStore } from "@/store/module/galleryStore"
 import { commentsPost } from "@/store/module/commentsPost"
 import { commentsPhoto } from "@/store/module/commentsPhoto"
 import { feedBackStore } from "@/store/module/feedBackStore"
+import { noticeStore } from "@/store/module/noticeStore"
+
 
 
 
@@ -33,6 +35,7 @@ export default createStore({
         galleryStore,
         commentsPost,
         commentsPhoto,
-        feedBackStore
+        feedBackStore,
+        noticeStore
     }
 });

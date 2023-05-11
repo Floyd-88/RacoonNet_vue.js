@@ -57,8 +57,10 @@ export const loadPhotoStore = {
 
         setIsModalLoadPhoto: function(state, bool) {
             state.isModalLoadPhoto = bool;
-            document.body.style.overflow = "hidden"
+            if (bool === true) {
+                document.body.style.overflow = "hidden"
 
+            }
             if (bool === false) {
                 state.messageLoadPhoto = "";
                 state.urlsImages = [];
@@ -101,7 +103,6 @@ export const loadPhotoStore = {
         removeAllPhotos(state, id) {
             state.allPhotos = state.allPhotos.filter(photo => photo.id !== id);
             state.myPhotosMyPage = state.myPhotosMyPage.filter(photo => photo.id !== id);
-            console.log(state.myPhotosMyPage)
         },
 
         setPhotoId(state, id) {
@@ -139,9 +140,6 @@ export const loadPhotoStore = {
             getters,
             commit
         }, img) {
-
-
-
             axios.post(
                     'http://localhost:8000/upload_ava', {
                         img: img,
@@ -307,39 +305,69 @@ export const loadPhotoStore = {
         async removePhoto({
             commit,
             state,
-            getters
-        }, name) {
+            getters,
+            rootGetters
+        }, body) {
             commit("setModulePhotoRemove", false)
 
+            //если все картинки закончились
             if (state.allPhotos.length <= 1) {
                 await commit("showFullPhotoStore/setIsModalFullSize", false, {
                     root: true
                 });
                 await commit("setIsModalAllPhotos", false);
+                console.log(1)
             }
 
-            try {
-                await axios.delete('http://localhost:8000/remove_photo', {
-                    params: {
-                        idPhoto: getters.getIdPhoto,
-                        id: getters.getUser.userID,
-                        namePhoto: name,
-                    }
-                }).then((response) => {
-
-                    commit("removeAllPhotos", getters.getIdPhoto);
-                    commit("postsMyPageStore/removePhotosPostsArray", getters.getIdPhoto, { root: true })
-
-                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                        root: true
-                    });
-                    commit("galleryStore/removeArrayFilterPhotos", getters.getIdPhoto, {
-                        root: true
-                    })
-                    console.log(response.data)
+            //если закончились картинки в посте
+            if (rootGetters["postsMyPageStore/getPhotosPostsArray"].length <= 1 && rootGetters["postsMyPageStore/getPosts"].length > 0) {
+                await commit("showFullPhotoStore/setIsModalFullSize", false, {
+                    root: true
                 });
-            } catch (err) {
-                console.log(err);
+                await commit("showFullPhotoStore/setPostID", "", { root: true });
+                document.body.style.overflow = "auto";
+                console.log(2)
+
+            }
+
+            if (!body.photoID) {
+                try {
+                    await axios.delete('http://localhost:8000/remove_photo', {
+                        params: {
+                            idPhoto: getters.getIdPhoto,
+                            id: getters.getUser.userID,
+                            namePhoto: body.name,
+                        }
+                    }).then(() => {
+                        commit("removeAllPhotos", getters.getIdPhoto);
+                        commit("postsMyPageStore/removePhotosPostsArray", getters.getIdPhoto, { root: true })
+                        commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                            root: true
+                        });
+                        commit("galleryStore/removeArrayFilterPhotos", getters.getIdPhoto, {
+                            root: true
+                        })
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
+            } else {
+                try {
+                    await axios.put('http://localhost:8000/remove_photo_post', {
+                        idPhoto: getters.getIdPhoto,
+                        id: getters.getUser.userID
+                    }).then(() => {
+                        commit("postsMyPageStore/removePhotosPostsArray", getters.getIdPhoto, { root: true })
+                        commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                            root: true
+                        });
+                        commit("galleryStore/removeArrayFilterPhotos", getters.getIdPhoto, {
+                            root: true
+                        });
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
             }
         },
 
@@ -369,11 +397,12 @@ export const loadPhotoStore = {
 
 
         //лайкнуть фото
-        async SAVE_LIKE_COUNT_PHOTO({ commit }, photoID) {
+        async SAVE_LIKE_COUNT_PHOTO({ commit, dispatch }, photoID) {
             try {
+                photoID.date = await dispatch("postsMyPageStore/newDate", null, { root: true });
+
                 await axios.post('http://localhost:8000/likes_photo', photoID)
                     .then((response) => {
-                        console.log(response.data)
                         commit("setLikesPhoto", response.data)
                     });
             } catch (err) {
