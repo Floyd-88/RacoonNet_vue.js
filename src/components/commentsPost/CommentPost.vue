@@ -21,16 +21,21 @@
                     {{ messageText(comment.comment_post_text) }}
                 </p>
                 <div class="wrapper_answer_comment" v-if="comment.isBtnsAnsw">
-                    <UIbtn class="answer_comment" @click.stop="showWriteUnderComments(comment, 'underComment' + comment.id)" >Ответить</UIbtn>
+                    <UIbtn class="answer_comment" @click.stop="showWriteUnderComments(comment, 'underComment' + comment.id)" >
+                        Ответить
+                    </UIbtn>
 
                     <UIbtn class="answer_comment answer_comment_del" v-if="getUser.is_editProfile || userID == comment.author_comment_id" @click.stop="DELETE_COMMENTS_POST({commentID: comment.id, authorID: comment.author_comment_id, pageID: +$route.params.id})">Удалить</UIbtn>
                 </div>
 
-                <UnderComment :comment="comment"/>
+                <UnderComment 
+                    :comment="comment" 
+                    @notShowWriteUnderComments="notShowWriteUnderComments(comment)" 
+                    @showWriteUnderComments="showWriteUnderComments(comment, 'underComment' + comment.id, $event)"/>
                 
                 <div :ref="'underComment' + comment.id">
                     <div class="wrapper_under_write_comments" v-show="comment.isShowWriteUnderComment">
-                        <WriteComments :comment="comment"/>
+                        <WriteComments :comment="comment" :name="name"/>
                     </div>
                 </div>
                
@@ -61,6 +66,7 @@ export default {
             isBtnsAnsw: false,
             userID: JSON.parse(localStorage.getItem('user')).userID,
             // isShowWriteUnderComment: false,
+            name: "" //имя пользователя которму мы отвечаем
         };
     },
     methods: {
@@ -71,13 +77,30 @@ export default {
             comment.isShowWriteUnderComment = false;
         },
 
-        showWriteUnderComments(comment, ref) {
+        showWriteUnderComments(comment, ref, comment_comments) {
+            if(comment_comments) {
+                    comment.comment_commentID = comment_comments.id;
+                    comment.author_comment_comment = comment_comments.author_comment;
+                    comment.comment_comment_text = comment_comments.comment_comment_text;
+                    this.name = comment_comments.comment_comment_name + ", ";
+                } else {
+                    comment.comment_commentID = "";
+                    comment.author_comment_comment = "";
+                    comment.comment_comment_text = "";
+                    this.name = comment.name + ", ";
+                }
+
             comment.isShowWriteUnderComment = !comment.isShowWriteUnderComment;
             if(comment.isShowWriteUnderComment) {
+               
                 let topWriteUnderComment = window.scrollY + this.$refs[ref][0].getBoundingClientRect().y - document.documentElement.clientHeight + 60;
                 window.scrollTo(0, topWriteUnderComment)
                 comment.isBtnsAnsw = false;
             }
+        },
+
+        notShowWriteUnderComments(comment) {
+            comment.isShowWriteUnderComment = false;
         },
 
         pathAva(ava) {

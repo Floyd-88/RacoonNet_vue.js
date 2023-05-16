@@ -69,7 +69,9 @@ export const commentsPost = {
             let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
             newCommentsPost.date = await date,
 
-                await axios.post('http://localhost:8000/load_comments_post.js', newCommentsPost)
+                console.log(newCommentsPost)
+
+            await axios.post('http://localhost:8000/load_comments_post.js', newCommentsPost)
                 .then(function(response) {
                     console.log(response.data);
                     commit("setCommentsArray", [response.data, ...state.commentsArray]);
@@ -90,9 +92,11 @@ export const commentsPost = {
             let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
             newCommentsComment.date = await date,
 
-                await axios.post('http://localhost:8000/load_comments_comment.js', newCommentsComment)
+                console.log(newCommentsComment)
+
+            await axios.post('http://localhost:8000/load_comments_comment.js', newCommentsComment)
                 .then(function(response) {
-                    console.log(response.data);
+                    // console.log(response.data);
                     commit("setCommentsCommentArray", [response.data, ...state.commentsCommentArray]);
 
                     // commit("setAddPosts", response.data);

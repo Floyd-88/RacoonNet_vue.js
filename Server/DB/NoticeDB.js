@@ -11,8 +11,9 @@ class NoticeDB {
     createTableNotice() {
         const sql = `CREATE TABLE IF NOT EXISTS notice (
             id integer PRIMARY KEY AUTO_INCREMENT,
-            user_id_addressee integer NOT NULL,
+            user_id_addressee integer NULL,
             user_id_sender integer NOT NULL,
+            user_comments_comment_addressee integer NULL,
             text_notice varchar(250) NOT NULL,
             post_id integer,
             photo_id integer,
@@ -27,7 +28,7 @@ class NoticeDB {
     //добавление уведомления в базу данных
     add_notice_DB(params, callback) {
         return this.connection.execute(`INSERT INTO notice
-        (user_id_addressee, user_id_sender, text_notice, post_id, photo_id, comment_post_id, comment_comments_post_id, comment_photo_id, date) VALUES (?,?,?,?,?,?,?,?,?)`, params, (err, row_notice) => {
+        (user_id_addressee, user_id_sender, user_comments_comment_addressee, text_notice, post_id, photo_id, comment_post_id, comment_comments_post_id, comment_photo_id, date) VALUES (?,?,?,?,?,?,?,?,?,?)`, params, (err, row_notice) => {
             callback(err, row_notice);
         });
     }
@@ -38,11 +39,42 @@ class NoticeDB {
         N.id,
         N.date,
         N.text_notice,
+        N.post_id,
+        N.photo_id,
+        N.comment_post_id,
+        N.comment_comments_post_id,
+        N.comment_photo_id,
         U.userID,
         U.name,
         U.surname,
+        U.ava, 
+        (SELECT users.name FROM users LEFT JOIN notice ON users.userID = IFNULL(notice.user_id_addressee, notice.user_comments_comment_addressee) WHERE notice.id = N.id) as name_addressee,
+        (SELECT users.surname FROM users LEFT JOIN notice ON users.userID = IFNULL(notice.user_id_addressee, notice.user_comments_comment_addressee) WHERE notice.id = N.id) as surname_addressee,
+        (SELECT users.ava FROM users LEFT JOIN notice ON users.userID = IFNULL(notice.user_id_addressee, notice.user_comments_comment_addressee) WHERE notice.id = N.id) as ava_addressee,
         U.selectedGender,
-        U.ava FROM notice N LEFT JOIN users U ON N.user_id_sender = U.userID  WHERE N.user_id_addressee = ? ORDER BY N.id DESC`, user, (err, newNotice) => {
+        P.postText,
+        P.photos,
+        IFNULL(CCP.answer_comment_comment_text, CP.comment_post_text) as comment_post_text,
+        CCP.comment_comment_text,
+        CPh.comment_photo_text,
+        Ph.photo_name
+        FROM notice N LEFT JOIN users U ON N.user_id_sender = U.userID 
+        LEFT JOIN posts P ON N.post_id = P.id 
+        LEFT JOIN comments_post CP ON N.comment_post_id = CP.id
+        LEFT JOIN comments_comment CCP ON N.comment_comments_post_id = CCP.id
+        LEFT JOIN comments_photo CPh ON N.comment_photo_id = CPh.id
+        LEFT JOIN photos Ph ON N.photo_id = Ph.id
+        WHERE N.user_id_addressee = ? OR user_comments_comment_addressee = ? ORDER BY N.id DESC`, user, (err, newNotice) => {
+            callback(err, newNotice);
+        })
+    }
+
+    //получение фотографий к посту из уведомления
+    get_notice_photos_post_DB(postID, callback) {
+        return this.connection.execute(`SELECT 
+        id,
+        photo_name FROM photos
+        WHERE post_id_photo = ?`, postID, (err, newNotice) => {
             callback(err, newNotice);
         })
     }

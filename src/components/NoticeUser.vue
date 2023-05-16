@@ -8,10 +8,8 @@
                 <div class="wrapper_message_user">
                     <div class="wrapper_message_user_content">
                         <div class="message_user_ava">
-                            <img class="ava_posts" 
-                                :src="loadAva(notice.ava)" 
-                                alt="ava"
-                                @click="$router.push({name: 'mypage', params: {id: `${notice.userID}`}})">
+                            <img class="ava_posts" :src="loadAva(notice.ava)" alt="ava"
+                                @click="$router.push({ name: 'mypage', params: { id: `${notice.userID}` } })">
                         </div>
                         <div class="message_user_content">
                             <div class="message_user_name">
@@ -24,10 +22,10 @@
                                     </UIbtn>
                                 </div>
                             </div>
-                            <div class="message_user_text">
+                            <div class="message_user_text" @click="showModalWindowOneNotice(notice)">
                                 <p>
                                     <span class="message_user_text_name"
-                                          @click="$router.push({name: 'mypage', params: {id: `${notice.userID}`}})">
+                                        @click.stop="$router.push({ name: 'mypage', params: { id: `${notice.userID}` } })">
                                         {{ `${notice.name} ${notice.surname}` }}
                                     </span>
                                     {{ (notice.selectedGender === "woman") ? (notice.text_notice.split(" ")[0] + 'a') + " "
@@ -46,6 +44,8 @@
                     <!-- <div ref="observer" class="observer"></div> -->
                 </div>
 
+
+
             </div>
         </div>
 
@@ -60,23 +60,30 @@
 
         </div>
     </template>
+    <UImodal v-if="getIsShowModalWindowOneNotice">
+        <NoticeOneUser />
+    </UImodal>
 </template>
 
 <script>
+import NoticeOneUser from './NoticeOneUser.vue';
 import CloseModal from './UI/CloseModal.vue';
 import { mapActions, mapGetters, mapMutations } from "vuex";
 export default {
     name: "NoticeUser",
-    components: { CloseModal },
+    components: { CloseModal, NoticeOneUser },
 
     methods: {
         ...mapMutations({
             setIsShowModalWindowNotice: "noticeStore/setIsShowModalWindowNotice",
-            setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete"
+            setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
+            setIsShowModalWindowOneNotice: "noticeStore/setIsShowModalWindowOneNotice",
+            setSelectNotice: "noticeStore/setSelectNotice"
         }),
 
         ...mapActions({
-            NOTICE_ARRAY_DELETE: "noticeStore/NOTICE_ARRAY_DELETE"
+            NOTICE_ARRAY_DELETE: "noticeStore/NOTICE_ARRAY_DELETE",
+            GET_PHOTOS_POST_NOTICE: "noticeStore/GET_PHOTOS_POST_NOTICE"
         }),
 
         loadAva(ava) {
@@ -86,12 +93,25 @@ export default {
                 return require(`../assets/ava/ava_1.jpg`);
             }
         },
+
+        showModalWindowOneNotice(notice) {
+            if(notice.text_notice !== "пригласил Вас в друзья") {
+                
+                this.setIsShowModalWindowOneNotice(true);
+                this.setSelectNotice(notice);
+                if(notice.photos) {
+                this.GET_PHOTOS_POST_NOTICE(notice.post_id);
+                }
+            }
+           
+        }
     }
     ,
     computed: {
         ...mapGetters({
             getNoticeArray: "noticeStore/getNoticeArray",
-            noticeTextArray: "noticeStore/noticeTextArray"
+            noticeTextArray: "noticeStore/noticeTextArray",
+            getIsShowModalWindowOneNotice: "noticeStore/getIsShowModalWindowOneNotice"
         })
     }
 }
@@ -165,6 +185,7 @@ export default {
     box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
     padding: 5px 5px 5px 5px;
     margin-bottom: 10px;
+    cursor: pointer;
 }
 
 .message_user_text_name {
@@ -215,8 +236,4 @@ export default {
     font-family: fantasy;
     background: #dcdcdc;
 }
-
-/* .observer {
-    border: 1px solid;
-} */
 </style>

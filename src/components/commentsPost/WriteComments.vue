@@ -1,6 +1,5 @@
 <template>
     <div class="write_comments">
-
         <!-- блок с комментариями к комменатириям -->
         <div class="write_comments_text" v-if="comment.isShowWriteUnderComment">
                 <div class="input-errors" v-for="(error, index) of v$.underCommentText.$errors" :key="index">
@@ -30,8 +29,6 @@
             :class="{ invalid: (v$.commentText.$error) }"></textarea>
         </div>
 
-        
-        
         <div class="write_comments_btn" @click.stop>
             <UIbtn 
                 v-if="comment.isShowWriteUnderComment" 
@@ -73,6 +70,11 @@ export default {
             default: () => {
                 return {}
             }
+        },
+
+        name: {
+            type: String,
+            default: "",
         }
     },
 
@@ -96,7 +98,7 @@ export default {
     data() {
         return {
             commentText: "",
-            underCommentText: "",
+            underCommentText: this.name,
         }
     },
 
@@ -115,11 +117,19 @@ export default {
            this.SAVE_COMMENTS_POST({ postID: this.post.id, textMessage: this.commentText, userPage: this.$route.params.id || this.post.authorPost});
             this.$emit("showComments", 1);
             this.commentText = "";
-            this.v$.commentText.$reset()
+            this.v$.commentText.$reset();
         },
 
         clickWriteUnderCommentPost() {
-            this.SAVE_UNDER_COMMENTS_POST({ postID: this.comment.id, textMessage: this.underCommentText, userPage: this.$route.params.id || this.comment.author_comment_id});
+            this.SAVE_UNDER_COMMENTS_POST({ 
+                postID: this.comment.post_id, 
+                commentID: this.comment.id, 
+                textMessage: this.underCommentText, 
+                userPage: this.$route.params.id || this.comment.author_comment_id, 
+                comment_commentID: this.comment.comment_commentID, 
+                author_comment_comment: this.comment.author_comment_comment, 
+                comment_comment_text: this.comment.comment_comment_text,
+            });
             this.underCommentText = "";
             this.v$.underCommentText.$reset()
         },
@@ -148,6 +158,12 @@ export default {
         //         this.v$.underCommentPost.$touch();
         //     }
         // }
+    },
+
+    watch: {
+        name() {
+            this.underCommentText = this.name;
+        }
     }
 }
 

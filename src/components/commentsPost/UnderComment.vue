@@ -17,7 +17,7 @@
                     {{ messageText(comment.comment_comment_text) }}
                 </p>
                 <div class="wrapper_answer_under_comment" v-if="comment.isBtnsAnswUnder">
-                    <!-- <UIbtn class="answer_under_comment">Ответить</UIbtn> -->
+                    <UIbtn class="answer_under_comment" @click="notShowBtnsAnswUnder(comment)">Ответить</UIbtn>
                     <UIbtn class="answer_under_comment answer_under_comment_del" 
                         v-if="getUser.is_editProfile || userID == comment.author_comment" 
                         @click.stop = "DELETE_COMMENTS_COMMENT({commentID: comment.id, authorID: comment.author_comment, pageID: +$route.params.id})">
@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-</div>
+    </div>
 
 <div class="wrapper_show_add_comments" v-if="commentsComment.length > countUnderComments">
     <p class="show_add_comments" @click="showUnderComments(3)">Показать еще комментарии</p>
@@ -49,19 +49,34 @@ export default {
             }
         }
     },
+    emits: ['showWriteUnderComments', 'notShowWriteUnderComments'],
 
     data() {
         return {
             isBtnsAnswUnder: false,
             userID: JSON.parse(localStorage.getItem('user')).userID,
             countUnderComments: 3,
+            commentID: "",
         };
     },
     methods: {
         ...mapActions({DELETE_COMMENTS_COMMENT: "commentsPost/DELETE_COMMENTS_COMMENT"}),
 
         showBtnsAnswUnder(comment) {
-            comment.isBtnsAnswUnder = !comment.isBtnsAnswUnder;
+            this.$emit("notShowWriteUnderComments")
+            this.commentID = comment.id;
+            this.commentsComment.map(comment => {
+                if(comment.id == this.commentID) {
+                    comment.isBtnsAnswUnder = !comment.isBtnsAnswUnder;
+                } else{
+                    comment.isBtnsAnswUnder = false;
+                }
+            })
+        },
+
+        notShowBtnsAnswUnder(comment) {
+            comment.isBtnsAnswUnder = false;
+            this.$emit('showWriteUnderComments', {id: comment.id, author_comment: comment.author_comment, comment_comment_text: comment.comment_comment_text, comment_comment_name: comment.name});
         },
 
         pathAva(ava) {
@@ -161,13 +176,14 @@ export default {
 .answer_under_comment {
     padding: 3px 6px 3px 6px;
     background: whitesmoke;
-    font-size: 12px;
+    font-size: 10px;
     font-family: fantasy;
     border-radius: 0px;
 }
 
 .answer_under_comment_del {
     margin-left: 10px;
+    font-size: 10px;
     opacity: 0.7;
 }
 

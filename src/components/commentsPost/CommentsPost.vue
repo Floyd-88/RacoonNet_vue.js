@@ -108,7 +108,6 @@ export default {
 
         async showWriteComment(post, ref) {
             post.isShowWriteComment = !post.isShowWriteComment;
-            console.log(this.$refs[ref])
 
             if (post.isShowWriteComment) {
                 let top = window.scrollY + this.$refs[ref].getBoundingClientRect().y - document.documentElement.clientHeight + 60;

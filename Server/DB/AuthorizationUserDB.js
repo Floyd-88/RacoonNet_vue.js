@@ -16,7 +16,7 @@ class AuthorizationUserDB {
     // возвращаем пользователя при попытке входа по его почте
     selectByEmail(email, callback) {
         this.connection.execute(
-            `SELECT userID, name, user_pass, is_admin FROM users WHERE email = ?`, [email],
+            `SELECT userID, name, surname, ava, user_pass, is_admin FROM users WHERE email = ?`, [email],
             function(err, row) {
                 callback(err, row[0]);
             })

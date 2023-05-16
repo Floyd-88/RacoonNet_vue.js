@@ -1,71 +1,71 @@
 <template>
-    <header class="header">
+  <header class="header">
 
-      <div class="header_wrapper_logo_title">
-        <div class="header_wrapper_logo">
-          <img 
-            class="header_logo"   
-            src="../../assets/logo/logo.png" 
-            alt="logo"
-            @click="$router.push(`/id${userID}`)" 
-            >
-        </div>
-
-        <div class="header_wrapper_title">
-          <button class="btn_title"  @click="$router.push(`/id${userID}`)" >RacсoonNet</button>
-        </div>
-        <div class="wrapper_notice" v-if="isLoggedIn">
-          <img class="new_message_img" src="../../assets/icons/notice.png" alt="new_message" @click="setIsShowModalWindowNotice(true)">
-        </div>
+    <div class="header_wrapper_logo_title">
+      <div class="header_wrapper_logo">
+        <img class="header_logo" src="../../assets/logo/logo.png" alt="logo" @click="$router.push(`/id${userID}`)">
       </div>
 
-      <div class="header_wrapper_exit">
-          <!-- <p class="welcom_text" v-if="isLoggedIn">Добро пожаловать, {{JSON.parse( nameUser ).name }}</p> -->
-          <span class="header_exit" v-if="isLoggedIn"> <a @click="runLogout">Выход</a></span>
-          <span class="header_exit" v-else> <a @click="$router.push('/')">Вход</a></span>
+      <div class="header_wrapper_title">
+        <button class="btn_title" @click="$router.push(`/id${userID}`)">RacсoonNet</button>
       </div>
+      <div class="wrapper_notice" v-if="isLoggedIn">
+        <img class="new_message_img" src="../../assets/icons/notice.png" alt="new_message"
+          @click="setIsShowModalWindowNotice(true)">
+        <div class="notice_true" v-if="getNoticeArray.length > 0" @click="setIsShowModalWindowNotice(true)">
+          <p>{{ (getNoticeArray.length > 99) ? 99 : getNoticeArray.length }}</p>
+        </div>
+      </div>
+    </div>
 
-    </header>
+    <div class="header_wrapper_exit">
+      <!-- <p class="welcom_text" v-if="isLoggedIn">Добро пожаловать, {{JSON.parse( nameUser ).name }}</p> -->
+      <span class="header_exit" v-if="isLoggedIn"> <a @click="runLogout">Выход</a></span>
+      <span class="header_exit" v-else> <a @click="$router.push('/')">Вход</a></span>
+    </div>
 
-    <UImodal v-if="getIsShowModalWindowNotice">
-     <NoticeUser/>
-    </UImodal>
+  </header>
+
+  <UImodal v-if="getIsShowModalWindowNotice">
+    <NoticeUser />
+  </UImodal>
 </template>
 
 <script>
-import {mapGetters, mapActions, mapMutations} from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import UImodal from "../UI/UImodal.vue";
 
 export default {
-    name: "HeaderNet",
-    data() {
-        return {
-            userID: (localStorage.getItem("user")) ? JSON.parse(localStorage.getItem("user")).userID : "",
-            nameUser: (localStorage.getItem("token")) ? atob(localStorage.getItem("token").split(".")[1]) : "",
-            
-        };
-    },
-    methods: {
-      ...mapMutations({
-        setIsShowModalWindowNotice: "noticeStore/setIsShowModalWindowNotice"
-      }),
-        ...mapActions({ logout: "authorizationStore/logout" }),
-        runLogout() {
-            this.logout()
-                .then(() => {
-                window.location.href = "/";
-                // this.$router.push('/')
-            });
-        }
-    },
-    computed: {
-        ...mapGetters({
-            isLoggedIn: "authorizationStore/isLoggedIn",
-            getUser: "authorizationStore/getUser",
-            getIsShowModalWindowNotice: "noticeStore/getIsShowModalWindowNotice"
-        })
-    },
-    components: { UImodal }
+  name: "HeaderNet",
+  data() {
+    return {
+      userID: (localStorage.getItem("user")) ? JSON.parse(localStorage.getItem("user")).userID : "",
+      nameUser: (localStorage.getItem("token")) ? atob(localStorage.getItem("token").split(".")[1]) : "",
+
+    };
+  },
+  methods: {
+    ...mapMutations({
+      setIsShowModalWindowNotice: "noticeStore/setIsShowModalWindowNotice"
+    }),
+    ...mapActions({ logout: "authorizationStore/logout" }),
+    runLogout() {
+      this.logout()
+        .then(() => {
+          window.location.href = "/";
+          // this.$router.push('/')
+        });
+    }
+  },
+  computed: {
+    ...mapGetters({
+      isLoggedIn: "authorizationStore/isLoggedIn",
+      getUser: "authorizationStore/getUser",
+      getIsShowModalWindowNotice: "noticeStore/getIsShowModalWindowNotice",
+      getNoticeArray: "noticeStore/getNoticeArray"
+    })
+  },
+  components: { UImodal }
 }
 </script>
 
@@ -80,24 +80,29 @@ export default {
   width: 100%;
   z-index: 2;
 }
+
 .header_wrapper_logo_title {
   display: flex;
   margin-left: 5%;
 }
+
 .header_wrapper_logo {
   display: flex;
   align-items: center;
 }
+
 .header_logo {
-width: 100px;
-cursor: pointer;
+  width: 100px;
+  cursor: pointer;
 }
+
 .header_wrapper_title {
   display: flex;
   align-items: center;
   margin-left: 20px;
-  
+
 }
+
 .btn_title {
   border: none;
   background: none;
@@ -108,16 +113,19 @@ cursor: pointer;
   font-family: fantasy;
   cursor: pointer;
 }
+
 .header_wrapper_exit {
   display: flex;
   align-items: center;
   margin-right: 35px;
 }
+
 .header_exit {
   cursor: pointer;
   font-size: 18px;
   font-family: fantasy;
 }
+
 .header_exit:after {
   display: block;
   content: "";
@@ -126,31 +134,53 @@ cursor: pointer;
   background-color: black;
   transition: width 0.2s ease-in-out;
 }
+
 .header_exit:hover:after {
   width: 100%;
 }
-.header_exit:hover{
+
+.header_exit:hover {
   color: black;
 }
 
 .welcom_text {
   padding-right: 20px;
-    font-size: 18px;
-    font-family: auto;
-    font-weight: 600;
-    color: honeydew;
-    padding-bottom: 3px;
+  font-size: 18px;
+  font-family: auto;
+  font-weight: 600;
+  color: honeydew;
+  padding-bottom: 3px;
 }
+
 .wrapper_notice {
   display: flex;
-    margin-left: 35px;
-    align-items: center;
-    margin-top: 6px;
+  margin-left: 35px;
+  align-items: center;
+  margin-top: 6px;
 }
+
 .new_message_img {
-    width: 30px;
-    margin-right: 10px;
-    margin-left: 5px;
-    cursor: pointer;
+  width: 35px;
+  margin-right: 10px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.notice_true {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-left: -8px;
+  background-color: #FF6B6B;
+  cursor: pointer;
+}
+.notice_true p {
+  font-size: 13px;
+    font-family: emoji;
+    font-weight: 600;
 }
 </style>

@@ -159,7 +159,6 @@ export default {
 
         getUserLike(currentImg) {
             if (currentImg.likes > 0) {
-                console.log(111)
                 currentImg.activeLikesUsers = true;
                 this.GET_USER_LIKES_PHOTO(currentImg);
             }

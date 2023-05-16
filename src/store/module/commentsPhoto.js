@@ -110,10 +110,13 @@ export const commentsPhoto = {
 
         async GET_USER_LIKES_PHOTO({ commit }, photo) {
             try {
-                console.log(photo)
+                let photo_id = photo.id;
+                if (photo.photoID) {
+                    photo_id = photo.photoID;
+                }
                 await axios.get('http://localhost:8000/get_users_likes_photo', {
                     params: {
-                        photoID: photo.id
+                        photoID: photo_id
                     }
                 }).then((response) => {
                     commit("setUsersLikesPhoto", response.data)

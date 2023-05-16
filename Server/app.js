@@ -745,7 +745,7 @@ router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
 
             //уведомление о новом посте
             if (tokenID !== userID) {
-                notice.add_notice_DB([userID, post.authorPost, "написал что то на Вашей стене", post.id, 0, 0, 0, 0, post.date], (err) => {
+                notice.add_notice_DB([userID, post.authorPost, null, "написал что то на Вашей стене", post.id, 0, 0, 0, 0, post.date], (err) => {
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
@@ -858,7 +858,7 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
                         if (err) return res.status(500).send("При получении лайков произошда ошибка" + " " + err);
 
                         if (tokenID !== likes.authorPost) {
-                            notice.add_notice_DB([likes.authorPost, tokenID, "отметил Вашу запись", req.body.postID, 0, 0, 0, 0, req.body.date], (err) => {
+                            notice.add_notice_DB([likes.authorPost, tokenID, null, "отметил Вашу запись", req.body.postID, 0, 0, 0, 0, req.body.date], (err) => {
                                 if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                             })
                         }
@@ -959,8 +959,9 @@ router.post("/load_comments_post.js", authenticateJWT, messageValidate, function
         commentsPost.load_one_comment_DB(newCommentID, (err, newComment) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
             console.log(newComment)
+
             if (tokenID !== newComment.authorPost) {
-                notice.add_notice_DB([newComment.authorPost, tokenID, "добавил комментарий к Вашей записи", newComment.post_id, 0, newComment.id, 0, 0, newComment.date], (err) => {
+                notice.add_notice_DB([newComment.authorPost, tokenID, null, "добавил комментарий к Вашей записи", newComment.post_id, 0, newComment.id, 0, 0, newComment.date], (err) => {
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
@@ -982,11 +983,14 @@ router.post("/load_comments_comment.js", authenticateJWT, messageValidate, funct
     tokenID = req.tokenID; //id из сохраненного токена 
 
     commentsPost.add_commentComment_DB([
-        req.body.postID,
+        req.body.commentID,
         req.body.textMessage,
         tokenID,
         req.body.userPage,
-        req.body.date
+        req.body.date,
+        req.body.comment_commentID || null,
+        req.body.author_comment_comment || null,
+        req.body.comment_comment_text || null
     ], (err, comment) => {
         if (err) return res.status(500).send('При добавлении комментария произошла ошибка' + " " + err);
 
@@ -995,9 +999,12 @@ router.post("/load_comments_comment.js", authenticateJWT, messageValidate, funct
         commentsPost.load_one_comment_comment_DB(newCommentID, (err, newComment) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
 
-            console.log(newComment)
             if (tokenID !== newComment.author_comment_id) {
-                notice.add_notice_DB([newComment.author_comment_id, tokenID, "ответил на Ваш комментарий", req.body.postID, 0, newComment.comment_id, newComment.id, 0, newComment.date], (err) => {
+                notice.add_notice_DB([newComment.author_comment_id, tokenID, null, "ответил на Ваш комментарий", req.body.postID, 0, newComment.comment_id, newComment.id, 0, newComment.date], (err) => {
+                    if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
+                })
+            } else if (req.body.author_comment_comment && tokenID !== req.body.author_comment_comment) {
+                notice.add_notice_DB([null, tokenID, req.body.author_comment_comment, "ответил на Ваш комментарий", req.body.postID, 0, newComment.comment_id, newComment.id, 0, newComment.date], (err) => {
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
@@ -1345,7 +1352,7 @@ router.post('/likes_photo', authenticateJWT, function(req, res) {
                         if (err) return res.status(500).send("При получении лайков произошла ошибка" + " " + err);
 
                         if (tokenID !== likes.userID) {
-                            notice.add_notice_DB([likes.userID, tokenID, "отметил Вашу фотографию", 0, req.body.photoID, 0, 0, 0, req.body.date], (err) => {
+                            notice.add_notice_DB([likes.userID, tokenID, null, "отметил Вашу фотографию", 0, req.body.photoID, 0, 0, 0, req.body.date], (err) => {
                                 if (err) return res.status(500).send('При добавлении уведомления о новой отметка фотографии произошла ошибка' + " " + err);
                             })
                         }
@@ -1397,7 +1404,7 @@ router.post("/load_comments_photo.js", authenticateJWT, messageValidate, functio
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
             console.log(newCommentPhoto)
             if (tokenID !== newCommentPhoto.userID) {
-                notice.add_notice_DB([newCommentPhoto.userID, tokenID, "добавил комментарий к Вашей фотографии", 0, newCommentPhoto.photo_id, 0, 0, newCommentPhoto.id, newCommentPhoto.date], (err) => {
+                notice.add_notice_DB([newCommentPhoto.userID, tokenID, null, "добавил комментарий к Вашей фотографии", 0, newCommentPhoto.photo_id, 0, 0, newCommentPhoto.id, newCommentPhoto.date], (err) => {
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
@@ -1707,7 +1714,7 @@ router.post("/add_friend", authenticateJWT, function(req, res) {
                     if (err) return res.status(500).send("При отправке запроса в друзья, произошла ошибка" + " " + err);
                     res.status(200).send("Заявка отправлена");
 
-                    notice.add_notice_DB([req.body.id, tokenID, "пригласил Вас в друзья", 0, 0, 0, 0, 0, req.body.date], (err) => {
+                    notice.add_notice_DB([req.body.id, tokenID, null, "пригласил Вас в друзья", 0, 0, 0, 0, 0, req.body.date], (err) => {
                         if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                     })
 
@@ -1846,7 +1853,7 @@ router.put("/add_friends_me", authenticateJWT, function(req, res) {
             if (err) return res.status(500).send("При получении пользователей приглашающих меня в друзья, произошла ошибка" + " " + err);
 
             //добавляем уведомление
-            notice.add_notice_DB([req.body.userID, tokenID, "принял Вашу заявку в друзья", 0, 0, 0, 0, 0, req.body.date], (err) => {
+            notice.add_notice_DB([req.body.userID, tokenID, null, "принял Вашу заявку в друзья", 0, 0, 0, 0, 0, req.body.date], (err) => {
                 if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
 
                 //убераем уведомление о приглашении в друзья
@@ -2048,6 +2055,7 @@ router.get('/new_notice', authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
 
     notice.get_notice_DB([
+        tokenID,
         tokenID
     ], (err, newNotice) => {
         if (err) return res.status(500).send('При получении уведомлений произошла ошибка' + " " + err);
@@ -2066,6 +2074,18 @@ router.delete('/notice_delete', authenticateJWT, function(req, res) {
         res.status(200).send("уведомление удалено");
     });
 })
+
+//ПОЛУЧЕНИЕ ФОТОГРАФИЙ К ПОСТУ ИЗ УВЕДОМЛЕНИЯ
+router.get('/new_notice_photos', authenticateJWT, function(req, res) {
+
+    notice.get_notice_photos_post_DB([
+        req.query.post_id
+    ], (err, newPhotoNotice) => {
+        if (err) return res.status(500).send('При получении фотографий к посту из уведомления произошла ошибка' + " " + err);
+
+        res.status(200).json(newPhotoNotice);
+    });
+});
 
 //ПОЛУЧЕНИЕ СООБЩЕНИЙ БЕЗ ПЕРЕЗАГРУЗКИ
 io.use(async(socket, next) => {
