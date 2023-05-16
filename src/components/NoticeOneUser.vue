@@ -316,6 +316,12 @@ export default {
     //     }
     // },
 
+    mounted() {
+        if(this.getSelectNotice.show_notice === 0) {
+            this.REMOVE_COUNT_NOTICE_LIST(this.getSelectNotice.id);
+        }
+    },
+
     methods: {
         ...mapMutations({
             setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
@@ -323,7 +329,8 @@ export default {
         }),
 
         ...mapActions({
-            NOTICE_ARRAY_DELETE: "noticeStore/NOTICE_ARRAY_DELETE"
+            NOTICE_ARRAY_DELETE: "noticeStore/NOTICE_ARRAY_DELETE",
+            REMOVE_COUNT_NOTICE_LIST: "noticeStore/REMOVE_COUNT_NOTICE_LIST"
         }),
 
         loadAva(ava) {

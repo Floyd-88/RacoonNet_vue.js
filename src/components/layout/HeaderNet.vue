@@ -12,8 +12,10 @@
       <div class="wrapper_notice" v-if="isLoggedIn">
         <img class="new_message_img" src="../../assets/icons/notice.png" alt="new_message"
           @click="setIsShowModalWindowNotice(true)">
-        <div class="notice_true" v-if="getNoticeArray.length > 0" @click="setIsShowModalWindowNotice(true)">
-          <p>{{ (getNoticeArray.length > 99) ? 99 : getNoticeArray.length }}</p>
+        <div class="notice_true" 
+            v-if="countNotice.length > 0" 
+            @click="setIsShowModalWindowNotice(true)">
+          <p>{{ (countNotice.length > 99) ? 99 : countNotice.length }} </p>
         </div>
       </div>
     </div>
@@ -63,7 +65,11 @@ export default {
       getUser: "authorizationStore/getUser",
       getIsShowModalWindowNotice: "noticeStore/getIsShowModalWindowNotice",
       getNoticeArray: "noticeStore/getNoticeArray"
-    })
+    }),
+
+    countNotice() {
+      return this.getNoticeArray.filter(notice => notice.show_notice !== 1);
+    }
   },
   components: { UImodal }
 }

@@ -20,7 +20,8 @@ class NoticeDB {
             comment_post_id integer,
             comment_comments_post_id integer,
             comment_photo_id integer,
-            date varchar(50) NOT NULL
+            date varchar(50) NOT NULL,
+            show_notice integer default 0
         )`
         return this.connection.execute(sql);
     }
@@ -44,6 +45,7 @@ class NoticeDB {
         N.comment_post_id,
         N.comment_comments_post_id,
         N.comment_photo_id,
+        show_notice,
         U.userID,
         U.name,
         U.surname,
@@ -76,6 +78,13 @@ class NoticeDB {
         photo_name FROM photos
         WHERE post_id_photo = ?`, postID, (err, newNotice) => {
             callback(err, newNotice);
+        })
+    }
+
+    //пометить уведомление как прочитанное
+    notice_remove_count_DB(id, callback) {
+        return this.connection.execute(`UPDATE notice SET show_notice = 1 WHERE id=?`, id, (err) => {
+            callback(err);
         })
     }
 

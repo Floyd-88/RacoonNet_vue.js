@@ -107,6 +107,21 @@ export const noticeStore = {
             }
         },
 
+        //убрать уведомление из шапки после его просмотра
+        async REMOVE_COUNT_NOTICE_LIST(context, id) {
+            try {
+                await axios.put("http://localhost:8000/notice_remove_count", {
+                        noticeID: id
+                    })
+                    .then(function(res) {
+                        console.log(res.data);
+                    })
+            } catch (err) {
+                console.log(err)
+            }
+
+        },
+
     },
     namespaced: true,
 }

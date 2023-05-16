@@ -96,10 +96,10 @@ export default {
 
         showModalWindowOneNotice(notice) {
             if(notice.text_notice !== "пригласил Вас в друзья") {
-                
+
                 this.setIsShowModalWindowOneNotice(true);
                 this.setSelectNotice(notice);
-                if(notice.photos) {
+                if(notice.photos !== "0") {
                 this.GET_PHOTOS_POST_NOTICE(notice.post_id);
                 }
             }

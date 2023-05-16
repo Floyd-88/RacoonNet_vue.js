@@ -2075,6 +2075,18 @@ router.delete('/notice_delete', authenticateJWT, function(req, res) {
     });
 })
 
+//ОТМЕТИТЬ УВЕДОМЛЕНИЕ КАК ПРОСМОТРЕННОЕ РАНЕЕ
+router.put('/notice_remove_count', authenticateJWT, function(req, res) {
+    tokenID = req.tokenID //id из сохраненного токена
+    console.log(req.body.noticeID)
+    notice.notice_remove_count_DB([
+        req.body.noticeID
+    ], (err) => {
+        if (err) return res.status(500).send('При попытке отметить уведомление как прочитанное произошла ошибка' + " " + err);
+        res.status(200).send("уведомление прочитано");
+    });
+})
+
 //ПОЛУЧЕНИЕ ФОТОГРАФИЙ К ПОСТУ ИЗ УВЕДОМЛЕНИЯ
 router.get('/new_notice_photos', authenticateJWT, function(req, res) {
 
