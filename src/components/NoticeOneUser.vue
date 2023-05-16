@@ -1,6 +1,6 @@
 <template>
     <!--  Закрыть модальное окно-->
-    <CloseModal @click="setIsShowModalWindowOneNotice(false)" />
+    <CloseModal @click="closeModalWindowOneNotice()" />
     <h4 class="notice_title">Ваши уведомления</h4>
     <template v-if="getNoticeArray.length > 0">
         <div class="wrapper_all_messages_users">
@@ -10,9 +10,11 @@
                     <!-- уведомление о новом комментарии к комментарию в посте-->
                     <template v-if="getSelectNotice.comment_comment_text">
 
+                        <!-- содержание поста -->
                         <div class="wrapper_post_user">
                             <div class="wrapper_text_post">
                                 <div>
+
                                 <!-- фотографии к посту -->
                                 <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
                                     
@@ -23,36 +25,38 @@
                                         </div>
                                     </template>
                                 </div>
+                                <!-- ------ -->
 
-                                    <p class="text_post">{{ getSelectNotice.postText }}</p>
+                            <p class="text_post">{{ getSelectNotice.postText }}</p>
+                        <!-- ----- -->
 
+                                    <!-- комент -->
                                     <div class="wrapper_message_user">
                                         <div class="message_name_user">
                                             <div class="dialog_ava_user">
-                                                <img :src="loadAva(getSelectNotice.ava_addressee)" alt="ava">
+                                                <img :src="loadAva(getSelectNotice.ava_addressee)" alt="ava" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                                             </div>
-                                            <p class="message_name">
+                                            <p class="message_name" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                                                 {{ getSelectNotice.name_addressee + " " + getSelectNotice.surname_addressee }}
                                             </p>
                                         </div>
-                                        <!-- <div class="message_time">
-                                            <p>{{ getSelectNotice.date.slice(0, 10) }}</p>
-                                        </div> -->
                                     </div>
 
                                     <div class="message_text">
                                         <p>
                                             {{  getSelectNotice.comment_post_text }}
                                         </p>
+                                        <!-- ---- -->
 
+                                        <!-- ответ на комент -->
                                         <div class="wrapper_under_comment">
                                             <div class="wrapper_block_under_comment_user">
                                                 <div class="wrapper_under_comment_user">
                                                     <div class="under_comment_name_user">
                                                         <div class="under_comment_ava_user">
-                                                            <img :src="loadAva(getSelectNotice.ava)" alt="ava">
+                                                            <img @click="$emit('getUserNotice', getSelectNotice.userID)" :src="loadAva(getSelectNotice.ava)" alt="ava">
                                                         </div>
-                                                        <p class="under_comment_name">{{ getSelectNotice.name + " " +
+                                                        <p class="under_comment_name" @click="$emit('getUserNotice', getSelectNotice.userID)">{{ getSelectNotice.name + " " +
                                                             getSelectNotice.surname }}</p>
                                                     </div>
                                                     <div class="under_comment_time">
@@ -66,6 +70,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- ----- -->
 
                                     </div>
                                 </div>
@@ -77,12 +82,12 @@
                     <!-- уведомление о коммениатрии к посту -->
                     <template v-else-if="getSelectNotice.comment_post_text">
                         <div class="wrapper_ava_posts">
-                            <img class="ava_posts" alt="ava" ref="img" :src="loadAva(getSelectNotice.ava_addressee)">
+                            <img class="ava_posts" alt="ava" ref="img" :src="loadAva(getSelectNotice.ava_addressee)" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                         </div>
 
                         <div class="wrapper_post_user">
                             <div class="wrapper_post_name">
-                                <p class="post_name">
+                                <p class="post_name" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                                     {{ getSelectNotice.name_addressee + " " + getSelectNotice.surname_addressee }}
                                 </p>
                             </div>
@@ -105,12 +110,13 @@
 
                                     <div class="wrapper_message_user">
                                         <div class="message_name_user">
-                                            <div class="dialog_ava_user"
-                                                @click="$router.push({ name: 'mypage', params: { id: getSelectNotice.userID } })">
-                                                <img :src="loadAva(getSelectNotice.ava)" alt="ava">
+                                            <div class="dialog_ava_user">
+                                                <img 
+                                                    @click="$emit('getUserNotice', getSelectNotice.userID)" 
+                                                    :src="loadAva(getSelectNotice.ava)" alt="ava">
                                             </div>
                                             <p class="message_name"
-                                                @click="$router.push({ name: 'mypage', params: { id: getSelectNotice.userID } })">
+                                                @click="$emit('getUserNotice', getSelectNotice.userID)">
                                                 {{ getSelectNotice.name + " " + getSelectNotice.surname }}
                                             </p>
                                         </div>
@@ -136,14 +142,14 @@
                         <template v-if="getSelectNotice.text_notice === 'написал что то на Вашей стене'">
                             <div class="wrapper_ava_posts">
                                 <img class="ava_posts" alt="ava" ref="img" 
-                                @click="$router.push({ name: 'mypage', params: { id: getSelectNotice.userID } })"
-                                :src="loadAva(getSelectNotice.ava)">
+                                    @click="$emit('getUserNotice', getSelectNotice.userID)"
+                                    :src="loadAva(getSelectNotice.ava)">
                             </div>
                             <div class="wrapper_post_user">
 
                                 <div class="wrapper_post_name">
                                     <p class="post_name"
-                                        @click="$router.push({ name: 'mypage', params: { id: getSelectNotice.userID } })">
+                                        @click="$emit('getUserNotice', getSelectNotice.userID)">
                                         {{ getSelectNotice.name + " " + getSelectNotice.surname }}
                                     </p>
                                 </div>
@@ -184,12 +190,17 @@
 
                         <template v-else-if="getSelectNotice.text_notice === 'отметил Вашу запись'">
                             <div class="wrapper_ava_posts">
-                                <img class="ava_posts" alt="ava" ref="img" :src="loadAva(getSelectNotice.ava_addressee)">
+                                <img class="ava_posts" 
+                                alt="ava" 
+                                ref="img" 
+                                @click="$emit('getUserNotice', getSelectNotice.userID_addressee)" 
+                                :src="loadAva(getSelectNotice.ava_addressee)">
                             </div>
                             <div class="wrapper_post_user">
                                 <div class="wrapper_post_name">
-                                    <p class="post_name">
-                                        {{ getSelectNotice.name + " " + getSelectNotice.surname }}
+                                    <p class="post_name"
+                                        @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
+                                        {{ getSelectNotice.name_addressee + " " + getSelectNotice.surname_addressee }}
                                     </p>
                                 </div>
 
@@ -228,12 +239,14 @@
                     <!-- уведомление о новом комментарии к фотографии-->
                     <template v-else-if="getSelectNotice.comment_photo_text">
                         <div class="wrapper_ava_posts">
-                            <img class="ava_posts" alt="ava" ref="img" :src="loadAva(getSelectNotice.ava_addressee)">
+                            <img class="ava_posts" alt="ava" ref="img" 
+                                :src="loadAva(getSelectNotice.ava_addressee)"
+                                @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                         </div>
 
                         <div class="wrapper_post_user">
                             <div class="wrapper_post_name">
-                                <p class="post_name">
+                                <p class="post_name" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                                     {{ getSelectNotice.name_addressee + " " + getSelectNotice.surname_addressee }}
                                 </p>
                             </div>
@@ -248,11 +261,11 @@
                                     <div class="wrapper_message_user">
                                         <div class="message_name_user">
                                             <div class="dialog_ava_user"
-                                                @click="$router.push({ name: 'mypage', params: { id: getSelectNotice.userID } })">
+                                                @click="$emit('getUserNotice', getSelectNotice.userID)">
                                                 <img :src="loadAva(getSelectNotice.ava)" alt="ava">
                                             </div>
                                             <p class="message_name"
-                                                @click="$router.push({ name: 'mypage', params: { id: getSelectNotice.userID } })">
+                                                @click="$emit('getUserNotice', getSelectNotice.userID)">
                                                 {{ getSelectNotice.name + " " + getSelectNotice.surname }}
                                             </p>
                                         </div>
@@ -274,19 +287,22 @@
                     <!-- уведомление о новом лайке фотографии-->
                     <template v-else-if="getSelectNotice.photo_name">
                         <div class="wrapper_ava_posts">
-                            <img class="ava_posts" alt="ava" ref="img" :src="loadAva(getSelectNotice.ava_addressee)">
+                            <img class="ava_posts"  alt="ava" ref="img" 
+                                :src="loadAva(getSelectNotice.ava_addressee)"
+                                @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                         </div>
 
                         <div class="wrapper_post_user">
                             <div class="wrapper_post_name">
-                                <p class="post_name">
+                                <p class="post_name" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                                     {{ getSelectNotice.name_addressee + " " + getSelectNotice.surname_addressee }}
                                 </p>
                             </div>
 
                             <div class="wrapper_text_post">
                                 <div class="text_post">
-                                    <img class="photo_post" :src="myPhotos(getSelectNotice.photo_name)"
+                                    <img class="photo_post" 
+                                        :src="myPhotos(getSelectNotice.photo_name)"
                                         :alt="'photo' + getSelectNotice.id">
                                 </div>
                             </div>
@@ -306,15 +322,7 @@ import { mapActions, mapGetters, mapMutations } from "vuex";
 export default {
     name: "NoticeOneUser",
     components: { CloseModal },
-
-    // props: {
-    //     notice: {
-    //         type: Object,
-    //         default: function () {
-    //     return {}
-    //   } 
-    //     }
-    // },
+    emits:['getUserNotice'],
 
     mounted() {
         if(this.getSelectNotice.show_notice === 0) {
@@ -325,7 +333,8 @@ export default {
     methods: {
         ...mapMutations({
             setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
-            setIsShowModalWindowOneNotice: "noticeStore/setIsShowModalWindowOneNotice"
+            setIsShowModalWindowOneNotice: "noticeStore/setIsShowModalWindowOneNotice",
+            setPhotosPostNotice: "noticeStore/setPhotosPostNotice"
         }),
 
         ...mapActions({
@@ -351,6 +360,11 @@ export default {
 
         moreTextPost(getSelectNotice) {
             getSelectNotice.isFullText = true;
+        },
+
+        closeModalWindowOneNotice() {
+            this.setIsShowModalWindowOneNotice(false);
+            this.setPhotosPostNotice([]);
         }
     },
 
@@ -462,6 +476,7 @@ export default {
 
 .text_post {
     word-break: break-word;
+    padding-top: 10px;
 }
 
 .more_text_post {
@@ -558,7 +573,6 @@ export default {
     height: inherit;
     -o-object-fit: cover;
     object-fit: cover;
-    cursor: pointer;
 }
 
 .size_photo_1 {
@@ -603,7 +617,6 @@ export default {
 
 .message_text p {
     word-break: break-word;
-    cursor: pointer;
 }
 
 .dialog_ava_user img {
@@ -657,6 +670,5 @@ wrapper_under_comment {
 
 .under_comment_text p {
     word-break: break-word;
-    cursor: pointer;
 }
 </style>

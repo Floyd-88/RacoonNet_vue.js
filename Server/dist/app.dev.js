@@ -676,12 +676,37 @@ router["delete"]('/dataBase_delete', authenticateJWT, function (req, res) {
     posts.remove_post_likes_DB(req.body.postID, function (err) {
       if (err) return res.status(500).send('При удалении лайков поста возникли проблемы' + " " + err);
       posts.remove_post_DB(req.body.postID, function (err) {
-        if (err) return res.status(500).send('Error on the server' + " " + err); //удаление уведомления о новом посте
+        if (err) return res.status(500).send('Error on the server' + " " + err); //удаление фото из БД в случае если пост с фото создан другим пользователем  
 
-        console.log(req.body.authorPost);
-        console.log(tokenID);
-        console.log(req.body.postID);
+        if (req.body.authorPost !== req.body.pageID && req.body.photos === "1") {
+          posts.post_photos_DB(req.body.postID, function (err, photosArray) {
+            if (err) return res.status(500).send('При получении фотографий из поста произошла ошибка' + " " + err);
+            photosArray.forEach(function (photo) {
+              photos.remove_photo_likes([photo.id], function (err) {
+                // if (err) return res.status(500).send('Ошибка на сервере при удалении лайков' + " " + err);
+                if (err) console.log(err);
+                photos.remove_photo([photo.id], function (err) {
+                  // if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err);
+                  if (err) console.log(err); //удаляем уведомление о лайке фото и комментарие
+
+                  notice.delete_notice_photo_DB([photo.id], function (err) {
+                    // if (err) return res.status(500).send('При удалении уведомления о лайке и комментарие произошла ошибка' + " " + err);
+                    if (err) console.log(err); //удаляем фото из папки на сервере
+
+                    fs.unlink("../src/assets/photo/".concat(photo.photo_name), function (err) {
+                      // if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее' + " " + err);
+                      if (err) console.log(err);
+                    });
+                  });
+                });
+              });
+            });
+          });
+        } //удаление уведомления о новом посте
+
+
         notice.delete_notice_post_DB([req.body.postID], function (err) {
+          console.log('dsds');
           if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
         });
         res.status(200).send("пост удален");
@@ -1050,7 +1075,7 @@ router["delete"]('/remove_photo', authenticateJWT, function (req, res) {
     });
     photos.remove_photo_likes([req.query.idPhoto], function (err) {
       if (err) return res.status(500).send('Ошибка на сервере при удалении лайков' + " " + err);
-      photos.remove_photo([req.query.idPhoto, tokenID], function (err) {
+      photos.remove_photo([req.query.idPhoto], function (err) {
         if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err); //удаляем уведомление о лайке фото и комментарие
 
         notice.delete_notice_photo_DB([req.query.idPhoto], function (err) {
@@ -1068,7 +1093,7 @@ router.put('/remove_photo_post', authenticateJWT, function (req, res) {
   tokenID = req.tokenID; //id из сохраненного токена 
 
   if (userID === tokenID) {
-    photos.remove_photo_post([req.body.idPhoto, tokenID], function (err) {
+    photos.remove_photo_post([req.body.idPhoto], function (err) {
       if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась из поста' + " " + err);
       res.status(200).send("Фотография удалена из поста");
       ;

@@ -57,6 +57,8 @@ export default {
     name: "WriteComments",
     components: { UIbtn },
 
+    emits: ['notShowWriteUnderComments', 'showComments'],
+
     props: {
         post: {
             type: Object,
@@ -118,6 +120,7 @@ export default {
             this.$emit("showComments", 1);
             this.commentText = "";
             this.v$.commentText.$reset();
+            this.$emit("notShowWriteUnderComments")
         },
 
         clickWriteUnderCommentPost() {
@@ -130,6 +133,7 @@ export default {
                 author_comment_comment: this.comment.author_comment_comment, 
                 comment_comment_text: this.comment.comment_comment_text,
             });
+            this.$emit("notShowWriteUnderComments")
             this.underCommentText = "";
             this.v$.underCommentText.$reset()
         },

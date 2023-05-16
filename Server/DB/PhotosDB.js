@@ -79,7 +79,7 @@ class PhotosDB {
         }
         // удаление фотографии
     remove_photo(photo, callback) {
-        return this.connection.execute(`DELETE from photos WHERE id = ? and userID = ?`, photo, (err) => {
+        return this.connection.execute(`DELETE from photos WHERE id = ?`, photo, (err) => {
             callback(err);
         });
     }

@@ -9,7 +9,7 @@
                     <div class="wrapper_message_user_content">
                         <div class="message_user_ava">
                             <img class="ava_posts" :src="loadAva(notice.ava)" alt="ava"
-                                @click="$router.push({ name: 'mypage', params: { id: `${notice.userID}` } })">
+                                @click="getUserNotice(notice.userID)">
                         </div>
                         <div class="message_user_content">
                             <div class="message_user_name">
@@ -22,10 +22,10 @@
                                     </UIbtn>
                                 </div>
                             </div>
-                            <div class="message_user_text" @click="showModalWindowOneNotice(notice)">
+                            <div class="message_user_text" :class="{'active_message_user_text': notice.show_notice === 0}" @click="showModalWindowOneNotice(notice)">
                                 <p>
                                     <span class="message_user_text_name"
-                                        @click.stop="$router.push({ name: 'mypage', params: { id: `${notice.userID}` } })">
+                                        @click.stop="getUserNotice(notice.userID)">
                                         {{ `${notice.name} ${notice.surname}` }}
                                     </span>
                                     {{ (notice.selectedGender === "woman") ? (notice.text_notice.split(" ")[0] + 'a') + " "
@@ -61,7 +61,7 @@
         </div>
     </template>
     <UImodal v-if="getIsShowModalWindowOneNotice">
-        <NoticeOneUser />
+        <NoticeOneUser @getUserNotice="getUserNotice"/>
     </UImodal>
 </template>
 
@@ -78,7 +78,9 @@ export default {
             setIsShowModalWindowNotice: "noticeStore/setIsShowModalWindowNotice",
             setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
             setIsShowModalWindowOneNotice: "noticeStore/setIsShowModalWindowOneNotice",
-            setSelectNotice: "noticeStore/setSelectNotice"
+            setSelectNotice: "noticeStore/setSelectNotice",
+
+
         }),
 
         ...mapActions({
@@ -95,7 +97,7 @@ export default {
         },
 
         showModalWindowOneNotice(notice) {
-            if(notice.text_notice !== "пригласил Вас в друзья") {
+            if(notice.text_notice !== "пригласил Вас в друзья" && notice.text_notice !== "принял Вашу заявку в друзья") {
 
                 this.setIsShowModalWindowOneNotice(true);
                 this.setSelectNotice(notice);
@@ -104,6 +106,12 @@ export default {
                 }
             }
            
+        },
+
+        getUserNotice(notice) {
+            this.setIsShowModalWindowNotice(false);
+            this.setIsShowModalWindowOneNotice(false);
+            this.$router.push({ name: 'mypage', params: { id: `${notice}` } });
         }
     }
     ,
@@ -186,6 +194,10 @@ export default {
     padding: 5px 5px 5px 5px;
     margin-bottom: 10px;
     cursor: pointer;
+}
+
+.active_message_user_text {
+    background: #ddffe6b3;
 }
 
 .message_user_text_name {

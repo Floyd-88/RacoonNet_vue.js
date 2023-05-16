@@ -53,6 +53,7 @@ class NoticeDB {
         (SELECT users.name FROM users LEFT JOIN notice ON users.userID = IFNULL(notice.user_id_addressee, notice.user_comments_comment_addressee) WHERE notice.id = N.id) as name_addressee,
         (SELECT users.surname FROM users LEFT JOIN notice ON users.userID = IFNULL(notice.user_id_addressee, notice.user_comments_comment_addressee) WHERE notice.id = N.id) as surname_addressee,
         (SELECT users.ava FROM users LEFT JOIN notice ON users.userID = IFNULL(notice.user_id_addressee, notice.user_comments_comment_addressee) WHERE notice.id = N.id) as ava_addressee,
+        (SELECT users.userID FROM users LEFT JOIN notice ON users.userID = IFNULL(notice.user_id_addressee, notice.user_comments_comment_addressee) WHERE notice.id = N.id) as userID_addressee,
         U.selectedGender,
         P.postText,
         P.photos,

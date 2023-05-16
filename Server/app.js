@@ -59,7 +59,9 @@ const messageValidate = require('./validate/messageValidate');
 const feedBackUser = require('./validate/feedBackUser');
 const searchNewFriendsValidate = require('./validate/searchNewFriendsValidate');
 
-const { resolve } = require('path');
+const {
+    resolve
+} = require('path');
 
 
 const app = express();
@@ -373,7 +375,9 @@ router.post('/refresh', (req, res) => {
                     expiresIn: 60 * 60
                 },
             );
-            res.json({ token });
+            res.json({
+                token
+            });
         });
     } else {
         return res.status(400).send("refresh-token не найден");
@@ -794,16 +798,47 @@ router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
             posts.remove_post_DB(req.body.postID, (err) => {
                 if (err) return res.status(500).send('Error on the server' + " " + err);
 
-                //удаление уведомления о новом посте
-                console.log(req.body.authorPost);
-                console.log(tokenID);
-                console.log(req.body.postID);
+                //удаление фото из БД в случае если пост с фото создан другим пользователем  
+                if (req.body.authorPost !== req.body.pageID && req.body.photos === "1") {
 
+                    posts.post_photos_DB(req.body.postID, (err, photosArray) => {
+                        if (err) return res.status(500).send('При получении фотографий из поста произошла ошибка' + " " + err);
+
+                        photosArray.forEach(photo => {
+
+                            photos.remove_photo_likes([photo.id], (err) => {
+                                // if (err) return res.status(500).send('Ошибка на сервере при удалении лайков' + " " + err);
+                                if (err) console.log(err)
+
+                                photos.remove_photo([
+                                    photo.id
+                                ], (err) => {
+                                    // if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err);
+                                    if (err) console.log(err)
+
+                                    //удаляем уведомление о лайке фото и комментарие
+                                    notice.delete_notice_photo_DB([photo.id], (err) => {
+                                        // if (err) return res.status(500).send('При удалении уведомления о лайке и комментарие произошла ошибка' + " " + err);
+                                        if (err) console.log(err)
+
+
+                                        //удаляем фото из папки на сервере
+                                        fs.unlink(`../src/assets/photo/${photo.photo_name}`, (err) => {
+                                            // if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее' + " " + err);
+                                            if (err) console.log(err)
+                                        });
+                                    })
+                                })
+                            })
+                        })
+
+                    })
+                }
+                //удаление уведомления о новом посте
                 notice.delete_notice_post_DB([req.body.postID], (err) => {
+                    console.log('dsds')
                     if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
                 })
-
-
                 res.status(200).send("пост удален");
             });
 
@@ -1238,8 +1273,7 @@ router.delete('/remove_photo', authenticateJWT, function(req, res) {
             if (err) return res.status(500).send('Ошибка на сервере при удалении лайков' + " " + err);
 
             photos.remove_photo([
-                req.query.idPhoto,
-                tokenID,
+                req.query.idPhoto
             ], (err) => {
                 if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err);
 
@@ -1260,8 +1294,7 @@ router.put('/remove_photo_post', authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
     if (userID === tokenID) {
         photos.remove_photo_post([
-            req.body.idPhoto,
-            tokenID,
+            req.body.idPhoto
         ], (err) => {
             if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась из поста' + " " + err);
             res.status(200).send("Фотография удалена из поста");;
@@ -1531,7 +1564,11 @@ router.get('/user_dialogs', authenticateJWT, function(req, res) {
 
     if (tokenID) {
         // Вывод диалогов пользователя
-        messages.get_all_conversation_DB({ tokenID, _count: req.query._count, _limit: req.query._limit }, (err, dialogs) => {
+        messages.get_all_conversation_DB({
+            tokenID,
+            _count: req.query._count,
+            _limit: req.query._limit
+        }, (err, dialogs) => {
             if (err) return res.status(500).send('При получении диалогов из БД произошла ошибка:' + ' ' + err);
 
             //определяем количство непрочитанных сообщений для адресата

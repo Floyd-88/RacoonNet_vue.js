@@ -217,7 +217,8 @@ export const postsMyPageStore = {
             let paramsBody = {
                 postID: state.id,
                 authorPost: post.authorPost,
-                pageID: getters.getUser.userID
+                pageID: getters.getUser.userID,
+                photos: post.photos
             }
             await axios.delete('http://localhost:8000/dataBase_delete', {
                     data: paramsBody

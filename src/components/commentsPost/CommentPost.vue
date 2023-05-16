@@ -35,7 +35,10 @@
                 
                 <div :ref="'underComment' + comment.id">
                     <div class="wrapper_under_write_comments" v-show="comment.isShowWriteUnderComment">
-                        <WriteComments :comment="comment" :name="name"/>
+                        <WriteComments 
+                            :comment="comment" 
+                            :name="name" 
+                            @notShowWriteUnderComments="notShowWriteUnderComments(comment)"/>
                     </div>
                 </div>
                

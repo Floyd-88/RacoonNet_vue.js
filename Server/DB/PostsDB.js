@@ -240,5 +240,12 @@ class PostsDB {
         })
     }
 
+    //получаем фотографии одного поста
+    post_photos_DB(postID, callback) {
+        return this.connection.execute(`SELECT id, photo_name FROM photos WHERE post_id_photo = ?`, [postID], (err, photosArray) => {
+            callback(err, photosArray);
+        })
+    }
+
 }
 module.exports = PostsDB;
