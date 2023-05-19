@@ -23,7 +23,7 @@
               </div>
 
               <div class="all_photos">
-                <img class="photo" :src="require(`../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name"
+                <img class="photo" :src="myPhotos(photo.photo_name)" :alt="photo.photo_name"
                   @click="fullSizePhoto({ bool: true, elem: index, id: photo.id })">
               </div>
             </div>
@@ -114,7 +114,15 @@ export default {
       } else {
         return "";
       }
-    }
+    },
+
+    myPhotos(photo) {
+      try {
+        return require(`../assets/photo/${photo}`);
+      } catch(err) {
+        return require(`../assets/ava/ava_1.jpg`);
+      }
+    },
 
   },
 
@@ -194,16 +202,16 @@ export default {
 }
 
 .wrapper_contents_allPhotos {
-  /* width: 740px; */
+  width: 100%;
   display: flex;
   /* padding: 20px; */
 }
 
 .wrapper_preview_allPhotos {
   display: flex;
-  flex-wrap: wrap;
-  /* max-height: 600px; */
-  justify-content: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
 }
 
 .all_photos {
