@@ -135,7 +135,7 @@ class MessagesDB {
                                 END
                                 GROUP BY U.userID
                             ORDER BY last_message DESC) 
-                        ORDER BY case when C.unread = 0 then 1 else 0 end, M.id  DESC LIMIT ${body._count}, ${body._limit}`, (err, dialogs) => {
+                        ORDER BY  M.id  DESC LIMIT ${body._count}, ${body._limit}`, (err, dialogs) => {
             callback(err, dialogs)
         })
     }

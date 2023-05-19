@@ -7,7 +7,7 @@
       <button class="link" @click="goNews()"> Новости </button>
     </div>
     <div class="wrapper_nav_link">
-      <button class="link" @click="$router.push('/message')">Сообщения</button>
+      <button class="link" @click="goMessage()">Сообщения</button>
       <p :class="{'new_message': newMessage}"></p>
     </div>
     <div class="wrapper_nav_link">
@@ -40,6 +40,7 @@ export default {
     ...mapActions({
       loadUser: "authorizationStore/loadUser",
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
+      LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
     }),
 
     ...mapMutations({
@@ -49,6 +50,9 @@ export default {
       setCountFriendsNull: "friendsStore/setCountFriendsNull",
       setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter",
       setIsFriendShow: "friendsStore/setIsFriendShow", 
+      setCountDialogsNull: "messageStore/setCountDialogsNull",
+      setArrayDialogs: "messageStore/setArrayDialogs",
+      setArrayMessages: "messageStore/setArrayMessages",
     }),
 
     goMyPage() {
@@ -73,7 +77,14 @@ export default {
             this.$router.push({name: 'friendspage', query: {id: this.userID} });
           })
         }
+    },
 
+    goMessage() {
+      // this.setCountDialogsNull();
+      // this.setArrayDialogs([]);
+      // this.setArrayMessages([]);
+      // this.LOAD_DIALOGS();
+      this.$router.push('/message');
     }
 
   },

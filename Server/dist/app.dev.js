@@ -1308,7 +1308,8 @@ router.get('/user_dialogs', authenticateJWT, function (req, res) {
       _count: req.query._count,
       _limit: req.query._limit
     }, function (err, dialogs) {
-      if (err) return res.status(500).send('При получении диалогов из БД произошла ошибка:' + ' ' + err); //определяем количство непрочитанных сообщений для адресата
+      if (err) return res.status(500).send('При получении диалогов из БД произошла ошибка:' + ' ' + err);
+      console.log(dialogs); //определяем количство непрочитанных сообщений для адресата
 
       var newDialogs = dialogs.map(function (dialog) {
         if (dialog.sender === tokenID) {

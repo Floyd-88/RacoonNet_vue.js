@@ -85,7 +85,7 @@ class PhotosDB {
     }
 
     remove_photo_post(photo, callback) {
-        return this.connection.execute(`UPDATE photos SET post_id_photo=0 WHERE id = ? and userID = ?`, photo, (err) => {
+        return this.connection.execute(`UPDATE photos SET post_id_photo=0 WHERE id = ?`, photo, (err) => {
             callback(err);
         });
     }

@@ -1570,8 +1570,8 @@ router.get('/user_dialogs', authenticateJWT, function(req, res) {
             _limit: req.query._limit
         }, (err, dialogs) => {
             if (err) return res.status(500).send('При получении диалогов из БД произошла ошибка:' + ' ' + err);
-
-            //определяем количство непрочитанных сообщений для адресата
+            console.log(dialogs)
+                //определяем количство непрочитанных сообщений для адресата
             let newDialogs = dialogs.map((dialog) => {
                 if (dialog.sender === tokenID) {
                     dialog.unread = 0;

@@ -127,7 +127,8 @@ export const messageStore = {
                         }
                     })
                     .then(function(resp) {
-                        commit("setArrayDialogs", [...state.arrayDialogs, ...resp.data]);
+                        let dialogs = resp.data.sort((a, b) => b.unread - a.unread)
+                        commit("setArrayDialogs", [...state.arrayDialogs, ...dialogs]);
                         if (resp.data.length > 0) {
                             commit("setCountDialogs", 10);
                         }
@@ -154,6 +155,7 @@ export const messageStore = {
                         })
                         .then(function(resp) {
                             let arrayMessage = resp.data.reverse();
+                            console.log(state.arrayMessages)
                             commit("setArrayMessages", [...arrayMessage, ...state.arrayMessages]);
                             if (resp.data.length > 0) {
                                 commit("setCountMessages", 10);

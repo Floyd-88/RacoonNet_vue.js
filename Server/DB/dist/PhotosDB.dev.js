@@ -79,7 +79,7 @@ function () {
   }, {
     key: "remove_photo_post",
     value: function remove_photo_post(photo, callback) {
-      return this.connection.execute("UPDATE photos SET post_id_photo=0 WHERE id = ? and userID = ?", photo, function (err) {
+      return this.connection.execute("UPDATE photos SET post_id_photo=0 WHERE id = ?", photo, function (err) {
         callback(err);
       });
     } // удаление фотографий перед удалением профиля

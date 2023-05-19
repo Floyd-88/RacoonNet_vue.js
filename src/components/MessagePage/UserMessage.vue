@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import UIbtn from '../UI/UIbtn.vue';
 export default {
     name: "UserMessage",
@@ -76,11 +76,16 @@ export default {
 //   },
 
     methods: {
+        ...mapMutations({setArrayMessages: "messageStore/setArrayMessages"}),
+
         ...mapActions({ 
             DELETE_DIALOGS: "messageStore/DELETE_DIALOGS",
             LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
         }),
+
         openDialogUser(id) {
+        this.setArrayMessages([])
+
             this.$router.push({
                 name: `dialoguser`, 
                 params: {
@@ -88,6 +93,7 @@ export default {
                 }
             })
         },
+
         loadAva(ava) {
             try {
                 return require(`../../assets/photo/${ava}`)
@@ -95,15 +101,19 @@ export default {
                 return require(`../../assets/ava/ava_1.jpg`);
             }
         },
+
         showBtnDelete(dialog) {
             dialog.isShowBtnDelete = true;
         },
+
         notShowBtnDelete(dialog) {
             dialog.isShowBtnDelete = false;
         },
+
         btnDialogDel(dialog) {
             dialog.isDialogDel = !dialog.isDialogDel;
         },
+
         dialogText(value) {
             let doc = new DOMParser().parseFromString(value, "text/html");
             return doc.documentElement.textContent;

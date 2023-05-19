@@ -93,8 +93,11 @@ export default {
     ...mapMutations({
       setArrayMessages: "messageStore/setArrayMessages",
       setArrayDialogs: "messageStore/setArrayDialogs",
-      setIsNewMessageNotify: "messageStore/setIsNewMessageNotify"
+      setIsNewMessageNotify: "messageStore/setIsNewMessageNotify",
+      setCountFriendsNull: "friendsStore/setCountFriendsNull",
+      setUsersMyFriends: "friendsStore/setUsersMyFriends"
     }),
+
     ...mapActions({
       logout: "authorizationStore/logout",
       loadUser: "authorizationStore/loadUser",
@@ -124,10 +127,16 @@ export default {
 
 
   watch: {
+    
     $route() {
       const id = this.$route.params.id;
+
       if (id) {
         this.loadUser({ id })
+        .then(() => {
+          this.setCountFriendsNull();
+          this.setUsersMyFriends([]);
+        })
           .then(() => {
             this.CHECK_REQUEST_FRIEND(id);
             if(this.getCountFriends === 0) {

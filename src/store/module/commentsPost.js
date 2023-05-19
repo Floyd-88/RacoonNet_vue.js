@@ -69,11 +69,8 @@ export const commentsPost = {
             let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
             newCommentsPost.date = await date,
 
-                console.log(newCommentsPost)
-
-            await axios.post('http://localhost:8000/load_comments_post.js', newCommentsPost)
+                await axios.post('http://localhost:8000/load_comments_post.js', newCommentsPost)
                 .then(function(response) {
-                    console.log(response.data);
                     commit("setCommentsArray", [response.data, ...state.commentsArray]);
 
                     // commit("setAddPosts", response.data);
@@ -120,6 +117,7 @@ export const commentsPost = {
                         postID: id
                     }
                 }).then((response) => {
+                    console.log(response.data)
                     if (response.data.length > 0) {
                         commit("setCommentsArray", [...state.commentsArray, ...response.data]);
                     }
@@ -168,6 +166,7 @@ export const commentsPost = {
                     }
                 }).then((response) => {
                     if (response.data.length > 0) {
+                        console.log(response.data)
                         commit("setCommentsCommentArray", [...state.commentsCommentArray, ...response.data]);
                     }
                 });

@@ -20,10 +20,10 @@
                         </div>
                     </div>
                     <div class="wrapper_block_info_remove_photo">
-                        <button class="remove_photo" v-if="getUser.is_editProfile" @click="isEditAva = true">
+                        <button class="remove_photo" v-if="getUser.is_editProfile && getUser.userID === currentImg.photo.userID" @click="isEditAva = true">
                             Сделать главной
                         </button>
-                        <button class="remove_photo" v-if="getUser.is_editProfile"
+                        <button class="remove_photo" v-if="getUser.is_editProfile && getUser.userID === currentImg.photo.userID"
                             @click="setModulePhotoRemove(true)">Удалить</button>
                     </div>
                 </div>

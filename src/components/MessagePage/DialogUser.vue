@@ -25,12 +25,13 @@
             <div ref="observer" class="observer"></div>
 
             <div class="wrapper_message_dialog_user" v-for="(message, index) in getArrayMessages" :key="message.id">
-                <div class="dialog_ava_user" :ref="'message'+ message.id" @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
+                <div class="dialog_ava_user" :ref="'message' + message.id"
+                    @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
                     <template v-if="message.sender == $route.params.id">
                         <img :src="pathAva" alt="ava">
                     </template>
                     <template v-else>
-                            <img :src="pathAvaMy" alt="ava">
+                        <img :src="pathAvaMy" alt="ava">
                     </template>
 
                 </div>
@@ -50,9 +51,9 @@
                     <div class="message_text" :class="{ 'active_text_fone': message.isMesssageDel }"
                         @click="showBtnDelete(message, index)">
                         <p>
-                            {{ messageText(message.message)}}
+                            {{ messageText(message.message) }}
                         </p>
-                       
+
                     </div>
                 </div>
             </div>
@@ -63,7 +64,7 @@
                     У вас отстутвует перписка с данным пользователем, но Вы можете начать общение прямо сейчас.
                 </p>
             </div>
-            
+
         </div>
 
         <div class="wrapper_block_write_message">
@@ -94,7 +95,7 @@
 
         </div>
 
-</div>
+    </div>
 </template>
 
 <script>
@@ -122,6 +123,7 @@ export default {
         },
     },
     mounted() {
+        this.setArrayMessages([])
         // this.scrollToElement();
 
         this.id = this.$route.params.id;
@@ -130,11 +132,11 @@ export default {
                 if (this.$refs.scrollToMe) {
             this.$nextTick(function () {
                 this.scrollToElement();
-            })
-        }
+                    })
+                }
             })
 
-        
+
         // this.scrollToElement();
 
         // console.log(this.getArrayMessages)
@@ -143,30 +145,30 @@ export default {
         //     this.setArrayMessages([...this.getArrayMessages, data])
         // });
 
-    //подгрузка новой партии сообщений при скроле страницы
-     const options = {
-      rootMargin: "0px",
-      threshold: 1
-    };
-    const callback = (entries) => {
-      if (entries[0].isIntersecting) {
-        if(this.getArrayMessages.length !== 0) {
-            this.LOAD_MESSAGES_USER(this.id)
-            .then((resp) => {
-                let ref = 'message' + resp.id
-                console.log(resp)
-                let topWriteUnderComment = this.$refs[ref][0].getBoundingClientRect().y;
-                if (this.$refs.scrollToMe) {
-            this.$nextTick(function () {
-                this.scrollToElementUP(topWriteUnderComment);
-            })
-        }
-            })
-        }
-      }
-    };
-    const observer = new IntersectionObserver(callback, options);
-    observer.observe(this.$refs.observer);
+        //подгрузка новой партии сообщений при скроле страницы
+        const options = {
+            rootMargin: "0px",
+            threshold: 1
+        };
+        const callback = (entries) => {
+            if (entries[0].isIntersecting) {
+                if (this.getArrayMessages.length !== 0) {
+                    this.LOAD_MESSAGES_USER(this.id)
+                        .then((resp) => {
+                            let ref = 'message' + resp.id
+                            console.log(resp)
+                            let topWriteUnderComment = this.$refs[ref][0].getBoundingClientRect().y;
+                            if (this.$refs.scrollToMe) {
+                                this.$nextTick(function () {
+                                    this.scrollToElementUP(topWriteUnderComment);
+                                })
+                            }
+                        })
+                }
+            }
+        };
+        const observer = new IntersectionObserver(callback, options);
+        observer.observe(this.$refs.observer);
     },
 
     // updated() {
@@ -178,11 +180,11 @@ export default {
     //     }
     // },
 
-   async unmounted() {
-        if(this.getArrayMessages.length > 0) {
-           this.setCountDialogsNull();
-           this.setArrayDialogs([]);
-            this.LOAD_DIALOGS({isExitMessage: true, convID: this.getArrayMessages[0].conv_id});
+    async unmounted() {
+        if (this.getArrayMessages.length > 0) {
+            this.setCountDialogsNull();
+            this.setArrayDialogs([]);
+            this.LOAD_DIALOGS({ isExitMessage: true, convID: this.getArrayMessages[0].conv_id });
         }
         this.setCountMessagesNull()
         this.setArrayMessages([])
@@ -196,7 +198,7 @@ export default {
             LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
             UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE"
         }),
-        
+
         ...mapMutations({
             setModalWriteMessage: "messageStore/setModalWriteMessage",
             setMessageUser: "messageStore/setMessageUser",
@@ -214,7 +216,7 @@ export default {
             this.WRITE_MESSAGE_USER(this.$route.params.id)
                 .then(() => {
                     this.$nextTick(function () {
-                    this.scrollToElement();
+                        this.scrollToElement();
                     })
                 });
         },
@@ -232,7 +234,7 @@ export default {
                 console.log(err)
             }
         },
-        
+
         //прокрутка сообщений вверх
         scrollToElementUP(top) {
             try {
@@ -304,6 +306,7 @@ export default {
     flex-direction: column;
     height: 80vh;
 }
+
 .wrapper_header_user {
     display: flex;
     border-bottom: 1px solid black;
@@ -312,6 +315,7 @@ export default {
     justify-content: space-between;
     margin-bottom: 20px;
 }
+
 /* .header_btn_back {} */
 .header_btn_back button {
     padding: 6px;
@@ -323,86 +327,105 @@ export default {
     color: whitesmoke;
     border: none;
 }
+
 .wrapper_header_user_name {
     display: flex;
     align-items: center;
 }
+
 .header_ava_user {
     margin-right: 10px;
     cursor: pointer;
 }
+
 .header_ava_user img {
     width: 50px;
     border-radius: 100%;
 }
+
 .header_name_user {
     font-family: fantasy;
     font-size: 20px;
     cursor: pointer;
 }
+
 .wrapper_main_messages {
     flex-grow: 1;
     overflow: auto;
     position: relative;
     /* border: 1px solid; */
 }
+
 .wrapper_message_dialog_user {
     display: flex;
     margin: 0px 15px 25px 10px;
 }
+
 /* .dialog_ava_user {} */
 .dialog_ava_user img {
     width: 40px;
     border-radius: 100%;
     cursor: pointer;
 }
+
 .wrapper_block_message_user {
     margin-left: 10px;
     width: 100%;
 }
+
 .wrapper_message_user {
     display: flex;
     align-items: center;
     margin-bottom: 5px;
 }
+
 .message_name_user {
     margin-right: 10px;
     font-size: 17px;
     font-family: fantasy;
     cursor: pointer;
 }
+
 .message_time {
     font-size: 15px;
 }
+
 .message_text {
     cursor: pointer;
 }
+
 .message_text p {
     word-break: break-word;
 }
+
 .message_btn_delete {
     margin-left: 10px;
 }
+
 .message_btn_delete button {
     height: 20px;
     display: flex;
     align-items: center;
 }
+
 .wrapper_block_write_message {
     display: flex;
     align-items: center;
     margin: 10px;
     flex-shrink: 0;
 }
+
 .wrapper_form_message_name {
     display: flex;
     justify-content: space-around;
     width: 100%;
 }
+
 .wrapper_form_message_input {
     width: 100%;
     margin-bottom: 0px;
 }
+
 .new_message {
     width: 100%;
     min-height: 50px;
@@ -410,12 +433,14 @@ export default {
     border-radius: 5px;
     padding: 5px;
 }
+
 .wrapper_form_message_btn {
     display: flex;
     justify-content: flex-end;
     height: 35px;
     margin: 5px 0px 10px 5px;
 }
+
 .form_message_btn {
     width: 130px;
     height: 100%;
@@ -427,16 +452,20 @@ export default {
     color: white;
     font-family: emoji;
 }
+
 .error-msg {
     color: red;
     font-size: 14px;
 }
+
 .invalid {
     /* border: 1px solid red; */
 }
+
 .active_text_fone {
     background: aliceblue;
 }
+
 .not_read_message {
     background-color: #ddffe6b3;
 }
@@ -452,5 +481,4 @@ export default {
     opacity: .3;
     font-family: fantasy;
     color: dimgray;
-}
-</style>
+}</style>

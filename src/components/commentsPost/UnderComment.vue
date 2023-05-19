@@ -4,9 +4,9 @@
             <div class="wrapper_under_comment_user">
                 <div class="under_comment_name_user">
                     <div class="under_comment_ava_user">
-                        <img :src="pathAva(comment.ava)" alt="ava">
+                        <img :src="pathAva(comment.ava)" alt="ava" @click="$router.push({ name: 'mypage', params: { id: comment.author_comment } })">
                     </div>
-                    <p class="under_comment_name">{{comment.name + " " + comment.surname}}</p>
+                    <p class="under_comment_name" @click="$router.push({ name: 'mypage', params: { id: comment.author_comment } })">{{comment.name + " " + comment.surname}}</p>
                 </div>
                 <div class="under_comment_time">
                     <p>{{ comment.date.slice(0, 10) }}</p>
