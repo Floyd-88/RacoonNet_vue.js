@@ -80,10 +80,10 @@ export default {
     },
 
     goMessage() {
-      // this.setCountDialogsNull();
-      // this.setArrayDialogs([]);
-      // this.setArrayMessages([]);
-      // this.LOAD_DIALOGS();
+      this.setCountDialogsNull();
+      this.setArrayDialogs([]);
+      this.setArrayMessages([]);
+      this.LOAD_DIALOGS();
       this.$router.push('/message');
     }
 

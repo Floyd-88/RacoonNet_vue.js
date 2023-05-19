@@ -21,8 +21,8 @@ class CommentsPostDB {
     }
 
     //получаем комментарии к постам
-    load_comments_DB(id, callback) {
-        return this.connection.query(`SELECT id, name, surname, ava, post_id, comment_post_text, author_comment_id, date FROM comments_post INNER JOIN users ON author_comment_id = userID WHERE user_page_id=?`, id, (err, comments) => {
+    load_comments_DB(params, callback) {
+        return this.connection.query(`SELECT id, name, surname, ava, post_id, comment_post_text, author_comment_id, date FROM comments_post INNER JOIN users ON author_comment_id = userID WHERE user_page_id=? AND post_id IN (?)`, params, (err, comments) => {
             callback(err, comments);
         })
     }
@@ -35,8 +35,8 @@ class CommentsPostDB {
     }
 
     //получаем комментарии к комментарию
-    load_comments_comment_DB(id, callback) {
-        return this.connection.query(`SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date FROM comments_comment INNER JOIN users ON author_comment = userID WHERE user_page=?`, id, (err, comment) => {
+    load_comments_comment_DB(params, callback) {
+        return this.connection.query(`SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date FROM comments_comment INNER JOIN users ON author_comment = userID WHERE user_page=? AND comment_id IN (?)`, params, (err, comment) => {
             callback(err, comment);
         })
     }

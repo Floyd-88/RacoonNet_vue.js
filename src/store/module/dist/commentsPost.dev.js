@@ -172,42 +172,37 @@ var commentsPost = {
       });
     },
     //загрузка комментариев из БД
-    LOAD_COMMENTS_POST: function LOAD_COMMENTS_POST(_ref3, id) {
+    LOAD_COMMENTS_POST: function LOAD_COMMENTS_POST(_ref3, body) {
       var state, commit;
       return regeneratorRuntime.async(function LOAD_COMMENTS_POST$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
               state = _ref3.state, commit = _ref3.commit;
-              _context3.prev = 1;
-              _context3.next = 4;
-              return regeneratorRuntime.awrap(_axios["default"].get('http://localhost:8000/load_comments_post.js', {
-                params: {
-                  postID: id
-                }
-              }).then(function (response) {
-                console.log(response.data);
+              return _context3.abrupt("return", new Promise(function (resolve, reject) {
+                _axios["default"].get('http://localhost:8000/load_comments_post.js', {
+                  params: {
+                    userID: body.userID,
+                    postID: body.postID.slice(body.postID.length - 10, body.postID.length)
+                  }
+                }).then(function (response) {
+                  if (response.data.length > 0) {
+                    commit("setCommentsArray", [].concat(_toConsumableArray(state.commentsArray), _toConsumableArray(response.data)));
+                  }
 
-                if (response.data.length > 0) {
-                  commit("setCommentsArray", [].concat(_toConsumableArray(state.commentsArray), _toConsumableArray(response.data)));
-                }
+                  resolve(response);
+                })["catch"](function (err) {
+                  console.error(err);
+                  reject(err);
+                });
               }));
 
-            case 4:
-              _context3.next = 9;
-              break;
-
-            case 6:
-              _context3.prev = 6;
-              _context3.t0 = _context3["catch"](1);
-              console.error(_context3.t0);
-
-            case 9:
+            case 2:
             case "end":
               return _context3.stop();
           }
         }
-      }, null, null, [[1, 6]]);
+      });
     },
     //загрузка комментариев из БД к конкретному посту
     LOAD_COMMENTS_ONE_POST: function LOAD_COMMENTS_ONE_POST(_ref4, id) {
@@ -251,7 +246,7 @@ var commentsPost = {
       }, null, null, [[1, 6]]);
     },
     //загрузка комментариев к комментариям из БД
-    LOAD_COMMENTS_COMMENT: function LOAD_COMMENTS_COMMENT(_ref5, id) {
+    LOAD_COMMENTS_COMMENT: function LOAD_COMMENTS_COMMENT(_ref5, body) {
       var state, commit;
       return regeneratorRuntime.async(function LOAD_COMMENTS_COMMENT$(_context5) {
         while (1) {
@@ -262,11 +257,11 @@ var commentsPost = {
               _context5.next = 4;
               return regeneratorRuntime.awrap(_axios["default"].get('http://localhost:8000/load_comments_comment.js', {
                 params: {
-                  postID: id
+                  userID: body.userID,
+                  postID: body.postID
                 }
               }).then(function (response) {
                 if (response.data.length > 0) {
-                  console.log(response.data);
                   commit("setCommentsCommentArray", [].concat(_toConsumableArray(state.commentsCommentArray), _toConsumableArray(response.data)));
                 }
               }));

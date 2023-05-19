@@ -120,29 +120,32 @@ export const postsMyPageStore = {
             dispatch,
             getters
         }, id) {
-            try {
-                await axios.get('http://localhost:8000/dataBase.js', {
-                    params: {
-                        _count: state.countPosts,
-                        _limit: state.limitPosts,
-                        userID: id
-                    }
-                }).then((response) => {
-                    if (response.data.length > 0) {
-                        commit("setPosts", [...state.posts, ...response.data]);
-                        commit("setCountPosts", 10);
+            return new Promise((resolve, reject) => {
+                axios.get('http://localhost:8000/dataBase.js', {
+                        params: {
+                            _count: state.countPosts,
+                            _limit: state.limitPosts,
+                            userID: id
+                        }
+                    }).then((response) => {
+                        if (response.data.length > 0) {
+                            commit("setPosts", [...state.posts, ...response.data]);
+                            commit("setCountPosts", 10);
 
-                        response.data.forEach(post => {
-                            if (post.photos === "1") {
-                                dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: getters.getUser.userID });
-                            }
-                        });
-                    }
+                            response.data.forEach(post => {
+                                if (post.photos === "1") {
+                                    dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: getters.getUser.userID });
+                                }
+                            });
+                        }
+                        resolve(response)
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        reject(err)
+                    })
+            })
 
-                });
-            } catch (err) {
-                console.error(err);
-            }
         },
 
         // добавление нового поста на мою страницу

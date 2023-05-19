@@ -64,9 +64,15 @@ export const commentsPost = {
 
     actions: {
         //сохранение комментария к посту в базу данных
-        async SAVE_COMMENTS_POST({ dispatch, commit, state }, newCommentsPost) {
+        async SAVE_COMMENTS_POST({
+            dispatch,
+            commit,
+            state
+        }, newCommentsPost) {
 
-            let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
+            let date = await dispatch("postsMyPageStore/newDate", null, {
+                root: true
+            });
             newCommentsPost.date = await date,
 
                 await axios.post('http://localhost:8000/load_comments_post.js', newCommentsPost)
@@ -84,9 +90,15 @@ export const commentsPost = {
         },
 
         //сохранение комментария к комментарию в базу данных
-        async SAVE_UNDER_COMMENTS_POST({ dispatch, commit, state }, newCommentsComment) {
+        async SAVE_UNDER_COMMENTS_POST({
+            dispatch,
+            commit,
+            state
+        }, newCommentsComment) {
 
-            let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
+            let date = await dispatch("postsMyPageStore/newDate", null, {
+                root: true
+            });
             newCommentsComment.date = await date,
 
                 console.log(newCommentsComment)
@@ -110,21 +122,25 @@ export const commentsPost = {
         async LOAD_COMMENTS_POST({
             state,
             commit
-        }, id) {
-            try {
-                await axios.get('http://localhost:8000/load_comments_post.js', {
-                    params: {
-                        postID: id
-                    }
-                }).then((response) => {
-                    console.log(response.data)
-                    if (response.data.length > 0) {
-                        commit("setCommentsArray", [...state.commentsArray, ...response.data]);
-                    }
-                });
-            } catch (err) {
-                console.error(err);
-            }
+        }, body) {
+            return new Promise((resolve, reject) => {
+
+                axios.get('http://localhost:8000/load_comments_post.js', {
+                        params: {
+                            userID: body.userID,
+                            postID: body.postID.slice((body.postID.length - 10), body.postID.length)
+                        }
+                    }).then((response) => {
+                        if (response.data.length > 0) {
+                            commit("setCommentsArray", [...state.commentsArray, ...response.data]);
+                        }
+                        resolve(response)
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        reject(err)
+                    })
+            })
         },
 
         //загрузка комментариев из БД к конкретному посту
@@ -158,15 +174,15 @@ export const commentsPost = {
         async LOAD_COMMENTS_COMMENT({
             state,
             commit
-        }, id) {
+        }, body) {
             try {
                 await axios.get('http://localhost:8000/load_comments_comment.js', {
                     params: {
-                        postID: id
+                        userID: body.userID,
+                        postID: body.postID
                     }
                 }).then((response) => {
                     if (response.data.length > 0) {
-                        console.log(response.data)
                         commit("setCommentsCommentArray", [...state.commentsCommentArray, ...response.data]);
                     }
                 });
@@ -196,7 +212,9 @@ export const commentsPost = {
         },
 
         //удаление комментария к комментарию
-        async DELETE_COMMENTS_COMMENT({ commit }, paramsComment) {
+        async DELETE_COMMENTS_COMMENT({
+            commit
+        }, paramsComment) {
             try {
                 commit("setRemoveCommentsComment", paramsComment.commentID)
                 await axios.delete('http://localhost:8000/load_comments_comment.js', {
@@ -211,7 +229,9 @@ export const commentsPost = {
         },
 
         //удаление комментария к посту
-        async DELETE_COMMENTS_POST({ commit }, paramsComment) {
+        async DELETE_COMMENTS_POST({
+            commit
+        }, paramsComment) {
             try {
                 commit("setRemoveCommentsPost", paramsComment.commentID)
                 await axios.delete('http://localhost:8000/load_comments_post.js', {
@@ -225,7 +245,9 @@ export const commentsPost = {
 
         },
 
-        async GET_USER_LIKES_POST({ commit }, post) {
+        async GET_USER_LIKES_POST({
+            commit
+        }, post) {
             try {
                 await axios.get('http://localhost:8000/get_users_likes', {
                     params: {

@@ -91,14 +91,20 @@ export default {
         };
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
-                this.loadPostServer(this.$route.params.id);
+                this.loadPostServer(this.$route.params.id)
+                    .then((response) => {
+                        return response.data.map(post => post.id)
+                    })
+                    .then((data) => {
+                        this.LOAD_COMMENTS_POST({userID: this.$route.params.id, postID: data})
+                        .then((response) => {
+                        this.LOAD_COMMENTS_COMMENT({userID: this.$route.params.id, postID: response.data.map(post => post.id)});
+                        })
+                    })
             }
         };
         const observer = new IntersectionObserver(callback, options);
         observer.observe(this.$refs.observer);
-
-        this.LOAD_COMMENTS_POST(this.$route.params.id);
-        this.LOAD_COMMENTS_COMMENT(this.$route.params.id);
     },
 
     beforeUnmount() {

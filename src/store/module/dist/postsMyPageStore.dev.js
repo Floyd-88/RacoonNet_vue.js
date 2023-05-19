@@ -163,44 +163,40 @@ var postsMyPageStore = {
           switch (_context.prev = _context.next) {
             case 0:
               state = _ref2.state, commit = _ref2.commit, dispatch = _ref2.dispatch, getters = _ref2.getters;
-              _context.prev = 1;
-              _context.next = 4;
-              return regeneratorRuntime.awrap(_axios["default"].get('http://localhost:8000/dataBase.js', {
-                params: {
-                  _count: state.countPosts,
-                  _limit: state.limitPosts,
-                  userID: id
-                }
-              }).then(function (response) {
-                if (response.data.length > 0) {
-                  commit("setPosts", [].concat(_toConsumableArray(state.posts), _toConsumableArray(response.data)));
-                  commit("setCountPosts", 10);
-                  response.data.forEach(function (post) {
-                    if (post.photos === "1") {
-                      dispatch("LOAD_POST_PHOTOS", {
-                        postID: post.id,
-                        userID: getters.getUser.userID
-                      });
-                    }
-                  });
-                }
+              return _context.abrupt("return", new Promise(function (resolve, reject) {
+                _axios["default"].get('http://localhost:8000/dataBase.js', {
+                  params: {
+                    _count: state.countPosts,
+                    _limit: state.limitPosts,
+                    userID: id
+                  }
+                }).then(function (response) {
+                  if (response.data.length > 0) {
+                    commit("setPosts", [].concat(_toConsumableArray(state.posts), _toConsumableArray(response.data)));
+                    commit("setCountPosts", 10);
+                    response.data.forEach(function (post) {
+                      if (post.photos === "1") {
+                        dispatch("LOAD_POST_PHOTOS", {
+                          postID: post.id,
+                          userID: getters.getUser.userID
+                        });
+                      }
+                    });
+                  }
+
+                  resolve(response);
+                })["catch"](function (err) {
+                  console.error(err);
+                  reject(err);
+                });
               }));
 
-            case 4:
-              _context.next = 9;
-              break;
-
-            case 6:
-              _context.prev = 6;
-              _context.t0 = _context["catch"](1);
-              console.error(_context.t0);
-
-            case 9:
+            case 2:
             case "end":
               return _context.stop();
           }
         }
-      }, null, null, [[1, 6]]);
+      });
     },
     // добавление нового поста на мою страницу
     addPost: function addPost(_ref3, isPhoto) {

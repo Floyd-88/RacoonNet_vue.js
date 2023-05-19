@@ -922,10 +922,8 @@ router.get('/get_users_likes', authenticateJWT, function(req, res) {
 router.get("/load_comments_post.js", authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
 
-    commentsPost.load_comments_DB([req.query.postID], (err, comments) => {
+    commentsPost.load_comments_DB([req.query.userID, req.query.postID], (err, comments) => {
         if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
-        if (!comments) return res.status(404).send('Комментарии к постам отстутствуют' + " " + err);
-
         res.status(200).json(comments);
     })
 })
@@ -946,13 +944,10 @@ router.get("/load_comments_one_post.js", authenticateJWT, function(req, res) {
 router.get("/load_comments_comment.js", authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
 
-    commentsPost.load_comments_comment_DB([req.query.postID], (err, comments) => {
+    commentsPost.load_comments_comment_DB([req.query.userID, req.query.postID], (err, comments) => {
         if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
-        if (!comments) return res.status(404).send('Комментарии отстутствуют' + " " + err);
-
+        // if (!comments) return res.status(404).send('Комментарии отстутствуют' + " " + err);
         res.status(200).json(comments);
-
-
     })
 })
 
