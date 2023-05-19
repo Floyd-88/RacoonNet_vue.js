@@ -5,23 +5,27 @@
     <div class="main">
 
       <!-- header -->
-      <HeaderGallery/>
+      <HeaderGallery />
 
       <!-- выбрать категории для фильтрации -->
-     <CategoryFilter/>
+      <CategoryFilter />
 
       <!-- фотографии -->
       <div class="wrapper_contents_myPhoto">
         <div class="wrapper_contents_allPhotos">
           <div class="wrapper_preview_allPhotos">
-            <div class="all_photos" id="preview_myPhoto"
-              v-for="(photo, index) in getArrayFilterPhotos.slice(0, getLimitAllPhoto)" :key="index">
-              <div>
-                <p>{{ `дата ${photo.date}` }}</p>
-              </div>
-              <img class="photo" :src="require(`../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name"
-                @click="fullSizePhoto({ bool: true, elem: index, id: photo.id })">
+            <div id="preview_myPhoto" v-for="(photo, index) in getArrayFilterPhotos.slice(0, getLimitAllPhoto)"
+              :key="index" :class="{ 'active_all_photos': photo.newDate }">
 
+              <div class="wrapper_date_load_photos">
+                <p class="date_load_photos">{{ dateLoadPhotos(photo, index) }}
+                </p>
+              </div>
+
+              <div class="all_photos">
+                <img class="photo" :src="require(`../assets/photo/${photo.photo_name}`)" :alt="photo.photo_name"
+                  @click="fullSizePhoto({ bool: true, elem: index, id: photo.id })">
+              </div>
             </div>
 
             <!--при прокрутки страницы до данного элемента - подгружать следующие фотографии -->
@@ -29,7 +33,7 @@
           </div>
         </div>
       </div>
-      
+
     </div>
   </div>
 
@@ -44,7 +48,6 @@
       <SliderPhoto />
     </UImodal>
   </div>
-
 </template>
 
 <script>
@@ -61,7 +64,7 @@ export default {
 
   async mounted() {
     this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
-    this.loadUser({id: JSON.parse(localStorage.getItem('user')).userID})
+    this.loadUser({ id: JSON.parse(localStorage.getItem('user')).userID })
 
 
     // this.setFilterPhoto(this.getAllPhotosMyPage);
@@ -100,6 +103,19 @@ export default {
       closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
     }),
 
+    dateLoadPhotos(photo, index) {
+      if (photo.date.slice(0, 7) !== this.getArrayFilterPhotos[(index - 1 === -1) ? 0 : index - 1].date.slice(0, 7) || this.getArrayFilterPhotos[0].id === photo.id) {
+        photo.newDate = true;
+
+        return new Date(photo.date).toLocaleDateString('ru-RU', {
+        month: 'long',
+        year: 'numeric',
+    })
+      } else {
+        return "";
+      }
+    }
+
   },
 
   computed: {
@@ -117,6 +133,13 @@ export default {
 
       getArrayFilterPhotos: "galleryStore/getArrayFilterPhotos"
     }),
+
+    // datePhotoLoad() {
+    //   return this.getArrayFilterPhotos.map((photo) => {
+
+    //   })
+    // }
+
   },
 }
 </script>
@@ -184,8 +207,8 @@ export default {
 }
 
 .all_photos {
-  width: 150px;
-  height: 150px;
+  width: 250px;
+  height: 250px;
   margin: 10px;
   border-radius: 8px;
   overflow: hidden;
@@ -214,5 +237,20 @@ export default {
   top: 0;
   right: 0;
   cursor: auto;
+}
+
+.wrapper_date_load_photos {
+  background: #0197d617;
+    width: 100%;
+}
+
+.date_load_photos {
+  font-size: 15px;
+    font-family: fantasy;
+    padding-left: 10px;
+}
+
+.active_all_photos {
+  display: contents;
 }
 </style>
