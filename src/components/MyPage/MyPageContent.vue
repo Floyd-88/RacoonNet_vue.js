@@ -13,8 +13,10 @@
 
             <!--при прокрутки страницы до данного элемента - подгружать следующие посты -->
             <div ref="observer" class="observer"></div>
+            <template v-if="isUIloadMoreContent">
+            <UIloadMoreContent/>
+            </template>
         </div>
-        <!-- <p>Загрузить еще</p> -->
 
     </div>
 
@@ -40,8 +42,16 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import MyFriendsBlock from "./MyFriendsBlock.vue";
+import UIloadMoreContent from "../UI/UIloadMoreContent.vue";
 export default {
     name: "MyPageContent",
+
+    data() {
+        return {
+            isUIloadMoreContent: false
+        }
+    },
+
     methods: {
         ...mapActions({
             loadPostServer: "postsMyPageStore/loadPostServer",
@@ -91,8 +101,13 @@ export default {
         };
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
+                this.isUIloadMoreContent = true; //показывать что идет загрузка
+
                 this.loadPostServer(this.$route.params.id)
                     .then((response) => {
+                        if(response.data.length === 0) {
+                            this.isUIloadMoreContent = false;
+                        }
                         return response.data.map(post => post.id)
                     })
                     .then((data) => {
@@ -101,6 +116,8 @@ export default {
                         this.LOAD_COMMENTS_COMMENT({userID: this.$route.params.id, postID: response.data.map(post => post.id)});
                         })
                     })
+            } else {
+                this.isUIloadMoreContent = false; //отключать загрузку
             }
         };
         const observer = new IntersectionObserver(callback, options);
@@ -113,7 +130,7 @@ export default {
         // this.setPhotosPostsArray([]);
     },
 
-    components: { MyFriendsBlock }
+    components: { MyFriendsBlock, UIloadMoreContent }
 }
 </script>
   
@@ -141,7 +158,7 @@ export default {
 }
 
 .observer {
-    border: 1px solid;
+    /* border: 1px solid; */
 }
 
 

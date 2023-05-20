@@ -71,9 +71,7 @@
     <!-- комментарии к посту -->
     <CommentsPost :post="post" />
     <!-- ------------------ -->
-
-
-
+    
   </div>
 
   <template v-if="getModulePost === 'edit'">

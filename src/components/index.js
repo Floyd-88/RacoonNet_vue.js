@@ -12,6 +12,9 @@ import PhotoMyPage from "@/components/MyPage/PhotoMyPage";
 import AddPost from "@/components/MyPage/AddPost";
 import PostMyPage from "@/components/MyPage/PostMyPage";
 import MyFriendsBlock from "@/components/MyPage/MyFriendsBlock";
+import UIloadMoreContent from "@/components/UI/UIloadMoreContent";
+
+
 
 import CommentsPost from "@/components/commentsPost/CommentsPost"
 import WriteComments from "@/components/commentsPost/WriteComments"
@@ -115,5 +118,6 @@ export default [
     ResetPassword,
     UIUsersLikes,
     NoticeUser,
-    NoticeOneUser
+    NoticeOneUser,
+    UIloadMoreContent
 ]
