@@ -332,51 +332,47 @@ var postsMyPageStore = {
           switch (_context5.prev = _context5.next) {
             case 0:
               state = _ref6.state, commit = _ref6.commit, dispatch = _ref6.dispatch;
-              _context5.prev = 1;
-              _context5.next = 4;
-              return regeneratorRuntime.awrap(_axios["default"].get('http://localhost:8000/news_friends.js', {
-                params: {
-                  _count: state.countNews,
-                  _limit: state.limitNews
-                }
-              }).then(function (response) {
-                if (response.data.length > 0) {
-                  commit("setNewsPostsFriends", [].concat(_toConsumableArray(state.newsPostsFriends), _toConsumableArray(response.data)));
-                  commit("setCountNews", 10); // response.data.forEach(post => {
-                  //     dispatch("commentsPost/LOAD_COMMENTS_POST", post.authorPost, { root: true });
-                  //     dispatch("commentsPost/LOAD_COMMENTS_COMMENT", post.authorPost, { root: true });
-                  // })
+              return _context5.abrupt("return", new Promise(function (resolve, reject) {
+                _axios["default"].get('http://localhost:8000/news_friends.js', {
+                  params: {
+                    _count: state.countNews,
+                    _limit: state.limitNews
+                  }
+                }).then(function (response) {
+                  if (response.data.length > 0) {
+                    commit("setNewsPostsFriends", [].concat(_toConsumableArray(state.newsPostsFriends), _toConsumableArray(response.data)));
+                    commit("setCountNews", 10); // response.data.forEach(post => {
+                    //     dispatch("commentsPost/LOAD_COMMENTS_POST", post.authorPost, { root: true });
+                    //     dispatch("commentsPost/LOAD_COMMENTS_COMMENT", post.authorPost, { root: true });
+                    // })
 
-                  response.data.forEach(function (post) {
-                    if (post.photos === "1") {
-                      dispatch("LOAD_POST_PHOTOS", {
-                        postID: post.id,
-                        userID: post.authorPost
+                    response.data.forEach(function (post) {
+                      if (post.photos === "1") {
+                        dispatch("LOAD_POST_PHOTOS", {
+                          postID: post.id,
+                          userID: post.authorPost
+                        });
+                      }
+
+                      dispatch("commentsPost/LOAD_COMMENTS_ONE_POST", post.id, {
+                        root: true
                       });
-                    }
-
-                    dispatch("commentsPost/LOAD_COMMENTS_ONE_POST", post.id, {
-                      root: true
                     });
-                  });
-                }
+                  }
+
+                  resolve(response);
+                })["catch"](function (err) {
+                  console.error(err);
+                  reject(err);
+                });
               }));
 
-            case 4:
-              _context5.next = 9;
-              break;
-
-            case 6:
-              _context5.prev = 6;
-              _context5.t0 = _context5["catch"](1);
-              console.error(_context5.t0);
-
-            case 9:
+            case 2:
             case "end":
               return _context5.stop();
           }
         }
-      }, null, null, [[1, 6]]);
+      });
     },
     //лайкнуть пост
     SAVE_LIKE_COUNT_POST: function SAVE_LIKE_COUNT_POST(_ref7, postID) {

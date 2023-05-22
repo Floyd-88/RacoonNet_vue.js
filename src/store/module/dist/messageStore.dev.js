@@ -35,7 +35,15 @@ var messageStore = {
       // лимит диалогов на странице
       countMessages: 0,
       // с какого сообщения начинать вести счет
-      limitMessages: 10 // лимит сообщений на странице
+      limitMessages: 10,
+      // лимит сообщений на странице
+      isUIloadMoreDialogs: false,
+      //отображать индикатор загрузки
+      isNotDialogs: false,
+      //отображать надпись об отсутствии диалогов
+      isUIloadMoreMessages: false,
+      //отображать индикатор загрузки
+      isNotMessages: false //отображать надпись об отсутствии диалогов
 
     };
   },
@@ -63,6 +71,18 @@ var messageStore = {
     },
     getCountDialogs: function getCountDialogs(state) {
       return state.countDialogs;
+    },
+    getIsUIloadMoreDialogs: function getIsUIloadMoreDialogs(state) {
+      return state.isUIloadMoreDialogs;
+    },
+    getIsNotDialogs: function getIsNotDialogs(state) {
+      return state.isNotDialogs;
+    },
+    getIsUIloadMoreMessages: function getIsUIloadMoreMessages(state) {
+      return state.isUIloadMoreMessages;
+    },
+    getIsNotMessages: function getIsNotMessages(state) {
+      return state.isNotMessages;
     }
   },
   mutations: {
@@ -106,6 +126,18 @@ var messageStore = {
     },
     setCountMessagesNull: function setCountMessagesNull(state) {
       state.countMessages = 0;
+    },
+    setIsUIloadMoreDialogs: function setIsUIloadMoreDialogs(state, bool) {
+      state.isUIloadMoreDialogs = bool;
+    },
+    setIsNotDialogs: function setIsNotDialogs(state, bool) {
+      state.isNotDialogs = bool;
+    },
+    setIsUIloadMoreMessages: function setIsUIloadMoreMessages(state, bool) {
+      state.isUIloadMoreMessages = bool;
+    },
+    setIsNotMessages: function setIsNotMessages(state, bool) {
+      state.isNotMessages = bool;
     }
   },
   actions: {
@@ -169,86 +201,114 @@ var messageStore = {
           switch (_context2.prev = _context2.next) {
             case 0:
               commit = _ref2.commit, state = _ref2.state;
-              _context2.prev = 1;
-              _context2.next = 4;
-              return regeneratorRuntime.awrap(_axios["default"].get("http://localhost:8000/user_dialogs", {
-                params: {
-                  body: body,
-                  _count: state.countDialogs,
-                  _limit: state.limitDialogs
-                }
-              }).then(function (resp) {
-                var dialogs = resp.data.sort(function (a, b) {
-                  return b.unread - a.unread;
+              _context2.next = 3;
+              return regeneratorRuntime.awrap(commit("setIsNotDialogs", false));
+
+            case 3:
+              _context2.next = 5;
+              return regeneratorRuntime.awrap(commit("setIsUIloadMoreDialogs", true));
+
+            case 5:
+              return _context2.abrupt("return", new Promise(function (resolve, reject) {
+                _axios["default"].get("http://localhost:8000/user_dialogs", {
+                  params: {
+                    body: body,
+                    _count: state.countDialogs,
+                    _limit: state.limitDialogs
+                  }
+                }).then(function (resp) {
+                  var dialogs = resp.data.sort(function (a, b) {
+                    return b.unread - a.unread;
+                  });
+                  commit("setIsUIloadMoreDialogs", false);
+                  commit("setArrayDialogs", [].concat(_toConsumableArray(state.arrayDialogs), _toConsumableArray(dialogs)));
+
+                  if (resp.data.length > 0) {
+                    commit("setCountDialogs", 10);
+                  } else {
+                    commit("setIsNotDialogs", true);
+                  } // let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
+                  // commit("setCountNewMessage", count)
+                  // commit("setMessageUser", "")
+                  // commit("setModalWriteMessage", false)
+
+
+                  resolve(resp);
+                })["catch"](function (err) {
+                  console.log(err);
+                  reject(err);
                 });
-                commit("setArrayDialogs", [].concat(_toConsumableArray(state.arrayDialogs), _toConsumableArray(dialogs)));
-
-                if (resp.data.length > 0) {
-                  commit("setCountDialogs", 10);
-                } // let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
-                // commit("setCountNewMessage", count)
-                // commit("setMessageUser", "")
-                // commit("setModalWriteMessage", false)
-
               }));
 
-            case 4:
-              _context2.next = 9;
-              break;
-
             case 6:
-              _context2.prev = 6;
-              _context2.t0 = _context2["catch"](1);
-              console.log(_context2.t0);
-
-            case 9:
             case "end":
               return _context2.stop();
           }
         }
-      }, null, null, [[1, 6]]);
+      });
     },
     //получение переписки с конкретным пользователем
     LOAD_MESSAGES_USER: function LOAD_MESSAGES_USER(_ref3, id) {
-      var commit = _ref3.commit,
-          state = _ref3.state;
-      return new Promise(function (resolve) {
-        try {
-          _axios["default"].get("http://localhost:8000/user_messages", {
-            params: {
-              user_companion: id,
-              _count: state.countMessages,
-              _limit: state.limitMessages
-            }
-          }).then(function (resp) {
-            var arrayMessage = resp.data.reverse();
-            console.log(state.arrayMessages);
-            commit("setArrayMessages", [].concat(_toConsumableArray(arrayMessage), _toConsumableArray(state.arrayMessages)));
+      var commit, state;
+      return regeneratorRuntime.async(function LOAD_MESSAGES_USER$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              commit = _ref3.commit, state = _ref3.state;
+              _context3.next = 3;
+              return regeneratorRuntime.awrap(commit("setIsNotMessages", false));
 
-            if (resp.data.length > 0) {
-              commit("setCountMessages", 10);
-            }
+            case 3:
+              _context3.next = 5;
+              return regeneratorRuntime.awrap(commit("setIsUIloadMoreMessages", true));
 
-            resolve(resp.data[resp.data.length - 4]);
-          });
-        } catch (err) {
-          console.log(err);
+            case 5:
+              return _context3.abrupt("return", new Promise(function (resolve) {
+                try {
+                  _axios["default"].get("http://localhost:8000/user_messages", {
+                    params: {
+                      user_companion: id,
+                      _count: state.countMessages,
+                      _limit: state.limitMessages
+                    }
+                  }).then(function (resp) {
+                    var arrayMessage = resp.data.reverse();
+                    commit("setIsUIloadMoreMessages", false);
+                    commit("setArrayMessages", [].concat(_toConsumableArray(arrayMessage), _toConsumableArray(state.arrayMessages)));
+
+                    if (resp.data.length > 0) {
+                      commit("setCountMessages", 10);
+                    } else {
+                      commit("setIsNotMessages", true);
+                    }
+
+                    resolve(resp);
+                  });
+                } catch (err) {
+                  console.log(err);
+                }
+              }));
+
+            case 6:
+            case "end":
+              return _context3.stop();
+          }
         }
       });
     },
     //удаление сообщения
     DELETE_MESSAGES: function DELETE_MESSAGES(_ref4, id) {
       var state, message_params;
-      return regeneratorRuntime.async(function DELETE_MESSAGES$(_context3) {
+      return regeneratorRuntime.async(function DELETE_MESSAGES$(_context4) {
         while (1) {
-          switch (_context3.prev = _context3.next) {
+          switch (_context4.prev = _context4.next) {
             case 0:
               state = _ref4.state;
-              _context3.prev = 1;
+              _context4.prev = 1;
               message_params = {
                 deleteID: id
               };
-              _context3.next = 5;
+              _context4.next = 5;
               return regeneratorRuntime.awrap(_axios["default"]["delete"]("http://localhost:8000/user_messages", {
                 data: message_params
               }).then(function () {
@@ -258,17 +318,17 @@ var messageStore = {
               }));
 
             case 5:
-              _context3.next = 10;
+              _context4.next = 10;
               break;
 
             case 7:
-              _context3.prev = 7;
-              _context3.t0 = _context3["catch"](1);
-              console.log(_context3.t0);
+              _context4.prev = 7;
+              _context4.t0 = _context4["catch"](1);
+              console.log(_context4.t0);
 
             case 10:
             case "end":
-              return _context3.stop();
+              return _context4.stop();
           }
         }
       }, null, null, [[1, 7]]);
@@ -276,16 +336,16 @@ var messageStore = {
     //удаление диалога
     DELETE_DIALOGS: function DELETE_DIALOGS(_ref5, id) {
       var state, commit, dialogs_params;
-      return regeneratorRuntime.async(function DELETE_DIALOGS$(_context4) {
+      return regeneratorRuntime.async(function DELETE_DIALOGS$(_context5) {
         while (1) {
-          switch (_context4.prev = _context4.next) {
+          switch (_context5.prev = _context5.next) {
             case 0:
               state = _ref5.state, commit = _ref5.commit;
-              _context4.prev = 1;
+              _context5.prev = 1;
               dialogs_params = {
                 dialogsID: id
               };
-              _context4.next = 5;
+              _context5.next = 5;
               return regeneratorRuntime.awrap(_axios["default"].put("http://localhost:8000/user_messages", dialogs_params).then(function (resp) {
                 var dialogs = state.arrayDialogs.filter(function (dialog) {
                   return dialog.convId !== resp.data.id;
@@ -295,17 +355,17 @@ var messageStore = {
 
             case 5:
               state.messageUser;
-              _context4.next = 11;
+              _context5.next = 11;
               break;
 
             case 8:
-              _context4.prev = 8;
-              _context4.t0 = _context4["catch"](1);
-              console.log(_context4.t0);
+              _context5.prev = 8;
+              _context5.t0 = _context5["catch"](1);
+              console.log(_context5.t0);
 
             case 11:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
         }
       }, null, null, [[1, 8]]);
@@ -313,13 +373,13 @@ var messageStore = {
     //обновление флагов непрочитанных сообщений после выхода из переписки
     UPDATE_FLAGS_UNREAD_MESSAGE: function UPDATE_FLAGS_UNREAD_MESSAGE(_ref6, conv_id) {
       var getters, commit;
-      return regeneratorRuntime.async(function UPDATE_FLAGS_UNREAD_MESSAGE$(_context5) {
+      return regeneratorRuntime.async(function UPDATE_FLAGS_UNREAD_MESSAGE$(_context6) {
         while (1) {
-          switch (_context5.prev = _context5.next) {
+          switch (_context6.prev = _context6.next) {
             case 0:
               getters = _ref6.getters, commit = _ref6.commit;
-              _context5.prev = 1;
-              _context5.next = 4;
+              _context6.prev = 1;
+              _context6.next = 4;
               return regeneratorRuntime.awrap(_axios["default"].put("http://localhost:8000/unread_messages", {
                 conv_id: conv_id
               }).then(function (res) {
@@ -332,17 +392,17 @@ var messageStore = {
               }));
 
             case 4:
-              _context5.next = 9;
+              _context6.next = 9;
               break;
 
             case 6:
-              _context5.prev = 6;
-              _context5.t0 = _context5["catch"](1);
-              console.log(_context5.t0);
+              _context6.prev = 6;
+              _context6.t0 = _context6["catch"](1);
+              console.log(_context6.t0);
 
             case 9:
             case "end":
-              return _context5.stop();
+              return _context6.stop();
           }
         }
       }, null, null, [[1, 6]]);

@@ -7,13 +7,18 @@
   </template>
   <template v-else>
     <div class="wrapper_not_messages">
-      <p class="not_messages">
+      <p class="not_messages" v-if="getIsNotDialogs">
         Ваш список диалогов пуст. Пора приступать к общению!
       </p>
     </div>
-</template>
-<div ref="observer" class="observer"></div>
+  </template>
+  <div ref="observer" class="observer"></div>
 
+  <template v-if="getIsUIloadMoreDialogs">
+    <div class="wrapper_messages_load_more_message">
+      <UIloadMoreContent />
+    </div>
+  </template>
 </template>
     
 <script>
@@ -22,17 +27,23 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   name: "AllUsersMessages",
 
+  data() {
+    return {}
+  },
+
   mounted() {
-     //подгрузка новой партии диалогов при скроле страницы
-     const options = {
+    //подгрузка новой партии диалогов при скроле страницы
+    const options = {
       rootMargin: "0px",
       threshold: 1
     };
     const callback = (entries) => {
       if (entries[0].isIntersecting) {
-        if(this.getArrayDialogs.length !== 0) {
+
+        if (this.getArrayDialogs.length !== 0) {
           this.LOAD_DIALOGS()
-        }
+            .then(() => {})
+        } 
       }
     };
     const observer = new IntersectionObserver(callback, options);
@@ -55,7 +66,11 @@ export default {
     })
   },
   computed: {
-    ...mapGetters({ getArrayDialogs: "messageStore/getArrayDialogs" })
+    ...mapGetters({ 
+      getArrayDialogs: "messageStore/getArrayDialogs",
+      getIsUIloadMoreDialogs: "messageStore/getIsUIloadMoreDialogs",
+      getIsNotDialogs: "messageStore/getIsNotDialogs"
+    })
   }
 }
 </script>
@@ -75,15 +90,24 @@ export default {
 }
 
 .wrapper_not_messages {
-  font-size: 16px;
-  line-height: 26px;
   display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 30px;
     font-size: 20px;
-  opacity: .8;
-  font-family: fantasy;
-  color: dimgray;
+    opacity: .8;
+    font-family: fantasy;
+    color: dimgray;
+    position: absolute;
+    top: 50%;
+    margin-top: -100px;
+    left: 50%;
+    margin-left: -100px;
+}
+.wrapper_messages_load_more_message {
+  margin-top: 10px;
+}
+
+.observer {
+  /* border: 1px solid; */
 }
 </style>

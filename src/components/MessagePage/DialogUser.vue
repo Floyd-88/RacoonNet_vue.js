@@ -22,6 +22,9 @@
 
         <div class="wrapper_main_messages" ref="scrollToMe">
             <!-- message -->
+            <template v-if="getIsUIloadMoreMessages">
+                <UIloadMoreContent />
+            </template>
             <div ref="observer" class="observer"></div>
 
             <div class="wrapper_message_dialog_user" v-for="(message, index) in getArrayMessages" :key="message.id">
@@ -53,18 +56,16 @@
                         <p>
                             {{ messageText(message.message) }}
                         </p>
-
                     </div>
                 </div>
             </div>
 
             <!-- -- -->
-            <div class="wrapper_not_messages" v-if="getArrayMessages.length < 1">
+            <div class="wrapper_not_messages" v-if="getArrayMessages.length < 1 && getIsNotMessages">
                 <p class="not_messages">
                     У вас отстутвует перписка с данным пользователем, но Вы можете начать общение прямо сейчас.
                 </p>
             </div>
-
         </div>
 
         <div class="wrapper_block_write_message">
@@ -130,8 +131,8 @@ export default {
         this.LOAD_MESSAGES_USER(this.id)
             .then(() => {
                 if (this.$refs.scrollToMe) {
-            this.$nextTick(function () {
-                this.scrollToElement();
+                    this.$nextTick(function () {
+                        this.scrollToElement();
                     })
                 }
             })
@@ -152,16 +153,18 @@ export default {
         };
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
+
                 if (this.getArrayMessages.length !== 0) {
                     this.LOAD_MESSAGES_USER(this.id)
                         .then((resp) => {
-                            let ref = 'message' + resp.id
-                            console.log(resp)
-                            let topWriteUnderComment = this.$refs[ref][0].getBoundingClientRect().y;
-                            if (this.$refs.scrollToMe) {
-                                this.$nextTick(function () {
-                                    this.scrollToElementUP(topWriteUnderComment);
-                                })
+                            if (resp.data.length > 0) {
+                                let ref = 'message' + resp.data[resp.data.length - 4].id;
+                                let topWriteUnderComment = this.$refs[ref][0].getBoundingClientRect().y;
+                                if (this.$refs.scrollToMe) {
+                                    this.$nextTick(function () {
+                                        this.scrollToElementUP(topWriteUnderComment);
+                                    })
+                                }
                             }
                         })
                 }
@@ -258,6 +261,8 @@ export default {
             getMessageUser: "messageStore/getMessageUser",
             getArrayMessages: "messageStore/getArrayMessages",
             getUser: "authorizationStore/getUser",
+            getIsUIloadMoreMessages: "messageStore/getIsUIloadMoreMessages",
+            getIsNotMessages: "messageStore/getIsNotMessages"
         }),
         ...mapState({
             messageUser: (state) => state.messageStore.messageUser,
@@ -285,7 +290,6 @@ export default {
         pathAvaMy() {
             let message = this.getArrayMessages.find(message => message.sender === JSON.parse(localStorage.getItem('user')).userID)
             try {
-                console.log(message.ava)
                 return require(`../../assets/photo/${message.ava}`);
             } catch {
                 return require(`../../assets/ava/ava_1.jpg`);
@@ -481,4 +485,5 @@ export default {
     opacity: .3;
     font-family: fantasy;
     color: dimgray;
-}</style>
+}
+</style>

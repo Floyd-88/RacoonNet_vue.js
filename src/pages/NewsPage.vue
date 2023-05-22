@@ -3,9 +3,13 @@
 
   <div class="wrapper_main">
     <div class="main">
-      <ContentNews />
-    </div>
+      <ContentNews :isNotNews="isNotNews"/>
+    <!-- </div> -->
     <div ref="observer" class="observer"></div>
+    <template v-if="isUIloadMoreContent">
+      <UIloadMoreContent/>
+    </template>
+  </div>
   </div>
 </template>
 
@@ -15,6 +19,13 @@ import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "NewsPage",
 
+  data() {
+    return {
+      isUIloadMoreContent: false, //отображать индикотор загрузки новых постов
+      isNotNews: false //надпись что посты отсутсвуют
+    }
+  },
+
   mounted() {
     //подгрузка новой партии новостей при скроле страницы
     const options = {
@@ -23,7 +34,19 @@ export default {
     };
     const callback = (entries) => {
       if (entries[0].isIntersecting) {
-        this.LOAD_NEWS_FRIENDS_USERS();
+        this.isUIloadMoreContent = true; //показывать что идет загрузка
+
+        this.LOAD_NEWS_FRIENDS_USERS()
+        .then((response) => {
+        this.isNotNews = false;
+
+        this.isUIloadMoreContent = false;
+          if(response.data.length === 0) {
+              this.isNotNews = true;
+            }
+        })
+      } else {
+        this.isUIloadMoreContent = false; //отключать загрузку
       }
     };
     const observer = new IntersectionObserver(callback, options);
@@ -68,6 +91,10 @@ export default {
 
 .main {
   margin-left: 180px;
+}
+
+.observer {
+    /* border: 1px solid; */
 }
 </style>
 

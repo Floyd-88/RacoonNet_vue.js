@@ -257,34 +257,37 @@ export const postsMyPageStore = {
             commit,
             dispatch
         }) {
-            try {
-                await axios.get('http://localhost:8000/news_friends.js', {
-                    params: {
-                        _count: state.countNews,
-                        _limit: state.limitNews,
-                    }
-                }).then((response) => {
-                    if (response.data.length > 0) {
-                        commit("setNewsPostsFriends", [...state.newsPostsFriends, ...response.data])
-                        commit("setCountNews", 10)
+            return new Promise((resolve, reject) => {
+                axios.get('http://localhost:8000/news_friends.js', {
+                        params: {
+                            _count: state.countNews,
+                            _limit: state.limitNews,
+                        }
+                    }).then((response) => {
+                        if (response.data.length > 0) {
+                            commit("setNewsPostsFriends", [...state.newsPostsFriends, ...response.data])
+                            commit("setCountNews", 10)
 
-                        // response.data.forEach(post => {
-                        //     dispatch("commentsPost/LOAD_COMMENTS_POST", post.authorPost, { root: true });
-                        //     dispatch("commentsPost/LOAD_COMMENTS_COMMENT", post.authorPost, { root: true });
-                        // })
+                            // response.data.forEach(post => {
+                            //     dispatch("commentsPost/LOAD_COMMENTS_POST", post.authorPost, { root: true });
+                            //     dispatch("commentsPost/LOAD_COMMENTS_COMMENT", post.authorPost, { root: true });
+                            // })
 
-                        response.data.forEach(post => {
-                            if (post.photos === "1") {
-                                dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: post.authorPost });
-                            }
-                            dispatch("commentsPost/LOAD_COMMENTS_ONE_POST", post.id, { root: true });
-                        });
-                    }
+                            response.data.forEach(post => {
+                                if (post.photos === "1") {
+                                    dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: post.authorPost });
+                                }
+                                dispatch("commentsPost/LOAD_COMMENTS_ONE_POST", post.id, { root: true });
+                            });
+                        }
+                        resolve(response);
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        reject(err)
+                    })
+            })
 
-                });
-            } catch (err) {
-                console.error(err);
-            }
         },
 
         //лайкнуть пост

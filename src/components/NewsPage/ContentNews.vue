@@ -74,7 +74,7 @@
     </UImodal>
   </div>
 
-  <div class="wrapper_not_news" v-if="getNewsPostsFriends.length < 1">
+  <div class="wrapper_not_news" v-if="getNewsPostsFriends.length < 1 && isNotNews === true">
     <p class="not_news">
       Список Вашей новостной ленты пуст. Попробуйте обзавестись новыми знакомыми что бы получать свежие новости.
     </p>
@@ -86,6 +86,13 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "ContentNews",
+
+  props: {
+    isNotNews:{
+      type: Boolean,
+      default: false
+    }
+  },
 
   data() {
     return {}
@@ -253,15 +260,17 @@ export default {
 
 .wrapper_not_news {
   font-size: 16px;
-  line-height: 26px;
-  position: absolute;
-  top: 50%;
-  margin-top: -50px;
-  text-align: center;
-  padding: 0 30px;
-  opacity: .7;
-  font-family: fantasy;
-  color: dimgray;
+    line-height: 26px;
+    position: absolute;
+    top: 50%;
+    margin-top: -100px;
+    text-align: center;
+    opacity: .7;
+    font-family: fantasy;
+    color: dimgray;
+    left: 30%;
+    margin-left: -50px;
+    padding: 0 60px;
 }
 
 .wrapper_block_photo_post {

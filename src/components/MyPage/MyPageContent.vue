@@ -7,14 +7,14 @@
             <AddPost />
             <PostMyPage />
 
-            <div class="wrapper_not_posts" v-if="getPosts.length === 0">
+            <div class="wrapper_not_posts" v-if="getPosts.length === 0 && isNotPosts === true">
                 <p class="not_posts">Посты не найдены!!!</p>
             </div>
 
             <!--при прокрутки страницы до данного элемента - подгружать следующие посты -->
             <div ref="observer" class="observer"></div>
             <template v-if="isUIloadMoreContent">
-            <UIloadMoreContent/>
+                <UIloadMoreContent/>
             </template>
         </div>
 
@@ -48,7 +48,8 @@ export default {
 
     data() {
         return {
-            isUIloadMoreContent: false
+            isUIloadMoreContent: false, //отображать индикотор загрузки новых постов
+            isNotPosts: false //надпись что посты отсутсвуют
         }
     },
 
@@ -105,8 +106,10 @@ export default {
 
                 this.loadPostServer(this.$route.params.id)
                     .then((response) => {
+                        this.isNotPosts = false;
                         if(response.data.length === 0) {
                             this.isUIloadMoreContent = false;
+                            this.isNotPosts = true;
                         }
                         return response.data.map(post => post.id)
                     })
@@ -114,6 +117,7 @@ export default {
                         this.LOAD_COMMENTS_POST({userID: this.$route.params.id, postID: data})
                         .then((response) => {
                         this.LOAD_COMMENTS_COMMENT({userID: this.$route.params.id, postID: response.data.map(post => post.id)});
+
                         })
                     })
             } else {
@@ -151,10 +155,15 @@ export default {
 }
 
 .not_posts {
-    margin: 10px 0;
-    font-size: 18px;
-    font-family: cursive;
-    font-weight: 600;
+    line-height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    font-size: 20px;
+    opacity: .8;
+    font-family: fantasy;
+    color: dimgray;
 }
 
 .observer {

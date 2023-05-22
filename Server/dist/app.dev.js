@@ -1352,7 +1352,7 @@ router.get('/user_messages', authenticateJWT, function (req, res) {
           if (err) return res.status(500).send('При получении сообщений из БД произошла ошибка:' + ' ' + err);
 
           if (messages_user.length === 0) {
-            return res.status(200);
+            return res.status(200).send(messages_user);
           } // if (row_conversation[0].unread !== 0) {
           // Обновляем флаг просмотров сообщений
 

@@ -17,6 +17,11 @@ export const messageStore = {
 
         countMessages: 0, // с какого сообщения начинать вести счет
         limitMessages: 10, // лимит сообщений на странице
+
+        isUIloadMoreDialogs: false, //отображать индикатор загрузки
+        isNotDialogs: false, //отображать надпись об отсутствии диалогов
+        isUIloadMoreMessages: false, //отображать индикатор загрузки
+        isNotMessages: false //отображать надпись об отсутствии диалогов
     }),
     getters: {
         getModalWriteMessage: (state) => state.modalWriteMessage,
@@ -29,7 +34,10 @@ export const messageStore = {
 
         getCountDialogs: (state) => state.countDialogs,
 
-
+        getIsUIloadMoreDialogs: (state) => state.isUIloadMoreDialogs,
+        getIsNotDialogs: (state) => state.isNotDialogs,
+        getIsUIloadMoreMessages: (state) => state.isUIloadMoreMessages,
+        getIsNotMessages: (state) => state.isNotMessages
     },
 
     mutations: {
@@ -80,6 +88,22 @@ export const messageStore = {
             state.countMessages = 0;
         },
 
+        setIsUIloadMoreDialogs(state, bool) {
+            state.isUIloadMoreDialogs = bool;
+        },
+
+        setIsNotDialogs(state, bool) {
+            state.isNotDialogs = bool;
+        },
+
+        setIsUIloadMoreMessages(state, bool) {
+            state.isUIloadMoreMessages = bool;
+        },
+
+        setIsNotMessages(state, bool) {
+            state.isNotMessages = bool;
+        }
+
     },
 
     actions: {
@@ -118,8 +142,11 @@ export const messageStore = {
 
         //получение всех диалогов пользователя
         async LOAD_DIALOGS({ commit, state }, body) {
-            try {
-                await axios.get("http://localhost:8000/user_dialogs", {
+            await commit("setIsNotDialogs", false);
+            await commit("setIsUIloadMoreDialogs", true);
+
+            return new Promise((resolve, reject) => {
+                axios.get("http://localhost:8000/user_dialogs", {
                         params: {
                             body,
                             _count: state.countDialogs,
@@ -127,23 +154,33 @@ export const messageStore = {
                         }
                     })
                     .then(function(resp) {
-                        let dialogs = resp.data.sort((a, b) => b.unread - a.unread)
+                        let dialogs = resp.data.sort((a, b) => b.unread - a.unread);
+                        commit("setIsUIloadMoreDialogs", false);
                         commit("setArrayDialogs", [...state.arrayDialogs, ...dialogs]);
                         if (resp.data.length > 0) {
                             commit("setCountDialogs", 10);
+                        } else {
+                            commit("setIsNotDialogs", true);
                         }
                         // let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
                         // commit("setCountNewMessage", count)
                         // commit("setMessageUser", "")
                         // commit("setModalWriteMessage", false)
+                        resolve(resp);
                     })
-            } catch (err) {
-                console.log(err)
-            }
+                    .catch((err) => {
+                        console.log(err)
+                        reject(err);
+                    })
+            })
+
         },
 
         //получение переписки с конкретным пользователем
-        LOAD_MESSAGES_USER({ commit, state }, id) {
+        async LOAD_MESSAGES_USER({ commit, state }, id) {
+            await commit("setIsNotMessages", false);
+            await commit("setIsUIloadMoreMessages", true);
+
             return new Promise((resolve) => {
                 try {
                     axios.get("http://localhost:8000/user_messages", {
@@ -155,12 +192,14 @@ export const messageStore = {
                         })
                         .then(function(resp) {
                             let arrayMessage = resp.data.reverse();
-                            console.log(state.arrayMessages)
+                            commit("setIsUIloadMoreMessages", false);
                             commit("setArrayMessages", [...arrayMessage, ...state.arrayMessages]);
                             if (resp.data.length > 0) {
                                 commit("setCountMessages", 10);
+                            } else {
+                                commit("setIsNotMessages", true);
                             }
-                            resolve(resp.data[resp.data.length - 4])
+                            resolve(resp);
                         })
                 } catch (err) {
                     console.log(err)
