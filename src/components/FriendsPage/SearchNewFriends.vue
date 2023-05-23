@@ -158,8 +158,6 @@ export default {
 
     methods: {
         ...mapMutations({
-            setIsFriendShow: "friendsStore/setIsFriendShow",
-
             //двухстроннее связывание v-model
             setSearchFriendName: "friendsStore/setSearchFriendName",
             setSearchFriendSurname: "friendsStore/setSearchFriendSurname",
@@ -186,7 +184,6 @@ export default {
                 ageBefore: this.getSearchFriendAgeBefore,
                 sex: this.getSearchFriendSex,
             });
-            this.setIsFriendShow("allFriends")
         }
     },
 

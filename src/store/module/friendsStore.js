@@ -26,7 +26,10 @@ export const friendsStore = {
             ageAfter: "", //возраст от в фильтре поиска
             ageBefore: "", //возраст до в фильтре поиска
             sex: "" //пол в фильтре поиска
-        }
+        },
+
+        isUIloadMoreFriends: false, //отображать индикатор загрузки
+        isNotFriends: false //отображать надпись об отсутствии друзей
     }),
 
     getters: {
@@ -54,6 +57,8 @@ export const friendsStore = {
 
         getCountFriends: (state) => state.countFriends,
 
+        getIsUIloadMoreFriends: (state) => state.isUIloadMoreFriends,
+        getIsNotFriends: (state) => state.isNotFriends
 
     },
 
@@ -142,6 +147,14 @@ export const friendsStore = {
             state.countFriends = 0;
         },
 
+        setIsUIloadMoreFriends(state, bool) {
+            state.isUIloadMoreFriends = bool;
+        },
+
+        setIsNotFriends(state, bool) {
+            state.isNotFriends = bool;
+        }
+
     },
 
     actions: {
@@ -222,12 +235,27 @@ export const friendsStore = {
 
         //получить пользователей отправивших мне заявку в друзья
         async GET_USER_ADD_FRIENDS_ME({
-            commit
+            commit,
+            state
         }) {
+            await commit("setIsNotFriends", false);
+            await commit("setIsUIloadMoreFriends", true);
             try {
-                await axios.get("http://localhost:8000/add_friends_me")
+                await axios.get("http://localhost:8000/add_friends_me", {
+                        params: {
+                            _count: state.countFriends,
+                            _limit: state.limitFriends,
+                        }
+                    })
                     .then(function(res) {
-                        commit("setUsersFriendsMe", res.data);
+                        commit("setIsUIloadMoreFriends", false);
+                        commit("setUsersFriendsMe", [...state.usersFriendsMe, ...res.data]);
+
+                        if (res.data.length > 0) {
+                            commit("setCountFriends", 8);
+                        } else {
+                            commit("setIsNotFriends", true);
+                        }
                     })
             } catch (err) {
                 console.log(err)
@@ -236,13 +264,27 @@ export const friendsStore = {
 
         //получить пользователей котрым я отправил заявку в друзья
         async GET_USER_ADD_FRIENDS_FROM_ME({
-            commit
+            commit,
+            state
         }) {
+            await commit("setIsNotFriends", false);
+            await commit("setIsUIloadMoreFriends", true);
             try {
-                await axios.get("http://localhost:8000/add_friends_from_me")
+                await axios.get("http://localhost:8000/add_friends_from_me", {
+                        params: {
+                            _count: state.countFriends,
+                            _limit: state.limitFriends,
+                        }
+                    })
                     .then(function(res) {
-                        console.log(res.data)
-                        commit("setUsersFriendsFromMe", res.data);
+                        commit("setIsUIloadMoreFriends", false);
+                        commit("setUsersFriendsFromMe", [...state.usersFriendsFromMe, ...res.data]);
+
+                        if (res.data.length > 0) {
+                            commit("setCountFriends", 8);
+                        } else {
+                            commit("setIsNotFriends", true);
+                        }
                     })
             } catch (err) {
                 console.log(err)
@@ -254,6 +296,8 @@ export const friendsStore = {
             commit,
             state
         }, id) {
+            await commit("setIsNotFriends", false);
+            await commit("setIsUIloadMoreFriends", true);
             try {
                 await axios.get("http://localhost:8000/my_friends", {
                         params: {
@@ -263,10 +307,13 @@ export const friendsStore = {
                         }
                     })
                     .then(function(res) {
+                        commit("setIsUIloadMoreFriends", false);
                         commit("setUsersMyFriends", [...state.usersMyFriends, ...res.data]);
                         commit("setUsersMyFriendsFilter", [...state.usersMyFriendsFilter, ...res.data]);
                         if (res.data.length > 0) {
                             commit("setCountFriends", 8);
+                        } else {
+                            commit("setIsNotFriends", true);
                         }
                     })
             } catch (err) {
@@ -307,6 +354,10 @@ export const friendsStore = {
 
         //поиск пользователей
         async SEARCH_USERS_FRIENDS({ commit, state }, params) {
+            await commit("setUsersMyFriends", []);
+            await commit("setUsersMyFriendsFilter", []);
+            await commit("setIsNotFriends", false);
+            await commit("setIsUIloadMoreFriends", true);
             try {
                 //если возрастной диапазон не указан, по умолчанию от 0 до 100
                 (!params.ageAfter) ? params.ageAfter = 0: params.ageAfter;
@@ -315,13 +366,20 @@ export const friendsStore = {
                 params._count = state.countFriends,
                     params._limit = state.limitFriends
 
+                await commit("setTitleFriend", "Поиск друзей");
+                await commit("setIsFriendShow", 'allFriends');
+
                 await axios.get("http://localhost:8000/search_friends", { params })
                     .then(function(res) {
-                        commit("setTitleFriend", "Поиск друзей");
+
+                        commit("setIsUIloadMoreFriends", false);
                         commit("setSearchUsersFriends", [...state.searchUsersFriends, ...res.data]);
                         if (res.data.length > 0) {
                             commit("setCountFriends", 8);
+                        } else {
+                            commit("setIsNotFriends", true);
                         }
+
                     })
             } catch (err) {
                 console.log(err)

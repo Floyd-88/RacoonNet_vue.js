@@ -1824,7 +1824,7 @@ router.get("/check_confirm_friends", authenticateJWT, function(req, res) {
 router.get("/add_friends_me", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
     if (tokenID) {
-        friends.get_user_confirm_friends_me_DB([tokenID], (err, users) => {
+        friends.get_user_confirm_friends_me_DB([tokenID, +req.query._count, +req.query._limit], (err, users) => {
             if (err) return res.status(500).send("При получении пользователей приглашающих меня в друзья, произошла ошибка" + " " + err);
 
             res.status(200).send(users);
@@ -1837,7 +1837,7 @@ router.get("/add_friends_me", authenticateJWT, function(req, res) {
 router.get("/add_friends_from_me", authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
     if (tokenID) {
-        friends.get_user_confirm_friends_from_me_DB([tokenID], (err, users) => {
+        friends.get_user_confirm_friends_from_me_DB([tokenID, +req.query._count, +req.query._limit], (err, users) => {
             if (err) return res.status(500).send("При получении пользователей которых я пригласил в друзья, произошла ошибка" + " " + err);
 
             res.status(200).send(users);

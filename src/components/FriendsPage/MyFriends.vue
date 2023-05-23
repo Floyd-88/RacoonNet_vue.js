@@ -27,7 +27,7 @@
             </div>
         </template>
         <template v-else>
-            <div class="wrapper_text_not_friends">
+            <div class="wrapper_text_not_friends" v-if="getIsNotFriends">
                 <p>Ваш список друзей пуст, попробуйте завести новые знакомства здесь</p>
             </div>
         </template>
@@ -164,7 +164,7 @@
             </div>
         </template>
         <template v-else>
-            <div class="wrapper_text_not_friends">
+            <div class="wrapper_text_not_friends" v-if="getIsNotFriends">
                 <p>Никого не найдено, попробуйте изменить критерии поиска</p>
             </div>
         </template>
@@ -261,6 +261,7 @@ export default {
             getSearchUsersFriends: "friendsStore/getSearchUsersFriends",
             getTextBtnFfriend: "friendsStore/getTextBtnFfriend",
             getUser: "authorizationStore/getUser",
+            getIsNotFriends: "friendsStore/getIsNotFriends"
         }),
     }
 

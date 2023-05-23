@@ -17,6 +17,9 @@
             <InviteFriendsFromMe />
           </template>
           <div ref="observer" class="observer"></div>
+          <template v-if="getIsUIloadMoreFriends">
+            <UIloadMoreContent />
+          </template>
         </div>
 
         <MyFriendsBlock class="wrapper_my_friends_params" v-if="userTokenID == this.$route.query.id">
@@ -96,7 +99,12 @@ export default {
       if (entries[0].isIntersecting) {
         if(this.getIsFriendShow === 'allFriends' && this.getTitleFriend === 'Друзья' && this.getCountFriends !== 0) {
           this.GET_USER_MY_FRIENDS(this.$route.query.id);
+        } else if(this.getIsFriendShow === 'friendsFromMe' && this.getCountFriends !== 0) {
+          this.GET_USER_ADD_FRIENDS_FROM_ME();
+        }else if(this.getIsFriendShow === 'friendsMe' && this.getCountFriends !== 0) {
+          this.GET_USER_ADD_FRIENDS_ME();
         }
+
         if(this.getIsFriendShow === 'allFriends' && this.getTitleFriend === 'Поиск друзей' && this.getCountFriends !== 0) {
           this.SEARCH_USERS_FRIENDS({
                 name: this.getSearchFriendName,
@@ -110,6 +118,7 @@ export default {
         }
       }
     };
+
     const observer = new IntersectionObserver(callback, options);
     observer.observe(this.$refs.observer);
   },
@@ -120,6 +129,8 @@ export default {
     this.setUsersMyFriendsFilter([]);
     this.setCountFriendsNull();
     this.setSearchUsersFriends([]);
+    // this.setUsersFriendsMe([]);
+    // this.setUsersFriendsFromMe([]);
   },
 
   methods: {
@@ -131,11 +142,15 @@ export default {
       setSearchUsersFriends: "friendsStore/setSearchUsersFriends",
       setTitleFriend: "friendsStore/setTitleFriend",
       setSearchFriend: "friendsStore/setSearchFriend",
+      // setUsersFriendsMe: "friendsStore/setUsersFriendsMe",
+      // setUsersFriendsFromMe: "friendsStore/setUsersFriendsFromMe"
     }),
 
     ...mapActions({ 
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
-      SEARCH_USERS_FRIENDS: "friendsStore/SEARCH_USERS_FRIENDS"
+      SEARCH_USERS_FRIENDS: "friendsStore/SEARCH_USERS_FRIENDS",
+      GET_USER_ADD_FRIENDS_FROM_ME: "friendsStore/GET_USER_ADD_FRIENDS_FROM_ME",
+      GET_USER_ADD_FRIENDS_ME: "friendsStore/GET_USER_ADD_FRIENDS_ME"
     }),
 
     getUserInfo(user) {
@@ -171,7 +186,8 @@ export default {
       getSearchFriendAgeAfter: "friendsStore/getSearchFriendAgeAfter",
       getSearchFriendAgeBefore: "friendsStore/getSearchFriendAgeBefore",
       getSearchFriendSex: "friendsStore/getSearchFriendSex",
-      getCountFriends: "friendsStore/getCountFriends"
+      getCountFriends: "friendsStore/getCountFriends",
+      getIsUIloadMoreFriends: "friendsStore/getIsUIloadMoreFriends",
     }),
   },
 

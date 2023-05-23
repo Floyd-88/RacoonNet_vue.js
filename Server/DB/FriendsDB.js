@@ -48,14 +48,14 @@ class FriendsDB {
 
     //получаем пользователй отправивших мне заявку в друзья
     get_user_confirm_friends_me_DB(userID, callback) {
-        return this.connection.query(`SELECT F.id, U.userID, U.name, U.surname, U.country, U.ava, U.city FROM users U INNER JOIN friends F ON U.userID = F.sender_user_id WHERE addressee_user_id=? AND confirm_addressee NOT IN (1)`, userID, (err, users) => {
+        return this.connection.query(`SELECT F.id, U.userID, U.name, U.surname, U.country, U.ava, U.city FROM users U INNER JOIN friends F ON U.userID = F.sender_user_id WHERE addressee_user_id=? AND confirm_addressee NOT IN (1) LIMIT ?, ?`, userID, (err, users) => {
             callback(err, users)
         })
     }
 
     //получаем пользователй которым я отправил заявку в друзья
     get_user_confirm_friends_from_me_DB(userID, callback) {
-        return this.connection.query(`SELECT F.id, U.userID, U.name, U.surname, U.country, U.ava, U.city FROM users U INNER JOIN friends F ON U.userID = F.addressee_user_id WHERE sender_user_id=? AND confirm_addressee NOT IN (1)`, userID, (err, users) => {
+        return this.connection.query(`SELECT F.id, U.userID, U.name, U.surname, U.country, U.ava, U.city FROM users U INNER JOIN friends F ON U.userID = F.addressee_user_id WHERE sender_user_id=? AND confirm_addressee NOT IN (1) LIMIT ?, ?`, userID, (err, users) => {
             callback(err, users)
         })
     }

@@ -27,7 +27,7 @@
     </div>
     </template>
     <template v-else>
-        <div class="wrapper_text_not_friends">
+        <div class="wrapper_text_not_friends" v-if="getIsNotFriends">
             <p>Список входящих заявок пуст</p>
         </div>
     </template>
@@ -35,16 +35,33 @@
 </template>
     
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 export default {
     name: "InviteFriendsMe",
 
     mounted() {
+        this.setUsersFriendsMe([]);
+        if(this.getCountFriends === 0) {
         this.GET_USER_ADD_FRIENDS_ME();
+        }
+    },
+
+    beforeUnmount() {
+        this.setUsersFriendsMe([]);
+        this.setSearchFriend();
+        this.setCountFriendsNull();
+        this.setSearchUsersFriends([]);
     },
 
     methods: {
+        ...mapMutations({
+            setSearchFriend: "friendsStore/setSearchFriend",
+            setSearchUsersFriends: "friendsStore/setSearchUsersFriends",
+            setCountFriendsNull: "friendsStore/setCountFriendsNull",
+            setUsersFriendsMe: "friendsStore/setUsersFriendsMe",
+        }),
+
         ...mapActions({ 
             GET_USER_ADD_FRIENDS_ME: "friendsStore/GET_USER_ADD_FRIENDS_ME",
             AGREE_ADD_FRIEND_USER: "friendsStore/AGREE_ADD_FRIEND_USER",
@@ -54,7 +71,12 @@ export default {
     },
 
     computed: {
-        ...mapGetters({ getUsersFriendsMe: "friendsStore/getUsersFriendsMe" })
+        ...mapGetters({ 
+            getUsersFriendsMe: "friendsStore/getUsersFriendsMe",
+            getIsNotFriends: "friendsStore/getIsNotFriends",
+            getCountFriends: "friendsStore/getCountFriends"
+
+        })
     }
 }
 
