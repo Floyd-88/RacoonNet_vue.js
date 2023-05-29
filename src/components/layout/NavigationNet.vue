@@ -41,6 +41,7 @@ export default {
       loadUser: "authorizationStore/loadUser",
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
       LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
+      UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE"
     }),
 
     ...mapMutations({
@@ -70,20 +71,17 @@ export default {
     goMyFriend() {
       this.setUsersMyFriends([]);
       this.setUsersMyFriendsFilter([]);
-      this.setCountFriendsNull()
+      this.setCountFriendsNull();
       if(this.getCountFriends === 0) {
-          this.GET_USER_MY_FRIENDS(this.userID). 
-          then(() => {
             this.$router.push({name: 'friendspage', query: {id: this.userID} });
-          })
         }
     },
 
-    goMessage() {
+    async goMessage() {    
       this.setCountDialogsNull();
       this.setArrayDialogs([]);
       this.setArrayMessages([]);
-      this.LOAD_DIALOGS();
+      this.LOAD_DIALOGS()
       this.$router.push('/message');
     }
 
@@ -97,7 +95,8 @@ export default {
       getUser: "authorizationStore/getUser",
       getIsFriendShow: "friendsStore/getIsFriendShow",
       getTitleFriend: "friendsStore/getTitleFriend",
-      getCountFriends: "friendsStore/getCountFriends"
+      getCountFriends: "friendsStore/getCountFriends",
+      getArrayMessages: "messageStore/getArrayMessages"
   }),
 
     newMessage() {

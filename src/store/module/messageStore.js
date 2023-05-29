@@ -21,7 +21,9 @@ export const messageStore = {
         isUIloadMoreDialogs: false, //отображать индикатор загрузки
         isNotDialogs: false, //отображать надпись об отсутствии диалогов
         isUIloadMoreMessages: false, //отображать индикатор загрузки
-        isNotMessages: false //отображать надпись об отсутствии диалогов
+        isNotMessages: false, //отображать надпись об отсутствии диалогов
+
+        photosMessagesArray: [] //массив с фотографиями к сообщениям
     }),
     getters: {
         getModalWriteMessage: (state) => state.modalWriteMessage,
@@ -37,7 +39,9 @@ export const messageStore = {
         getIsUIloadMoreDialogs: (state) => state.isUIloadMoreDialogs,
         getIsNotDialogs: (state) => state.isNotDialogs,
         getIsUIloadMoreMessages: (state) => state.isUIloadMoreMessages,
-        getIsNotMessages: (state) => state.isNotMessages
+        getIsNotMessages: (state) => state.isNotMessages,
+
+        getPhotosMessagesArray: (state) => state.photosMessagesArray
     },
 
     mutations: {
@@ -57,6 +61,14 @@ export const messageStore = {
 
         setArrayDialogs(state, value) {
             state.arrayDialogs = value;
+        },
+
+        setArrayDialogsConvID(state, id) {
+            state.arrayDialogs.map((dialog) => {
+                if (dialog.convId === id) {
+                    dialog.unread = 0
+                }
+            })
         },
 
         setArrayMessages(state, value) {
@@ -102,21 +114,28 @@ export const messageStore = {
 
         setIsNotMessages(state, bool) {
             state.isNotMessages = bool;
+        },
+
+        setPhotosMessagesArray(state, value) {
+            state.photosMessagesArray = value;
         }
 
     },
 
     actions: {
         //сохранение сообщений в базе данных
-        async WRITE_MESSAGE_USER({ state, commit, dispatch }, addresseeID) {
+        async WRITE_MESSAGE_USER({ state, commit, dispatch }, body) {
 
             let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
 
             let message = {
-                destinationID: addresseeID,
+                destinationID: body.addresseeID,
                 textMessage: state.messageUser,
                 date: date
             }
+
+            message.photo = body.isPhoto;
+
             try {
                 commit("setMessageUser", "");
                 commit("setModalWriteMessage", false);
@@ -126,7 +145,7 @@ export const messageStore = {
 
                         //отпраляем сообщение на сервер для передачи его адресату через сокет
                         let newMessage = res.data[0];
-                        newMessage.destinationID = addresseeID;
+                        newMessage.destinationID = body.addresseeID;
                         SocketioService.sendMessage(newMessage, cb => {
                             console.log(cb);
                         });
@@ -177,7 +196,7 @@ export const messageStore = {
         },
 
         //получение переписки с конкретным пользователем
-        async LOAD_MESSAGES_USER({ commit, state }, id) {
+        async LOAD_MESSAGES_USER({ commit, state, dispatch }, id) {
             await commit("setIsNotMessages", false);
             await commit("setIsUIloadMoreMessages", true);
 
@@ -199,6 +218,13 @@ export const messageStore = {
                             } else {
                                 commit("setIsNotMessages", true);
                             }
+
+                            resp.data.forEach(message => {
+                                if (message.photos === "1") {
+                                    dispatch("LOAD_MESSAGES_PHOTOS", { messageID: message.id });
+                                }
+                            });
+
                             resolve(resp);
                         })
                 } catch (err) {
@@ -209,14 +235,16 @@ export const messageStore = {
         },
 
         //удаление сообщения
-        async DELETE_MESSAGES({ state }, id) {
+        async DELETE_MESSAGES({ state }, body) {
             try {
                 let message_params = {
-                    deleteID: id,
+                    deleteID: body.messageID,
+                    photos: body.photos
                 }
+
                 await axios.delete("http://localhost:8000/user_messages", { data: message_params })
                     .then(function() {
-                        state.arrayMessages = state.arrayMessages.filter(message => message.id !== id);
+                        state.arrayMessages = state.arrayMessages.filter(message => message.id !== body.messageID);
                     })
             } catch (err) {
                 console.log(err)
@@ -224,10 +252,11 @@ export const messageStore = {
         },
 
         //удаление диалога
-        async DELETE_DIALOGS({ state, commit }, id) {
+        async DELETE_DIALOGS({ state, commit }, body) {
             try {
                 let dialogs_params = {
-                    dialogsID: id,
+                    dialogsID: body.convID,
+                    photos: body.photos
                 }
 
                 await axios.put("http://localhost:8000/user_messages", dialogs_params)
@@ -242,16 +271,12 @@ export const messageStore = {
         },
 
         //обновление флагов непрочитанных сообщений после выхода из переписки
-        async UPDATE_FLAGS_UNREAD_MESSAGE({ getters, commit }, conv_id) {
+        async UPDATE_FLAGS_UNREAD_MESSAGE({ commit }, conv_id) {
             try {
                 await axios.put("http://localhost:8000/unread_messages", { conv_id })
-                    .then(function(res) {
-                        getters.getArrayDialogs.map((dialog) => {
-                            if (dialog.convId === conv_id) {
-                                dialog.unread = 0
-                            }
-                        })
-                        commit("setCountNewMessage", getters.getCountNewMessage - res.data.count)
+                    .then(function() {
+                        commit("setArrayDialogsConvID", conv_id)
+                            // commit("setCountNewMessage", getters.getCountNewMessage - res.data.count)
                     })
             } catch (err) {
                 console.log(err)
@@ -293,6 +318,21 @@ export const messageStore = {
                 if (a.unread) { return b.id - a.id }
             });
         },
+
+        //загрузка фотографий к сообщениям
+        async LOAD_MESSAGES_PHOTOS({ commit, state }, params) {
+            try {
+                await axios.get('http://localhost:8000/message_photos.js', {
+                    params
+                }).then((response) => {
+                    if (response.data.length > 0) {
+                        commit("setPhotosMessagesArray", [...state.photosMessagesArray, ...response.data]);
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
     },
 
 

@@ -23,7 +23,9 @@ export const loadPhotoStore = {
         request: null, //прерывание запроса
 
         likesPhoto: "", //количество лайков фото
-        isLoadPhotoPost: "" //загрузка фотографий в пост
+        isLoadPhotoPost: "", //загрузка фотографий в пост
+        isLoadPhotoMessage: "" //загрузка фотографий в сообщения
+
 
     }),
 
@@ -42,7 +44,9 @@ export const loadPhotoStore = {
         getAvaPhoto: (state) => state.avaPhoto,
         getProgressLoadPhoto: (state) => state.progressLoadPhoto,
         getLikesPhoto: (state) => state.likesPhoto,
-        getIsLoadPhotoPost: (state) => state.isLoadPhotoPost
+        getIsLoadPhotoPost: (state) => state.isLoadPhotoPost,
+        getIsLoadPhotoMessage: (state) => state.isLoadPhotoMessage,
+
 
     },
 
@@ -126,11 +130,15 @@ export const loadPhotoStore = {
         },
 
         setLikesPhoto(state, value) {
-            state.likesPhoto = value
+            state.likesPhoto = value;
         },
 
         setIsLoadPhotoPost(state, bool) {
-            state.isLoadPhotoPost = bool
+            state.isLoadPhotoPost = bool;
+        },
+
+        setIsLoadPhotoMessage(state, bool) {
+            state.isLoadPhotoMessage = bool;
         }
     },
 
@@ -187,7 +195,7 @@ export const loadPhotoStore = {
             state,
             rootGetters,
             dispatch
-        }, event) {
+        }, body) {
             //остановка загрузки картинок
             const axiosSource = axios.CancelToken.source();
             state.request = {
@@ -195,7 +203,7 @@ export const loadPhotoStore = {
             };
 
             //сокрытие кнопки загрузить картинки после ее нажатия
-            event.target.style.opacity = '0'
+            body.event.target.style.opacity = '0'
 
             const formData = new FormData();
 
@@ -203,7 +211,7 @@ export const loadPhotoStore = {
                 let file = getters.getArrayLoadImage[i];
                 formData.append('files[' + i + ']', file);
             }
-            formData.append('id', getters.getUser.userID);
+            formData.append('id', body.addresseeID);
             // formData.append('id', JSON.parse(localStorage.getItem('user')).userID);
 
             //добавляем категорию к фотографии если она есть
@@ -214,50 +222,53 @@ export const loadPhotoStore = {
             //проверяем отправлены ли фотографии через пост
             if (state.isLoadPhotoPost) {
                 await dispatch("postsMyPageStore/addPost", state.isLoadPhotoPost, { root: true });
-
-                const posts = rootGetters["postsMyPageStore/getPosts"]
-                formData.append('postIDLast', posts[0].id)
+                const posts = rootGetters["postsMyPageStore/getPosts"];
+                formData.append('postIDLast', posts[0].id);
+            } else if (state.isLoadPhotoMessage) {
+                await dispatch("messageStore/WRITE_MESSAGE_USER", { addresseeID: body.addresseeID, isPhoto: state.isLoadPhotoMessage }, { root: true });
+                const messages = rootGetters["messageStore/getArrayMessages"]
+                console.log(messages)
+                formData.append('dialogIDLast', messages[messages.length - 1].id)
             }
+            return new Promise((resolve, reject) => {
+                axios.post(
+                        'http://localhost:8000/upload_photo',
+                        formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            },
+                            cancelToken: axiosSource.token,
+                            onUploadProgress: ProgressEvent => {
+                                let progress =
+                                    Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) +
+                                    "%";
+                                commit("setProgressLoadPhoto", progress);
+                            },
+                        }
+                    ).then((resp) => {
+                        commit("setIsModalLoadPhoto", false);
+                        commit("setProgressLoadPhoto", 0);
+                        commit("setIsLoadPhotoPost", false);
+                        commit("setIsLoadPhotoMessage", false);
 
-            axios.post(
-                    'http://localhost:8000/upload_photo',
-                    formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        },
-                        cancelToken: axiosSource.token,
-                        onUploadProgress: ProgressEvent => {
-                            let progress =
-                                Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) +
-                                "%";
-                            commit("setProgressLoadPhoto", progress);
-                        },
-                    }
-                ).then(() => {
-                    commit("setIsModalLoadPhoto", false);
-                    // commit("authorizationStore/setUserAva", res.data.ava, {
-                    //     root: true
-                    // })
-                    // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                    //     root: true
-                    // });
-                    commit("setProgressLoadPhoto", 0);
-                    commit("setIsLoadPhotoPost", false);
-                    window.location.href = `/id${JSON.parse(getters.getUser.userID)}`;
+                        resolve(resp.data);
+                        // window.location.href = `/id${JSON.parse(getters.getUser.userID)}`;
 
-                    // dispatch("postsMyPageStore/LOAD_POST_PHOTOS", rootGetters["postsMyPageStore/getPosts"][0].id, { root: true });
-                    // window.location.href = `/id${JSON.parse(localStorage.getItem('user')).userID}`;
-                })
-                .catch((err) => {
-                    if (axios.isCancel(err)) {
-                        console.info("Загрузка фотографий была прервана");
-                        return
-                    }
-                    commit("setIsLoadPhotoPost", false);
-                    commit("setArrayLoadImage", []);
-                    commit("setUrlsImages", []);
-                    commit("setMessageLoadPhoto", err);
-                })
+                    })
+                    .catch((err) => {
+                        if (axios.isCancel(err)) {
+                            console.info("Загрузка фотографий была прервана");
+                            return
+                        }
+                        commit("setIsLoadPhotoPost", false);
+                        commit("setIsLoadPhotoMessage", false);
+                        commit("setArrayLoadImage", []);
+                        commit("setUrlsImages", []);
+                        commit("setMessageLoadPhoto", err);
+
+                        reject(err);
+                    })
+            })
         },
 
         //остановка загрузки картиновк на сервер
@@ -316,18 +327,15 @@ export const loadPhotoStore = {
                     root: true
                 });
                 await commit("setIsModalAllPhotos", false);
-                console.log(1)
             }
 
             //если закончились картинки в посте
-            if (rootGetters["postsMyPageStore/getPhotosPostsArray"].length <= 1 && rootGetters["postsMyPageStore/getPosts"].length > 0) {
+            if (body.countPhotoPost <= 1 && rootGetters["postsMyPageStore/getPosts"].length > 0) {
                 await commit("showFullPhotoStore/setIsModalFullSize", false, {
                     root: true
                 });
                 await commit("showFullPhotoStore/setPostID", "", { root: true });
                 document.body.style.overflow = "auto";
-                console.log(2)
-
             }
 
             if (!body.photoID) {

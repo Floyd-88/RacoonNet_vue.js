@@ -8,7 +8,9 @@ export const showFullPhotoStore = {
         indexPhoto: 0, //ключ массива с фото для слайдера
         isShowFullAvaPhoto: false, //открытие модального окна для редактирования автарки
         isEditAva: "", //загрузка аватарки или ее редактирование
-        postID: "" //номер поста в которм есть фотографии
+        postID: "", //номер поста в которм есть фотографии
+        messageID: "" //номер сообщения в которм есть фотографии
+
     }),
 
     getters: {
@@ -17,7 +19,8 @@ export const showFullPhotoStore = {
         getAllPhotosMyPage: (state, _, rootState) => rootState.loadPhotoStore.isModalAllPhotos,
         getShowFullAvaPhoto: (state) => state.isShowFullAvaPhoto,
         getEditAva: (state) => state.isEditAva,
-        getPostID: (state) => state.postID
+        getPostID: (state) => state.postID,
+        getMessageID: (state) => state.messageID
     },
 
     mutations: {
@@ -51,6 +54,10 @@ export const showFullPhotoStore = {
 
         setPostID(state, id) {
             state.postID = id;
+        },
+
+        setMessageID(state, id) {
+            state.messageID = id;
         }
 
     },
@@ -88,10 +95,24 @@ export const showFullPhotoStore = {
             document.body.style.overflow = "hidden";
         },
 
+        async FULL_SIZE_PHOTO_MESSAGE({ commit }, body) {
+            const bool = body.bool;
+            const index = body.elem;
+            const id = body.id;
+
+            commit("setIsModalFullSize", bool);
+            commit("setIndexPhoto", index);
+            commit('loadPhotoStore/setPhotoId', id, { root: true });
+            commit('setMessageID', body.messageID);
+
+            document.body.style.overflow = "hidden";
+        },
+
         //закрытие картинки по которой кликнули
         closeModalFullSize({ commit, getters }, bool) {
             commit("setIsModalFullSize", bool);
             commit('setPostID', "");
+            commit('setMessageID', "");
             if (bool === false && getters.getAllPhotosMyPage === false) {
                 document.body.style.overflow = "auto";
             }

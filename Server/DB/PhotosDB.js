@@ -11,7 +11,7 @@ class PhotosDB {
 
     //создаем таблицу БД с фотографиями
     createTablePhotos() {
-        const sql = `CREATE TABLE IF NOT EXISTS photos (id integer PRIMARY KEY AUTO_INCREMENT, photo_name varchar(150) not null, date timestamp not null DEFAULT CURRENT_TIMESTAMP, userID integer not null, pageID integer not null, category varchar (50) default 'not category', likes integer default 0, post_id_photo integer, CONSTRAINT FK_Photos_Users FOREIGN KEY (userID) REFERENCES users (userID) ON DELETE CASCADE)`;
+        const sql = `CREATE TABLE IF NOT EXISTS photos (id integer PRIMARY KEY AUTO_INCREMENT, photo_name varchar(150) not null, date timestamp not null DEFAULT CURRENT_TIMESTAMP, userID integer not null, pageID integer not null, category varchar (50) default 'not category', likes integer default 0, post_id_photo integer, message_id_photo integer, CONSTRAINT FK_Photos_Users FOREIGN KEY (userID) REFERENCES users (userID) ON DELETE CASCADE)`;
         this.connection.execute(sql);
     }
 
@@ -29,7 +29,7 @@ class PhotosDB {
     // добавление фото в базу данных
     add_photo_DB(arrayPhotos, callback) {
         return this.connection.query(
-            'INSERT INTO photos (photo_name, userID, pageID, category, post_id_photo) VALUES ?', [arrayPhotos], (err) => {
+            'INSERT INTO photos (photo_name, userID, pageID, category, post_id_photo, message_id_photo) VALUES ?', [arrayPhotos], (err) => {
                 callback(err);
             })
     }

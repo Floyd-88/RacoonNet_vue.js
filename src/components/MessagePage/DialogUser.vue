@@ -4,7 +4,7 @@
         <!-- headre -->
         <div class="wrapper_header_user">
             <div class="header_btn_back">
-                <button @click="$router.go(-1)">Назад</button>
+                <button @click="goBackMessage()">Назад</button>
             </div>
             <div class="wrapper_header_user_name">
                 <div class="header_ava_user" @click="$router.push({ name: 'mypage', params: { id: getUser.userID } })">
@@ -28,10 +28,10 @@
             <div ref="observer" class="observer"></div>
 
             <div class="wrapper_message_dialog_user" v-for="(message, index) in getArrayMessages" :key="message.id">
-                <div class="dialog_ava_user" :ref="'message' + message.id"
-                    @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
+                <div class="dialog_ava_user" :ref="'message' + message.id">
                     <template v-if="message.sender == $route.params.id">
-                        <img :src="pathAva" alt="ava">
+                        <img :src="pathAva" alt="ava"
+                            @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
                     </template>
                     <template v-else>
                         <img :src="pathAvaMy" alt="ava">
@@ -48,15 +48,45 @@
                             <p>{{ message.date }}</p>
                         </div>
                         <div class="message_btn_delete" v-if="message.isMesssageDel">
-                            <UIbtn @click="DELETE_MESSAGES(message.id)">Удалить</UIbtn>
+                            <UIbtn @click="DELETE_MESSAGES({messageID: message.id, photos: message.photos})">Удалить</UIbtn>
                         </div>
                     </div>
+
                     <div class="message_text" :class="{ 'active_text_fone': message.isMesssageDel }"
                         @click="showBtnDelete(message, index)">
-                        <p>
-                            {{ messageText(message.message) }}
-                        </p>
+
+                        <!-- фотографии к сообщению -->
+                        <div class="wrapper_block_photo_post">
+                            <template v-for="(photo, index) in getPhotosMessagesArray.filter(i => i.id === message.id)"
+                                :key="index">
+                                <div class="wrapper_photo_post" v-if="message.id === photo.id"
+                                    :class="{ 'size_photo_1': index === 0 }">
+                                    <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
+                                        @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index, id: photo.id, messageID: message.id })">
+                                </div>
+                            </template>
+                        </div>
+
+
+                        <!-- текст сообщения -->
+                        <div v-if="messageText(message.message).length < 800">
+                            <p>
+                                {{ messageText(message.message) }}
+                            </p>
+                        </div>
+                        <div v-else>
+                            <p v-if="!message.isFullText">
+                                {{ messageText(message.message).slice(0, 800) }}
+                            </p>
+                            <p v-else>
+                                {{ messageText(message.message) }}
+                            </p>
+                            <p class="more_text_message" v-if="!message.isFullText" @click.stop="moreTextMessage(message)">
+                                Показать еще
+                            </p>
+                        </div>
                     </div>
+
                 </div>
             </div>
 
@@ -88,14 +118,26 @@
 
             <!-- button -->
             <div class="wrapper_form_message_btn">
+
+                <UIbtn class="btn_addPhoto" @click="addPostPhoto()">
+                </UIbtn>
+
                 <button class="form_message_btn" type="submit" @click="submitMessage()" :disabled="v$.$invalid">
                     Написать
                 </button>
             </div>
             <!-- -- -->
 
-        </div>
+            <div @click="closeModalFullSize(false)">
+                <UImodal v-if="getIsModalFullSize">
+                    <SliderPhoto />
+                </UImodal>
+            </div>
 
+        </div>
+        <UImodal class="modal_fone" v-if="getIsModalLoadPhoto">
+            <FileUpload :addresseeID="this.$route.params.id" />
+        </UImodal>
     </div>
 </template>
 
@@ -104,7 +146,9 @@
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
-import UIbtn from "../UI/UIbtn.vue";
+import UImodal from "../UI/UImodal.vue";
+import FileUpload from "../FileUpload.vue";
+
 export default {
     name: "DialogUser",
     setup() {
@@ -115,6 +159,7 @@ export default {
             isBtnMessageDelete: false,
             messages: [],
             id: "",
+            conv_id: ""
         };
     },
     validations: {
@@ -124,28 +169,24 @@ export default {
         },
     },
     mounted() {
-        this.setArrayMessages([])
+        this.setArrayMessages([]);
         // this.scrollToElement();
-
         this.id = this.$route.params.id;
         this.LOAD_MESSAGES_USER(this.id)
             .then(() => {
                 if (this.$refs.scrollToMe) {
                     this.$nextTick(function () {
                         this.scrollToElement();
-                    })
+                    });
                 }
-            })
-
-
+                this.conv_id = this.getArrayMessages[0].conv_id;
+            });
         // this.scrollToElement();
-
         // console.log(this.getArrayMessages)
         // SocketioService.subscribeToMessages((err, data) => {
         //     if (err) return console.log(err)
         //     this.setArrayMessages([...this.getArrayMessages, data])
         // });
-
         //подгрузка новой партии сообщений при скроле страницы
         const options = {
             rootMargin: "0px",
@@ -153,27 +194,25 @@ export default {
         };
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
-
                 if (this.getArrayMessages.length !== 0) {
                     this.LOAD_MESSAGES_USER(this.id)
                         .then((resp) => {
                             if (resp.data.length > 0) {
-                                let ref = 'message' + resp.data[resp.data.length - 4].id;
+                                let ref = "message" + resp.data[resp.data.length - 4].id;
                                 let topWriteUnderComment = this.$refs[ref][0].getBoundingClientRect().y;
                                 if (this.$refs.scrollToMe) {
                                     this.$nextTick(function () {
                                         this.scrollToElementUP(topWriteUnderComment);
-                                    })
+                                    });
                                 }
                             }
-                        })
+                        });
                 }
             }
         };
         const observer = new IntersectionObserver(callback, options);
         observer.observe(this.$refs.observer);
     },
-
     // updated() {
     //     if (this.$refs.scrollToMe) {
     //         console.log(this.entries[0].isIntersecting)
@@ -182,15 +221,22 @@ export default {
     //         })
     //     }
     // },
-
     async unmounted() {
         if (this.getArrayMessages.length > 0) {
             this.setCountDialogsNull();
             this.setArrayDialogs([]);
             this.LOAD_DIALOGS({ isExitMessage: true, convID: this.getArrayMessages[0].conv_id });
         }
-        this.setCountMessagesNull()
-        this.setArrayMessages([])
+        this.setCountMessagesNull();
+        this.setArrayMessages([]);
+
+
+    },
+
+    async beforeUnmount() {
+        this.UPDATE_FLAGS_UNREAD_MESSAGE(this.conv_id);
+        this.setPhotosMessagesArray([]);
+        this.conv_id = "";
     },
 
     methods: {
@@ -199,9 +245,13 @@ export default {
             LOAD_MESSAGES_USER: "messageStore/LOAD_MESSAGES_USER",
             DELETE_MESSAGES: "messageStore/DELETE_MESSAGES",
             LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
-            UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE"
-        }),
+            UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE",
+            FULL_SIZE_PHOTO_MESSAGE: "showFullPhotoStore/FULL_SIZE_PHOTO_MESSAGE",
+            closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
+            NULL_UNREAD_MESSAGE: "messageStore/NULL_UNREAD_MESSAGE"
 
+
+        }),
         ...mapMutations({
             setModalWriteMessage: "messageStore/setModalWriteMessage",
             setMessageUser: "messageStore/setMessageUser",
@@ -209,22 +259,26 @@ export default {
             setCountMessagesNull: "messageStore/setCountMessagesNull",
             setArrayMessages: "messageStore/setArrayMessages",
             setCountDialogsNull: "messageStore/setCountDialogsNull",
-            setArrayDialogs: "messageStore/setArrayDialogs"
+            setArrayDialogs: "messageStore/setArrayDialogs",
+            setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
+            setIsLoadPhotoMessage: "loadPhotoStore/setIsLoadPhotoMessage",
+            setPhotosMessagesArray: "messageStore/setPhotosMessagesArray"
         }),
+
         //отправляем сообщение
         async submitMessage() {
             // при отпарвке сообщения убирать фон с непрачитанных
-            this.setArrayMessagesUnread()
+            this.setArrayMessagesUnread();
             //сохраянем сообщение в БД
-            this.WRITE_MESSAGE_USER(this.$route.params.id)
+            this.WRITE_MESSAGE_USER({ addresseeID: this.$route.params.id })
                 .then(() => {
                     this.$nextTick(function () {
                         this.scrollToElement();
-                    })
+                    });
                 });
         },
         showBtnDelete(message) {
-            message.isMesssageDel = !message.isMesssageDel
+            message.isMesssageDel = !message.isMesssageDel;
         },
         //автоматическая прокрутка сообщений вниз
         scrollToElement() {
@@ -233,11 +287,11 @@ export default {
                 if (el) {
                     el.scrollTop = el.scrollHeight;
                 }
-            } catch (err) {
-                console.log(err)
+            }
+            catch (err) {
+                console.log(err);
             }
         },
-
         //прокрутка сообщений вверх
         scrollToElementUP(top) {
             try {
@@ -245,16 +299,39 @@ export default {
                 if (el) {
                     el.scrollTop = top;
                 }
-            } catch (err) {
-                console.log(err)
+            }
+            catch (err) {
+                console.log(err);
             }
         },
-
-        //в случае закодированных специсимволов в тектсе- переводим их обратно в читаемый вид
+        //в случае закодированных специсимволов в текcте- переводим их обратно в читаемый вид
         messageText(value) {
             let doc = new DOMParser().parseFromString(value, "text/html");
             return doc.documentElement.textContent;
         },
+
+        addPostPhoto() {
+            this.setIsLoadPhotoMessage(true);
+            this.setIsModalLoadPhoto(true);
+        },
+
+        myPhotos(photo) {
+            try {
+                return require(`../../assets/photo/${photo.photo_name}`);
+            } catch (err) {
+                console.log(err)
+                return require(`../../assets/ava/ava_1.jpg`);
+            }
+        },
+
+        moreTextMessage(message) {
+            message.isFullText = true;
+        },
+
+        goBackMessage() {
+            this.$router.go(-1);
+            this.UPDATE_FLAGS_UNREAD_MESSAGE(this.getArrayMessages[0].conv_id);
+        }
     },
     computed: {
         ...mapGetters({
@@ -262,7 +339,11 @@ export default {
             getArrayMessages: "messageStore/getArrayMessages",
             getUser: "authorizationStore/getUser",
             getIsUIloadMoreMessages: "messageStore/getIsUIloadMoreMessages",
-            getIsNotMessages: "messageStore/getIsNotMessages"
+            getIsNotMessages: "messageStore/getIsNotMessages",
+            getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
+            getPhotosMessagesArray: "messageStore/getPhotosMessagesArray",
+            getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
+
         }),
         ...mapState({
             messageUser: (state) => state.messageStore.messageUser,
@@ -281,22 +362,23 @@ export default {
         pathAva() {
             try {
                 return require(`../../assets/photo/${this.getUser.ava}`);
-            } catch {
+            }
+            catch {
                 return require(`../../assets/ava/ava_1.jpg`);
             }
         },
-
         //подгрузка аватрки моей
         pathAvaMy() {
-            let message = this.getArrayMessages.find(message => message.sender === JSON.parse(localStorage.getItem('user')).userID)
+            let message = this.getArrayMessages.find(message => message.sender === JSON.parse(localStorage.getItem("user")).userID);
             try {
                 return require(`../../assets/photo/${message.ava}`);
-            } catch {
+            }
+            catch {
                 return require(`../../assets/ava/ava_1.jpg`);
             }
         },
     },
-    components: { UIbtn }
+    components: { UImodal, FileUpload }
 }
 </script>
 
@@ -485,5 +567,51 @@ export default {
     opacity: .3;
     font-family: fantasy;
     color: dimgray;
+}
+
+.btn_addPhoto {
+    background-image: url(http://localhost:8080/img/camera_4.a75f9837.svg);
+    background-size: 45%;
+    background-repeat: no-repeat;
+    width: 60px;
+    background-position: center;
+    margin-right: 10px;
+    height: 90%;
+}
+
+.wrapper_block_photo_post {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.wrapper_photo_post {
+    width: 18%;
+    height: 150px;
+    margin: 10px 5px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.photo_post {
+    width: 100%;
+    height: 100%;
+    /* height: inherit; */
+    -o-object-fit: cover;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.size_photo_1 {
+    width: 18%;
+    height: auto;
+    max-height: 150px;
+}
+
+.more_text_message {
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-block;
+    color: #008edb;
 }
 </style>

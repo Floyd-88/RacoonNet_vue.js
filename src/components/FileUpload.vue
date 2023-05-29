@@ -51,7 +51,7 @@
                 Выбрать фотографии
             </UIbtn>
 
-            <UIbtn v-if="getUrlsImages.length > 0" @click.prevent="addPhotoServer($event)" :disabled="getArrayLoadImage.length < 1">
+            <UIbtn v-if="getUrlsImages.length > 0" @click.prevent="addNewPhotoServer($event)" :disabled="getArrayLoadImage.length < 1">
                 Добавить фотографии
             </UIbtn>
         </div>
@@ -68,6 +68,13 @@ import { mapActions, mapGetters, mapMutations} from 'vuex';
 export default {
     components: { CloseModal, UIbtn },
     name: "FileUpload",
+
+    props:{
+        addresseeID: {
+            type: String,
+            default: "",
+        }
+    },
 
     data() {
         return {
@@ -143,6 +150,16 @@ export default {
             })
         },
 
+        addNewPhotoServer(event) {
+                console.log(this.addresseeID)
+                this.addPhotoServer({event: event, addresseeID: this.addresseeID})
+                .then((resp) => {
+                    if(resp[0][5] === 0 || resp[0][5] === undefined) {
+                    window.location.href = `/id${JSON.parse(this.getUser.userID)}`;
+                    }
+                })
+            },
+
         //конвертирует байты
         bytesToSize: function (bytes) {
             const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
@@ -159,7 +176,8 @@ export default {
             getMessageLoadPhoto: "loadPhotoStore/getMessageLoadPhoto",
             getArrayLoadImage: "loadPhotoStore/getArrayLoadImage",
             getUrlsImages: "loadPhotoStore/getUrlsImages",
-            getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto"
+            getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto",
+            getUser: "authorizationStore/getUser"
     })
     }
 }

@@ -169,7 +169,6 @@
             </div>
         </template>
     </template>
-    <!-- ----- -->
 </template>
 
 <script>
@@ -178,22 +177,19 @@ import { mapActions, mapGetters, mapMutations } from 'vuex';
 export default {
     name: "MyFriends",
     emits: ["getUserInfo"],
-
     data() {
         return {
-            userTokenID: JSON.parse(localStorage.getItem('user')).userID,
-        }
+            userTokenID: JSON.parse(localStorage.getItem("user")).userID,
+        };
     },
-
     beforeUnmount() {
         this.setTitleFriend("Друзья");
         this.setSearchFriend();
         this.setCountFriendsNull();
         this.setSearchUsersFriends([]);
     },
-
     methods: {
-        ...mapMutations({ 
+        ...mapMutations({
             setTitleFriend: "friendsStore/setTitleFriend",
             setModalWriteMessage: "messageStore/setModalWriteMessage",
             setIsFriendShow: "friendsStore/setIsFriendShow",
@@ -201,58 +197,52 @@ export default {
             setSearchUsersFriends: "friendsStore/setSearchUsersFriends",
             setCountFriendsNull: "friendsStore/setCountFriendsNull",
         }),
-
         ...mapActions({
             ADD_FRIEND: "friendsStore/ADD_FRIEND",
             DELETE_FRIEND: "friendsStore/DELETE_FRIEND",
             AGREE_ADD_FRIEND_USER: "friendsStore/AGREE_ADD_FRIEND_USER"
         }),
-
         getUserInfo(user) {
             this.$emit("getUserInfo", user);
         },
-
         writeMessageMyFriend(user) {
-            this.setModalWriteMessage(true)
-            this.getUserInfo(user)
+            this.setModalWriteMessage(true);
+            this.getUserInfo(user);
         },
-
-          //приглашение в друзья от меня
-    addFriend(user) {
-        if(user.textBTN === "Добавить в друзья") {
-            this.ADD_FRIEND(user.userID)
-            user.textBTN = "Отменить заявку"
-        } else {
-            user.textBTN = "Добавить в друзья"
-            this.ADD_FRIEND(user.userID)
+        //приглашение в друзья от меня
+        addFriend(user) {
+            if (user.textBTN === "Добавить в друзья") {
+                this.ADD_FRIEND(user.userID);
+                user.textBTN = "Отменить заявку";
+            }
+            else {
+                user.textBTN = "Добавить в друзья";
+                this.ADD_FRIEND(user.userID);
+            }
+        },
+        removeFriend(user) {
+            if (user.textBTN === "Удалить из друзей") {
+                this.DELETE_FRIEND({ id: user.id, query: this.$route.query.id, userID: user.userID });
+                user.textBTN = "Добавить в друзья";
+            }
+            else if (user.textBTN === "Добавить в друзья") {
+                user.textBTN = "Отменить заявку";
+                this.ADD_FRIEND(user.userID);
+            }
+            else if (user.textBTN === "Отменить заявку") {
+                user.textBTN = "Добавить в друзья";
+                this.ADD_FRIEND(user.userID);
+            }
+        },
+        acceptFriend(user) {
+            user.acceptBTN = "removeFriend";
+            this.AGREE_ADD_FRIEND_USER(user.id);
+        },
+        refusalFriend(user) {
+            user.acceptBTN = "addFriend";
+            this.DELETE_FRIEND({ id: user.id, query: this.$route.query.id, userID: user.userID });
         }
     },
-
-    removeFriend(user) {
-        if(user.textBTN === "Удалить из друзей") {
-            this.DELETE_FRIEND({id: user.id, query: this.$route.query.id, userID: user.userID});
-            user.textBTN = "Добавить в друзья";
-        } else if(user.textBTN === "Добавить в друзья") {
-            user.textBTN = "Отменить заявку";
-            this.ADD_FRIEND(user.userID);
-        } else if(user.textBTN === "Отменить заявку") {
-            user.textBTN = "Добавить в друзья";
-            this.ADD_FRIEND(user.userID);
-        }
-    },
-
-    acceptFriend(user) {
-        user.acceptBTN = 'removeFriend';
-        this.AGREE_ADD_FRIEND_USER(user.id)
-    },
-
-    refusalFriend(user) {
-        user.acceptBTN = 'addFriend';
-        this.DELETE_FRIEND({id: user.id, query: this.$route.query.id, userID: user.userID});
-    }
-
-    },
-
     computed: {
         ...mapGetters({
             getUsersMyFriends: "friendsStore/getUsersMyFriends",
@@ -261,10 +251,9 @@ export default {
             getSearchUsersFriends: "friendsStore/getSearchUsersFriends",
             getTextBtnFfriend: "friendsStore/getTextBtnFfriend",
             getUser: "authorizationStore/getUser",
-            getIsNotFriends: "friendsStore/getIsNotFriends"
+            getIsNotFriends: "friendsStore/getIsNotFriends",
         }),
-    }
-
+    },
 }
 
 </script>

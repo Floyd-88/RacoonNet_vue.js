@@ -16,7 +16,8 @@ export const postsMyPageStore = {
         limitNews: 10, // лимит новостей на странице
         likesPost: "",
         // isLoadPhotoPost: "" //загрузка фотографий в пост
-        photosPostsArray: [] //фотографии к постам
+        photosPostsArray: [], //фотографии к постам
+        isNotRepeatAddPost: true //предотвращение потворной отправки поста
 
     }),
 
@@ -31,8 +32,9 @@ export const postsMyPageStore = {
         getNewsPostsFriends: state => state.newsPostsFriends,
         getLikesPost: state => state.likesPost,
         // getIsLoadPhotoPost: (state) => state.isLoadPhotoPost
-        getPhotosPostsArray: (state) => state.photosPostsArray
+        getPhotosPostsArray: (state) => state.photosPostsArray,
 
+        getIsNotRepeatAddPost: (state) => state.isNotRepeatAddPost
     },
 
     mutations: {
@@ -110,6 +112,10 @@ export const postsMyPageStore = {
             }
         },
 
+        setIsNotRepeatAddPost(state, bool) {
+            state.isNotRepeatAddPost = bool;
+        }
+
     },
 
     actions: {
@@ -155,6 +161,9 @@ export const postsMyPageStore = {
             commit,
             state
         }, isPhoto) {
+
+            commit("setIsNotRepeatAddPost", false);
+
             const newPost = {
                 id: getters.getUser.userID,
                 postText: state.postText.trim(),
@@ -164,7 +173,7 @@ export const postsMyPageStore = {
             newPost.photo = isPhoto;
 
             await axios.post('http://localhost:8000/dataBase.js', newPost)
-                .then(function(response) {
+                .then(async function(response) {
 
 
                     // newPost.id = response.data.user.postID;
@@ -173,10 +182,14 @@ export const postsMyPageStore = {
                     // newPost.ava = response.data.user.ava
 
 
-                    commit("setAddPosts", response.data);
-                    commit("setCountPosts", 1);
+                    await commit("setAddPosts", response.data);
+                    await commit("setCountPosts", 1);
+
+                    await commit("setIsNotRepeatAddPost", true);
+
                 })
                 .catch(function(error) {
+                    commit("setIsNotRepeatAddPost", true);
                     console.log("Ошибка при добавлении поста: " + error);
                 });
         },
@@ -249,7 +262,6 @@ export const postsMyPageStore = {
 
             return result
         },
-
 
         //получение постов от друзей для отображения в новостях
         async LOAD_NEWS_FRIENDS_USERS({

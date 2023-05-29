@@ -52,7 +52,9 @@ var postsMyPageStore = {
       // лимит новостей на странице
       likesPost: "",
       // isLoadPhotoPost: "" //загрузка фотографий в пост
-      photosPostsArray: [] //фотографии к постам
+      photosPostsArray: [],
+      //фотографии к постам
+      isNotRepeatAddPost: true //предотвращение потворной отправки поста
 
     };
   },
@@ -82,6 +84,9 @@ var postsMyPageStore = {
     // getIsLoadPhotoPost: (state) => state.isLoadPhotoPost
     getPhotosPostsArray: function getPhotosPostsArray(state) {
       return state.photosPostsArray;
+    },
+    getIsNotRepeatAddPost: function getIsNotRepeatAddPost(state) {
+      return state.isNotRepeatAddPost;
     }
   },
   mutations: {
@@ -152,6 +157,9 @@ var postsMyPageStore = {
           return photo.photoID !== id;
         });
       }
+    },
+    setIsNotRepeatAddPost: function setIsNotRepeatAddPost(state, bool) {
+      state.isNotRepeatAddPost = bool;
     }
   },
   actions: {
@@ -201,36 +209,53 @@ var postsMyPageStore = {
     // добавление нового поста на мою страницу
     addPost: function addPost(_ref3, isPhoto) {
       var dispatch, getters, commit, state, newPost;
-      return regeneratorRuntime.async(function addPost$(_context2) {
+      return regeneratorRuntime.async(function addPost$(_context3) {
         while (1) {
-          switch (_context2.prev = _context2.next) {
+          switch (_context3.prev = _context3.next) {
             case 0:
               dispatch = _ref3.dispatch, getters = _ref3.getters, commit = _ref3.commit, state = _ref3.state;
+              commit("setIsNotRepeatAddPost", false);
               newPost = {
                 id: getters.getUser.userID,
                 postText: state.postText.trim()
               };
-              _context2.next = 4;
+              _context3.next = 5;
               return regeneratorRuntime.awrap(dispatch("newDate"));
 
-            case 4:
-              newPost.date = _context2.sent;
+            case 5:
+              newPost.date = _context3.sent;
               newPost.photo = isPhoto;
-              _context2.next = 8;
-              return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/dataBase.js', newPost).then(function (response) {
-                // newPost.id = response.data.user.postID;
-                // newPost.name = response.data.user.name;
-                // newPost.surname = response.data.user.surname;
-                // newPost.ava = response.data.user.ava
-                commit("setAddPosts", response.data);
-                commit("setCountPosts", 1);
+              _context3.next = 9;
+              return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/dataBase.js', newPost).then(function _callee(response) {
+                return regeneratorRuntime.async(function _callee$(_context2) {
+                  while (1) {
+                    switch (_context2.prev = _context2.next) {
+                      case 0:
+                        _context2.next = 2;
+                        return regeneratorRuntime.awrap(commit("setAddPosts", response.data));
+
+                      case 2:
+                        _context2.next = 4;
+                        return regeneratorRuntime.awrap(commit("setCountPosts", 1));
+
+                      case 4:
+                        _context2.next = 6;
+                        return regeneratorRuntime.awrap(commit("setIsNotRepeatAddPost", true));
+
+                      case 6:
+                      case "end":
+                        return _context2.stop();
+                    }
+                  }
+                });
               })["catch"](function (error) {
+                commit("setIsNotRepeatAddPost", true);
                 console.log("Ошибка при добавлении поста: " + error);
               }));
 
-            case 8:
+            case 9:
             case "end":
-              return _context2.stop();
+              return _context3.stop();
           }
         }
       });
@@ -239,16 +264,16 @@ var postsMyPageStore = {
     editPost: function editPost(_ref4) {
       var state, dispatch, commit, date, _state$posts$filter, _state$posts$filter2, post;
 
-      return regeneratorRuntime.async(function editPost$(_context3) {
+      return regeneratorRuntime.async(function editPost$(_context4) {
         while (1) {
-          switch (_context3.prev = _context3.next) {
+          switch (_context4.prev = _context4.next) {
             case 0:
               state = _ref4.state, dispatch = _ref4.dispatch, commit = _ref4.commit;
-              _context3.next = 3;
+              _context4.next = 3;
               return regeneratorRuntime.awrap(dispatch("newDate"));
 
             case 3:
-              date = _context3.sent;
+              date = _context4.sent;
               _state$posts$filter = state.posts.filter(function (post) {
                 return post.id === state.id;
               }), _state$posts$filter2 = _slicedToArray(_state$posts$filter, 1), post = _state$posts$filter2[0];
@@ -256,7 +281,7 @@ var postsMyPageStore = {
               commit("setCloseModulePost");
               post.postText = state.beforePostText; //при нажатии на кнопку сохранить, перезаписываем postText
 
-              _context3.next = 10;
+              _context4.next = 10;
               return regeneratorRuntime.awrap(_axios["default"].put('http://localhost:8000/dataBase.js', {
                 postText: post.postText,
                 date: "Изменено: " + date,
@@ -270,7 +295,7 @@ var postsMyPageStore = {
 
             case 10:
             case "end":
-              return _context3.stop();
+              return _context4.stop();
           }
         }
       });
@@ -279,9 +304,9 @@ var postsMyPageStore = {
     removePost: function removePost(_ref5) {
       var getters, commit, state, _state$posts$filter3, _state$posts$filter4, post, paramsBody;
 
-      return regeneratorRuntime.async(function removePost$(_context4) {
+      return regeneratorRuntime.async(function removePost$(_context5) {
         while (1) {
-          switch (_context4.prev = _context4.next) {
+          switch (_context5.prev = _context5.next) {
             case 0:
               getters = _ref5.getters, commit = _ref5.commit, state = _ref5.state;
               _state$posts$filter3 = state.posts.filter(function (post) {
@@ -295,7 +320,7 @@ var postsMyPageStore = {
                 pageID: getters.getUser.userID,
                 photos: post.photos
               };
-              _context4.next = 7;
+              _context5.next = 7;
               return regeneratorRuntime.awrap(_axios["default"]["delete"]('http://localhost:8000/dataBase_delete', {
                 data: paramsBody
               }).then(function (response) {
@@ -306,7 +331,7 @@ var postsMyPageStore = {
 
             case 7:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
         }
       });
@@ -327,12 +352,12 @@ var postsMyPageStore = {
     //получение постов от друзей для отображения в новостях
     LOAD_NEWS_FRIENDS_USERS: function LOAD_NEWS_FRIENDS_USERS(_ref6) {
       var state, commit, dispatch;
-      return regeneratorRuntime.async(function LOAD_NEWS_FRIENDS_USERS$(_context5) {
+      return regeneratorRuntime.async(function LOAD_NEWS_FRIENDS_USERS$(_context6) {
         while (1) {
-          switch (_context5.prev = _context5.next) {
+          switch (_context6.prev = _context6.next) {
             case 0:
               state = _ref6.state, commit = _ref6.commit, dispatch = _ref6.dispatch;
-              return _context5.abrupt("return", new Promise(function (resolve, reject) {
+              return _context6.abrupt("return", new Promise(function (resolve, reject) {
                 _axios["default"].get('http://localhost:8000/news_friends.js', {
                   params: {
                     _count: state.countNews,
@@ -369,7 +394,7 @@ var postsMyPageStore = {
 
             case 2:
             case "end":
-              return _context5.stop();
+              return _context6.stop();
           }
         }
       });
@@ -377,34 +402,34 @@ var postsMyPageStore = {
     //лайкнуть пост
     SAVE_LIKE_COUNT_POST: function SAVE_LIKE_COUNT_POST(_ref7, postID) {
       var commit, dispatch;
-      return regeneratorRuntime.async(function SAVE_LIKE_COUNT_POST$(_context6) {
+      return regeneratorRuntime.async(function SAVE_LIKE_COUNT_POST$(_context7) {
         while (1) {
-          switch (_context6.prev = _context6.next) {
+          switch (_context7.prev = _context7.next) {
             case 0:
               commit = _ref7.commit, dispatch = _ref7.dispatch;
-              _context6.prev = 1;
-              _context6.next = 4;
+              _context7.prev = 1;
+              _context7.next = 4;
               return regeneratorRuntime.awrap(dispatch("newDate"));
 
             case 4:
-              postID.date = _context6.sent;
-              _context6.next = 7;
+              postID.date = _context7.sent;
+              _context7.next = 7;
               return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/likes_post', postID).then(function (response) {
                 commit("setLikesPost", response.data);
               }));
 
             case 7:
-              _context6.next = 12;
+              _context7.next = 12;
               break;
 
             case 9:
-              _context6.prev = 9;
-              _context6.t0 = _context6["catch"](1);
-              console.error(_context6.t0);
+              _context7.prev = 9;
+              _context7.t0 = _context7["catch"](1);
+              console.error(_context7.t0);
 
             case 12:
             case "end":
-              return _context6.stop();
+              return _context7.stop();
           }
         }
       }, null, null, [[1, 9]]);
@@ -412,13 +437,13 @@ var postsMyPageStore = {
     //загрузка фотографий к постам
     LOAD_POST_PHOTOS: function LOAD_POST_PHOTOS(_ref8, params) {
       var state, commit;
-      return regeneratorRuntime.async(function LOAD_POST_PHOTOS$(_context7) {
+      return regeneratorRuntime.async(function LOAD_POST_PHOTOS$(_context8) {
         while (1) {
-          switch (_context7.prev = _context7.next) {
+          switch (_context8.prev = _context8.next) {
             case 0:
               state = _ref8.state, commit = _ref8.commit;
-              _context7.prev = 1;
-              _context7.next = 4;
+              _context8.prev = 1;
+              _context8.next = 4;
               return regeneratorRuntime.awrap(_axios["default"].get('http://localhost:8000/post_photos.js', {
                 params: params
               }).then(function (response) {
@@ -428,17 +453,17 @@ var postsMyPageStore = {
               }));
 
             case 4:
-              _context7.next = 9;
+              _context8.next = 9;
               break;
 
             case 6:
-              _context7.prev = 6;
-              _context7.t0 = _context7["catch"](1);
-              console.error(_context7.t0);
+              _context8.prev = 6;
+              _context8.t0 = _context8["catch"](1);
+              console.error(_context8.t0);
 
             case 9:
             case "end":
-              return _context7.stop();
+              return _context8.stop();
           }
         }
       }, null, null, [[1, 6]]);

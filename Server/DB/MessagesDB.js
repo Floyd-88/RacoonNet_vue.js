@@ -34,7 +34,8 @@ class MessagesDB {
             sender_delete integer(1) NOT NULL,
             addressee_delete integer(1) NOT NULL,
             message text NOT NULL,
-            date varchar(50) NOT NULL
+            date varchar(50) NOT NULL,
+            photos varchar(10) default 'false'
         )`
         return this.connection.execute(sql);
     }
@@ -61,7 +62,7 @@ class MessagesDB {
     //добавление сообщение в базу данных
     add_message_DB(params, callback) {
         return this.connection.execute(`INSERT INTO messages
-        (conv_id, sender, addressee, readed, sender_delete, addressee_delete, message, date) VALUES (?, ?, ?, '0', '0', '0', ?, ?)`, params, (err, row_messages) => {
+        (conv_id, sender, addressee, readed, sender_delete, addressee_delete, message, date, photos) VALUES (?, ?, ?, '0', '0', '0', ?, ?, ?)`, params, (err, row_messages) => {
             callback(err, row_messages);
         });
     }
@@ -111,7 +112,7 @@ class MessagesDB {
         C.sender,
         C.unread,
         M.message,
-        M.date 
+        M.date
             FROM 
                 users U, conversation C
                 LEFT JOIN messages M ON (C.id = M.conv_id)
@@ -150,6 +151,7 @@ class MessagesDB {
         U.name,
         U.surname,
         M.conv_id,
+        M.photos,
        	(SELECT unread FROM conversation WHERE id = ? AND CASE WHEN sender = ? THEN unread = 0 ELSE unread END) as unread,
         U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  LEFT JOIN conversation C ON C.id = M.conv_id
         WHERE M.conv_id = ?
@@ -161,6 +163,25 @@ class MessagesDB {
             END ORDER BY id DESC LIMIT ?, ?`, params, (err, messages_user) => {
             callback(err, messages_user)
         })
+    }
+
+    //загрузка фотографий к сообщениям 
+    load_photos_messages_DB(params, callback) {
+        return this.connection.execute(`SELECT 
+        users.name, 
+        users.surname, 
+        users.ava, 
+        users.userID,
+        photos.date, 
+        messages.id, 
+        photos.photo_name,
+        photos.id as photoID
+        FROM messages 
+        INNER JOIN photos ON photos.message_id_photo = messages.id 
+        INNER JOIN users ON photos.userID = users.userID 
+        WHERE messages.id = ?`, params, (err, row) => {
+            callback(err, row)
+        });
     }
 
     //обновляем флаг просмотра сообщений в таблице сообщений
@@ -331,73 +352,54 @@ class MessagesDB {
         })
     }
 
+    //проверяем на удаление сообщения обоими пользователями
+    check_message_flag_delete(id, callback) {
+        return this.connection.execute(`SELECT (CASE WHEN sender_delete=1 AND addressee_delete=1 THEN 'true' ELSE 'false' END) as bool FROM messages WHERE id = ?`, id, (err, message_flag) => {
+            callback(err, message_flag[0])
+        })
+    }
 
-    //создаем таблицу БД с сообщениями
-    // createTableMessages() {
-    //     const sql = `CREATE TABLE IF NOT EXISTS messages (
-    //         messageID integer PRIMARY KEY AUTO_INCREMENT,
-    //         date timestamp not null DEFAULT CURRENT_TIMESTAMP, 
-    //         messageText text not null, 
-    //         destinationID integer not null,
-    //         authorMessage integer not null,
-    //         FOREIGN KEY (authorMessage) REFERENCES users (userID) ON DELETE CASCADE)`;
-    //     return this.connection.execute(sql);
-    // }
+    //проверяем на удаление диалога обоими пользователями
+    check_dialog_flag_delete(id, callback) {
+        return this.connection.execute(`SELECT (CASE WHEN first_delete=1 AND second_delete=1 THEN 'true' ELSE 'false' END) as bool FROM conversation WHERE id = ?`, id, (err, message_flag) => {
+            callback(err, message_flag[0])
+        })
+    }
 
-    // загрузка всех сообщений пользователя
-    // load_all_messages_DB(tokenID, callback) {
-    //     return this.connection.execute(`SELECT 
-    //     messages.messageID, 
-    //     users.ava, 
-    //     messages.date, 
-    //     messages.messageText, 
-    //     users.name, 
-    //     users.surname,
-    //     messages.destinationID FROM messages 
-    //     INNER JOIN users ON messages.destinationID = users.userID 
-    //     WHERE authorMessage = tokenID OR destinationID = tokenID ORDER BY messageID DESC`, tokenID, (err, row) => {
-    //         callback(err, row)
-    //     });
-    // }
+    //удаляем сообщение из БД
+    delete_message(id, callback) {
+        return this.connection.execute(`DELETE FROM messages WHERE id=?`, id, (err) => {
+            callback(err)
+        })
+    }
 
+    //удаляем диалог из БД
+    delete_dialog(id, callback) {
+        return this.connection.execute(`DELETE FROM conversation WHERE id=?`, id, (err) => {
+            callback(err)
+        })
+    }
 
-    // загрузка последних сообщений из всех преписок из базы данны
-    // load_end_message_DB(params, callback) {
-    //     return this.connection.execute(`SELECT 
-    //     messages.messageID, 
-    //     messages.date, 
-    //     messages.messageText, 
-    //     users.name, 
-    //     users.surname,
-    //     messages.authorPost FROM messages 
-    //     INNER JOIN users ON messages.authorPost = users.userID 
-    //     WHERE destinationID = ? ORDER BY messageID DESC`, params, (err, row) => {
-    //         callback(err, row)
-    //     });
-    // }
+    //удаляем все сообщения из диалога
+    delete_all_message_dialog(id, callback) {
+        return this.connection.execute(`DELETE FROM messages WHERE conv_id=?`, id, (err) => {
+            callback(err)
+        })
+    }
 
-    // загрузка одного сообщения из базы данных
-    // load_message_DB(messageID, callback) {
-    //     return this.connection.execute(`SELECT 
-    //         messages.messageID, 
-    //         users.ava, 
-    //         messages.date, 
-    //         messages.messageText, 
-    //         users.name, 
-    //         users.surname,
-    //         messages.destinationID FROM messages 
-    //         INNER JOIN users ON messages.destinationID = users.userID 
-    //         WHERE messageID = ?`, [messageID], (err, row) => {
-    //         console.log(row)
-    //         callback(err, row[0])
-    //     });
-    // }
+    //получаем массив фотографий из сообщения при удалении
+    message_photos_DB(id, callback) {
+        return this.connection.execute(`SELECT id, photo_name FROM photos WHERE message_id_photo=?`, [id], (err, photosArray) => {
+            callback(err, photosArray);
+        })
+    }
 
-    // //добавление сообщения в базу данных
-    // add_message_DB(message, callback) {
-    //     return this.connection.execute(`INSERT INTO messages (messageText, destinationID, authorMessage) VALUES (?,?,?)`, message, (err, row) => {
-    //         callback(err, row);
-    //     });
-    // }
+    //получаем массив фотографий из диалога при удалении
+    dialog_photos_DB(id, callback) {
+        return this.connection.execute(`SELECT id, photo_name FROM photos WHERE message_id_photo IN (SELECT id FROM messages WHERE conv_id=?)`, [id], (err, photosArray) => {
+            callback(err, photosArray);
+        })
+    }
+
 }
 module.exports = MessagesDB;

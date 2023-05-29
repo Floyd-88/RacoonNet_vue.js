@@ -39,7 +39,7 @@
 
   <!-- окно загрузки -->
   <UImodal class="modal_fone" v-if="getIsModalLoadPhoto">
-    <FileUpload />
+    <FileUpload :addresseeID="this.getUser.userID"/>
   </UImodal>
 
   <!-- слайдер -->

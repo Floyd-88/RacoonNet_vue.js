@@ -1,8 +1,8 @@
 <template>
     <template v-if="!isEditAva">
-        <div class="wrapper_block_full_size">
+        <div class="wrapper_block_full_size" :class="{'wrapper_block_full_size_action': getMessageID}">
             <!-- <transition-group name='fade' tag='div'> -->
-            <div class="wrapper_block_full_size_img">
+            <div class="wrapper_block_full_size_img" :class="{'wrapper_block_full_size_img_action': getMessageID}">
                 <div class="wrapper_full_size_img">
                     <img class="full_size_img" v-if="currentImg.photo"
                         :src="myPhotos(currentImg.photo.photo_name)" :alt="currentImg.photo.photo_name" />
@@ -15,8 +15,7 @@
                 <div class="wrapper_block_info_photo">
                     <div class="wrapper_block_info_name_count_photo">
                         <div class="wrapper_block_info_name">
-                            <p>Фотографии: {{ getIndexPhoto + 1 }} из {{ currentImg.photosPostArray?.length ||
-                                getAllPhotosMyPage.length }}</p>
+                            <p>Фотографии: {{ getIndexPhoto + 1 }} из {{ currentImg.photosMessageArray?.length || currentImg.photosPostArray?.length || getAllPhotosMyPage.length }}</p>
                         </div>
                     </div>
                     <div class="wrapper_block_info_remove_photo">
@@ -30,7 +29,7 @@
             </div>
 
             <!-- блок комментариев -->
-            <template v-if="currentImg.photo">
+            <template v-if="currentImg.photo && !getMessageID">
                 <CommentsPhoto :currentImg="currentImg.photo" />
             </template>
         </div>
@@ -44,7 +43,7 @@
 
                     <div class="wrapper_save_editPost_btn">
                         <UIbtn class="save_editPost_btn" type="submit"
-                            @click="removePhoto({ name: currentImg.photo.photo_name, photoID: currentImg.photo.photoID || undefined })">
+                            @click="removePhoto({ name: currentImg.photo.photo_name, photoID: currentImg.photo.photoID || undefined, countPhotoPost: currentImg.photosPostArray?.length })">
                             Удалить
                         </UIbtn>
 
@@ -112,7 +111,8 @@ export default {
             setPhotoId: "loadPhotoStore/setPhotoId",
             setCommentsPhotoArray: "commentsPhoto/setCommentsPhotoArray",
             setIsModalFullSize: "showFullPhotoStore/setIsModalFullSize",
-            setPostID: "showFullPhotoStore/setPostID"
+            setPostID: "showFullPhotoStore/setPostID",
+            setMessageID: "showFullPhotoStore/setMessageID"
         }),
         ...mapActions({
             removePhoto: "loadPhotoStore/removePhoto",
@@ -136,13 +136,15 @@ export default {
             getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
             getIdPhoto: "loadPhotoStore/getIdPhoto",
             getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
+            getPhotosMessagesArray: "messageStore/getPhotosMessagesArray",
             getPostID: "showFullPhotoStore/getPostID",
-            getIsFocusComment: "commentsPhoto/getIsFocusComment"
+            getIsFocusComment: "commentsPhoto/getIsFocusComment",
+            getMessageID: "showFullPhotoStore/getMessageID"
         }),
 
         currentImg: function () {
 
-            if (this.getPostID === "") {
+            if (this.getPostID === "" && this.getMessageID === "") {
                 
                 if (this.getAllPhotosMyPage.length > 0) {
                     this.setCommentsPhotoArray([])
@@ -159,6 +161,34 @@ export default {
                     this.setPhotoId(photo.id);
                     this.LOAD_COMMENTS_PHOTO(photo.id)
                     return { photo };
+                }
+                return [];
+            } else if (this.getMessageID) {
+                if (this.getPhotosMessagesArray.length > 0) {
+                    let photosMessageArray = this.getPhotosMessagesArray.filter(photo => photo.id === this.getMessageID)
+                    // this.setCommentsPhotoArray([])
+
+                    if (photosMessageArray.length > 0) {
+                        if (this.getIndexPhoto === -1) {
+                            this.setIndexPhoto(photosMessageArray.length - 1);
+                        }
+                        let photo = photosMessageArray[Math.abs(this.getIndexPhoto) % photosMessageArray.length];
+
+                        if (this.getIndexPhoto >= photosMessageArray.length) {
+                            this.setIndexPhoto(0);
+                        } else if (this.getIndexPhoto < 0) {
+                            this.setIndexPhoto(photosMessageArray.length - 1);
+                        }
+                        if (photo) {
+                            this.setPhotoId(photo.photoID);
+                            // this.LOAD_COMMENTS_PHOTO(photo.photoID)
+                            return { photo, photosMessageArray };
+                        }
+                    } else {
+                        this.setIsModalFullSize(false);
+                        document.body.style.overflow = "auto";
+                        this.setMessageID("");
+                    }
                 }
                 return [];
             } else {
@@ -179,12 +209,16 @@ export default {
                         }
                         if (photo) {
                             this.setPhotoId(photo.photoID);
-                            this.LOAD_COMMENTS_PHOTO(photo.photoID)
+                            this.LOAD_COMMENTS_PHOTO(photo.photoID);
+                           
                             return { photo, photosPostArray };
                         }
                     } else {
                         console.log('tttt')
+
                         this.setIsModalFullSize(false);
+                        console.log(this.getPostID)
+
                         document.body.style.overflow = "auto";
                         this.setPostID("");
                     }
@@ -239,7 +273,9 @@ export default {
     height: 90vh;
     flex-direction: row;
     overflow: hidden;
-
+}
+.wrapper_block_full_size_action {
+    width: 700px;
 }
 
 
@@ -251,6 +287,9 @@ export default {
     align-items: center;
     background: black;
     justify-content: center;
+}
+.wrapper_block_full_size_img_action {
+    width: 100%;
 }
 
 .wrapper_full_size_img {

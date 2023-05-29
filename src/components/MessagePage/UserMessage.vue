@@ -12,7 +12,7 @@
                         {{ dialog.name + " " + dialog.surname }}
                     </p>
                     <div class="message_user_del">
-                        <UIbtn v-show="dialog.isDialogDel" @click="DELETE_DIALOGS(dialog.convId)">
+                        <UIbtn v-show="dialog.isDialogDel" @click="DELETE_DIALOGS({convID: dialog.convId, photos: dialog.photos})">
                             Удалить переписку
                         </UIbtn>
                     </div>
@@ -20,7 +20,10 @@
                 <div class="message_user_text" 
                     @click="openDialogUser(dialog.userID)"
                     :class="{'new_message_color': dialog.unread}">
-                    <p>{{ dialogText(dialog.message) }}</p>
+                    <p>
+                        <img class="new_message_icon_photo" src="../../assets/icons/icon_photo.png" alt="photo" v-if="dialogText(dialog.message) === ''">
+                        {{ (dialogText(dialog.message) === "") ? "Фотография" : dialogText(dialog.message)}}
+                    </p>
                 </div>
             </div>
         </div>
@@ -116,6 +119,9 @@ export default {
 
         dialogText(value) {
             let doc = new DOMParser().parseFromString(value, "text/html");
+            if(value.length > 200) {
+               return doc.documentElement.textContent.slice(0, 200) + "..."
+            } 
             return doc.documentElement.textContent;
         }
     },
@@ -169,6 +175,8 @@ export default {
 }
 .message_user_text p {
     word-break: break-word;
+    display: flex;
+    align-items: center;
 }
 .wrapper_message_user_btn {
     display: flex;
@@ -194,6 +202,12 @@ export default {
 }
 .new_message_color {
   background: #ddffe6b3;
+}
+
+.new_message_icon_photo {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
 }
 /* .observer {
     border: 1px solid;

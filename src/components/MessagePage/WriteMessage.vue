@@ -1,6 +1,6 @@
 <template>
   <!--  Закрыть модальное окно-->
-  <CloseModal @click="setModalWriteMessage(false)" />
+  <CloseModal @click="closeModalWriteMessage()" />
 
   <h4 class="form_message_title">Написать сообщение</h4>
 
@@ -34,7 +34,11 @@
       </div>
       <!-- ---------------- -->
 
+      
+
       <div class="wrapper_form_message_btn">
+          <UIbtn class="btn_addPhoto" @click.prevent="addPostPhoto()"></UIbtn>
+
         <button class="form_message_btn" type="submit" :disabled="v$.$invalid">
           Отправить
         </button>
@@ -81,7 +85,16 @@ export default {
     ...mapMutations({
       setModalWriteMessage: "messageStore/setModalWriteMessage",
       setMessageUser: "messageStore/setMessageUser",
+      setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
+      setIsLoadPhotoMessage: "loadPhotoStore/setIsLoadPhotoMessage",
     }),
+
+    closeModalWriteMessage() {
+      this.setModalWriteMessage(false);
+      this.setMessageUser("");
+
+    },
+
     //отправляем сообщение
     submitMessage() {
       //создаем имя комнаты
@@ -92,8 +105,14 @@ export default {
       //   console.log(cb);
       // });
       //сохраянем сообщение в БД
-      this.WRITE_MESSAGE_USER(this.user.userID);
+      console.log(this.user.userID )
+      this.WRITE_MESSAGE_USER({ addresseeID: this.user.userID });
     },
+
+    addPostPhoto() {
+            this.setIsLoadPhotoMessage(true);
+            this.setIsModalLoadPhoto(true);
+        },
   },
   computed: {
     ...mapGetters({
@@ -195,5 +214,15 @@ export default {
 }
 .invalid {
   border: 1px solid red;
+}
+
+.btn_addPhoto {
+  background-image: url(http://localhost:8080/img/camera_4.a75f9837.svg);
+    background-size: 45%;
+    background-repeat: no-repeat;
+    width: 60px;
+    background-position: center;
+    margin-right: 10px;
+    height: 90%;
 }
 </style>

@@ -11,10 +11,11 @@
 
     <div class="wrapper_btn_addPost">
       <UIbtn class="btn_addPhoto"
-             @click="addPostPhoto(postText)"></UIbtn>
+          @click="addPostPhoto(postText)">
+      </UIbtn>
 
       <UIbtn class="btn_addPost"
-             @click="addPost()"
+             @click="addPostPage()"
              :disabled="postText.length < 1">
         Добавить
       </UIbtn>
@@ -43,13 +44,20 @@ export default {
     this.setIsLoadPhotoPost(true);
     // this.addPost(postText)
     this.setIsModalLoadPhoto(true);
+   },
+
+   addPostPage() {
+    if(this.getIsNotRepeatAddPost) {
+      this.addPost(); 
+    }
    }
   },
 
   computed: {
 ...mapGetters({
   getUser: "authorizationStore/getUser",
-  getPostText: "postsMyPageStore/getPostText"
+  getPostText: "postsMyPageStore/getPostText",
+  getIsNotRepeatAddPost: "postsMyPageStore/getIsNotRepeatAddPost"
 }),
 
 postText: {

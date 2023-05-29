@@ -22,7 +22,7 @@
 
     <MyFriendsBlock>
         <div class="wrapper_my_friends_title">
-            <h4 class="titleMyFriendsBlock" @click="$router.push({name: 'friendspage', query: {id: getUser.userID} })">
+            <h4 class="titleMyFriendsBlock" @click="goMyFriends()">
                 Список друзей
             </h4>
         </div>
@@ -65,7 +65,10 @@ export default {
             setCountPostsNull: "postsMyPageStore/setCountPostsNull",
             setCommentsArray: "commentsPost/setCommentsArray",
             setCommentsCommentArray: "commentsPost/setCommentsCommentArray",
-            setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
+            setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray",
+            setUsersMyFriends: "friendsStore/setUsersMyFriends",
+            setCountFriendsNull: "friendsStore/setCountFriendsNull",
+            setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter"
         }),
 
         loadAva(ava) {
@@ -74,6 +77,13 @@ export default {
             } catch {
                 return require(`../../assets/ava/ava_1.jpg`);
             }
+        },
+
+        goMyFriends() {
+            this.setCountFriendsNull();
+            this.setUsersMyFriends([]);
+            this.setUsersMyFriendsFilter([]);
+            this.$router.push({name: 'friendspage', query: {id: this.getUser.userID} })
         }
     },
     computed: {

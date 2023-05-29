@@ -43,7 +43,9 @@ var messageStore = {
       //отображать надпись об отсутствии диалогов
       isUIloadMoreMessages: false,
       //отображать индикатор загрузки
-      isNotMessages: false //отображать надпись об отсутствии диалогов
+      isNotMessages: false,
+      //отображать надпись об отсутствии диалогов
+      photosMessagesArray: [] //массив с фотографиями к сообщениям
 
     };
   },
@@ -83,6 +85,9 @@ var messageStore = {
     },
     getIsNotMessages: function getIsNotMessages(state) {
       return state.isNotMessages;
+    },
+    getPhotosMessagesArray: function getPhotosMessagesArray(state) {
+      return state.photosMessagesArray;
     }
   },
   mutations: {
@@ -100,6 +105,13 @@ var messageStore = {
     },
     setArrayDialogs: function setArrayDialogs(state, value) {
       state.arrayDialogs = value;
+    },
+    setArrayDialogsConvID: function setArrayDialogsConvID(state, id) {
+      state.arrayDialogs.map(function (dialog) {
+        if (dialog.convId === id) {
+          dialog.unread = 0;
+        }
+      });
     },
     setArrayMessages: function setArrayMessages(state, value) {
       state.arrayMessages = value;
@@ -138,11 +150,14 @@ var messageStore = {
     },
     setIsNotMessages: function setIsNotMessages(state, bool) {
       state.isNotMessages = bool;
+    },
+    setPhotosMessagesArray: function setPhotosMessagesArray(state, value) {
+      state.photosMessagesArray = value;
     }
   },
   actions: {
     //сохранение сообщений в базе данных
-    WRITE_MESSAGE_USER: function WRITE_MESSAGE_USER(_ref, addresseeID) {
+    WRITE_MESSAGE_USER: function WRITE_MESSAGE_USER(_ref, body) {
       var state, commit, dispatch, date, message;
       return regeneratorRuntime.async(function WRITE_MESSAGE_USER$(_context) {
         while (1) {
@@ -157,18 +172,19 @@ var messageStore = {
             case 3:
               date = _context.sent;
               message = {
-                destinationID: addresseeID,
+                destinationID: body.addresseeID,
                 textMessage: state.messageUser,
                 date: date
               };
-              _context.prev = 5;
+              message.photo = body.isPhoto;
+              _context.prev = 6;
               commit("setMessageUser", "");
               commit("setModalWriteMessage", false);
-              _context.next = 10;
+              _context.next = 11;
               return regeneratorRuntime.awrap(_axios["default"].post("http://localhost:8000/user_message", message).then(function (res) {
                 //отпраляем сообщение на сервер для передачи его адресату через сокет
                 var newMessage = res.data[0];
-                newMessage.destinationID = addresseeID;
+                newMessage.destinationID = body.addresseeID;
 
                 _socketio["default"].sendMessage(newMessage, function (cb) {
                   console.log(cb);
@@ -177,21 +193,21 @@ var messageStore = {
                 commit("setArrayMessages", [].concat(_toConsumableArray(state.arrayMessages), [newMessage])); // state.arrayMessages.push(resp.data)
               }));
 
-            case 10:
-              _context.next = 15;
+            case 11:
+              _context.next = 16;
               break;
 
-            case 12:
-              _context.prev = 12;
-              _context.t0 = _context["catch"](5);
+            case 13:
+              _context.prev = 13;
+              _context.t0 = _context["catch"](6);
               console.log(_context.t0);
 
-            case 15:
+            case 16:
             case "end":
               return _context.stop();
           }
         }
-      }, null, null, [[5, 12]]);
+      }, null, null, [[6, 13]]);
     },
     //получение всех диалогов пользователя
     LOAD_DIALOGS: function LOAD_DIALOGS(_ref2, body) {
@@ -249,12 +265,12 @@ var messageStore = {
     },
     //получение переписки с конкретным пользователем
     LOAD_MESSAGES_USER: function LOAD_MESSAGES_USER(_ref3, id) {
-      var commit, state;
+      var commit, state, dispatch;
       return regeneratorRuntime.async(function LOAD_MESSAGES_USER$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              commit = _ref3.commit, state = _ref3.state;
+              commit = _ref3.commit, state = _ref3.state, dispatch = _ref3.dispatch;
               _context3.next = 3;
               return regeneratorRuntime.awrap(commit("setIsNotMessages", false));
 
@@ -282,6 +298,13 @@ var messageStore = {
                       commit("setIsNotMessages", true);
                     }
 
+                    resp.data.forEach(function (message) {
+                      if (message.photos === "1") {
+                        dispatch("LOAD_MESSAGES_PHOTOS", {
+                          messageID: message.id
+                        });
+                      }
+                    });
                     resolve(resp);
                   });
                 } catch (err) {
@@ -297,7 +320,7 @@ var messageStore = {
       });
     },
     //удаление сообщения
-    DELETE_MESSAGES: function DELETE_MESSAGES(_ref4, id) {
+    DELETE_MESSAGES: function DELETE_MESSAGES(_ref4, body) {
       var state, message_params;
       return regeneratorRuntime.async(function DELETE_MESSAGES$(_context4) {
         while (1) {
@@ -306,14 +329,15 @@ var messageStore = {
               state = _ref4.state;
               _context4.prev = 1;
               message_params = {
-                deleteID: id
+                deleteID: body.messageID,
+                photos: body.photos
               };
               _context4.next = 5;
               return regeneratorRuntime.awrap(_axios["default"]["delete"]("http://localhost:8000/user_messages", {
                 data: message_params
               }).then(function () {
                 state.arrayMessages = state.arrayMessages.filter(function (message) {
-                  return message.id !== id;
+                  return message.id !== body.messageID;
                 });
               }));
 
@@ -334,7 +358,7 @@ var messageStore = {
       }, null, null, [[1, 7]]);
     },
     //удаление диалога
-    DELETE_DIALOGS: function DELETE_DIALOGS(_ref5, id) {
+    DELETE_DIALOGS: function DELETE_DIALOGS(_ref5, body) {
       var state, commit, dialogs_params;
       return regeneratorRuntime.async(function DELETE_DIALOGS$(_context5) {
         while (1) {
@@ -343,7 +367,8 @@ var messageStore = {
               state = _ref5.state, commit = _ref5.commit;
               _context5.prev = 1;
               dialogs_params = {
-                dialogsID: id
+                dialogsID: body.convID,
+                photos: body.photos
               };
               _context5.next = 5;
               return regeneratorRuntime.awrap(_axios["default"].put("http://localhost:8000/user_messages", dialogs_params).then(function (resp) {
@@ -372,23 +397,18 @@ var messageStore = {
     },
     //обновление флагов непрочитанных сообщений после выхода из переписки
     UPDATE_FLAGS_UNREAD_MESSAGE: function UPDATE_FLAGS_UNREAD_MESSAGE(_ref6, conv_id) {
-      var getters, commit;
+      var commit;
       return regeneratorRuntime.async(function UPDATE_FLAGS_UNREAD_MESSAGE$(_context6) {
         while (1) {
           switch (_context6.prev = _context6.next) {
             case 0:
-              getters = _ref6.getters, commit = _ref6.commit;
+              commit = _ref6.commit;
               _context6.prev = 1;
               _context6.next = 4;
               return regeneratorRuntime.awrap(_axios["default"].put("http://localhost:8000/unread_messages", {
                 conv_id: conv_id
-              }).then(function (res) {
-                getters.getArrayDialogs.map(function (dialog) {
-                  if (dialog.convId === conv_id) {
-                    dialog.unread = 0;
-                  }
-                });
-                commit("setCountNewMessage", getters.getCountNewMessage - res.data.count);
+              }).then(function () {
+                commit("setArrayDialogsConvID", conv_id); // commit("setCountNewMessage", getters.getCountNewMessage - res.data.count)
               }));
 
             case 4:
@@ -441,6 +461,40 @@ var messageStore = {
           return b.id - a.id;
         }
       });
+    },
+    //загрузка фотографий к сообщениям
+    LOAD_MESSAGES_PHOTOS: function LOAD_MESSAGES_PHOTOS(_ref8, params) {
+      var commit, state;
+      return regeneratorRuntime.async(function LOAD_MESSAGES_PHOTOS$(_context7) {
+        while (1) {
+          switch (_context7.prev = _context7.next) {
+            case 0:
+              commit = _ref8.commit, state = _ref8.state;
+              _context7.prev = 1;
+              _context7.next = 4;
+              return regeneratorRuntime.awrap(_axios["default"].get('http://localhost:8000/message_photos.js', {
+                params: params
+              }).then(function (response) {
+                if (response.data.length > 0) {
+                  commit("setPhotosMessagesArray", [].concat(_toConsumableArray(state.photosMessagesArray), _toConsumableArray(response.data)));
+                }
+              }));
+
+            case 4:
+              _context7.next = 9;
+              break;
+
+            case 6:
+              _context7.prev = 6;
+              _context7.t0 = _context7["catch"](1);
+              console.error(_context7.t0);
+
+            case 9:
+            case "end":
+              return _context7.stop();
+          }
+        }
+      }, null, null, [[1, 6]]);
     }
   },
   namespaced: true

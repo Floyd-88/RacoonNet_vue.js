@@ -25,7 +25,7 @@
     </UIbtn>
 
     <UImodal class="modal_fone" v-if="getIsModalLoadPhoto">
-      <FileUpload/>
+      <FileUpload :addresseeID="this.$route.params.id"/>
     </UImodal>
 
     <div @click="setIsModalAllPhotos(false)">
