@@ -209,7 +209,7 @@ export const messageStore = {
                                 _limit: state.limitMessages,
                             }
                         })
-                        .then(function(resp) {
+                        .then(async function(resp) {
                             let arrayMessage = resp.data.reverse();
                             commit("setIsUIloadMoreMessages", false);
                             commit("setArrayMessages", [...arrayMessage, ...state.arrayMessages]);
@@ -219,9 +219,9 @@ export const messageStore = {
                                 commit("setIsNotMessages", true);
                             }
 
-                            resp.data.forEach(message => {
+                            await resp.data.forEach(async message => {
                                 if (message.photos === "1") {
-                                    dispatch("LOAD_MESSAGES_PHOTOS", { messageID: message.id });
+                                    await dispatch("LOAD_MESSAGES_PHOTOS", { messageID: message.id });
                                 }
                             });
 

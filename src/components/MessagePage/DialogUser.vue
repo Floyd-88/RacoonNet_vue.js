@@ -159,7 +159,8 @@ export default {
             isBtnMessageDelete: false,
             messages: [],
             id: "",
-            conv_id: ""
+            conv_id: "",
+            scrolPhotoDown: true
         };
     },
     validations: {
@@ -168,6 +169,7 @@ export default {
             min: minLength(1),
         },
     },
+
     mounted() {
         this.setArrayMessages([]);
         // this.scrollToElement();
@@ -195,16 +197,21 @@ export default {
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
                 if (this.getArrayMessages.length !== 0) {
+                this.scrolPhotoDown = false;
                     this.LOAD_MESSAGES_USER(this.id)
                         .then((resp) => {
                             if (resp.data.length > 0) {
-                                let ref = "message" + resp.data[resp.data.length - 4].id;
-                                let topWriteUnderComment = this.$refs[ref][0].getBoundingClientRect().y;
-                                if (this.$refs.scrollToMe) {
+                                if(resp.data[resp.data.length - 4]) {
+                                    let ref = "message" + resp.data[resp.data.length - 4].id;
+                                    let topWriteUnderComment = this.$refs[ref][0].getBoundingClientRect().y;
+
+                                    if (this.$refs.scrollToMe) {
                                     this.$nextTick(function () {
                                         this.scrollToElementUP(topWriteUnderComment);
                                     });
                                 }
+                                }
+                              
                             }
                         });
                 }
@@ -213,14 +220,18 @@ export default {
         const observer = new IntersectionObserver(callback, options);
         observer.observe(this.$refs.observer);
     },
-    // updated() {
-    //     if (this.$refs.scrollToMe) {
-    //         console.log(this.entries[0].isIntersecting)
-    //         this.$nextTick(function () {
-    //             this.scrollToElement();
-    //         })
-    //     }
-    // },
+
+    updated() {
+        if( this.scrolPhotoDown === true) {
+            if (this.$refs.scrollToMe) {
+            this.$nextTick(function () {
+                this.scrollToElement();
+            })
+        }
+        }
+        
+    },
+
     async unmounted() {
         if (this.getArrayMessages.length > 0) {
             this.setCountDialogsNull();

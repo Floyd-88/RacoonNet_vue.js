@@ -88,12 +88,11 @@ var noticeStore = {
               _context.prev = 1;
               _context.next = 4;
               return regeneratorRuntime.awrap(_axios["default"].get("http://localhost:8000/new_notice").then(function (res) {
-                console.log(res.data); // res.data.map(notice => {
+                // res.data.map(notice => {
                 //     if (notice.selectedGender === "woman") {
                 //         notice.text = state.noticeTextArray
                 //     }
                 // })
-
                 commit("setNoticeArray", res.data);
               }));
 

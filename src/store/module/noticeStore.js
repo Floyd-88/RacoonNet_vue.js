@@ -62,7 +62,6 @@ export const noticeStore = {
             try {
                 await axios.get("http://localhost:8000/new_notice")
                     .then(function(res) {
-                        console.log(res.data);
                         // res.data.map(notice => {
                         //     if (notice.selectedGender === "woman") {
                         //         notice.text = state.noticeTextArray
