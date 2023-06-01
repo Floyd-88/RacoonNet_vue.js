@@ -1,4 +1,5 @@
 import axios from "axios";
+import SocketioService from "../../services/socketio.service";
 
 export const postsMyPageStore = {
 
@@ -187,6 +188,10 @@ export const postsMyPageStore = {
 
                     await commit("setIsNotRepeatAddPost", true);
 
+                    //отправляем уведомление адресату без перезагрузки страницы
+                    SocketioService.sendNotice(newPost.id, cb => {
+                        console.log(cb);
+                    });
                 })
                 .catch(function(error) {
                     commit("setIsNotRepeatAddPost", true);
@@ -311,7 +316,15 @@ export const postsMyPageStore = {
                 postID.date = await dispatch("newDate");
                 await axios.post('http://localhost:8000/likes_post', postID)
                     .then((response) => {
-                        commit("setLikesPost", response.data)
+                        commit("setLikesPost", response.data);
+
+                        //отправляем уведомление адресату без перезагрузки страницы
+                        if (response.data.flag) {
+                            SocketioService.sendNotice(response.data.likes.authorPost, cb => {
+                                console.log(cb);
+                            });
+                        }
+
                     });
             } catch (err) {
                 console.error(err);

@@ -77,9 +77,12 @@ export default {
         this.setIsNewMessageNotify(false);
       } else {
         this.setIsNewMessageNotify(true);
-
       }
 
+    });
+
+    SocketioService.subscribeToNotice((err, data) => {
+      this.setNoticeArray([data[0], ...this.getNoticeArray]);
     });
   },
 
@@ -95,7 +98,8 @@ export default {
       setArrayDialogs: "messageStore/setArrayDialogs",
       setIsNewMessageNotify: "messageStore/setIsNewMessageNotify",
       setCountFriendsNull: "friendsStore/setCountFriendsNull",
-      setUsersMyFriends: "friendsStore/setUsersMyFriends"
+      setUsersMyFriends: "friendsStore/setUsersMyFriends",
+      setNoticeArray: "noticeStore/setNoticeArray"
     }),
 
     ...mapActions({
@@ -121,7 +125,8 @@ export default {
       getArrayMessages: "messageStore/getArrayMessages",
       getArrayDialogs: "messageStore/getArrayDialogs",
       getisModalFeedBack: "feedBackStore/getisModalFeedBack",
-      getCountFriends: "friendsStore/getCountFriends"
+      getCountFriends: "friendsStore/getCountFriends",
+      getNoticeArray: "noticeStore/getNoticeArray"
     })
   },
 

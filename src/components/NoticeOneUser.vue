@@ -324,10 +324,12 @@ export default {
     components: { CloseModal },
     emits:['getUserNotice'],
 
-    mounted() {
+   async mounted() {
         if(this.getSelectNotice.show_notice === 0) {
-            this.REMOVE_COUNT_NOTICE_LIST(this.getSelectNotice.id);
+           await this.REMOVE_COUNT_NOTICE_LIST(this.getSelectNotice.id);
+           this.getSelectNotice.show_notice = 1;
         }
+
     },
 
     methods: {

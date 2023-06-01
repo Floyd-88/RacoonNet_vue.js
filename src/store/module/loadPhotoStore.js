@@ -1,4 +1,5 @@
 import axios from "axios";
+import SocketioService from "../../services/socketio.service";
 // import router from "@/router/router";
 
 export const loadPhotoStore = {
@@ -412,6 +413,14 @@ export const loadPhotoStore = {
                 await axios.post('http://localhost:8000/likes_photo', photoID)
                     .then((response) => {
                         commit("setLikesPhoto", response.data)
+
+                        console.log(response.data)
+                            //отправляем уведомление адресату без перезагрузки страницы
+                        if (response.data.flag) {
+                            SocketioService.sendNotice(response.data.likes.userID, cb => {
+                                console.log(cb);
+                            });
+                        }
                     });
             } catch (err) {
                 console.error(err);

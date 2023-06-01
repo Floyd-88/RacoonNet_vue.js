@@ -7,6 +7,8 @@ exports.postsMyPageStore = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
+var _socketio = _interopRequireDefault(require("../../services/socketio.service"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -243,6 +245,12 @@ var postsMyPageStore = {
                         return regeneratorRuntime.awrap(commit("setIsNotRepeatAddPost", true));
 
                       case 6:
+                        //отправляем уведомление адресату без перезагрузки страницы
+                        _socketio["default"].sendNotice(newPost.id, function (cb) {
+                          console.log(cb);
+                        });
+
+                      case 7:
                       case "end":
                         return _context2.stop();
                     }
@@ -415,7 +423,13 @@ var postsMyPageStore = {
               postID.date = _context7.sent;
               _context7.next = 7;
               return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/likes_post', postID).then(function (response) {
-                commit("setLikesPost", response.data);
+                commit("setLikesPost", response.data); //отправляем уведомление адресату без перезагрузки страницы
+
+                if (response.data.flag) {
+                  _socketio["default"].sendNotice(response.data.likes.authorPost, function (cb) {
+                    console.log(cb);
+                  });
+                }
               }));
 
             case 7:

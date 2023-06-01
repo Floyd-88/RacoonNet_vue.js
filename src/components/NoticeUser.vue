@@ -101,7 +101,8 @@ export default {
 
                 this.setIsShowModalWindowOneNotice(true);
                 this.setSelectNotice(notice);
-                if(notice.photos !== "0") {
+
+                if(notice.photos !== "0" && notice.photos !== null) {
                 this.GET_PHOTOS_POST_NOTICE(notice.post_id);
                 }
             }

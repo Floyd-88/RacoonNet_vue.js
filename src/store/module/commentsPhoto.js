@@ -1,4 +1,5 @@
 import axios from "axios";
+import SocketioService from "../../services/socketio.service";
 
 export const commentsPhoto = {
 
@@ -52,7 +53,7 @@ export const commentsPhoto = {
     },
 
     actions: {
-        //сохранение комментария к посту в базу данных
+        //сохранение комментария к фотографии в базу данных
         async SAVE_COMMENTS_PHOTO({ dispatch, commit, state }, newCommentsPhoto) {
 
             let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
@@ -66,6 +67,13 @@ export const commentsPhoto = {
                     // commit("setCountPosts", 1);
                     // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
                     // commit("setCommentPost", "")
+
+                    console.log(response.data)
+                    console.log(newCommentsPhoto)
+                        //отправляем уведомление адресату без перезагрузки страницы
+                    SocketioService.sendNotice(response.data.userID, cb => {
+                        console.log(cb);
+                    });
                 })
                 .catch(function(error) {
                     console.log("Ошибка при написании комментария: " + error);

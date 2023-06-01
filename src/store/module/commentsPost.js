@@ -1,4 +1,5 @@
 import axios from "axios";
+import SocketioService from "../../services/socketio.service";
 
 export const commentsPost = {
 
@@ -83,6 +84,11 @@ export const commentsPost = {
                     // commit("setCountPosts", 1);
                     // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
                     // commit("setCommentPost", "")
+
+                    //отправляем уведомление адресату без перезагрузки страницы
+                    SocketioService.sendNotice(response.data.authorPost, cb => {
+                        console.log(cb);
+                    });
                 })
                 .catch(function(error) {
                     console.log("Ошибка при написании комментария: " + error);
@@ -101,9 +107,8 @@ export const commentsPost = {
             });
             newCommentsComment.date = await date,
 
-                console.log(newCommentsComment)
 
-            await axios.post('http://localhost:8000/load_comments_comment.js', newCommentsComment)
+                await axios.post('http://localhost:8000/load_comments_comment.js', newCommentsComment)
                 .then(function(response) {
                     // console.log(response.data);
                     commit("setCommentsCommentArray", [response.data, ...state.commentsCommentArray]);
@@ -112,6 +117,11 @@ export const commentsPost = {
                     // commit("setCountPosts", 1);
                     // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
                     // commit("setCommentPost", "")
+
+                    //отправляем уведомление адресату без перезагрузки страницы
+                    SocketioService.sendNotice(newCommentsComment.author_comment_comment || response.data.author_comment_id, cb => {
+                        console.log(cb);
+                    });
                 })
                 .catch(function(error) {
                     console.log("Ошибка при написании комментария: " + error);

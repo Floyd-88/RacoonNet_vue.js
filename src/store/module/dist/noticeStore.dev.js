@@ -94,6 +94,7 @@ var noticeStore = {
                 //     }
                 // })
                 commit("setNoticeArray", res.data);
+                console.log(res.data);
               }));
 
             case 4:
@@ -162,7 +163,6 @@ var noticeStore = {
                   post_id: post_id
                 }
               }).then(function (res) {
-                console.log(res.data);
                 commit("setPhotosPostNotice", res.data);
               }));
 

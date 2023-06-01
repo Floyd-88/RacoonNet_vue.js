@@ -7,6 +7,8 @@ exports.loadPhotoStore = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
+var _socketio = _interopRequireDefault(require("../../services/socketio.service"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 // import router from "@/router/router";
@@ -554,6 +556,13 @@ var loadPhotoStore = {
               _context5.next = 7;
               return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/likes_photo', photoID).then(function (response) {
                 commit("setLikesPhoto", response.data);
+                console.log(response.data); //отправляем уведомление адресату без перезагрузки страницы
+
+                if (response.data.flag) {
+                  _socketio["default"].sendNotice(response.data.likes.userID, function (cb) {
+                    console.log(cb);
+                  });
+                }
               }));
 
             case 7:

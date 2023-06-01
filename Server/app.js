@@ -2266,7 +2266,7 @@ router.put('/notice_remove_count', authenticateJWT, function(req, res) {
 
 //ПОЛУЧЕНИЕ ФОТОГРАФИЙ К ПОСТУ ИЗ УВЕДОМЛЕНИЯ
 router.get('/new_notice_photos', authenticateJWT, function(req, res) {
-
+    console.log(req.query)
     notice.get_notice_photos_post_DB([
         req.query.post_id
     ], (err, newPhotoNotice) => {
@@ -2276,13 +2276,13 @@ router.get('/new_notice_photos', authenticateJWT, function(req, res) {
     });
 });
 
-//ПОЛУЧЕНИЕ СООБЩЕНИЙ БЕЗ ПЕРЕЗАГРУЗКИ
+//ПОЛУЧЕНИЕ ДАННЫХ БЕЗ ПЕРЕЗАГРУЗКИ
 io.use(async(socket, next) => {
     // получаем токен от клиента
     const token = socket.handshake.auth.token;
     try {
         // проверяем что токен соответствует авторизованному пользователю
-        const user = await jwt.verify(token, tokenKey.secret);
+        const user = jwt.verify(token, tokenKey.secret);
 
         // сохраняем информацию из токена в сокете
         socket.user = user;
@@ -2332,6 +2332,23 @@ io.on("connection", (socket) => {
 
         //отправляем сообщение всем кто находится в комнате кроме отправителя
         socket.to(Number(newMessage.destinationID)).emit("message", newMessage);
+
+        // отправляем сообщение всем кто находится в комнате включая отправителя
+        // io.to(roomName).emit("message", outgoingMessage);
+    });
+
+    socket.on("notice", (addresseeID) => {
+
+        notice.get_notice_DB([
+            addresseeID,
+            addresseeID
+        ], (err, newNotice) => {
+            if (err) return res.status(500).send('При получении уведомлений произошла ошибка' + " " + err);
+
+            //отправляем сообщение всем кто находится в комнате кроме отправителя
+            socket.to(Number(addresseeID)).emit("notice", newNotice);
+            // res.status(200).json(newNotice);
+        });
 
         // отправляем сообщение всем кто находится в комнате включая отправителя
         // io.to(roomName).emit("message", outgoingMessage);

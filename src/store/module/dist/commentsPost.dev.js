@@ -7,6 +7,8 @@ exports.commentsPost = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
+var _socketio = _interopRequireDefault(require("../../services/socketio.service"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -121,6 +123,11 @@ var commentsPost = {
                 // commit("setCountPosts", 1);
                 // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
                 // commit("setCommentPost", "")
+                //отправляем уведомление адресату без перезагрузки страницы
+
+                _socketio["default"].sendNotice(response.data.authorPost, function (cb) {
+                  console.log(cb);
+                });
               })["catch"](function (error) {
                 console.log("Ошибка при написании комментария: " + error);
               }));
@@ -152,19 +159,23 @@ var commentsPost = {
 
             case 6:
               newCommentsComment.date = _context2.sent;
-              console.log(newCommentsComment);
-              _context2.next = 10;
+              _context2.next = 9;
               return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/load_comments_comment.js', newCommentsComment).then(function (response) {
                 // console.log(response.data);
                 commit("setCommentsCommentArray", [response.data].concat(_toConsumableArray(state.commentsCommentArray))); // commit("setAddPosts", response.data);
                 // commit("setCountPosts", 1);
                 // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
                 // commit("setCommentPost", "")
+                //отправляем уведомление адресату без перезагрузки страницы
+
+                _socketio["default"].sendNotice(newCommentsComment.author_comment_comment || response.data.author_comment_id, function (cb) {
+                  console.log(cb);
+                });
               })["catch"](function (error) {
                 console.log("Ошибка при написании комментария: " + error);
               }));
 
-            case 10:
+            case 9:
             case "end":
               return _context2.stop();
           }

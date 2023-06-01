@@ -1847,11 +1847,12 @@ router.put('/notice_remove_count', authenticateJWT, function (req, res) {
 }); //ПОЛУЧЕНИЕ ФОТОГРАФИЙ К ПОСТУ ИЗ УВЕДОМЛЕНИЯ
 
 router.get('/new_notice_photos', authenticateJWT, function (req, res) {
+  console.log(req.query);
   notice.get_notice_photos_post_DB([req.query.post_id], function (err, newPhotoNotice) {
     if (err) return res.status(500).send('При получении фотографий к посту из уведомления произошла ошибка' + " " + err);
     res.status(200).json(newPhotoNotice);
   });
-}); //ПОЛУЧЕНИЕ СООБЩЕНИЙ БЕЗ ПЕРЕЗАГРУЗКИ
+}); //ПОЛУЧЕНИЕ ДАННЫХ БЕЗ ПЕРЕЗАГРУЗКИ
 
 io.use(function _callee(socket, next) {
   var token, user;
@@ -1862,29 +1863,26 @@ io.use(function _callee(socket, next) {
           // получаем токен от клиента
           token = socket.handshake.auth.token;
           _context.prev = 1;
-          _context.next = 4;
-          return regeneratorRuntime.awrap(jwt.verify(token, tokenKey.secret));
+          // проверяем что токен соответствует авторизованному пользователю
+          user = jwt.verify(token, tokenKey.secret); // сохраняем информацию из токена в сокете
 
-        case 4:
-          user = _context.sent;
-          // сохраняем информацию из токена в сокете
           socket.user = user;
           next();
-          _context.next = 13;
+          _context.next = 11;
           break;
 
-        case 9:
-          _context.prev = 9;
+        case 7:
+          _context.prev = 7;
           _context.t0 = _context["catch"](1);
           console.log('error', _context.t0.message);
           return _context.abrupt("return", next(new Error(_context.t0.message)));
 
-        case 13:
+        case 11:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[1, 9]]);
+  }, null, null, [[1, 7]]);
 });
 io.on("connection", function (socket) {
   socket.join(socket.user.id); // let arr = [];
@@ -1915,6 +1913,14 @@ io.on("connection", function (socket) {
   socket.on("message", function (newMessage) {
     //отправляем сообщение всем кто находится в комнате кроме отправителя
     socket.to(Number(newMessage.destinationID)).emit("message", newMessage); // отправляем сообщение всем кто находится в комнате включая отправителя
+    // io.to(roomName).emit("message", outgoingMessage);
+  });
+  socket.on("notice", function (addresseeID) {
+    notice.get_notice_DB([addresseeID, addresseeID], function (err, newNotice) {
+      if (err) return res.status(500).send('При получении уведомлений произошла ошибка' + " " + err); //отправляем сообщение всем кто находится в комнате кроме отправителя
+
+      socket.to(Number(addresseeID)).emit("notice", newNotice); // res.status(200).json(newNotice);
+    }); // отправляем сообщение всем кто находится в комнате включая отправителя
     // io.to(roomName).emit("message", outgoingMessage);
   });
 });

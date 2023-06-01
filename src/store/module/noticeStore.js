@@ -69,6 +69,7 @@ export const noticeStore = {
                         // })
 
                         commit("setNoticeArray", res.data);
+                        console.log(res.data)
                     })
             } catch (err) {
                 console.log(err)
@@ -98,7 +99,6 @@ export const noticeStore = {
                         params: { post_id }
                     })
                     .then(function(res) {
-                        console.log(res.data);
                         commit("setPhotosPostNotice", res.data);
                     })
             } catch (err) {
