@@ -79,6 +79,9 @@ export const postsMyPageStore = {
         setCountPostsNull(state) {
             state.countPosts = 0;
         },
+        setCountPostDel(state) {
+            state.countPosts -= 1;
+        },
         setRemovePost(state, id) {
             state.posts = state.posts.filter(post => post.id !== id);
         },
@@ -245,7 +248,8 @@ export const postsMyPageStore = {
                     data: paramsBody
                 })
                 .then(function(response) {
-                    console.log(response)
+                    console.log(response);
+                    commit("setCountPostDel");
                 })
                 .catch(function(error) {
                     console.log(error)

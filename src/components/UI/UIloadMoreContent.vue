@@ -20,7 +20,6 @@ export default {
   },
 
   mounted() {
-    console.log('start dot')
     this.showLoadDot();
       this.timerDot = setInterval(() => {
       this.showLoadDot()
@@ -28,7 +27,6 @@ export default {
   },
 
   beforeUnmount() {
-    console.log('end dot')
     clearInterval(this.timerDot);
   },
 

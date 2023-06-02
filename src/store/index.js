@@ -16,9 +16,6 @@ import { commentsPhoto } from "@/store/module/commentsPhoto"
 import { feedBackStore } from "@/store/module/feedBackStore"
 import { noticeStore } from "@/store/module/noticeStore"
 
-
-
-
 export default createStore({
     modules: {
         authorizationStore,
@@ -36,6 +33,6 @@ export default createStore({
         commentsPost,
         commentsPhoto,
         feedBackStore,
-        noticeStore
+        noticeStore,
     }
 });

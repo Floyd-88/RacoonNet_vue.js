@@ -94,7 +94,6 @@ var noticeStore = {
                 //     }
                 // })
                 commit("setNoticeArray", res.data);
-                console.log(res.data);
               }));
 
             case 4:
@@ -192,9 +191,7 @@ var noticeStore = {
               _context4.next = 3;
               return regeneratorRuntime.awrap(_axios["default"].put("http://localhost:8000/notice_remove_count", {
                 noticeID: id
-              }).then(function (res) {
-                console.log(res.data);
-              }));
+              }).then(function () {}));
 
             case 3:
               _context4.next = 8;

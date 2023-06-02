@@ -82,8 +82,6 @@ const io = require('socket.io')(http, {
 });
 
 
-
-
 // CORS middleware
 const allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -105,7 +103,6 @@ app.use(bodyParser.urlencoded({
     limit: '200mb',
     extended: true
 }));
-
 
 
 // РЕГЕСТРИРУЕМ ПРОСТОГО ПОЛЬЗОВАТЕЛЯ
@@ -179,17 +176,7 @@ router.post('/register', registerValidate, function(req, res) {
                 refreshToken: refreshToken,
                 user: {
                     userID: user.userID,
-                    // name: user.name,
-                    // surname: user.surname,
                     is_admin: user.is_admin
-                        // ava: user.ava,
-                        // email: user.email,
-                        // year_user: user.year_user,
-                        // month_user: user.month_user,
-                        // day_user: user.day_user,
-                        // selectedGender: user.selectedGender,
-                        // country: user.country,
-                        // city: user.city,
                 }
             });
         });
@@ -269,17 +256,7 @@ router.post('/register-admin', registerValidate, function(req, res) {
                 refreshToken: refreshToken,
                 user: {
                     userID: user.userID,
-                    // name: user.name,
-                    // surname: user.surname,
                     is_admin: user.is_admin
-                        // ava: user.ava,
-                        // email: user.email,
-                        // year_user: user.year_user,
-                        // month_user: user.month_user,
-                        // day_user: user.day_user,
-                        // selectedGender: user.selectedGender,
-                        // country: user.country,
-                        // city: user.city,
                 }
             });
         });
@@ -533,7 +510,7 @@ router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
             });
         }
         //проверка старого пароля
-        if (!req.body.old_password) return res.status(500).send("Поле со старым паролем не заполнено");
+        if (!req.body.old_password) return res.status(401).send("Поле со старым паролем не заполнено");
 
         authorization.getPassword(tokenID, (err, password) => {
             if (err) return res.status(500).send("Ошибка на сервере" + " " + err);
@@ -542,7 +519,7 @@ router.put('/password', authenticateJWT, passwordValidate, function(req, res) {
                 err: 'Пароль не действителен'
             });
 
-            if (!req.body.new_password) return res.status(500).send("Поле с новым паролем не заполнено");
+            if (!req.body.new_password) return res.status(401).send("Поле с новым паролем не заполнено");
 
             //обновление старого пароля
             authorization.updateUserPassword([
@@ -1250,6 +1227,8 @@ router.get('/upload_all_photo', authenticateJWT, function(req, res) {
         photos.load_all_photos_DB([
             tokenID,
             req.query.id,
+            // req.query._count,
+            // req.query._limit
         ], (err, allPhotos) => {
             if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились' + " " + err);
             if (!allPhotos) return res.status(404).send('Фотографии не найдены' + " " + err);
@@ -2266,7 +2245,6 @@ router.put('/notice_remove_count', authenticateJWT, function(req, res) {
 
 //ПОЛУЧЕНИЕ ФОТОГРАФИЙ К ПОСТУ ИЗ УВЕДОМЛЕНИЯ
 router.get('/new_notice_photos', authenticateJWT, function(req, res) {
-    console.log(req.query)
     notice.get_notice_photos_post_DB([
         req.query.post_id
     ], (err, newPhotoNotice) => {

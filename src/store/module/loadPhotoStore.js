@@ -294,12 +294,13 @@ export const loadPhotoStore = {
 
         //получить все фотографии
         async loadAllPhotos({
-            commit
+            commit,
+            // state
         }, id) {
             try {
                 await axios.get('http://localhost:8000/upload_all_photo', {
                     params: {
-                        id: id
+                        id: id,
                     }
                 }).then((response) => {
                     commit("setMyPhotosMyPage", response.data);

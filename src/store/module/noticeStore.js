@@ -69,7 +69,6 @@ export const noticeStore = {
                         // })
 
                         commit("setNoticeArray", res.data);
-                        console.log(res.data)
                     })
             } catch (err) {
                 console.log(err)
@@ -112,9 +111,7 @@ export const noticeStore = {
                 await axios.put("http://localhost:8000/notice_remove_count", {
                         noticeID: id
                     })
-                    .then(function(res) {
-                        console.log(res.data);
-                    })
+                    .then(function() {})
             } catch (err) {
                 console.log(err)
             }

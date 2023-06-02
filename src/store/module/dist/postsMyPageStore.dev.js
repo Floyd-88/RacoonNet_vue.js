@@ -129,6 +129,9 @@ var postsMyPageStore = {
     setCountPostsNull: function setCountPostsNull(state) {
       state.countPosts = 0;
     },
+    setCountPostDel: function setCountPostDel(state) {
+      state.countPosts -= 1;
+    },
     setRemovePost: function setRemovePost(state, id) {
       state.posts = state.posts.filter(function (post) {
         return post.id !== id;
@@ -333,6 +336,7 @@ var postsMyPageStore = {
                 data: paramsBody
               }).then(function (response) {
                 console.log(response);
+                commit("setCountPostDel");
               })["catch"](function (error) {
                 console.log(error);
               }));

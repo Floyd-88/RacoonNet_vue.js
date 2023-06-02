@@ -168,17 +168,7 @@ router.post('/register', registerValidate, function (req, res) {
         refreshToken: refreshToken,
         user: {
           userID: user.userID,
-          // name: user.name,
-          // surname: user.surname,
-          is_admin: user.is_admin // ava: user.ava,
-          // email: user.email,
-          // year_user: user.year_user,
-          // month_user: user.month_user,
-          // day_user: user.day_user,
-          // selectedGender: user.selectedGender,
-          // country: user.country,
-          // city: user.city,
-
+          is_admin: user.is_admin
         }
       });
     });
@@ -234,17 +224,7 @@ router.post('/register-admin', registerValidate, function (req, res) {
         refreshToken: refreshToken,
         user: {
           userID: user.userID,
-          // name: user.name,
-          // surname: user.surname,
-          is_admin: user.is_admin // ava: user.ava,
-          // email: user.email,
-          // year_user: user.year_user,
-          // month_user: user.month_user,
-          // day_user: user.day_user,
-          // selectedGender: user.selectedGender,
-          // country: user.country,
-          // city: user.city,
-
+          is_admin: user.is_admin
         }
       });
     });
@@ -472,14 +452,14 @@ router.put('/password', authenticateJWT, passwordValidate, function (req, res) {
     } //проверка старого пароля
 
 
-    if (!req.body.old_password) return res.status(500).send("Поле со старым паролем не заполнено");
+    if (!req.body.old_password) return res.status(401).send("Поле со старым паролем не заполнено");
     authorization.getPassword(tokenID, function (err, password) {
       if (err) return res.status(500).send("Ошибка на сервере" + " " + err);
       var passwordIsValid = bcrypt.compareSync(req.body.old_password, password.user_pass);
       if (!passwordIsValid) return res.status(401).send({
         err: 'Пароль не действителен'
       });
-      if (!req.body.new_password) return res.status(500).send("Поле с новым паролем не заполнено"); //обновление старого пароля
+      if (!req.body.new_password) return res.status(401).send("Поле с новым паролем не заполнено"); //обновление старого пароля
 
       authorization.updateUserPassword([bcrypt.hashSync(req.body.new_password, 8), tokenID], function (err) {
         if (err) return res.status(500).send("При изменении пароля возникли проблемы" + " " + err); //получение почты пользователя
@@ -1065,7 +1045,9 @@ router.get('/upload_all_photo', authenticateJWT, function (req, res) {
   tokenID = req.tokenID; //id из сохраненного токена 
 
   if (tokenID) {
-    photos.load_all_photos_DB([tokenID, req.query.id], function (err, allPhotos) {
+    photos.load_all_photos_DB([tokenID, req.query.id // req.query._count,
+    // req.query._limit
+    ], function (err, allPhotos) {
       if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились' + " " + err);
       if (!allPhotos) return res.status(404).send('Фотографии не найдены' + " " + err); //массив с названиями фотографий
 
@@ -1847,7 +1829,6 @@ router.put('/notice_remove_count', authenticateJWT, function (req, res) {
 }); //ПОЛУЧЕНИЕ ФОТОГРАФИЙ К ПОСТУ ИЗ УВЕДОМЛЕНИЯ
 
 router.get('/new_notice_photos', authenticateJWT, function (req, res) {
-  console.log(req.query);
   notice.get_notice_photos_post_DB([req.query.post_id], function (err, newPhotoNotice) {
     if (err) return res.status(500).send('При получении фотографий к посту из уведомления произошла ошибка' + " " + err);
     res.status(200).json(newPhotoNotice);

@@ -67,6 +67,15 @@ export default {
         // });
   }, 
 
+  mounted() {
+    this.loadAllPhotos(this.$route.params.id);
+    this.setPosts([])
+    this.setPhotosPostsArray([]);
+    this.setCountPostsNull()
+    // this.loadPostServer(this.$route.params.id);
+    // this.LOAD_DIALOGS();
+  },
+
   methods: {
     ...mapActions({
       loadAllPhotos: "loadPhotoStore/loadAllPhotos",
@@ -93,14 +102,7 @@ export default {
     }),
   },
 
-  mounted() {
-    this.loadAllPhotos(this.$route.params.id);
-    this.setPosts([])
-    this.setPhotosPostsArray([]);
-    this.setCountPostsNull()
-    // this.loadPostServer(this.$route.params.id);
-    // this.LOAD_DIALOGS();
-  },
+
 
   // watch: {
   //   $route() {
