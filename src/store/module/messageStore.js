@@ -188,7 +188,6 @@ export const messageStore = {
                         resolve(resp);
                     })
                     .catch((err) => {
-                        console.log(err)
                         reject(err);
                     })
             })

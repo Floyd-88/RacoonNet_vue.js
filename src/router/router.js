@@ -16,7 +16,7 @@ import AllUsersMessages from "@/components/MessagePage/AllUsersMessages";
 import DialogUser from "@/components/MessagePage/DialogUser";
 import ResetPassword from "@/components/authorizationUser/ResetPassword";
 
-
+import store from "@/store/index";
 
 const routes = [{
         path: "/",
@@ -138,6 +138,7 @@ router.beforeEach((to, from, next) => {
         }
     } else if (to.matched.some(record => record.meta.requiresAuth)) {
         if (localStorage.getItem('token')) {
+            store.dispatch('cancelLoadAxios/CANCEL_PENDING_REQUESTS')
             next()
         } else {
             next('/')

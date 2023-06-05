@@ -41,7 +41,7 @@ export default {
       loadUser: "authorizationStore/loadUser",
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
       LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
-      UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE"
+      UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE",
     }),
 
     ...mapMutations({
@@ -54,6 +54,7 @@ export default {
       setCountDialogsNull: "messageStore/setCountDialogsNull",
       setArrayDialogs: "messageStore/setArrayDialogs",
       setArrayMessages: "messageStore/setArrayMessages",
+      setTitleFriend: "friendsStore/setTitleFriend"
     }),
 
     goMyPage() {
@@ -68,12 +69,15 @@ export default {
       this.setUserEditProfile(false)
       this.$router.push('/news');
     },
-    goMyFriend() {
+    async goMyFriend() {
       this.setUsersMyFriends([]);
       this.setUsersMyFriendsFilter([]);
       this.setCountFriendsNull();
+      this.setIsFriendShow('allFriends');
+      this.setTitleFriend('Друзья');
       if(this.getCountFriends === 0) {
-            this.$router.push({name: 'friendspage', query: {id: this.userID} });
+          await this.GET_USER_MY_FRIENDS(this.userID);
+          await this.$router.push({name: 'friendspage', query: {id: this.userID} });
         }
     },
 
@@ -82,6 +86,17 @@ export default {
       this.setArrayDialogs([]);
       this.setArrayMessages([]);
       this.LOAD_DIALOGS()
+      .then(() => () => {})
+      .catch((err) => {
+              if (err.code === "ERR_CANCELED") {
+              this.LOAD_DIALOGS()
+              .catch((err) => {
+                if (err.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена")
+              }
+        });
+            }
+        });
       this.$router.push('/message');
     }
 

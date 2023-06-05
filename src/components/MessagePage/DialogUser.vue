@@ -149,6 +149,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 import UImodal from "../UI/UImodal.vue";
 import FileUpload from "../FileUpload.vue";
 
+
 export default {
     name: "DialogUser",
     setup() {
@@ -243,6 +244,8 @@ export default {
 
 
     },
+
+
 
     async beforeUnmount() {
         this.UPDATE_FLAGS_UNREAD_MESSAGE(this.conv_id);

@@ -59,8 +59,9 @@ export const noticeStore = {
     actions: {
         //получение массива с уведомлениями
         async GET_NEW_NOTICE({ commit }) {
-            try {
-                await axios.get("http://localhost:8000/new_notice")
+
+            return new Promise((resolve, reject) => {
+                axios.get("http://localhost:8000/new_notice")
                     .then(function(res) {
                         // res.data.map(notice => {
                         //     if (notice.selectedGender === "woman") {
@@ -69,10 +70,12 @@ export const noticeStore = {
                         // })
 
                         commit("setNoticeArray", res.data);
+                        resolve();
                     })
-            } catch (err) {
-                console.log(err)
-            }
+                    .catch((err) => {
+                        reject(err)
+                    })
+            })
         },
 
         //удаление уведомления из списка

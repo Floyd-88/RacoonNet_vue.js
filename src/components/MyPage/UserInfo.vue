@@ -99,7 +99,8 @@ export default {
       setModulEditProfile: "editProfileStore/setModulEditProfile",
       setShowFullAvaPhoto: "showFullPhotoStore/setShowFullAvaPhoto",
       setModalWriteMessage: "messageStore/setModalWriteMessage",
-      setIsFriendShow: "friendsStore/setIsFriendShow"
+      setIsFriendShow: "friendsStore/setIsFriendShow",
+      setCountFriendsNull: "friendsStore/setCountFriendsNull",
     }),
     ...mapActions({
       showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto",
@@ -121,6 +122,7 @@ export default {
     //приглашение в друзья
     addFriend(nameBTN) {
       if(nameBTN === "Рассмотреть заявку") {
+      this.setCountFriendsNull();
         this.setIsFriendShow("friendsMe");
         this.$router.push({name: 'friendspage'})
       } else {

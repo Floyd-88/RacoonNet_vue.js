@@ -97,7 +97,11 @@ export const commentsPhoto = {
                     }
                 });
             } catch (err) {
-                console.error(err);
+                if (err.code === "ERR_CANCELED") {
+                    console.log("Загрузка была отменена")
+                } else {
+                    console.log(err)
+                }
             }
         },
 

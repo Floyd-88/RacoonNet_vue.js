@@ -65,6 +65,11 @@ export default {
   async mounted() {
     this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
     this.loadUser({ id: JSON.parse(localStorage.getItem('user')).userID })
+    .catch((err) => {
+          if (err.code === "ERR_CANCELED") {
+              console.log("Загрузка была отменена")
+            }
+        });
 
 
     // this.setFilterPhoto(this.getAllPhotosMyPage);

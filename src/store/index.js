@@ -15,6 +15,7 @@ import { commentsPost } from "@/store/module/commentsPost"
 import { commentsPhoto } from "@/store/module/commentsPhoto"
 import { feedBackStore } from "@/store/module/feedBackStore"
 import { noticeStore } from "@/store/module/noticeStore"
+import { cancelLoadAxios } from "@/store/module/cancelLoadAxios"
 
 export default createStore({
     modules: {
@@ -34,5 +35,6 @@ export default createStore({
         commentsPhoto,
         feedBackStore,
         noticeStore,
+        cancelLoadAxios
     }
 });

@@ -203,7 +203,6 @@ var commentsPost = {
 
                   resolve(response);
                 })["catch"](function (err) {
-                  console.error(err);
                   reject(err);
                 });
               }));
@@ -247,7 +246,12 @@ var commentsPost = {
             case 6:
               _context4.prev = 6;
               _context4.t0 = _context4["catch"](1);
-              console.error(_context4.t0);
+
+              if (_context4.t0.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена");
+              } else {
+                console.log(_context4.t0);
+              }
 
             case 9:
             case "end":
@@ -284,7 +288,12 @@ var commentsPost = {
             case 6:
               _context5.prev = 6;
               _context5.t0 = _context5["catch"](1);
-              console.error(_context5.t0);
+
+              if (_context5.t0.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена");
+              } else {
+                console.log(_context5.t0);
+              }
 
             case 9:
             case "end":
@@ -320,7 +329,12 @@ var commentsPost = {
             case 6:
               _context6.prev = 6;
               _context6.t0 = _context6["catch"](1);
-              console.error(_context6.t0);
+
+              if (_context6.t0.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена");
+              } else {
+                console.log(_context6.t0);
+              }
 
             case 9:
             case "end":
@@ -419,7 +433,12 @@ var commentsPost = {
             case 6:
               _context9.prev = 6;
               _context9.t0 = _context9["catch"](1);
-              console.log(_context9.t0);
+
+              if (_context9.t0.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена");
+              } else {
+                console.log(_context9.t0);
+              }
 
             case 9:
             case "end":

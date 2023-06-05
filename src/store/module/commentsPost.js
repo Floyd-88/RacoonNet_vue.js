@@ -147,7 +147,6 @@ export const commentsPost = {
                         resolve(response)
                     })
                     .catch((err) => {
-                        console.error(err);
                         reject(err)
                     })
             })
@@ -176,7 +175,11 @@ export const commentsPost = {
                     }
                 });
             } catch (err) {
-                console.error(err);
+                if (err.code === "ERR_CANCELED") {
+                    console.log("Загрузка была отменена")
+                } else {
+                    console.log(err)
+                }
             }
         },
 
@@ -197,7 +200,11 @@ export const commentsPost = {
                     }
                 });
             } catch (err) {
-                console.error(err);
+                if (err.code === "ERR_CANCELED") {
+                    console.log("Загрузка была отменена")
+                } else {
+                    console.log(err)
+                }
             }
         },
 
@@ -217,7 +224,11 @@ export const commentsPost = {
                     }
                 });
             } catch (err) {
-                console.error(err);
+                if (err.code === "ERR_CANCELED") {
+                    console.log("Загрузка была отменена")
+                } else {
+                    console.log(err)
+                }
             }
         },
 
@@ -267,7 +278,11 @@ export const commentsPost = {
                     commit("setUsersLikesPost", response.data)
                 })
             } catch (err) {
-                console.log(err)
+                if (err.code === "ERR_CANCELED") {
+                    console.log("Загрузка была отменена")
+                } else {
+                    console.log(err)
+                }
             }
         }
 

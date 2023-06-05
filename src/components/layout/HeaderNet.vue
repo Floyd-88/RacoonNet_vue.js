@@ -5,7 +5,6 @@
       <div class="header_wrapper_logo">
         <img class="header_logo" src="../../assets/logo/logo.png" alt="logo" @click="$router.push(`/id${userID}`)">
       </div>
-
       <div class="header_wrapper_title">
         <button class="btn_title" @click="$router.push(`/id${userID}`)">RacсoonNet</button>
       </div>
@@ -48,9 +47,11 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setIsShowModalWindowNotice: "noticeStore/setIsShowModalWindowNotice"
+      setIsShowModalWindowNotice: "noticeStore/setIsShowModalWindowNotice",
     }),
-    ...mapActions({ logout: "authorizationStore/logout" }),
+    ...mapActions({ 
+      logout: "authorizationStore/logout",
+     }),
     runLogout() {
       this.logout()
         .then(() => {

@@ -199,7 +199,6 @@ var postsMyPageStore = {
 
                   resolve(response);
                 })["catch"](function (err) {
-                  console.error(err);
                   reject(err);
                 });
               }));
@@ -399,7 +398,6 @@ var postsMyPageStore = {
 
                   resolve(response);
                 })["catch"](function (err) {
-                  console.error(err);
                   reject(err);
                 });
               }));
@@ -477,7 +475,12 @@ var postsMyPageStore = {
             case 6:
               _context8.prev = 6;
               _context8.t0 = _context8["catch"](1);
-              console.error(_context8.t0);
+
+              if (_context8.t0.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена");
+              } else {
+                console.log(_context8.t0);
+              }
 
             case 9:
             case "end":

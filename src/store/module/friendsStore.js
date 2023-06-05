@@ -164,7 +164,9 @@ export const friendsStore = {
             dispatch
         }, id) {
             try {
-                let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
+                let date = await dispatch("postsMyPageStore/newDate", null, {
+                    root: true
+                });
                 await axios.post("http://localhost:8000/add_friend", {
                         id,
                         date
@@ -185,7 +187,9 @@ export const friendsStore = {
             dispatch
         }, value) {
             try {
-                let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
+                let date = await dispatch("postsMyPageStore/newDate", null, {
+                    root: true
+                });
                 await axios.put("http://localhost:8000/add_friends_me", {
                         id: value.id,
                         userID: value.userID,
@@ -229,7 +233,11 @@ export const friendsStore = {
 
                     })
             } catch (err) {
-                console.log(err)
+                if (err.code === "ERR_CANCELED") {
+                    console.log("Загрузка была отменена")
+                } else {
+                    console.log(err)
+                }
             }
         },
 
@@ -240,8 +248,9 @@ export const friendsStore = {
         }) {
             await commit("setIsNotFriends", false);
             await commit("setIsUIloadMoreFriends", true);
-            try {
-                await axios.get("http://localhost:8000/add_friends_me", {
+
+            return new Promise((resolve, reject) => {
+                axios.get("http://localhost:8000/add_friends_me", {
                         params: {
                             _count: state.countFriends,
                             _limit: state.limitFriends,
@@ -256,11 +265,15 @@ export const friendsStore = {
                         } else {
                             commit("setIsNotFriends", true);
                         }
+                        resolve(res);
                     })
-            } catch (err) {
-                console.log(err)
-            }
+                    .catch((err) => {
+                        reject(err)
+                    })
+            })
+
         },
+
 
         //получить пользователей котрым я отправил заявку в друзья
         async GET_USER_ADD_FRIENDS_FROM_ME({
@@ -317,14 +330,25 @@ export const friendsStore = {
                         }
                     })
             } catch (err) {
-                console.log(err)
+                if (err.code === "ERR_CANCELED") {
+                    console.log("Загрузка была отменена")
+                } else {
+                    console.log(err)
+                }
             }
         },
 
         //удалить друга
-        async DELETE_FRIEND({ state, commit }, params) {
+        async DELETE_FRIEND({
+            state,
+            commit
+        }, params) {
             try {
-                await axios.delete("http://localhost:8000/delete_friends", { data: { params } })
+                await axios.delete("http://localhost:8000/delete_friends", {
+                        data: {
+                            params
+                        }
+                    })
                     .then(function() {
                         if (state.usersMyFriends) {
                             let friends = state.usersMyFriends.filter(user => user.id !== params.id);
@@ -353,7 +377,10 @@ export const friendsStore = {
         },
 
         //поиск пользователей
-        async SEARCH_USERS_FRIENDS({ commit, state }, params) {
+        async SEARCH_USERS_FRIENDS({
+            commit,
+            state
+        }, params) {
             await commit("setUsersMyFriends", []);
             await commit("setUsersMyFriendsFilter", []);
             await commit("setIsNotFriends", false);
@@ -369,7 +396,9 @@ export const friendsStore = {
                 await commit("setTitleFriend", "Поиск друзей");
                 await commit("setIsFriendShow", 'allFriends');
 
-                await axios.get("http://localhost:8000/search_friends", { params })
+                await axios.get("http://localhost:8000/search_friends", {
+                        params
+                    })
                     .then(function(res) {
 
                         commit("setIsUIloadMoreFriends", false);

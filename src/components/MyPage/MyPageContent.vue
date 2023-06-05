@@ -14,7 +14,7 @@
             <!--при прокрутки страницы до данного элемента - подгружать следующие посты -->
             <div ref="observer" class="observer"></div>
             <template v-if="isUIloadMoreContent">
-                <UIloadMoreContent/>
+                <UIloadMoreContent />
             </template>
         </div>
 
@@ -28,10 +28,10 @@
         </div>
         <div class="list_my_friends">
             <div class="my_friend" v-for="friend in getUsersMyFriends.slice(0, 8)" :key="friend.id">
-                <div class="my_friend_ava" @click="$router.push({name: 'mypage', params: {id: `${friend.userID}`}})">
+                <div class="my_friend_ava" @click="$router.push({ name: 'mypage', params: { id: `${friend.userID}` } })">
                     <img :src="loadAva(friend.ava)" alt="ava">
                 </div>
-                <div class="my_friend_name" @click="$router.push({name: 'mypage', params: {id: `${friend.userID}`}})">
+                <div class="my_friend_name" @click="$router.push({ name: 'mypage', params: { id: `${friend.userID}` } })">
                     <p>{{ friend.name }}</p>
                 </div>
             </div>
@@ -83,7 +83,7 @@ export default {
             this.setCountFriendsNull();
             this.setUsersMyFriends([]);
             this.setUsersMyFriendsFilter([]);
-            this.$router.push({name: 'friendspage', query: {id: this.getUser.userID} })
+            this.$router.push({ name: 'friendspage', query: { id: this.getUser.userID } })
         }
     },
     computed: {
@@ -117,19 +117,29 @@ export default {
                 this.loadPostServer(this.$route.params.id)
                     .then((response) => {
                         this.isNotPosts = false;
-                        if(response.data.length === 0) {
-                            this.isUIloadMoreContent = false;
+                        if (response.data.length === 0) {
                             this.isNotPosts = true;
                         }
+                        this.isUIloadMoreContent = false;
                         return response.data.map(post => post.id)
                     })
                     .then((data) => {
-                        this.LOAD_COMMENTS_POST({userID: this.$route.params.id, postID: data})
-                        .then((response) => {
-                        this.LOAD_COMMENTS_COMMENT({userID: this.$route.params.id, postID: response.data.map(post => post.id)});
+                        this.LOAD_COMMENTS_POST({ userID: this.$route.params.id, postID: data })
+                            .then((response) => {
+                                this.LOAD_COMMENTS_COMMENT({ userID: this.$route.params.id, postID: response.data.map(post => post.id) });
 
-                        })
+                            })
+                            .catch((err) => {
+                                if (err.code === "ERR_CANCELED") {
+                                    console.log("Загрузка была отменена")
+                                }
+                            });
                     })
+                    .catch((err) => {
+                        if (err.code === "ERR_CANCELED") {
+                            console.log("Загрузка была отменена")
+                        }
+                    });
             } else {
                 this.isUIloadMoreContent = false; //отключать загрузку
             }
@@ -190,29 +200,33 @@ export default {
     font-size: 17px;
     font-family: fantasy;
 }
+
 .wrapper_my_friends_title h4 {
     font-weight: 300;
 }
+
 .list_my_friends {
     display: flex;
     flex-wrap: wrap;
     padding: 0 0 10px;
     justify-content: center;
 }
+
 .my_friend {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 5px;
 }
-.my_friend_ava {
-    
-}
+
+.my_friend_ava {}
+
 .my_friend_ava img {
     width: 64px;
     border-radius: 100%;
     cursor: pointer;
 }
+
 .my_friend_name {
     cursor: pointer;
 }
@@ -220,6 +234,7 @@ export default {
 .titleMyFriendsBlock {
     cursor: pointer;
 }
+
 .titleMyFriendsBlock:hover {
     color: rgb(0 0 0 / 50%);
 }

@@ -23,6 +23,7 @@
     
 <script>
 import { mapGetters, mapActions } from "vuex";
+// import store from "@/store/index";
 
 export default {
   name: "AllUsersMessages",

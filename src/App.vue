@@ -14,17 +14,24 @@
 import { mapActions, mapMutations, mapGetters } from "vuex";
 import SocketioService from "./services/socketio.service"
 import axios from "axios";
+import store from "@/store/index";
 
 export default {
   name: 'App',
 
   created() {
     axios.interceptors.request.use(
-      function (config) {
+      async function (config) {
         const token = localStorage.getItem('token');
         if (token) {
           config.headers.Authorization = token;
         }
+
+        //отмена запросов на сервер
+        let source = axios.CancelToken.source();
+        config.cancelToken = source.token;
+        store.commit('cancelLoadAxios/setCancelTokens', source);
+
         return config;
       },
       function (error) {
@@ -39,7 +46,8 @@ export default {
       }
       return config
     }, error => {
-      if (error.response.data === "Неверный токен") {
+      if(error.response) {
+        if (error.response.data === "Неверный токен") {
         this.UPDATE_TOKEN()
           .then(res => {
             if (res.data.token) {
@@ -50,17 +58,45 @@ export default {
             return window.location.href = '/'
           })
         return axios.request(error.config)
+        }
       }
+      
+      if (error.code === "ERR_CANCELED") {
+        console.log("Загрузка была отменена")
+      }
+      
       return Promise.reject(error);
     });
 
 
     // this.CHECK_CONFIRM_FRIEND();
     if(localStorage.getItem('token')) {
-      this.LOAD_DIALOGS();
-      this.GET_USER_ADD_FRIENDS_ME();
-      this.GET_NEW_NOTICE();
+      
+      this.LOAD_DIALOGS()
+        .then(() => () => {})
+        .catch((err) => {
+              if (err.code === "ERR_CANCELED") {
+              this.LOAD_DIALOGS()
+            }
+        });
+
+      this.GET_USER_ADD_FRIENDS_ME()
+        .catch((err) => {
+          if (err.code === "ERR_CANCELED") {
+              console.log("Загрузка была отменена")
+            }
+        });
+        
+      this.GET_NEW_NOTICE()
+      .catch((err) => {
+          if (err.code === "ERR_CANCELED") {
+              this.GET_NEW_NOTICE()
+            }
+        });
     }
+
+
+
     // this.CHECK_REQUEST_FRIEND(this.$route.params.id);
 
     //вызываем метод для отправки сообщения всем участникам комнаты
@@ -86,9 +122,14 @@ export default {
     });
   },
 
+  mounted() {
+    // this.LOAD_DIALOGS();
+
+  },
+
   beforeUnmount() {
     SocketioService.disconnect();
-    console.log("disconnected")
+    console.log("disconnected");
   },
 
 
@@ -99,7 +140,9 @@ export default {
       setIsNewMessageNotify: "messageStore/setIsNewMessageNotify",
       setCountFriendsNull: "friendsStore/setCountFriendsNull",
       setUsersMyFriends: "friendsStore/setUsersMyFriends",
-      setNoticeArray: "noticeStore/setNoticeArray"
+      setNoticeArray: "noticeStore/setNoticeArray",
+      // setCancelTokens: "cancelLoadAxios/setCancelTokens",
+
     }),
 
     ...mapActions({
@@ -111,7 +154,9 @@ export default {
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
       CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND",
       UPDATE_TOKEN: "authorizationStore/UPDATE_TOKEN",
-      GET_NEW_NOTICE: "noticeStore/GET_NEW_NOTICE"
+      GET_NEW_NOTICE: "noticeStore/GET_NEW_NOTICE",
+      // CANCEL_PENDING_REQUESTS: "cancelLoadAxios/CANCEL_PENDING_REQUESTS"
+
 
       // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
       // loadPostServer: "postsMyPageStore/loadPostServer",

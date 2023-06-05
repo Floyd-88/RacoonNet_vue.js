@@ -151,7 +151,12 @@ var commentsPhoto = {
             case 6:
               _context2.prev = 6;
               _context2.t0 = _context2["catch"](1);
-              console.error(_context2.t0);
+
+              if (_context2.t0.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена");
+              } else {
+                console.log(_context2.t0);
+              }
 
             case 9:
             case "end":

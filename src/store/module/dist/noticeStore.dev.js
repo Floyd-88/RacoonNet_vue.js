@@ -85,32 +85,26 @@ var noticeStore = {
           switch (_context.prev = _context.next) {
             case 0:
               commit = _ref.commit;
-              _context.prev = 1;
-              _context.next = 4;
-              return regeneratorRuntime.awrap(_axios["default"].get("http://localhost:8000/new_notice").then(function (res) {
-                // res.data.map(notice => {
-                //     if (notice.selectedGender === "woman") {
-                //         notice.text = state.noticeTextArray
-                //     }
-                // })
-                commit("setNoticeArray", res.data);
+              return _context.abrupt("return", new Promise(function (resolve, reject) {
+                _axios["default"].get("http://localhost:8000/new_notice").then(function (res) {
+                  // res.data.map(notice => {
+                  //     if (notice.selectedGender === "woman") {
+                  //         notice.text = state.noticeTextArray
+                  //     }
+                  // })
+                  commit("setNoticeArray", res.data);
+                  resolve();
+                })["catch"](function (err) {
+                  reject(err);
+                });
               }));
 
-            case 4:
-              _context.next = 9;
-              break;
-
-            case 6:
-              _context.prev = 6;
-              _context.t0 = _context["catch"](1);
-              console.log(_context.t0);
-
-            case 9:
+            case 2:
             case "end":
               return _context.stop();
           }
         }
-      }, null, null, [[1, 6]]);
+      });
     },
     //удаление уведомления из списка
     NOTICE_ARRAY_DELETE: function NOTICE_ARRAY_DELETE(_ref2, id) {

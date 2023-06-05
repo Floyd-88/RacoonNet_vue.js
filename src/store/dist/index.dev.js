@@ -39,6 +39,8 @@ var _feedBackStore = require("@/store/module/feedBackStore");
 
 var _noticeStore = require("@/store/module/noticeStore");
 
+var _cancelLoadAxios = require("@/store/module/cancelLoadAxios");
+
 var _default = (0, _vuex.createStore)({
   modules: {
     authorizationStore: _authorizationStore.authorizationStore,
@@ -56,7 +58,8 @@ var _default = (0, _vuex.createStore)({
     commentsPost: _commentsPost.commentsPost,
     commentsPhoto: _commentsPhoto.commentsPhoto,
     feedBackStore: _feedBackStore.feedBackStore,
-    noticeStore: _noticeStore.noticeStore
+    noticeStore: _noticeStore.noticeStore,
+    cancelLoadAxios: _cancelLoadAxios.cancelLoadAxios
   }
 });
 

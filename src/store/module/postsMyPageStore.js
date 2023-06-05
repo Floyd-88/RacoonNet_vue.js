@@ -151,7 +151,6 @@ export const postsMyPageStore = {
                         resolve(response)
                     })
                     .catch((err) => {
-                        console.error(err);
                         reject(err)
                     })
             })
@@ -304,7 +303,6 @@ export const postsMyPageStore = {
                         resolve(response);
                     })
                     .catch((err) => {
-                        console.error(err);
                         reject(err)
                     })
             })
@@ -346,7 +344,11 @@ export const postsMyPageStore = {
                     }
                 });
             } catch (err) {
-                console.error(err);
+                if (err.code === "ERR_CANCELED") {
+                    console.log("Загрузка была отменена")
+                } else {
+                    console.log(err)
+                }
             }
         }
     },

@@ -251,7 +251,6 @@ var messageStore = {
 
                   resolve(resp);
                 })["catch"](function (err) {
-                  console.log(err);
                   reject(err);
                 });
               }));

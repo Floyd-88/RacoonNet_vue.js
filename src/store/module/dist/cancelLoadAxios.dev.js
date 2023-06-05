@@ -5,26 +5,54 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.cancelLoadAxios = void 0;
 var cancelLoadAxios = {
-  state: function state() {
-    return {
-      cancelTokenArr: [] // Отменить массив токенов запроса
+  strict: true,
+  state: {
+    cancelTokens: [] //массив отмененных запросов
 
-    };
   },
-  getters: {},
-  mutations: {
-    pushToken: function pushToken(state, payload) {
-      state.cancelTokenArr.push(payload.cancelToken);
-    },
-    clearToken: function clearToken(_ref) {
-      var cancelTokenArr = _ref.cancelTokenArr;
-      cancelTokenArr.forEach(function (item) {
-        item('Запрос на отмену перехода по маршруту');
-      });
-      cancelTokenArr = [];
+  getters: {
+    cancelTokens: function cancelTokens(state) {
+      return state.cancelTokens;
     }
   },
-  actions: {},
+  mutations: {
+    setCancelTokens: function setCancelTokens(state, token) {
+      state.cancelTokens.push(token);
+    },
+    setCancelTokensClear: function setCancelTokensClear(state) {
+      state.cancelTokens = [];
+    }
+  },
+  actions: {
+    //отмена запросов на сервер
+    CANCEL_PENDING_REQUESTS: function CANCEL_PENDING_REQUESTS(_ref) {
+      var state, commit;
+      return regeneratorRuntime.async(function CANCEL_PENDING_REQUESTS$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              state = _ref.state, commit = _ref.commit;
+              // return new Response((resolve, reject) => {
+              //     try {
+              state.cancelTokens.forEach(function (request) {
+                if (request.cancel) {
+                  request.cancel();
+                }
+              });
+              commit('setCancelTokensClear'); // resolve();
+              //     } catch (err) {
+              //         reject(err)
+              //     }
+              // })
+
+            case 3:
+            case "end":
+              return _context.stop();
+          }
+        }
+      });
+    }
+  },
   namespaced: true
 };
 exports.cancelLoadAxios = cancelLoadAxios;

@@ -1,6 +1,8 @@
 import axios from "axios";
 import SocketioService from "../../services/socketio.service";
 // import router from "@/router/router";
+// const controller = new AbortController();
+// const signal = controller.signal;
 
 export const loadPhotoStore = {
 
@@ -140,7 +142,11 @@ export const loadPhotoStore = {
 
         setIsLoadPhotoMessage(state, bool) {
             state.isLoadPhotoMessage = bool;
-        }
+        },
+
+        // setRequest(state, body) {
+        //     state.request = body;
+        // }
     },
 
     actions: {
@@ -228,7 +234,6 @@ export const loadPhotoStore = {
             } else if (state.isLoadPhotoMessage) {
                 await dispatch("messageStore/WRITE_MESSAGE_USER", { addresseeID: body.addresseeID, isPhoto: state.isLoadPhotoMessage }, { root: true });
                 const messages = rootGetters["messageStore/getArrayMessages"]
-                console.log(messages)
                 formData.append('dialogIDLast', messages[messages.length - 1].id)
             }
             return new Promise((resolve, reject) => {
@@ -238,6 +243,7 @@ export const loadPhotoStore = {
                             headers: {
                                 'Content-Type': 'multipart/form-data'
                             },
+
                             cancelToken: axiosSource.token,
                             onUploadProgress: ProgressEvent => {
                                 let progress =
@@ -254,7 +260,6 @@ export const loadPhotoStore = {
 
                         resolve(resp.data);
                         // window.location.href = `/id${JSON.parse(getters.getUser.userID)}`;
-
                     })
                     .catch((err) => {
                         if (axios.isCancel(err)) {
@@ -277,6 +282,7 @@ export const loadPhotoStore = {
             state,
             commit
         }) {
+
             if (state.request) {
                 state.request.cancel();
             }
@@ -310,7 +316,11 @@ export const loadPhotoStore = {
                     });
                 });
             } catch (err) {
-                console.log(err);
+                if (err.code === "ERR_CANCELED") {
+                    console.log("Загрузка была отменена")
+                } else {
+                    console.log(err)
+                }
             }
         },
 

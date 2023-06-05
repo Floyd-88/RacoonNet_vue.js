@@ -8,8 +8,7 @@ export const authorizationStore = {
         user: {}, //получаем данные юзера при авторизаци
         errorLogin: "", //ошибка возникающая при вводе неверного пароля или почты
         isForgetPassword: true, //показывать ввод логина и пароля или восстановление пароля
-        messageEmailPassword: "" //сообщение о восстановлении пароля
-
+        messageEmailPassword: "", //сообщение о восстановлении пароля
     }),
 
     getters: {
@@ -18,7 +17,8 @@ export const authorizationStore = {
         getUser: (state) => state.user,
         getErrorLogin: (state) => state.errorLogin,
         getIsForgetPassword: (state) => state.isForgetPassword,
-        getMessageEmailPassword: (state) => state.messageEmailPassword
+        getMessageEmailPassword: (state) => state.messageEmailPassword,
+
     },
 
     mutations: {
@@ -64,7 +64,8 @@ export const authorizationStore = {
 
         setMessageEmailPassword(state, value) {
             state.messageEmailPassword = value;
-        }
+        },
+
 
     },
 
@@ -178,9 +179,8 @@ export const authorizationStore = {
                     })
                     .catch((err) => {
                         // commit('auth_error');
-                        console.log(err)
-                            // localStorage.removeItem('token');
-                            // localStorage.removeItem('user');
+                        // localStorage.removeItem('token');
+                        // localStorage.removeItem('user');
                         reject(err);
                     })
             })
@@ -231,7 +231,7 @@ export const authorizationStore = {
                         }
                     })
             })
-        }
+        },
 
     },
 

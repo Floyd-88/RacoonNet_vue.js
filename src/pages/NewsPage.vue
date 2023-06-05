@@ -45,6 +45,11 @@ export default {
               this.isNotNews = true;
             }
         })
+        .catch((err) => {
+          if (err.code === "ERR_CANCELED") {
+              console.log("Загрузка была отменена")
+            }
+        });
       } else {
         this.isUIloadMoreContent = false; //отключать загрузку
       }

@@ -12,6 +12,8 @@ var _socketio = _interopRequireDefault(require("../../services/socketio.service"
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 // import router from "@/router/router";
+// const controller = new AbortController();
+// const signal = controller.signal;
 var loadPhotoStore = {
   state: function state() {
     return {
@@ -177,7 +179,10 @@ var loadPhotoStore = {
     },
     setIsLoadPhotoMessage: function setIsLoadPhotoMessage(state, bool) {
       state.isLoadPhotoMessage = bool;
-    }
+    } // setRequest(state, body) {
+    //     state.request = body;
+    // }
+
   },
   actions: {
     //загрузка автарки
@@ -262,12 +267,12 @@ var loadPhotoStore = {
             case 11:
               posts = rootGetters["postsMyPageStore/getPosts"];
               formData.append('postIDLast', posts[0].id);
-              _context.next = 21;
+              _context.next = 20;
               break;
 
             case 15:
               if (!state.isLoadPhotoMessage) {
-                _context.next = 21;
+                _context.next = 20;
                 break;
               }
 
@@ -281,10 +286,9 @@ var loadPhotoStore = {
 
             case 18:
               messages = rootGetters["messageStore/getArrayMessages"];
-              console.log(messages);
               formData.append('dialogIDLast', messages[messages.length - 1].id);
 
-            case 21:
+            case 20:
               return _context.abrupt("return", new Promise(function (resolve, reject) {
                 _axios["default"].post('http://localhost:8000/upload_photo', formData, {
                   headers: {
@@ -316,7 +320,7 @@ var loadPhotoStore = {
                 });
               }));
 
-            case 22:
+            case 21:
             case "end":
               return _context.stop();
           }
@@ -370,7 +374,12 @@ var loadPhotoStore = {
             case 6:
               _context2.prev = 6;
               _context2.t0 = _context2["catch"](1);
-              console.log(_context2.t0);
+
+              if (_context2.t0.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена");
+              } else {
+                console.log(_context2.t0);
+              }
 
             case 9:
             case "end":

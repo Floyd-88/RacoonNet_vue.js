@@ -333,7 +333,12 @@ var friendsStore = {
             case 6:
               _context3.prev = 6;
               _context3.t0 = _context3["catch"](1);
-              console.log(_context3.t0);
+
+              if (_context3.t0.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена");
+              } else {
+                console.log(_context3.t0);
+              }
 
             case 9:
             case "end":
@@ -358,39 +363,34 @@ var friendsStore = {
               return regeneratorRuntime.awrap(commit("setIsUIloadMoreFriends", true));
 
             case 5:
-              _context4.prev = 5;
-              _context4.next = 8;
-              return regeneratorRuntime.awrap(_axios["default"].get("http://localhost:8000/add_friends_me", {
-                params: {
-                  _count: state.countFriends,
-                  _limit: state.limitFriends
-                }
-              }).then(function (res) {
-                commit("setIsUIloadMoreFriends", false);
-                commit("setUsersFriendsMe", [].concat(_toConsumableArray(state.usersFriendsMe), _toConsumableArray(res.data)));
+              return _context4.abrupt("return", new Promise(function (resolve, reject) {
+                _axios["default"].get("http://localhost:8000/add_friends_me", {
+                  params: {
+                    _count: state.countFriends,
+                    _limit: state.limitFriends
+                  }
+                }).then(function (res) {
+                  commit("setIsUIloadMoreFriends", false);
+                  commit("setUsersFriendsMe", [].concat(_toConsumableArray(state.usersFriendsMe), _toConsumableArray(res.data)));
 
-                if (res.data.length > 0) {
-                  commit("setCountFriends", 8);
-                } else {
-                  commit("setIsNotFriends", true);
-                }
+                  if (res.data.length > 0) {
+                    commit("setCountFriends", 8);
+                  } else {
+                    commit("setIsNotFriends", true);
+                  }
+
+                  resolve(res);
+                })["catch"](function (err) {
+                  reject(err);
+                });
               }));
 
-            case 8:
-              _context4.next = 13;
-              break;
-
-            case 10:
-              _context4.prev = 10;
-              _context4.t0 = _context4["catch"](5);
-              console.log(_context4.t0);
-
-            case 13:
+            case 6:
             case "end":
               return _context4.stop();
           }
         }
-      }, null, null, [[5, 10]]);
+      });
     },
     //получить пользователей котрым я отправил заявку в друзья
     GET_USER_ADD_FRIENDS_FROM_ME: function GET_USER_ADD_FRIENDS_FROM_ME(_ref5) {
@@ -485,7 +485,12 @@ var friendsStore = {
             case 10:
               _context6.prev = 10;
               _context6.t0 = _context6["catch"](5);
-              console.log(_context6.t0);
+
+              if (_context6.t0.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена");
+              } else {
+                console.log(_context6.t0);
+              }
 
             case 13:
             case "end":

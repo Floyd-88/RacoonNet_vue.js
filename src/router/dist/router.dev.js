@@ -29,6 +29,8 @@ var _DialogUser = _interopRequireDefault(require("@/components/MessagePage/Dialo
 
 var _ResetPassword = _interopRequireDefault(require("@/components/authorizationUser/ResetPassword"));
 
+var _index = _interopRequireDefault(require("@/store/index"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 // import SecureNet from "@/components/SecureNet";
@@ -141,6 +143,8 @@ router.beforeEach(function (to, from, next) {
     return record.meta.requiresAuth;
   })) {
     if (localStorage.getItem('token')) {
+      _index["default"].dispatch('cancelLoadAxios/CANCEL_PENDING_REQUESTS');
+
       next();
     } else {
       next('/');
