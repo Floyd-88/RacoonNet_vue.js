@@ -70,7 +70,7 @@
                         <div class="search_form search_age search_age_before">
                             <select class="search_form_title_select" name="" id="" v-model.trim="searchAgeBefore">
                                 <option class="search_form_title_option" value="" selected>До</option>
-                                <option class="search_form_title_option" v-for="n in 100"
+                                <option class="search_form_title_option" v-for="n in 100 - ((searchAgeAfter) ? (searchAgeAfter - 1) : 0)"
                                     :value="(searchAgeAfter) ? n + searchAgeAfter - 1 : n"
                                     :key="(searchAgeAfter) ? n + searchAgeAfter - 1 : n">
                                     {{ (searchAgeAfter) ? n + searchAgeAfter - 1 : n }}
@@ -94,7 +94,7 @@
         <div class="wrapper_search_new_friends_btn">
             <UIbtn class="search_new_friends_btn" 
             @click="search_users()"
-            :disabled="v$.$invalid">Найти новых друзей</UIbtn>
+            :disabled="v$.$invalid || !isblockBtnSearchUsers">Найти новых друзей</UIbtn>
         </div>
     </div>
 </template>
@@ -120,6 +120,7 @@ export default {
     data() {
         return {
             isSearchUsersFilter: false,
+            isblockBtnSearchUsers: true,
         }
     },
 
@@ -171,11 +172,12 @@ export default {
         }),
         ...mapActions({ SEARCH_USERS_FRIENDS: "friendsStore/SEARCH_USERS_FRIENDS" }),
 
-        search_users() {
+        async search_users() {
+            this.isblockBtnSearchUsers = false;
             this.setCountFriendsNull();
             this.setSearchUsersFriends([]);
 
-            this.SEARCH_USERS_FRIENDS({
+            await this.SEARCH_USERS_FRIENDS({
                 name: this.getSearchFriendName,
                 surname: this.getSearchFriendSurname,
                 country: this.getSearchFriendCountry,
@@ -184,6 +186,7 @@ export default {
                 ageBefore: this.getSearchFriendAgeBefore,
                 sex: this.getSearchFriendSex,
             });
+            this.isblockBtnSearchUsers = true;
         }
     },
 

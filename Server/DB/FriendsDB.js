@@ -63,8 +63,8 @@ class FriendsDB {
     // отправляем заявку в друзья
     add_friend_DB(users, callback) {
         return this.connection.query(
-            'INSERT INTO friends (sender_user_id, addressee_user_id) VALUES (?,?)', users, (err) => {
-                callback(err);
+            'INSERT INTO friends (sender_user_id, addressee_user_id) VALUES (?,?)', users, (err, friendID) => {
+                callback(err, friendID);
             })
     }
 

@@ -189,8 +189,8 @@ export const postsMyPageStore = {
                     await commit("setCountPosts", 1);
 
                     await commit("setIsNotRepeatAddPost", true);
-
-                    //отправляем уведомление адресату без перезагрузки страницы
+                    console.log(newPost.id)
+                        //отправляем уведомление адресату без перезагрузки страницы
                     SocketioService.sendNotice(newPost.id, cb => {
                         console.log(cb);
                     });

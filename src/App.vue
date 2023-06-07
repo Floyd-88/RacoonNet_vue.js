@@ -114,11 +114,16 @@ export default {
       } else {
         this.setIsNewMessageNotify(true);
       }
-
     });
 
     SocketioService.subscribeToNotice((err, data) => {
-      this.setNoticeArray([data[0], ...this.getNoticeArray]);
+      console.log(data)
+        if(data.length > 0) {
+          if(data[0].text_notice !== "Пользователь удален из ваших друзей") {
+            this.setNoticeArray([...data]);
+          } 
+        this.changeTextBTN(data[0])
+      }
     });
   },
 
@@ -142,6 +147,7 @@ export default {
       setUsersMyFriends: "friendsStore/setUsersMyFriends",
       setNoticeArray: "noticeStore/setNoticeArray",
       // setCancelTokens: "cancelLoadAxios/setCancelTokens",
+      changeTextBTN: "friendsStore/changeTextBTN"
 
     }),
 
@@ -171,7 +177,8 @@ export default {
       getArrayDialogs: "messageStore/getArrayDialogs",
       getisModalFeedBack: "feedBackStore/getisModalFeedBack",
       getCountFriends: "friendsStore/getCountFriends",
-      getNoticeArray: "noticeStore/getNoticeArray"
+      getNoticeArray: "noticeStore/getNoticeArray",
+      getSearchUsersFriends: "friendsStore/getSearchUsersFriends"
     })
   },
 

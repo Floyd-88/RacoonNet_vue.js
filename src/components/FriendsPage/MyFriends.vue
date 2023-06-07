@@ -234,13 +234,19 @@ export default {
                 this.ADD_FRIEND(user.userID);
             }
         },
-        acceptFriend(user) {
-            user.acceptBTN = "removeFriend";
-            this.AGREE_ADD_FRIEND_USER(user.id);
+        async acceptFriend(user) {
+            // user.acceptBTN = "removeFriend";
+            await this.AGREE_ADD_FRIEND_USER({id: user.id, userID: user.userID});
+            user.type_user = "друзья";
+            user.textBTN = "Удалить из друзей"
         },
         refusalFriend(user) {
-            user.acceptBTN = "addFriend";
-            this.DELETE_FRIEND({ id: user.id, query: this.$route.query.id, userID: user.userID });
+            // user.acceptBTN = "addFriend";
+            this.DELETE_FRIEND({ id: user.id, query: this.$route.query.id, userID: user.userID })
+                .then(() => {
+                    user.type_user = null;
+                    user.id = null;
+                });
         }
     },
     computed: {

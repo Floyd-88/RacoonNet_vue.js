@@ -20,6 +20,7 @@ class NoticeDB {
             comment_post_id integer,
             comment_comments_post_id integer,
             comment_photo_id integer,
+            friend_id integer,
             date varchar(50) NOT NULL,
             show_notice integer default 0
         )`
@@ -29,7 +30,7 @@ class NoticeDB {
     //добавление уведомления в базу данных
     add_notice_DB(params, callback) {
         return this.connection.execute(`INSERT INTO notice
-        (user_id_addressee, user_id_sender, user_comments_comment_addressee, text_notice, post_id, photo_id, comment_post_id, comment_comments_post_id, comment_photo_id, date) VALUES (?,?,?,?,?,?,?,?,?,?)`, params, (err, row_notice) => {
+        (user_id_addressee, user_id_sender, user_comments_comment_addressee, text_notice, post_id, photo_id, comment_post_id, comment_comments_post_id, comment_photo_id, friend_id, date) VALUES (?,?,?,?,?,?,?,?,?,?,?)`, params, (err, row_notice) => {
             callback(err, row_notice);
         });
     }
@@ -45,6 +46,7 @@ class NoticeDB {
         N.comment_post_id,
         N.comment_comments_post_id,
         N.comment_photo_id,
+        N.friend_id,
         show_notice,
         U.userID,
         U.name,

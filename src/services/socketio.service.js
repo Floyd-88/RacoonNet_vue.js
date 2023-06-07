@@ -26,14 +26,14 @@ class SocketioService {
         }
     }
 
-    //отправляем уведомление о посте на сервер для дальнейшей передачи его адресату
+    //отправляем уведомление на сервер для дальнейшей передачи его адресату
     sendNotice(newNotice) {
         if (this.socket) {
             this.socket.emit('notice', newNotice);
         }
     }
 
-    //получаем уведомление о посте с сервера для дальнейшей отправки адресатам
+    //получаем уведомление с сервера для дальнейшей отправки адресатам
     subscribeToNotice(cb) {
         if (!this.socket) return (true);
         this.socket.on('notice', (newNotice) => {

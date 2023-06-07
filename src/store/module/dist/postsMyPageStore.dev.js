@@ -247,12 +247,13 @@ var postsMyPageStore = {
                         return regeneratorRuntime.awrap(commit("setIsNotRepeatAddPost", true));
 
                       case 6:
-                        //отправляем уведомление адресату без перезагрузки страницы
+                        console.log(newPost.id); //отправляем уведомление адресату без перезагрузки страницы
+
                         _socketio["default"].sendNotice(newPost.id, function (cb) {
                           console.log(cb);
                         });
 
-                      case 7:
+                      case 8:
                       case "end":
                         return _context2.stop();
                     }

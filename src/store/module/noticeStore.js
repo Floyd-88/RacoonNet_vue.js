@@ -68,7 +68,6 @@ export const noticeStore = {
                         //         notice.text = state.noticeTextArray
                         //     }
                         // })
-
                         commit("setNoticeArray", res.data);
                         resolve();
                     })

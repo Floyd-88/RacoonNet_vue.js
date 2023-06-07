@@ -9,7 +9,7 @@
     <template v-if="getUsersFriendsMe.length > 0">
         <div class="wrapper_my_friends_list" v-for="user in getUsersFriendsMe" :key="user.userID">
         <div class="my_friend_card">
-            <CardFriend :user="user" />
+            <CardFriend :user="user"/>
 
             <!-- блок с кнопками -->
             <div class="wrapper_my_friend_card_show_btns">

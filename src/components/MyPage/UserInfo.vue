@@ -124,11 +124,10 @@ export default {
       if(nameBTN === "Рассмотреть заявку") {
       this.setCountFriendsNull();
         this.setIsFriendShow("friendsMe");
-        this.$router.push({name: 'friendspage'})
+        this.$router.push({ name: 'friendspage', query: { id: JSON.parse(localStorage.getItem('user')).userID } });
       } else {
-        this.ADD_FRIEND(this.$route.params.id)
+        this.ADD_FRIEND(this.$route.params.id);
       }
-
     }
 
     // editToken() {

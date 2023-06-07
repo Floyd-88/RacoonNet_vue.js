@@ -1,4 +1,5 @@
 import axios from "axios"
+import SocketioService from "../../services/socketio.service";
 
 axios
 export const friendsStore = {
@@ -59,7 +60,6 @@ export const friendsStore = {
 
         getIsUIloadMoreFriends: (state) => state.isUIloadMoreFriends,
         getIsNotFriends: (state) => state.isNotFriends
-
     },
 
     mutations: {
@@ -153,6 +153,53 @@ export const friendsStore = {
 
         setIsNotFriends(state, bool) {
             state.isNotFriends = bool;
+        },
+
+        changeTextBTN(state, data) {
+            if (data.text_notice === "пригласил Вас в друзья") {
+                state.searchUsersFriends.map(user => {
+                    if (data.userID === user.userID) {
+                        user.type_user = 'мне отправили заявку';
+                        user.id = data.friend_id;
+                    }
+                })
+                state.textBtnFfriend = "Рассмотреть заявку"
+
+            } else if (data.text_notice === "принял Вашу заявку в друзья") {
+                state.searchUsersFriends.map(user => {
+                    if (data.userID === user.userID) {
+                        user.type_user = 'друзья';
+                        user.textBTN = 'Удалить из друзей';
+                        user.id = data.friend_id;
+                    }
+                })
+                state.isFriend = false;
+                state.usersFriendsFromMe = state.usersFriendsFromMe.filter(user => user.userID != data.userID);
+                if (state.usersFriendsFromMe.length === 0 && state.isFriendShow === "friendsFromMe") {
+                    state.isNotFriends = true;
+                }
+
+            } else if (data.text_notice === "Пользователь удален из ваших друзей") {
+                state.searchUsersFriends.map(user => {
+                    if (+data.userID === user.userID) {
+                        user.type_user = null;
+                        user.textBTN = 'Добавить в друзья';
+                        user.id = null;
+                    }
+                })
+                state.usersFriendsMe = state.usersFriendsMe.filter(user => user.userID != data.userID);
+
+                if (state.usersFriendsMe.length === 0 && state.isFriendShow === "friendsMe") {
+                    state.isNotFriends = true;
+                }
+
+                state.usersFriendsFromMe = state.usersFriendsFromMe.filter(user => user.userID != data.userID);
+                if (state.usersFriendsFromMe.length === 0 && state.isFriendShow === "friendsFromMe") {
+                    state.isNotFriends = true;
+                }
+
+                state.textBtnFfriend = "Добавить в друзья";
+            }
         }
 
     },
@@ -172,8 +219,24 @@ export const friendsStore = {
                         date
                     })
                     .then(function(res) {
-                        console.log(res.data)
-                        commit("setTextBtnFfriend", res.data);
+                        commit("setTextBtnFfriend", res.data.status);
+
+                        if (res.data.status === "Заявка отправлена") {
+                            //отправляем уведомление адресату без перезагрузки страницы
+                            SocketioService.sendNotice(id, cb => {
+                                console.log(cb);
+                            });
+                        } else if (res.data.status === "Добавить в друзья") {
+                            let addresseeID = {
+                                    text_notice: "Пользователь удален из ваших друзей",
+                                    id: id,
+                                    userID: res.data.userID
+                                }
+                                //отправляем уведомление адресату без перезагрузки страницы
+                            SocketioService.sendNotice(addresseeID, cb => {
+                                console.log(cb);
+                            });
+                        }
                     })
             } catch (err) {
                 console.log(err)
@@ -184,7 +247,8 @@ export const friendsStore = {
         async AGREE_ADD_FRIEND_USER({
             getters,
             commit,
-            dispatch
+            dispatch,
+            state
         }, value) {
             try {
                 let date = await dispatch("postsMyPageStore/newDate", null, {
@@ -199,6 +263,16 @@ export const friendsStore = {
                         const users = getters.getUsersFriendsMe.filter(user => user.id != value.id)
                         commit("setUsersFriendsMe", users);
                         dispatch("GET_USER_MY_FRIENDS", JSON.parse(localStorage.getItem('user')).userID);
+
+                        if (state.usersFriendsMe.length === 0 && state.isFriendShow === "friendsMe") {
+                            state.isNotFriends = true;
+                        }
+
+                        //отправляем уведомление адресату без перезагрузки страницы
+                        SocketioService.sendNotice(value.userID, cb => {
+                            console.log(cb);
+                        });
+                        dispatch("noticeStore/GET_NEW_NOTICE", null, { root: true });
                     })
             } catch (err) {
                 console.log(err)
@@ -341,15 +415,16 @@ export const friendsStore = {
         //удалить друга
         async DELETE_FRIEND({
             state,
-            commit
+            commit,
+            dispatch
         }, params) {
-            try {
-                await axios.delete("http://localhost:8000/delete_friends", {
+            return new Promise((resolve, reject) => {
+                axios.delete("http://localhost:8000/delete_friends", {
                         data: {
                             params
                         }
                     })
-                    .then(function() {
+                    .then(function(res) {
                         if (state.usersMyFriends) {
                             let friends = state.usersMyFriends.filter(user => user.id !== params.id);
                             commit("setUsersMyFriends", friends)
@@ -363,17 +438,39 @@ export const friendsStore = {
                         if (state.usersFriendsMe) {
                             let friendsMe = state.usersFriendsMe.filter(user => user.id !== params.id)
                             commit("setUsersFriendsMe", friendsMe)
+
+                            if (state.usersFriendsMe.length === 0 && state.isFriendShow === "friendsMe") {
+                                state.isNotFriends = true;
+                            }
                         }
 
                         if (state.usersFriendsFromMe) {
                             let friendsFromMe = state.usersFriendsFromMe.filter(user => user.id !== params.id)
                             commit("setUsersFriendsFromMe", friendsFromMe);
-                        }
 
+                            if (state.usersFriendsFromMe.length === 0 && state.isFriendShow === "friendsFromMe") {
+                                state.isNotFriends = true;
+                            }
+                        }
+                        dispatch("noticeStore/GET_NEW_NOTICE", null, { root: true });
+
+                        let addresseeID = {
+                                text_notice: res.data,
+                                id: params.userID,
+                                userID: params.query
+                            }
+                            //отправляем уведомление адресату без перезагрузки страницы
+                        SocketioService.sendNotice(addresseeID, cb => {
+                            console.log(cb);
+                        });
+                        resolve();
                     })
-            } catch (err) {
-                console.log(err)
-            }
+                    .catch((err) => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+
         },
 
         //поиск пользователей
@@ -400,7 +497,6 @@ export const friendsStore = {
                         params
                     })
                     .then(function(res) {
-
                         commit("setIsUIloadMoreFriends", false);
                         commit("setSearchUsersFriends", [...state.searchUsersFriends, ...res.data]);
                         if (res.data.length > 0) {

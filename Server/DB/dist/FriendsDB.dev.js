@@ -72,8 +72,8 @@ function () {
   }, {
     key: "add_friend_DB",
     value: function add_friend_DB(users, callback) {
-      return this.connection.query('INSERT INTO friends (sender_user_id, addressee_user_id) VALUES (?,?)', users, function (err) {
-        callback(err);
+      return this.connection.query('INSERT INTO friends (sender_user_id, addressee_user_id) VALUES (?,?)', users, function (err, friendID) {
+        callback(err, friendID);
       });
     } //отменяем запрос в друзья
 

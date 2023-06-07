@@ -7,6 +7,8 @@ exports.friendsStore = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
+var _socketio = _interopRequireDefault(require("../../services/socketio.service"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -206,6 +208,58 @@ var friendsStore = {
     },
     setIsNotFriends: function setIsNotFriends(state, bool) {
       state.isNotFriends = bool;
+    },
+    changeTextBTN: function changeTextBTN(state, data) {
+      if (data.text_notice === "пригласил Вас в друзья") {
+        state.searchUsersFriends.map(function (user) {
+          if (data.userID === user.userID) {
+            user.type_user = 'мне отправили заявку';
+            user.id = data.friend_id;
+          }
+        });
+        state.textBtnFfriend = "Рассмотреть заявку";
+      } else if (data.text_notice === "принял Вашу заявку в друзья") {
+        state.searchUsersFriends.map(function (user) {
+          if (data.userID === user.userID) {
+            user.type_user = 'друзья';
+            user.textBTN = 'Удалить из друзей';
+            user.id = data.friend_id;
+          }
+        });
+        state.isFriend = false;
+        state.usersFriendsFromMe = state.usersFriendsFromMe.filter(function (user) {
+          return user.userID != data.userID;
+        });
+
+        if (state.usersFriendsFromMe.length === 0 && state.isFriendShow === "friendsFromMe") {
+          state.isNotFriends = true;
+        }
+      } else if (data.text_notice === "Пользователь удален из ваших друзей") {
+        state.searchUsersFriends.map(function (user) {
+          if (+data.userID === user.userID) {
+            user.type_user = null;
+            user.textBTN = 'Добавить в друзья';
+            user.id = null;
+          }
+        });
+        state.usersFriendsMe = state.usersFriendsMe.filter(function (user) {
+          return user.userID != data.userID;
+        });
+
+        if (state.usersFriendsMe.length === 0 && state.isFriendShow === "friendsMe") {
+          state.isNotFriends = true;
+        }
+
+        state.usersFriendsFromMe = state.usersFriendsFromMe.filter(function (user) {
+          return user.userID != data.userID;
+        });
+
+        if (state.usersFriendsFromMe.length === 0 && state.isFriendShow === "friendsFromMe") {
+          state.isNotFriends = true;
+        }
+
+        state.textBtnFfriend = "Добавить в друзья";
+      }
     }
   },
   actions: {
@@ -230,8 +284,24 @@ var friendsStore = {
                 id: id,
                 date: date
               }).then(function (res) {
-                console.log(res.data);
-                commit("setTextBtnFfriend", res.data);
+                commit("setTextBtnFfriend", res.data.status);
+
+                if (res.data.status === "Заявка отправлена") {
+                  //отправляем уведомление адресату без перезагрузки страницы
+                  _socketio["default"].sendNotice(id, function (cb) {
+                    console.log(cb);
+                  });
+                } else if (res.data.status === "Добавить в друзья") {
+                  var addresseeID = {
+                    text_notice: "Пользователь удален из ваших друзей",
+                    id: id,
+                    userID: res.data.userID
+                  }; //отправляем уведомление адресату без перезагрузки страницы
+
+                  _socketio["default"].sendNotice(addresseeID, function (cb) {
+                    console.log(cb);
+                  });
+                }
               }));
 
             case 7:
@@ -252,12 +322,12 @@ var friendsStore = {
     },
     //принять заявку в друзья
     AGREE_ADD_FRIEND_USER: function AGREE_ADD_FRIEND_USER(_ref2, value) {
-      var getters, commit, dispatch, date;
+      var getters, commit, dispatch, state, date;
       return regeneratorRuntime.async(function AGREE_ADD_FRIEND_USER$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              getters = _ref2.getters, commit = _ref2.commit, dispatch = _ref2.dispatch;
+              getters = _ref2.getters, commit = _ref2.commit, dispatch = _ref2.dispatch, state = _ref2.state;
               _context2.prev = 1;
               _context2.next = 4;
               return regeneratorRuntime.awrap(dispatch("postsMyPageStore/newDate", null, {
@@ -277,6 +347,19 @@ var friendsStore = {
                 });
                 commit("setUsersFriendsMe", users);
                 dispatch("GET_USER_MY_FRIENDS", JSON.parse(localStorage.getItem('user')).userID);
+
+                if (state.usersFriendsMe.length === 0 && state.isFriendShow === "friendsMe") {
+                  state.isNotFriends = true;
+                } //отправляем уведомление адресату без перезагрузки страницы
+
+
+                _socketio["default"].sendNotice(value.userID, function (cb) {
+                  console.log(cb);
+                });
+
+                dispatch("noticeStore/GET_NEW_NOTICE", null, {
+                  root: true
+                });
               }));
 
             case 7:
@@ -501,63 +584,80 @@ var friendsStore = {
     },
     //удалить друга
     DELETE_FRIEND: function DELETE_FRIEND(_ref7, params) {
-      var state, commit;
+      var state, commit, dispatch;
       return regeneratorRuntime.async(function DELETE_FRIEND$(_context7) {
         while (1) {
           switch (_context7.prev = _context7.next) {
             case 0:
-              state = _ref7.state, commit = _ref7.commit;
-              _context7.prev = 1;
-              _context7.next = 4;
-              return regeneratorRuntime.awrap(_axios["default"]["delete"]("http://localhost:8000/delete_friends", {
-                data: {
-                  params: params
-                }
-              }).then(function () {
-                if (state.usersMyFriends) {
-                  var friends = state.usersMyFriends.filter(function (user) {
-                    return user.id !== params.id;
-                  });
-                  commit("setUsersMyFriends", friends);
-                }
+              state = _ref7.state, commit = _ref7.commit, dispatch = _ref7.dispatch;
+              return _context7.abrupt("return", new Promise(function (resolve, reject) {
+                _axios["default"]["delete"]("http://localhost:8000/delete_friends", {
+                  data: {
+                    params: params
+                  }
+                }).then(function (res) {
+                  if (state.usersMyFriends) {
+                    var friends = state.usersMyFriends.filter(function (user) {
+                      return user.id !== params.id;
+                    });
+                    commit("setUsersMyFriends", friends);
+                  }
 
-                if (state.usersMyFriendsFilter) {
-                  var friendsFilter = state.usersMyFriendsFilter.filter(function (user) {
-                    return user.id !== params.id;
-                  });
-                  commit("setUsersMyFriendsFilter", friendsFilter);
-                }
+                  if (state.usersMyFriendsFilter) {
+                    var friendsFilter = state.usersMyFriendsFilter.filter(function (user) {
+                      return user.id !== params.id;
+                    });
+                    commit("setUsersMyFriendsFilter", friendsFilter);
+                  }
 
-                if (state.usersFriendsMe) {
-                  var friendsMe = state.usersFriendsMe.filter(function (user) {
-                    return user.id !== params.id;
-                  });
-                  commit("setUsersFriendsMe", friendsMe);
-                }
+                  if (state.usersFriendsMe) {
+                    var friendsMe = state.usersFriendsMe.filter(function (user) {
+                      return user.id !== params.id;
+                    });
+                    commit("setUsersFriendsMe", friendsMe);
 
-                if (state.usersFriendsFromMe) {
-                  var friendsFromMe = state.usersFriendsFromMe.filter(function (user) {
-                    return user.id !== params.id;
+                    if (state.usersFriendsMe.length === 0 && state.isFriendShow === "friendsMe") {
+                      state.isNotFriends = true;
+                    }
+                  }
+
+                  if (state.usersFriendsFromMe) {
+                    var friendsFromMe = state.usersFriendsFromMe.filter(function (user) {
+                      return user.id !== params.id;
+                    });
+                    commit("setUsersFriendsFromMe", friendsFromMe);
+
+                    if (state.usersFriendsFromMe.length === 0 && state.isFriendShow === "friendsFromMe") {
+                      state.isNotFriends = true;
+                    }
+                  }
+
+                  dispatch("noticeStore/GET_NEW_NOTICE", null, {
+                    root: true
                   });
-                  commit("setUsersFriendsFromMe", friendsFromMe);
-                }
+                  var addresseeID = {
+                    text_notice: res.data,
+                    id: params.userID,
+                    userID: params.query
+                  }; //отправляем уведомление адресату без перезагрузки страницы
+
+                  _socketio["default"].sendNotice(addresseeID, function (cb) {
+                    console.log(cb);
+                  });
+
+                  resolve();
+                })["catch"](function (err) {
+                  console.log(err);
+                  reject(err);
+                });
               }));
 
-            case 4:
-              _context7.next = 9;
-              break;
-
-            case 6:
-              _context7.prev = 6;
-              _context7.t0 = _context7["catch"](1);
-              console.log(_context7.t0);
-
-            case 9:
+            case 2:
             case "end":
               return _context7.stop();
           }
         }
-      }, null, null, [[1, 6]]);
+      });
     },
     //поиск пользователей
     SEARCH_USERS_FRIENDS: function SEARCH_USERS_FRIENDS(_ref8, params) {
