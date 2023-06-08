@@ -10,7 +10,7 @@ export const postsMyPageStore = {
         modulePost: false, //отображение модального окна
         posts: [], //массив постов подгружаемый из базы данных
         countPosts: 0, //с какого поста начинать вести счет
-        limitPosts: 10, //лимит постов на одной странице
+        limitPosts: 20, //лимит постов на одной странице
         totalCount: 0, //всего страниц
         newsPostsFriends: [], //новостная лента от друзей
         countNews: 0, //с какой новости начинать вести счет
@@ -140,7 +140,7 @@ export const postsMyPageStore = {
                     }).then((response) => {
                         if (response.data.length > 0) {
                             commit("setPosts", [...state.posts, ...response.data]);
-                            commit("setCountPosts", 10);
+                            commit("setCountPosts", 20);
 
                             response.data.forEach(post => {
                                 if (post.photos === "1") {
@@ -148,6 +148,8 @@ export const postsMyPageStore = {
                                 }
                             });
                         }
+                        console.log(state.countPosts)
+
                         resolve(response)
                     })
                     .catch((err) => {
@@ -249,6 +251,7 @@ export const postsMyPageStore = {
                 .then(function(response) {
                     console.log(response);
                     commit("setCountPostDel");
+                    console.log(state.countPosts)
                 })
                 .catch(function(error) {
                     console.log(error)

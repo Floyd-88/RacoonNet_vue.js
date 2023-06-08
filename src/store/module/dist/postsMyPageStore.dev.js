@@ -42,7 +42,7 @@ var postsMyPageStore = {
       //массив постов подгружаемый из базы данных
       countPosts: 0,
       //с какого поста начинать вести счет
-      limitPosts: 10,
+      limitPosts: 20,
       //лимит постов на одной странице
       totalCount: 0,
       //всего страниц
@@ -186,7 +186,7 @@ var postsMyPageStore = {
                 }).then(function (response) {
                   if (response.data.length > 0) {
                     commit("setPosts", [].concat(_toConsumableArray(state.posts), _toConsumableArray(response.data)));
-                    commit("setCountPosts", 10);
+                    commit("setCountPosts", 20);
                     response.data.forEach(function (post) {
                       if (post.photos === "1") {
                         dispatch("LOAD_POST_PHOTOS", {
@@ -197,6 +197,7 @@ var postsMyPageStore = {
                     });
                   }
 
+                  console.log(state.countPosts);
                   resolve(response);
                 })["catch"](function (err) {
                   reject(err);
@@ -337,6 +338,7 @@ var postsMyPageStore = {
               }).then(function (response) {
                 console.log(response);
                 commit("setCountPostDel");
+                console.log(state.countPosts);
               })["catch"](function (error) {
                 console.log(error);
               }));
