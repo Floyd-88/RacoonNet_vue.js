@@ -243,8 +243,9 @@ export default {
 .wrapper_post_user {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   width: 100%;
+  padding-top: 25px;
 }
 
 .wrapper_post_name {
@@ -261,9 +262,9 @@ export default {
 }
 
 .post_name {
-  font-size: 18px;
-  font-family: cursive;
-  font-weight: 600;
+  font-size: 16px;
+  font-family: Russo One, fantasy, sans-serif;
+  /* font-weight: 600; */
   cursor: pointer;
 }
 
@@ -272,8 +273,8 @@ export default {
 }
 
 .data_post {
-  font-size: 13px;
-  font-family: cursive;
+  font-size: 12px;
+  font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
 }
 
 .wrapper_text_post {
@@ -282,17 +283,21 @@ export default {
 
 .text_post {
   word-break: break-word;
+  font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
 }
 
 .more_text_post {
   font-weight: 600;
   cursor: pointer;
   display: inline-block;
-  color: #008edb;
+  font-size: 14px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .more_text_post:hover {
-  filter: brightness(80%);
+  opacity: 0.7;
 }
 
 .btn_post {

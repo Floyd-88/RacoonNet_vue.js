@@ -10,7 +10,10 @@ export const commentsPost = {
         commentsArray: [], //массив комментариев к посту
         commentsCommentArray: [], //массив комментариев к комментариям
         usersLikesPost: [], //пользователи лайкнувшие пост
-        showModalBlockUsersLikesPost: false //показывать блок с пользователями лайкнувшими пост
+        showModalBlockUsersLikesPost: false, //показывать блок с пользователями лайкнувшими пост
+
+        // commentText: "",
+        // underCommentText: "",
     }),
 
     getters: {
@@ -20,7 +23,9 @@ export const commentsPost = {
         getCommentsArray: state => state.commentsArray,
         getCommentsCommentArray: state => state.commentsCommentArray,
         getUsersLikesPost: state => state.usersLikesPost,
-        getShowModalBlockUsersLikesPost: state => state.showModalBlockUsersLikesPost
+        getShowModalBlockUsersLikesPost: state => state.showModalBlockUsersLikesPost,
+
+        // getUnderCommentText: state => state.underCommentText
     },
 
     mutations: {
@@ -60,7 +65,11 @@ export const commentsPost = {
 
         setShowModalBlockUsersLikesPost(state, bool) {
             state.showModalBlockUsersLikesPost = bool
-        }
+        },
+
+        // setUnderCommentText(state, text) {
+        //     state.underCommentText = text;
+        // }
     },
 
     actions: {
@@ -138,7 +147,7 @@ export const commentsPost = {
                 axios.get('http://localhost:8000/load_comments_post.js', {
                         params: {
                             userID: body.userID,
-                            postID: body.postID.slice((body.postID.length - 10), body.postID.length)
+                            postID: body.postID.slice((body.postID.length - 20), body.postID.length)
                         }
                     }).then((response) => {
                         if (response.data.length > 0) {

@@ -13,9 +13,26 @@
                 </div>
             </div>
             <div class="under_comment_text" >
-                <p @click.stop="showBtnsAnswUnder(comment)">
+                
+                <div v-if="comment.comment_comment_text.length < 200">
+                    <p @click.stop="showBtnsAnswUnder(comment)">
                     {{ messageText(comment.comment_comment_text) }}
-                </p>
+                    </p>
+                </div>                
+                <div v-else>
+                    <p class="text_post" v-if="!comment.isFullText" 
+                        @click="showBtnsAnswUnder(comment)" >
+                        {{ messageText(comment.comment_comment_text).slice(0, 200) }}
+                    </p>
+                    <p class="text_post" v-else 
+                        @click="showBtnsAnswUnder(comment)" >
+                        {{ messageText(comment.comment_comment_text) }}
+                    </p>
+                    <p class="more_text_post" v-if="!comment.isFullText" @click="moreTextCommentComments(comment)">
+                        Показать еще
+                    </p>
+                </div>
+
                 <div class="wrapper_answer_under_comment" v-if="comment.isBtnsAnswUnder">
                     <UIbtn class="answer_under_comment" @click="notShowBtnsAnswUnder(comment)">Ответить</UIbtn>
                     <UIbtn class="answer_under_comment answer_under_comment_del" 
@@ -93,6 +110,10 @@ export default {
         },
         showUnderComments(n) {
             this.countUnderComments += n;
+        },
+
+        moreTextCommentComments(comment) {
+            comment.isFullText = true;
         }
     },
 
@@ -121,7 +142,7 @@ export default {
 <style scoped>
 .wrapper_under_comment {
     display: flex;
-    margin: 10px 10px 20px 30px;
+    margin: 10px 10px 20px 20px;
 }
 
 .under_comment_ava_user img {
@@ -149,22 +170,25 @@ export default {
     padding-left: 5px;
     font-size: 13px;
     cursor: pointer;
-    font-family: cursive;
-    font-weight: 600;
+    font-family: Russo One, fantasy, sans-serif;
 }
 
 .under_comment_time {
-    font-size: 13px;
+    font-size: 11px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
 }
 
 .under_comment_text {
     margin-left: 10px;
-    font-size: 14px;
 }
 
 .under_comment_text p {
     word-break: break-word;
     cursor: pointer;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    line-height: 16px;
+
 }
 
 .wrapper_answer_under_comment {
@@ -194,9 +218,26 @@ export default {
 
 .show_add_comments {
     font-weight: 600;
-    font-family: cursive;
-    font-size: 11px;
     cursor: pointer;
+    display: inline-block;
+    font-size: 13px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.show_add_comments:hover {
+    opacity: 0.7;
+}
+
+.more_text_post {
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.more_text_post:hover {
+  opacity: 0.7;
 }
 
 /* .message_btn_delete {

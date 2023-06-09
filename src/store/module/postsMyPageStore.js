@@ -148,7 +148,6 @@ export const postsMyPageStore = {
                                 }
                             });
                         }
-                        console.log(state.countPosts)
 
                         resolve(response)
                     })
@@ -191,8 +190,7 @@ export const postsMyPageStore = {
                     await commit("setCountPosts", 1);
 
                     await commit("setIsNotRepeatAddPost", true);
-                    console.log(newPost.id)
-                        //отправляем уведомление адресату без перезагрузки страницы
+                    //отправляем уведомление адресату без перезагрузки страницы
                     SocketioService.sendNotice(newPost.id, cb => {
                         console.log(cb);
                     });

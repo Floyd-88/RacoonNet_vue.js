@@ -197,7 +197,6 @@ var postsMyPageStore = {
                     });
                   }
 
-                  console.log(state.countPosts);
                   resolve(response);
                 })["catch"](function (err) {
                   reject(err);
@@ -248,13 +247,12 @@ var postsMyPageStore = {
                         return regeneratorRuntime.awrap(commit("setIsNotRepeatAddPost", true));
 
                       case 6:
-                        console.log(newPost.id); //отправляем уведомление адресату без перезагрузки страницы
-
+                        //отправляем уведомление адресату без перезагрузки страницы
                         _socketio["default"].sendNotice(newPost.id, function (cb) {
                           console.log(cb);
                         });
 
-                      case 8:
+                      case 7:
                       case "end":
                         return _context2.stop();
                     }

@@ -198,7 +198,7 @@ export default {
     justify-content: center;
     margin: 10px;
     font-size: 17px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
 }
 
 .wrapper_my_friends_title h4 {
@@ -228,6 +228,8 @@ export default {
 }
 
 .my_friend_name {
+    font-size: 14px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
     cursor: pointer;
 }
 

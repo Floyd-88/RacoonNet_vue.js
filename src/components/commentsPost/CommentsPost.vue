@@ -233,9 +233,14 @@ export default {
 
 .show_add_comments {
     font-weight: 600;
-    font-family: cursive;
-    font-size: 13px;
     cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.show_add_comments:hover {
+    opacity: 0.7;
 }
 
 .wrapper_likes_users {

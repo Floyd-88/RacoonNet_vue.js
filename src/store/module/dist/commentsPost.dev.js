@@ -35,6 +35,8 @@ var commentsPost = {
       usersLikesPost: [],
       //пользователи лайкнувшие пост
       showModalBlockUsersLikesPost: false //показывать блок с пользователями лайкнувшими пост
+      // commentText: "",
+      // underCommentText: "",
 
     };
   },
@@ -59,7 +61,8 @@ var commentsPost = {
     },
     getShowModalBlockUsersLikesPost: function getShowModalBlockUsersLikesPost(state) {
       return state.showModalBlockUsersLikesPost;
-    }
+    } // getUnderCommentText: state => state.underCommentText
+
   },
   mutations: {
     setIsShowWriteComment: function setIsShowWriteComment(state) {
@@ -94,7 +97,10 @@ var commentsPost = {
     },
     setShowModalBlockUsersLikesPost: function setShowModalBlockUsersLikesPost(state, bool) {
       state.showModalBlockUsersLikesPost = bool;
-    }
+    } // setUnderCommentText(state, text) {
+    //     state.underCommentText = text;
+    // }
+
   },
   actions: {
     //сохранение комментария к посту в базу данных
@@ -194,7 +200,7 @@ var commentsPost = {
                 _axios["default"].get('http://localhost:8000/load_comments_post.js', {
                   params: {
                     userID: body.userID,
-                    postID: body.postID.slice(body.postID.length - 10, body.postID.length)
+                    postID: body.postID.slice(body.postID.length - 20, body.postID.length)
                   }
                 }).then(function (response) {
                   if (response.data.length > 0) {

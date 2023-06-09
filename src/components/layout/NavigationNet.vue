@@ -193,7 +193,7 @@ export default {
 .link {
   margin: 7px 0;
   font-size: 18px;
-  font-family: fantasy;
+  font-family: Russo One, fantasy, sans-serif;
   border: none;
   cursor: pointer;
   background: none;

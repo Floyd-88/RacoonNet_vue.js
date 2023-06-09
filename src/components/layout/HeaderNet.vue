@@ -6,7 +6,7 @@
         <img class="header_logo" src="../../assets/logo/logo.png" alt="logo" @click="$router.push(`/id${userID}`)">
       </div>
       <div class="header_wrapper_title">
-        <button class="btn_title" @click="$router.push(`/id${userID}`)">RacсoonNet</button>
+        <button class="btn_title" @click="$router.push(`/id${userID}`)">RaccoonNet</button>
       </div>
       <div class="wrapper_notice" v-if="isLoggedIn">
         <img class="new_message_img" src="../../assets/icons/notice.png" alt="new_message"
@@ -112,13 +112,13 @@ export default {
 
 .btn_title {
   border: none;
-  background: none;
-  text-shadow: 4px 3px 0 #ccc, 9px 8px 0 rgb(0 0 0 / 15%);
-  display: flex;
-  align-items: center;
-  font-size: 40px;
-  font-family: fantasy;
-  cursor: pointer;
+    background: none;
+    text-shadow: 1px 1px 0 #ccc, 4px 4px 0 rgb(0 0 0 / 15%);
+    display: flex;
+    align-items: center;
+    font-size: 45px;
+    font-family: "Russo One", fantasy, sans-serif;
+    cursor: pointer;
 }
 
 .header_wrapper_exit {
@@ -130,7 +130,7 @@ export default {
 .header_exit {
   cursor: pointer;
   font-size: 18px;
-  font-family: fantasy;
+  font-family: Russo One, fantasy, sans-serif;
 }
 
 .header_exit:after {
@@ -161,7 +161,7 @@ export default {
 
 .wrapper_notice {
   display: flex;
-  margin-left: 35px;
+  margin-left: 25px;
   align-items: center;
   margin-top: 6px;
 }

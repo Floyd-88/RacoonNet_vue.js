@@ -3,10 +3,7 @@ import App from './App.vue'
 import pages from '@/pages'
 import components from "@/components"
 import router from "@/router/router"
-import store from "@/store/index";
-// import axios from "axios";
-
-
+import store from "@/store/index"
 
 const app = createApp(App);
 

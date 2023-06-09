@@ -105,7 +105,6 @@ export default {
       //   console.log(cb);
       // });
       //сохраянем сообщение в БД
-      console.log(this.user.userID )
       this.WRITE_MESSAGE_USER({ addresseeID: this.user.userID });
     },
 

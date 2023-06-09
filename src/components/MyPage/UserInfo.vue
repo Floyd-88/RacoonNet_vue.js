@@ -38,10 +38,10 @@
           <p v-if="getUser.name" class="name_user">{{ getUser.name + " " + getUser.surname }}</p>
         </div>
         <div class="wrapper_city_user">
-          <p v-if="getUser.country" class="city_user">Страна: {{ getUser.country }}</p>
-          <p v-if="getUser.city"  class="city_user">Город: {{ getUser.city }}</p>
-          <p v-if="age" class="city_user">Возраст: {{ age }}</p>
-          <p v-if="getUser.selectedGender"  class="city_user">Пол: {{ getUser.selectedGender }}</p>
+          <p v-if="getUser.country" class="city_user">Страна: <span class="city_user_name">{{ getUser.country }}</span></p>
+          <p v-if="getUser.city"  class="city_user">Город:  <span class="city_user_name">{{ getUser.city }}</span></p>
+          <p v-if="age" class="city_user">Возраст: <span class="city_user_name">{{ age }}</span></p>
+          <p v-if="getUser.selectedGender"  class="city_user">Пол: <span class="city_user_name">{{ getUser.selectedGender }}</span></p>
         </div>
       </div>
 
@@ -258,7 +258,7 @@ export default {
 } */
 .name_user {
   font-size: 20px;
-  font-family: fantasy;
+  font-family: Russo One, fantasy, sans-serif;
 }
 
 .wrapper_city_user {
@@ -267,8 +267,13 @@ export default {
 
 .city_user {
   font-size: 16px;
-  font-family: math;
+  font-family: Russo One, fantasy, sans-serif;
   /*margin-bottom: 5px;*/
+}
+
+.city_user_name {
+  font-size: 16px;
+  font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
 }
 
 .wrapper_btn {

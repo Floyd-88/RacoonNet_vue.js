@@ -927,7 +927,6 @@ router.get('/get_users_likes', authenticateJWT, function(req, res) {
 //ПОДГРУЗКА КОММЕНТАРИЕВ К ПОСТУ
 router.get("/load_comments_post.js", authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
-
     commentsPost.load_comments_DB([req.query.userID, req.query.postID], (err, comments) => {
         if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
         res.status(200).json(comments);

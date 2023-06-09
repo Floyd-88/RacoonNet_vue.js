@@ -216,7 +216,7 @@ export default {
 
 </script>
 
-<style>
+<style lang="scss">
 *,
 *::before,
 *::after {
