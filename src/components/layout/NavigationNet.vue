@@ -232,7 +232,7 @@ export default {
 .link_help {
   background: none;
   border: none;
-  font-family: fantasy;
+  font-family: Russo One, fantasy, sans-serif;
   font-size: 13px;
   color: #636363;
   cursor: pointer;

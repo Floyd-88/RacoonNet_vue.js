@@ -1,7 +1,7 @@
 <template>
     <CloseModal @click="setIsModalAllPhotos(false)"/>
 
-    <h2 class="title_pthoto_name">Мои фотографии</h2>
+    <h2 class="title_pthoto_name">Все фотографии</h2>
     <div class="wrapper_contents_allPhotos">
         <div class="wrapper_preview_allPhotos">
             <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage.slice(0, getLimitAllPhoto)" :key="index">
@@ -82,7 +82,7 @@ export default {
 .title_pthoto_name {
     margin-top: 10px;
     margin-left: 40px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     font-size: 20px;
 }
 .wrapper_contents_allPhotos {

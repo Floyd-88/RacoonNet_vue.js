@@ -92,6 +92,9 @@ export default {
           if (err.code === "ERR_CANCELED") {
               this.GET_NEW_NOTICE()
             }
+            if(err) {
+              console.log(err)
+            }
         });
     }
 
@@ -114,15 +117,21 @@ export default {
       } else {
         this.setIsNewMessageNotify(true);
       }
+
+      if(err) {
+        console.log(err)
+      }
     });
 
     SocketioService.subscribeToNotice((err, data) => {
-      console.log(data)
         if(data.length > 0) {
           if(data[0].text_notice !== "Пользователь удален из ваших друзей") {
             this.setNoticeArray([...data]);
           } 
         this.changeTextBTN(data[0])
+      }
+      if(err) {
+        console.log(err)
       }
     });
   },

@@ -245,13 +245,16 @@ export default {
 }
 
 .block_comments_name {
-    font-family: fantasy;
-    font-size: 18px;
+    font-family: Russo One, fantasy, sans-serif;
+    font-size: 17px;
 }
 
 .wrapper_block_comments_date {}
 
-.block_comments_date {}
+.block_comments_date {
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
 
 .wrapper_block_comments_item {
     display: flex;
@@ -349,9 +352,8 @@ export default {
 .wrapper_like_user_name {
     position: absolute;
     width: max-content;
-    font-weight: 600;
-    font-size: 13px;
-    font-family: emoji;
+    font-size: 11px;
+    font-family: Russo One, fantasy, sans-serif;
     background: gainsboro;
     padding: 0px 2px 0px 2px;
     left: -50%;

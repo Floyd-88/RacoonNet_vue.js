@@ -458,6 +458,8 @@ export default {
   display: flex;
   justify-content: center;
   margin: 15px;
+  font-family: Russo One, fantasy, sans-serif;
+  font-weight: 400;
   font-size: 23px;
   border-bottom: 2px solid;
   padding-bottom: 5px;
@@ -552,9 +554,9 @@ export default {
   border-radius: 5px;
   background: cornflowerblue;
   cursor: pointer;
-  font-size: 28px;
+  font-size: 26px;
   color: white;
-  font-family: emoji;
+  font-family: Russo One, fantasy, sans-serif;
 }
 
 .error-msg {

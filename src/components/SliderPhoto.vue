@@ -359,7 +359,7 @@ export default {
 }
 
 .wrapper_block_info_name {
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
 }
 
 .wrapper_block_info_count {}
@@ -370,7 +370,7 @@ export default {
     border: none;
     background: repeat;
     color: white;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     font-size: 15px;
     padding-left: 30px
 }

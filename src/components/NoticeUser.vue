@@ -133,6 +133,8 @@ export default {
     justify-content: center;
     padding: 10px;
     background: #0197d6;
+    font-family: Russo One, fantasy, sans-serif;
+    font-weight: 400;
 }
 
 .wrapper_all_messages_users {
@@ -181,7 +183,7 @@ export default {
     justify-content: space-between;
     height: 25px;
     margin-bottom: 10px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     font-size: 18px;
 }
 
@@ -202,12 +204,16 @@ export default {
 }
 
 .message_user_text_name {
-    font-weight: 600;
     cursor: pointer;
+    font-size: 13.5px;
+    font-family: Russo One, fantasy, sans-serif;
 }
 
 .message_user_text p {
+    font-family:'Times New Roman', Times, serif;
     word-break: break-word;
+    font-size: 15px;
+    min-width: 355px;
 }
 
 .wrapper_message_user_btn {
@@ -219,11 +225,12 @@ export default {
 }
 
 .message_user_date {
-    font-size: 14px;
     display: flex;
     justify-content: flex-end;
     flex-direction: column;
     align-items: center;
+    font-size: 13px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
 }
 
 .show_btn_delete {
@@ -246,7 +253,7 @@ export default {
     align-items: center;
     min-height: 89px;
     font-size: 17px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     background: #dcdcdc;
 }
 </style>

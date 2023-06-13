@@ -1,6 +1,6 @@
 <template>
     <!--  Закрыть модальное окно-->
-    <CloseModal @click="setIsModalFeedBack(false)" />
+    <CloseModal @click="closeModalFeedBack()" />
 
     <h4 class="form_feedBack_title">Форма обратной связи</h4>
 
@@ -122,6 +122,13 @@ export default {
 
         feedBackSubmit() {
             this.SEND_MESSAGE_PROBLEM_USER()
+        },
+
+        closeModalFeedBack() {
+            this.setIsModalFeedBack(false);
+            this.setMessageFeedBackSelectedCause("");
+            this.setMessageFeedBackTitle("");
+            this.setMessageFeedBackDescription("");
         }
     },
 
@@ -176,6 +183,8 @@ export default {
     display: flex;
     justify-content: center;
     margin: 20px;
+    font-family: Russo One, fantasy, sans-serif;
+    font-weight: 400;
 }
 
 .wrapper_form_feedBack {
@@ -186,7 +195,11 @@ export default {
 
 .wrapper_form_feedBack_name {}
 
-.form_label_feedBack {}
+.form_label_feedBack {
+    font-family: Russo One, fantasy, sans-serif;
+    font-size: 12px;
+    opacity: .65;
+}
 
 .wrapper_form_feedBack_cause {
     margin-bottom: 10px;
@@ -194,9 +207,16 @@ export default {
 
 .form_feedBack_cause {}
 
-.select_form_feedBack_cause {}
+.select_form_feedBack_cause {
+    font-size: 13px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+    min-width: 300px;
+}
 
-.option_form_feedBack_cause {}
+.option_form_feedBack_cause {
+    font-size: 13px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+}
 
 .wrapper_form_feedBack_input {}
 
@@ -228,9 +248,9 @@ export default {
     border-radius: 5px;
     background: cornflowerblue;
     cursor: pointer;
-    font-size: 28px;
+    font-size: 23px;
     color: white;
-    font-family: emoji;
+    font-family: Russo One, fantasy, sans-serif;
 }
 
 .error-msg {

@@ -311,9 +311,8 @@ export default {
 .wrapper_like_user_name {
     position: absolute;
     width: max-content;
-    font-weight: 600;
-    font-size: 13px;
-    font-family: emoji;
+    font-size: 11px;
+    font-family: Russo One, fantasy, sans-serif;
     background: gainsboro;
     padding: 0px 2px 0px 2px;
     left: -50%;

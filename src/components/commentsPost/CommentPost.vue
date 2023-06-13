@@ -238,10 +238,6 @@ export default {
   opacity: 0.7;
 }
 
-
-
-
-
 .wrapper_answer_comment {
     display: flex;
     justify-content: flex-end;
@@ -251,7 +247,7 @@ export default {
     padding: 3px 6px 3px 6px;
     background: whitesmoke;
     font-size: 12px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     border-radius: 0px;
 }
 

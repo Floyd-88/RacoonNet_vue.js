@@ -7,6 +7,9 @@
                 <div class="error-msg" v-if="error.$message === 'Value is required'">
                     Вы не написали комментарий
                 </div>
+                <div class="error-msg-limit" v-else-if="error.$message === 'The maximum length allowed is 400'">
+                    Вы превысили допустимое количество символов
+                </div>
             </div>
             <textarea 
             placeholder="Оставить комментарий..." 
@@ -56,7 +59,7 @@ export default {
         commentPhoto: {
             required,
             min: minLength(1),
-            max: maxLength(200),
+            max: maxLength(400),
         },
     },
 
@@ -154,6 +157,11 @@ export default {
 .error-msg {
     color: red;
     font-size: 14px;
+}
+
+.error-msg-limit {
+    color: red;
+    font-size: 13px; 
 }
 
 .invalid {

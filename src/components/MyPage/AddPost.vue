@@ -134,7 +134,7 @@ addPostText: {
   width: 150px;
   height: 40px;
   font-size: 19px;
-  font-family: fantasy;
+  font-family: Russo One, fantasy, sans-serif;
   background: #00adef;
 }
 .btn_addPost:hover {

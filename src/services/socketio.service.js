@@ -8,7 +8,9 @@ class SocketioService {
         this.socket = io(process.env.VUE_APP_SOCKET_ENDPOINT, {
             auth: { token: localStorage.getItem('token') },
         });
-        // this.socket.emit('userID', id);
+        console.log(this.socket)
+        if (this.socket.connected === false) return
+            // this.socket.emit('userID', id);
     }
 
     //получаем сообщение с сервера для дальнейшей отправки адресатам

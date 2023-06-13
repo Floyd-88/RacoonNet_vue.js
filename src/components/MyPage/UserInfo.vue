@@ -284,8 +284,8 @@ export default {
 }
 
 .redaction_profile_btn {
-  width: 155px;
-  font-size: 13px;
+  width: auto;
+  font-size: 12px;
   margin-bottom: 15px;
 }
 

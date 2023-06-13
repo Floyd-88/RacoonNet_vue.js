@@ -200,7 +200,7 @@ export default {
     padding: 3px 6px 3px 6px;
     background: whitesmoke;
     font-size: 10px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     border-radius: 0px;
 }
 

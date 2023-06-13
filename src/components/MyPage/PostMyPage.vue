@@ -308,7 +308,7 @@ export default {
 }
 
 .redaction_post_btn {
-  width: 100px;
+  width: auto;
   font-size: 13px;
   margin-right: 5px;
   margin-bottom: 5px;
@@ -348,7 +348,7 @@ export default {
 /* .wrapper_save_editPost_btn {} */
 
 .save_editPost_btn {
-  width: 70px;
+  width: 85px;
   margin-left: 5px;
   margin-right: 5px;
 }

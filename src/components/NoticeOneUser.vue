@@ -15,37 +15,74 @@
                             <div class="wrapper_text_post">
                                 <div>
 
-                                <!-- фотографии к посту -->
-                                <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
-                                    
-                                    <template v-for="(photo, index) in getPhotosPostNotice"
-                                              :key="photo.id">
-                                        <div class="wrapper_photo_post" :class="{ 'size_photo_1': index === 0 }">
-                                            <img class="photo_post" :src="myPhotos(photo.photo_name)" :alt="'photo' + photo.id">
-                                        </div>
-                                    </template>
-                                </div>
-                                <!-- ------ -->
+                                    <!-- фотографии к посту -->
+                                    <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
 
-                            <p class="text_post">{{ getSelectNotice.postText }}</p>
-                        <!-- ----- -->
+                                        <template v-for="(photo, index) in getPhotosPostNotice" :key="photo.id">
+                                            <div class="wrapper_photo_post" :class="{ 'size_photo_1': index === 0 }">
+                                                <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                    :alt="'photo' + photo.id">
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <!-- ------ -->
+
+                                    <!-- пост -->
+                                    <div class="wrapper_text_post wrapper_text_post_comment"
+                                        v-if="getSelectNotice.postText.length < 400">
+                                        <p class="text_post">
+                                            {{ postText(getSelectNotice.postText) }}
+                                        </p>
+                                    </div>
+                                    <div class="wrapper_text_post" v-else>
+                                        <p class="text_post" v-if="!getSelectNotice.isFullText">
+                                            {{ postText(getSelectNotice.postText).slice(0, 400) }}
+                                        </p>
+                                        <p class="text_post" v-else>
+                                            {{ postText(getSelectNotice.postText) }}
+                                        </p>
+                                        <p class="more_text_post" v-if="!getSelectNotice.isFullText"
+                                            @click="moreTextPost(getSelectNotice)">
+                                            Показать еще
+                                        </p>
+                                    </div>
+
+                                    <!-- ----- -->
 
                                     <!-- комент -->
                                     <div class="wrapper_message_user">
                                         <div class="message_name_user">
                                             <div class="dialog_ava_user">
-                                                <img :src="loadAva(getSelectNotice.ava_addressee)" alt="ava" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
+                                                <img :src="loadAva(getSelectNotice.ava_addressee)" alt="ava"
+                                                    @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                                             </div>
-                                            <p class="message_name" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
-                                                {{ getSelectNotice.name_addressee + " " + getSelectNotice.surname_addressee }}
+                                            <p class="message_name"
+                                                @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
+                                                {{ getSelectNotice.name_addressee + " " + getSelectNotice.surname_addressee
+                                                }}
                                             </p>
                                         </div>
                                     </div>
 
                                     <div class="message_text">
-                                        <p>
-                                            {{  getSelectNotice.comment_post_text }}
-                                        </p>
+                                        <div v-if="getSelectNotice.comment_post_text.length < 200">
+                                            <p class="text_post text_post_comment">
+                                                {{ postText(getSelectNotice.comment_post_text) }}
+                                            </p>
+                                        </div>
+                                        <div v-else>
+                                            <p class="text_post text_post_comment" v-if="!getSelectNotice.isFullTextComment">
+                                                {{ postText(getSelectNotice.comment_post_text).slice(0, 200) }}
+                                            </p>
+                                            <p class="text_post text_post_comment" v-else>
+                                                {{ postText(getSelectNotice.comment_post_text) }}
+                                            </p>
+                                            <p class="more_text_post" v-if="!getSelectNotice.isFullTextComment"
+                                                @click="moreTextComment(getSelectNotice)">
+                                                Показать еще
+                                            </p>
+                                        </div>
+
                                         <!-- ---- -->
 
                                         <!-- ответ на комент -->
@@ -54,19 +91,40 @@
                                                 <div class="wrapper_under_comment_user">
                                                     <div class="under_comment_name_user">
                                                         <div class="under_comment_ava_user">
-                                                            <img @click="$emit('getUserNotice', getSelectNotice.userID)" :src="loadAva(getSelectNotice.ava)" alt="ava">
+                                                            <img @click="$emit('getUserNotice', getSelectNotice.userID)"
+                                                                :src="loadAva(getSelectNotice.ava)" alt="ava">
                                                         </div>
-                                                        <p class="under_comment_name" @click="$emit('getUserNotice', getSelectNotice.userID)">{{ getSelectNotice.name + " " +
-                                                            getSelectNotice.surname }}</p>
+                                                        <p class="under_comment_name"
+                                                            @click="$emit('getUserNotice', getSelectNotice.userID)">{{
+                                                                getSelectNotice.name + " " +
+                                                                getSelectNotice.surname }}</p>
                                                     </div>
                                                     <div class="under_comment_time">
                                                         <p>{{ getSelectNotice.date.slice(0, 10) }}</p>
                                                     </div>
                                                 </div>
                                                 <div class="under_comment_text">
-                                                    <p>
-                                                        {{ getSelectNotice.comment_comment_text }}
-                                                    </p>
+
+                                                    <div v-if="getSelectNotice.comment_comment_text.length < 200">
+                                                        <p class="text_post text_post_under_comment">
+                                                            {{ postText(getSelectNotice.comment_comment_text) }}
+                                                        </p>
+                                                    </div>
+                                                    <div v-else>
+                                                        <p class="text_post text_post_under_comment" v-if="!getSelectNotice.isFullTextUnderComment">
+                                                            {{ postText(getSelectNotice.comment_comment_text).slice(0,
+                                                                200) }}
+                                                        </p>
+                                                        <p cclass="text_post text_post_under_comment" v-else>
+                                                            {{ postText(getSelectNotice.comment_comment_text) }}
+                                                        </p>
+                                                        <p class="more_text_post more_text_under_post"
+                                                            v-if="!getSelectNotice.isFullTextUnderComment"
+                                                            @click="moreTextCommentComments(getSelectNotice)">
+                                                            Показать еще
+                                                        </p>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -82,7 +140,8 @@
                     <!-- уведомление о коммениатрии к посту -->
                     <template v-else-if="getSelectNotice.comment_post_text">
                         <div class="wrapper_ava_posts">
-                            <img class="ava_posts" alt="ava" ref="img" :src="loadAva(getSelectNotice.ava_addressee)" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
+                            <img class="ava_posts" alt="ava" ref="img" :src="loadAva(getSelectNotice.ava_addressee)"
+                                @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                         </div>
 
                         <div class="wrapper_post_user">
@@ -95,28 +154,45 @@
                             <div class="wrapper_text_post">
                                 <div>
 
-                                     <!-- фотографии к посту -->
-                                <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
-                                    
-                                    <template v-for="(photo, index) in getPhotosPostNotice"
-                                              :key="photo.id">
-                                        <div class="wrapper_photo_post" :class="{ 'size_photo_1': index === 0 }">
-                                            <img class="photo_post" :src="myPhotos(photo.photo_name)" :alt="'photo' + photo.id">
-                                        </div>
-                                    </template>
-                                </div>
-                                    
-                                    <p class="text_post">{{ getSelectNotice.postText }}</p>
+                                    <!-- фотографии к посту -->
+                                    <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
+
+                                        <template v-for="(photo, index) in getPhotosPostNotice" :key="photo.id">
+                                            <div class="wrapper_photo_post" :class="{ 'size_photo_1': index === 0 }">
+                                                <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                    :alt="'photo' + photo.id">
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <!-- пост -->
+                                    <div class="wrapper_text_post" v-if="getSelectNotice.postText.length < 400">
+                                        <p class="text_post">
+                                            {{ postText(getSelectNotice.postText) }}
+                                        </p>
+                                    </div>
+                                    <div class="wrapper_text_post" v-else>
+                                        <p class="text_post" v-if="!getSelectNotice.isFullText">
+                                            {{ postText(getSelectNotice.postText).slice(0, 400) }}
+                                        </p>
+                                        <p class="text_post" v-else>
+                                            {{ postText(getSelectNotice.postText) }}
+                                        </p>
+                                        <p class="more_text_post" v-if="!getSelectNotice.isFullText"
+                                            @click="moreTextPost(getSelectNotice)">
+                                            Показать еще
+                                        </p>
+                                    </div>
+
+                                    <!-- -- -->
 
                                     <div class="wrapper_message_user">
                                         <div class="message_name_user">
                                             <div class="dialog_ava_user">
-                                                <img 
-                                                    @click="$emit('getUserNotice', getSelectNotice.userID)" 
+                                                <img @click="$emit('getUserNotice', getSelectNotice.userID)"
                                                     :src="loadAva(getSelectNotice.ava)" alt="ava">
                                             </div>
-                                            <p class="message_name"
-                                                @click="$emit('getUserNotice', getSelectNotice.userID)">
+                                            <p class="message_name" @click="$emit('getUserNotice', getSelectNotice.userID)">
                                                 {{ getSelectNotice.name + " " + getSelectNotice.surname }}
                                             </p>
                                         </div>
@@ -125,11 +201,28 @@
                                         </div>
                                     </div>
 
+                                    <!-- комментарий к посту -->
                                     <div class="message_text">
-                                        <p>
-                                            {{ getSelectNotice.comment_post_text }}
-                                        </p>
+                                        <div v-if="getSelectNotice.comment_post_text.length < 200">
+                                            <p class="text_post text_post_comment">
+                                                {{ postText(getSelectNotice.comment_post_text) }}
+                                            </p>
+                                        </div>
+                                        <div v-else>
+                                            <p class="text_post text_post_comment" v-if="!getSelectNotice.isFullTextComment">
+                                                {{ postText(getSelectNotice.comment_post_text).slice(0, 200) }}
+                                            </p>
+                                            <p class="text_post text_post_comment" v-else>
+                                                {{ postText(getSelectNotice.comment_post_text) }}
+                                            </p>
+                                            <p class="more_text_post" v-if="!getSelectNotice.isFullTextComment"
+                                                @click="moreTextComment(getSelectNotice)">
+                                                Показать еще
+                                            </p>
+                                        </div>
                                     </div>
+                                    <!-- -- -->
+
                                 </div>
                             </div>
                         </div>
@@ -141,15 +234,14 @@
 
                         <template v-if="getSelectNotice.text_notice === 'написал что то на Вашей стене'">
                             <div class="wrapper_ava_posts">
-                                <img class="ava_posts" alt="ava" ref="img" 
+                                <img class="ava_posts" alt="ava" ref="img"
                                     @click="$emit('getUserNotice', getSelectNotice.userID)"
                                     :src="loadAva(getSelectNotice.ava)">
                             </div>
                             <div class="wrapper_post_user">
 
                                 <div class="wrapper_post_name">
-                                    <p class="post_name"
-                                        @click="$emit('getUserNotice', getSelectNotice.userID)">
+                                    <p class="post_name" @click="$emit('getUserNotice', getSelectNotice.userID)">
                                         {{ getSelectNotice.name + " " + getSelectNotice.surname }}
                                     </p>
                                 </div>
@@ -158,27 +250,27 @@
                                     <p class="data_post">{{ getSelectNotice.date }}</p>
                                 </div>
 
-                               <!-- фотографии к посту -->
-                               <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
-                                    <template v-for="(photo, index) in getPhotosPostNotice"
-                                              :key="photo.id">
+                                <!-- фотографии к посту -->
+                                <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
+                                    <template v-for="(photo, index) in getPhotosPostNotice" :key="photo.id">
                                         <div class="wrapper_photo_post" :class="{ 'size_photo_1': index === 0 }">
-                                            <img class="photo_post" :src="myPhotos(photo.photo_name)" :alt="'photo' + photo.id">
+                                            <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                :alt="'photo' + photo.id">
                                         </div>
                                     </template>
                                 </div>
 
-                                <div class="wrapper_text_post" v-if="getSelectNotice.postText.length < 800">
+                                <div class="wrapper_text_post" v-if="getSelectNotice.postText.length < 400">
                                     <div>
-                                        <p class="text_post">{{ getSelectNotice.postText }}</p>
+                                        <p class="text_post">{{ postText(getSelectNotice.postText) }}</p>
                                     </div>
                                 </div>
                                 <div class="wrapper_text_post" v-else>
                                     <p class="text_post" v-if="!getSelectNotice.isFullText">
-                                        {{ getSelectNotice.postText.slice(0, 800) }}
+                                        {{ postText(getSelectNotice.postText.slice(0, 400)) }}
                                     </p>
                                     <p class="text_post" v-else>
-                                        {{ getSelectNotice.postText }}
+                                        {{ postText(getSelectNotice.postText) }}
                                     </p>
                                     <p class="more_text_post" v-if="!getSelectNotice.isFullText"
                                         @click="moreTextPost(getSelectNotice)">
@@ -190,41 +282,38 @@
 
                         <template v-else-if="getSelectNotice.text_notice === 'отметил Вашу запись'">
                             <div class="wrapper_ava_posts">
-                                <img class="ava_posts" 
-                                alt="ava" 
-                                ref="img" 
-                                @click="$emit('getUserNotice', getSelectNotice.userID_addressee)" 
-                                :src="loadAva(getSelectNotice.ava_addressee)">
+                                <img class="ava_posts" alt="ava" ref="img"
+                                    @click="$emit('getUserNotice', getSelectNotice.userID_addressee)"
+                                    :src="loadAva(getSelectNotice.ava_addressee)">
                             </div>
                             <div class="wrapper_post_user">
                                 <div class="wrapper_post_name">
-                                    <p class="post_name"
-                                        @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
+                                    <p class="post_name" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                                         {{ getSelectNotice.name_addressee + " " + getSelectNotice.surname_addressee }}
                                     </p>
                                 </div>
 
                                 <!-- фотографии к посту -->
-                               <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
-                                    <template v-for="(photo, index) in getPhotosPostNotice"
-                                              :key="photo.id">
+                                <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
+                                    <template v-for="(photo, index) in getPhotosPostNotice" :key="photo.id">
                                         <div class="wrapper_photo_post" :class="{ 'size_photo_1': index === 0 }">
-                                            <img class="photo_post" :src="myPhotos(photo.photo_name)" :alt="'photo' + photo.id">
+                                            <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                :alt="'photo' + photo.id">
                                         </div>
                                     </template>
                                 </div>
 
-                                <div class="wrapper_text_post" v-if="getSelectNotice.postText.length < 800">
+                                <div class="wrapper_text_post" v-if="getSelectNotice.postText.length < 400">
                                     <div>
-                                        <p class="text_post">{{ getSelectNotice.postText }}</p>
+                                        <p class="text_post">{{ postText(getSelectNotice.postText) }}</p>
                                     </div>
                                 </div>
                                 <div class="wrapper_text_post" v-else>
                                     <p class="text_post" v-if="!getSelectNotice.isFullText">
-                                        {{ getSelectNotice.postText.slice(0, 800) }}
+                                        {{ postText(getSelectNotice.postText.slice(0, 400)) }}
                                     </p>
                                     <p class="text_post" v-else>
-                                        {{ getSelectNotice.postText }}
+                                        {{ postText(getSelectNotice.postText) }}
                                     </p>
                                     <p class="more_text_post" v-if="!getSelectNotice.isFullText"
                                         @click="moreTextPost(getSelectNotice)">
@@ -233,14 +322,13 @@
                                 </div>
                             </div>
                         </template>
-                        
+
                     </template>
 
                     <!-- уведомление о новом комментарии к фотографии-->
                     <template v-else-if="getSelectNotice.comment_photo_text">
                         <div class="wrapper_ava_posts">
-                            <img class="ava_posts" alt="ava" ref="img" 
-                                :src="loadAva(getSelectNotice.ava_addressee)"
+                            <img class="ava_posts" alt="ava" ref="img" :src="loadAva(getSelectNotice.ava_addressee)"
                                 @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                         </div>
 
@@ -264,8 +352,7 @@
                                                 @click="$emit('getUserNotice', getSelectNotice.userID)">
                                                 <img :src="loadAva(getSelectNotice.ava)" alt="ava">
                                             </div>
-                                            <p class="message_name"
-                                                @click="$emit('getUserNotice', getSelectNotice.userID)">
+                                            <p class="message_name" @click="$emit('getUserNotice', getSelectNotice.userID)">
                                                 {{ getSelectNotice.name + " " + getSelectNotice.surname }}
                                             </p>
                                         </div>
@@ -275,9 +362,25 @@
                                     </div>
 
                                     <div class="message_text">
-                                        <p>
-                                            {{ getSelectNotice.comment_photo_text }}
-                                        </p>
+
+                                        <div v-if="getSelectNotice.comment_photo_text.length < 100">
+                                            <p class="text_post">
+                                                {{ postText(getSelectNotice.comment_photo_text) }}
+                                            </p>
+                                        </div>
+                                        <div v-else>
+                                            <p class="text_post" v-if="!getSelectNotice.isFullTextCommentPhoto">
+                                                {{ postText(getSelectNotice.comment_photo_text).slice(0, 100) }}
+                                            </p>
+                                            <p class="text_post" v-else>
+                                                {{ postText(getSelectNotice.comment_photo_text) }}
+                                            </p>
+                                            <p class="more_text_post" v-if="!getSelectNotice.isFullTextCommentPhoto"
+                                                @click="moreTextCommentPhoto(getSelectNotice)">
+                                                Показать еще
+                                            </p>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -287,8 +390,7 @@
                     <!-- уведомление о новом лайке фотографии-->
                     <template v-else-if="getSelectNotice.photo_name">
                         <div class="wrapper_ava_posts">
-                            <img class="ava_posts"  alt="ava" ref="img" 
-                                :src="loadAva(getSelectNotice.ava_addressee)"
+                            <img class="ava_posts" alt="ava" ref="img" :src="loadAva(getSelectNotice.ava_addressee)"
                                 @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                         </div>
 
@@ -301,8 +403,7 @@
 
                             <div class="wrapper_text_post">
                                 <div class="text_post">
-                                    <img class="photo_post" 
-                                        :src="myPhotos(getSelectNotice.photo_name)"
+                                    <img class="photo_post" :src="myPhotos(getSelectNotice.photo_name)"
                                         :alt="'photo' + getSelectNotice.id">
                                 </div>
                             </div>
@@ -322,12 +423,12 @@ import { mapActions, mapGetters, mapMutations } from "vuex";
 export default {
     name: "NoticeOneUser",
     components: { CloseModal },
-    emits:['getUserNotice'],
+    emits: ['getUserNotice'],
 
-   async mounted() {
-        if(this.getSelectNotice.show_notice === 0) {
-           await this.REMOVE_COUNT_NOTICE_LIST(this.getSelectNotice.id);
-           this.getSelectNotice.show_notice = 1;
+    async mounted() {
+        if (this.getSelectNotice.show_notice === 0) {
+            await this.REMOVE_COUNT_NOTICE_LIST(this.getSelectNotice.id);
+            this.getSelectNotice.show_notice = 1;
         }
 
     },
@@ -367,6 +468,23 @@ export default {
         closeModalWindowOneNotice() {
             this.setIsShowModalWindowOneNotice(false);
             this.setPhotosPostNotice([]);
+        },
+
+        postText(value) {
+            let doc = new DOMParser().parseFromString(value, "text/html");
+            return doc.documentElement.textContent;
+        },
+
+        moreTextComment(getSelectNotice) {
+            getSelectNotice.isFullTextComment = true;
+        },
+
+        moreTextCommentComments(getSelectNotice) {
+            getSelectNotice.isFullTextUnderComment = true;
+        },
+
+        moreTextCommentPhoto(getSelectNotice) {
+            getSelectNotice.isFullTextCommentPhoto = true;
         }
     },
 
@@ -440,12 +558,14 @@ export default {
     flex-direction: column;
     justify-content: center;
     width: 100%;
+    padding-left: 10px;
 }
 
 .wrapper_post_name {
-    margin-bottom: 5px;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 5px;
+    margin-top: 20px;
 }
 
 .post_show_btn {
@@ -457,8 +577,7 @@ export default {
 
 .post_name {
     font-size: 18px;
-    font-family: cursive;
-    font-weight: 600;
+    font-family: Russo One, fantasy, sans-serif;
     cursor: pointer;
 }
 
@@ -468,24 +587,40 @@ export default {
 
 .data_post {
     font-size: 13px;
-    font-family: cursive;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
 }
 
 .wrapper_text_post {
     padding-right: 6px;
-    padding-left: 6px;
+    /* padding-left: 6px; */
 }
 
 .text_post {
     word-break: break-word;
     padding-top: 10px;
+    font-size: 15px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+}
+
+.text_post_comment {
+    font-size: 14px;
+}
+
+.text_post_under_comment {
+    font-size: 13.5px;
 }
 
 .more_text_post {
     font-weight: 600;
     cursor: pointer;
     display: inline-block;
-    color: #008edb;
+    font-size: 14px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: black;
+}
+
+.more_text_under_post {
+    font-size: 13.5px;
 }
 
 .more_text_post:hover {
@@ -589,6 +724,8 @@ export default {
     align-items: center;
     border-top: 1px solid;
     margin-top: 10px;
+    margin-right: 20px;
+    margin-left: 10px;
     padding-top: 10px;
 
 }
@@ -600,24 +737,26 @@ export default {
 
 .message_name {
     padding-left: 5px;
-    font-size: 14px;
     cursor: pointer;
-    font-family: cursive;
-    font-weight: 600;
+    font-size: 13.5px;
+    font-family: Russo One, fantasy, sans-serif;
 }
 
 .message_time {
-    font-size: 15px;
+    font-size: 13px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
 }
 
 .message_text {
-    margin-left: 10px;
-    font-size: 15px;
-    /* border-bottom: 1px solid; */
+    margin-left: 20px;
+    font-size: 14px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
     padding-bottom: 10px;
+    margin-right: 20px;
 }
 
 .message_text p {
+    padding-top: 0;
     word-break: break-word;
 }
 
@@ -640,6 +779,9 @@ wrapper_under_comment {
 
 .wrapper_block_under_comment_user {
     width: 100%;
+    margin-top: 10px;
+    margin-left: 10px;
+    padding-right: 40px;
 }
 
 .wrapper_under_comment_user {
@@ -657,20 +799,16 @@ wrapper_under_comment {
     padding-left: 5px;
     font-size: 13px;
     cursor: pointer;
-    font-family: cursive;
-    font-weight: 600;
+    font-family: Russo One, fantasy, sans-serif;
 }
 
 .under_comment_time {
     font-size: 13px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
 }
 
 .under_comment_text {
     margin-left: 10px;
-    font-size: 14px;
-}
-
-.under_comment_text p {
-    word-break: break-word;
+    /* font-size: 13px; */
 }
 </style>

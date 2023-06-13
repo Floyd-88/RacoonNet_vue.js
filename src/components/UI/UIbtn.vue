@@ -16,7 +16,7 @@ export default {
   background: gainsboro;
   border: 0px solid black;
   padding: 5px;
-  font-family: fantasy;
+  font-family: Russo One, fantasy, sans-serif;
   cursor: pointer;
   color: black;
   box-shadow: 0px 2px 3px 0px rgb(0 0 0 / 40%);

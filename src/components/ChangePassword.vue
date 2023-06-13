@@ -211,7 +211,8 @@ export default {
 }
 
 .change_password_label {
-  font-size: 17px;
+  font-size: 13.5px;
+  font-family: Russo One, fantasy, sans-serif;
 }
 
 .wrapper_form_change_password_input {
