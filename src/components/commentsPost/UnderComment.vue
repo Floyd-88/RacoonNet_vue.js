@@ -16,17 +16,29 @@
                 
                 <div v-if="comment.comment_comment_text.length < 200">
                     <p @click.stop="showBtnsAnswUnder(comment)">
-                    {{ messageText(comment.comment_comment_text) }}
+                        <span :style="{fontWeight: 600}" 
+                              v-if="comment.nameAddressee === comment.comment_comment_text.slice(0, comment.nameAddressee.length)">
+                            {{ comment.nameAddressee }}
+                        </span>
+                    {{ messageText(comment) }}
                     </p>
                 </div>                
                 <div v-else>
                     <p class="text_post" v-if="!comment.isFullText" 
                         @click="showBtnsAnswUnder(comment)" >
-                        {{ messageText(comment.comment_comment_text).slice(0, 200) }}
+                        <span :style="{fontWeight: 600}" 
+                              v-if="comment.nameAddressee === comment.comment_comment_text.slice(0, comment.nameAddressee.length)">
+                            {{ comment.nameAddressee }}
+                        </span>
+                        {{ messageText(comment).slice(0, 200) }}
                     </p>
                     <p class="text_post" v-else 
                         @click="showBtnsAnswUnder(comment)" >
-                        {{ messageText(comment.comment_comment_text) }}
+                        <span :style="{fontWeight: 600}" 
+                              v-if="comment.nameAddressee === comment.comment_comment_text.slice(0, comment.nameAddressee.length)">
+                            {{ comment.nameAddressee }}
+                        </span>
+                        {{ messageText(comment) }}
                     </p>
                     <p class="more_text_post" v-if="!comment.isFullText" @click="moreTextCommentComments(comment)">
                         Показать еще
@@ -104,9 +116,13 @@ export default {
             }
         },
 
-        messageText(value) {
-            let doc = new DOMParser().parseFromString(value, "text/html");
-            return doc.documentElement.textContent;
+        messageText(comment) {
+            let doc = new DOMParser().parseFromString(comment.comment_comment_text, "text/html");
+            if(comment.comment_comment_text.slice(0, comment.nameAddressee.length) === comment.nameAddressee) {
+                return doc.documentElement.textContent.slice(comment.nameAddressee.length);
+            }else {
+                return doc.documentElement.textContent;
+            }
         },
         showUnderComments(n) {
             this.countUnderComments += n;

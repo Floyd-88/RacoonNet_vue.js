@@ -36,14 +36,14 @@ class CommentsPostDB {
 
     //получаем комментарии к комментарию
     load_comments_comment_DB(params, callback) {
-        return this.connection.query(`SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date FROM comments_comment INNER JOIN users ON author_comment = userID WHERE user_page=? AND comment_id IN (?)`, params, (err, comment) => {
+        return this.connection.query(`SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date, nameAddressee FROM comments_comment INNER JOIN users ON author_comment = userID WHERE user_page=? AND comment_id IN (?)`, params, (err, comment) => {
             callback(err, comment);
         })
     }
 
     //получаем комментарии к комментарию к одному посту
     load_comments_comment_one_DB(id, callback) {
-        return this.connection.query(`SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date FROM comments_comment INNER JOIN users ON author_comment = userID WHERE comment_id=?`, id, (err, comment) => {
+        return this.connection.query(`SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date, nameAddressee FROM comments_comment INNER JOIN users ON author_comment = userID WHERE comment_id=?`, id, (err, comment) => {
             callback(err, comment);
         })
     }
@@ -64,7 +64,7 @@ class CommentsPostDB {
 
     //добавляем комментарий к другому комментарию в БД
     add_commentComment_DB(body, callback) {
-        return this.connection.execute(`INSERT INTO comments_comment (comment_id, comment_comment_text, author_comment, user_page, date, comment_commentID, author_comment_comment, answer_comment_comment_text) VALUES (?,?,?,?,?,?,?,?)`, body, (err, row) => {
+        return this.connection.execute(`INSERT INTO comments_comment (comment_id, comment_comment_text, author_comment, nameAddressee, user_page, date, comment_commentID, author_comment_comment, answer_comment_comment_text) VALUES (?,?,?,?,?,?,?,?,?)`, body, (err, row) => {
             callback(err, row);
         });
     }

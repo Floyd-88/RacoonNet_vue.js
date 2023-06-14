@@ -168,6 +168,7 @@ var commentsPost = {
               _context2.next = 9;
               return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/load_comments_comment.js', newCommentsComment).then(function (response) {
                 // console.log(response.data);
+                response.data.nameAddressee = newCommentsComment.nameAddressee;
                 commit("setCommentsCommentArray", [response.data].concat(_toConsumableArray(state.commentsCommentArray))); // commit("setAddPosts", response.data);
                 // commit("setCountPosts", 1);
                 // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);

@@ -870,7 +870,7 @@ router.post("/load_comments_comment.js", authenticateJWT, messageValidate, funct
 
   tokenID = req.tokenID; //id из сохраненного токена 
 
-  commentsPost.add_commentComment_DB([req.body.commentID, req.body.textMessage, tokenID, req.body.userPage, req.body.date, req.body.comment_commentID || null, req.body.author_comment_comment || null, req.body.comment_comment_text || null], function (err, comment) {
+  commentsPost.add_commentComment_DB([req.body.commentID, req.body.textMessage, tokenID, req.body.nameAddressee, req.body.userPage, req.body.date, req.body.comment_commentID || null, req.body.author_comment_comment || null, req.body.comment_comment_text || null], function (err, comment) {
     if (err) return res.status(500).send('При добавлении комментария произошла ошибка' + " " + err);
     var newCommentID = comment.insertId; // возвращаем написанный комментарий
 
@@ -1906,8 +1906,7 @@ io.on("connection", function (socket) {
   socket.on("notice", function (addresseeID) {
     if (Object.prototype.toString.call(addresseeID) !== '[object Object]') {
       notice.get_notice_DB([addresseeID, addresseeID], function (err, newNotice) {
-        if (err) return res.status(500).send('При получении уведомлений произошла ошибка' + " " + err);
-        console.log(newNotice); //отправляем сообщение всем кто находится в комнате кроме отправителя
+        if (err) return res.status(500).send('При получении уведомлений произошла ошибка' + " " + err); //отправляем сообщение всем кто находится в комнате кроме отправителя
 
         socket.to(Number(addresseeID)).emit("notice", newNotice); // res.status(200).json(newNotice);
       }); // отправляем сообщение всем кто находится в комнате включая отправителя

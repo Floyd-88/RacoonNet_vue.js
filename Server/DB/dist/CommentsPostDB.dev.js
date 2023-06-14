@@ -56,7 +56,7 @@ function () {
   }, {
     key: "load_comments_comment_DB",
     value: function load_comments_comment_DB(params, callback) {
-      return this.connection.query("SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date FROM comments_comment INNER JOIN users ON author_comment = userID WHERE user_page=? AND comment_id IN (?)", params, function (err, comment) {
+      return this.connection.query("SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date, nameAddressee FROM comments_comment INNER JOIN users ON author_comment = userID WHERE user_page=? AND comment_id IN (?)", params, function (err, comment) {
         callback(err, comment);
       });
     } //получаем комментарии к комментарию к одному посту
@@ -64,7 +64,7 @@ function () {
   }, {
     key: "load_comments_comment_one_DB",
     value: function load_comments_comment_one_DB(id, callback) {
-      return this.connection.query("SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date FROM comments_comment INNER JOIN users ON author_comment = userID WHERE comment_id=?", id, function (err, comment) {
+      return this.connection.query("SELECT id, name, surname, ava, comment_id, comment_comment_text, author_comment, date, nameAddressee FROM comments_comment INNER JOIN users ON author_comment = userID WHERE comment_id=?", id, function (err, comment) {
         callback(err, comment);
       });
     } //добавляем комментарий к посту в БД
@@ -88,7 +88,7 @@ function () {
   }, {
     key: "add_commentComment_DB",
     value: function add_commentComment_DB(body, callback) {
-      return this.connection.execute("INSERT INTO comments_comment (comment_id, comment_comment_text, author_comment, user_page, date, comment_commentID, author_comment_comment, answer_comment_comment_text) VALUES (?,?,?,?,?,?,?,?)", body, function (err, row) {
+      return this.connection.execute("INSERT INTO comments_comment (comment_id, comment_comment_text, author_comment, nameAddressee, user_page, date, comment_commentID, author_comment_comment, answer_comment_comment_text) VALUES (?,?,?,?,?,?,?,?,?)", body, function (err, row) {
         callback(err, row);
       });
     } //получаем новый комментарий из БД

@@ -102,12 +102,12 @@ export default {
                 comment.comment_commentID = comment_comments.id;
                 comment.author_comment_comment = comment_comments.author_comment;
                 comment.comment_comment_text = comment_comments.comment_comment_text;
-                this.name = comment_comments.comment_comment_name + ", ";
+                this.name = comment_comments.comment_comment_name + ",";
             } else {
                 comment.comment_commentID = "";
                 comment.author_comment_comment = "";
                 comment.comment_comment_text = "";
-                this.name = comment.name + ", ";
+                this.name = comment.name + ",";
             }
 
             comment.isShowWriteUnderComment = !comment.isShowWriteUnderComment;

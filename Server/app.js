@@ -1020,6 +1020,7 @@ router.post("/load_comments_comment.js", authenticateJWT, messageValidate, funct
         req.body.commentID,
         req.body.textMessage,
         tokenID,
+        req.body.nameAddressee,
         req.body.userPage,
         req.body.date,
         req.body.comment_commentID || null,
@@ -2323,7 +2324,6 @@ io.on("connection", (socket) => {
                 addresseeID
             ], (err, newNotice) => {
                 if (err) return res.status(500).send('При получении уведомлений произошла ошибка' + " " + err);
-                console.log(newNotice)
 
                 //отправляем сообщение всем кто находится в комнате кроме отправителя
                 socket.to(Number(addresseeID)).emit("notice", newNotice);

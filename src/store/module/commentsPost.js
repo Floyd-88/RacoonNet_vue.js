@@ -120,6 +120,7 @@ export const commentsPost = {
                 await axios.post('http://localhost:8000/load_comments_comment.js', newCommentsComment)
                 .then(function(response) {
                     // console.log(response.data);
+                    response.data.nameAddressee = newCommentsComment.nameAddressee
                     commit("setCommentsCommentArray", [response.data, ...state.commentsCommentArray]);
 
                     // commit("setAddPosts", response.data);

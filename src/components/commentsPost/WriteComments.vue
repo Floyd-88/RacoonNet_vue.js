@@ -116,7 +116,7 @@ export default {
         }),
 
         clickWriteCommentPost() {
-            this.SAVE_COMMENTS_POST({ postID: this.post.id, textMessage: this.commentText, userPage: this.$route.params.id || this.post.authorPost });
+            this.SAVE_COMMENTS_POST({ postID: this.post.id, textMessage: this.commentText, userPage: this.$route.params.id || this.post.authorPost});
             this.$emit("showComments", 1);
             this.commentText = "";
             this.v$.commentText.$reset();
@@ -132,6 +132,7 @@ export default {
                 comment_commentID: this.comment.comment_commentID,
                 author_comment_comment: this.comment.author_comment_comment,
                 comment_comment_text: this.comment.comment_comment_text,
+                nameAddressee: this.name
             });
             this.$emit("notShowWriteUnderComments")
             this.underCommentText = "";
