@@ -232,7 +232,8 @@ export default {
   cursor: pointer;
   font-size: 28px;
   color: white;
-  font-family: emoji;
+  font-family: Russo One, fantasy, sans-serif;
+  letter-spacing: 5px;
 }
 
 .form_wrapper_not_password {
@@ -260,9 +261,10 @@ export default {
   border-radius: 5px;
   background: forestgreen;
   cursor: pointer;
-  font-size: 19px;
+  font-size: 16px;
   color: white;
-  font-family: emoji;
+  font-family: Russo One, fantasy, sans-serif;
+
 }
 
 .error-msg {

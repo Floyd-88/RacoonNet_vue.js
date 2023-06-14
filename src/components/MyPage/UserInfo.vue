@@ -291,7 +291,7 @@ export default {
 
 .add_friend_btn {
   width: 155px;
-  font-size: 13px;
+  font-size: 12px;
   margin-bottom: 15px;
   background: #00adef;
   border: 2px solid #00adef;

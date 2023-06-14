@@ -144,11 +144,10 @@ export const commentsPost = {
             commit
         }, body) {
             return new Promise((resolve, reject) => {
-
                 axios.get('http://localhost:8000/load_comments_post.js', {
                         params: {
                             userID: body.userID,
-                            postID: body.postID.slice((body.postID.length - 20), body.postID.length)
+                            postID: body.postID
                         }
                     }).then((response) => {
                         if (response.data.length > 0) {

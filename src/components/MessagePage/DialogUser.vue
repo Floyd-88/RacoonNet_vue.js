@@ -48,7 +48,7 @@
                             <p>{{ message.date }}</p>
                         </div>
                         <div class="message_btn_delete" v-if="message.isMesssageDel">
-                            <UIbtn @click="DELETE_MESSAGES({messageID: message.id, photos: message.photos})">Удалить</UIbtn>
+                            <UIbtn @click="DELETE_MESSAGES({ messageID: message.id, photos: message.photos })">Удалить</UIbtn>
                         </div>
                     </div>
 
@@ -107,6 +107,9 @@
                         <div class="error-msg" v-if="error.$message === 'Value is required'">
                             <!-- Вы не можете отправить пустое сообщение -->
                         </div>
+                        <div class="error-msg" v-else-if="error.$message === 'The maximum length allowed is 10000'">
+                            Вы превысили допустимое количество символов
+                        </div>
                     </div>
 
                     <textarea class="new_message" id="name" placeholder="Введите сообщение" v-model="changeMessage"
@@ -144,7 +147,7 @@
 <script>
 // import SocketioService from "../../services/socketio.service";
 import { useVuelidate } from "@vuelidate/core";
-import { required, minLength } from "@vuelidate/validators";
+import { required, minLength, maxLength } from "@vuelidate/validators";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 import UImodal from "../UI/UImodal.vue";
 import FileUpload from "../FileUpload.vue";
@@ -168,6 +171,7 @@ export default {
         messageUser: {
             required,
             min: minLength(1),
+            max: maxLength(10000),
         },
     },
 
@@ -198,21 +202,21 @@ export default {
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
                 if (this.getArrayMessages.length !== 0) {
-                this.scrolPhotoDown = false;
+                    this.scrolPhotoDown = false;
                     this.LOAD_MESSAGES_USER(this.id)
                         .then((resp) => {
                             if (resp.data.length > 0) {
-                                if(resp.data[resp.data.length - 4]) {
+                                if (resp.data[resp.data.length - 4]) {
                                     let ref = "message" + resp.data[resp.data.length - 4].id;
                                     let topWriteUnderComment = this.$refs[ref][0].getBoundingClientRect().y;
 
                                     if (this.$refs.scrollToMe) {
-                                    this.$nextTick(function () {
-                                        this.scrollToElementUP(topWriteUnderComment);
-                                    });
+                                        this.$nextTick(function () {
+                                            this.scrollToElementUP(topWriteUnderComment);
+                                        });
+                                    }
                                 }
-                                }
-                              
+
                             }
                         });
                 }
@@ -223,14 +227,14 @@ export default {
     },
 
     updated() {
-        if( this.scrolPhotoDown === true) {
+        if (this.scrolPhotoDown === true) {
             if (this.$refs.scrollToMe) {
-            this.$nextTick(function () {
-                this.scrollToElement();
-            })
+                this.$nextTick(function () {
+                    this.scrollToElement();
+                })
+            }
         }
-        }
-        
+
     },
 
     async unmounted() {
@@ -420,12 +424,13 @@ export default {
 .header_btn_back button {
     padding: 6px;
     font-size: 14px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     border-radius: 5px;
     background: #0197d6;
     cursor: pointer;
     color: whitesmoke;
     border: none;
+    letter-spacing: 1px;
 }
 
 .wrapper_header_user_name {
@@ -444,7 +449,7 @@ export default {
 }
 
 .header_name_user {
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     font-size: 20px;
     cursor: pointer;
 }
@@ -482,12 +487,13 @@ export default {
 .message_name_user {
     margin-right: 10px;
     font-size: 17px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     cursor: pointer;
 }
 
 .message_time {
-    font-size: 15px;
+    font-size: 12px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
 }
 
 .message_text {
@@ -528,7 +534,7 @@ export default {
 
 .new_message {
     width: 100%;
-    min-height: 50px;
+    min-height: 80px;
     resize: none;
     border-radius: 5px;
     padding: 5px;
@@ -548,9 +554,10 @@ export default {
     border-radius: 5px;
     background: cornflowerblue;
     cursor: pointer;
-    font-size: 23px;
+    font-size: 20px;
     color: white;
-    font-family: emoji;
+    font-family: Russo One, fantasy, sans-serif;
+    font-weight: 400;
 }
 
 .error-msg {
@@ -626,6 +633,7 @@ export default {
     font-weight: 600;
     cursor: pointer;
     display: inline-block;
-    color: #008edb;
+    font-size: 14px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 </style>

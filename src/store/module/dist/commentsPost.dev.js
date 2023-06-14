@@ -201,7 +201,7 @@ var commentsPost = {
                 _axios["default"].get('http://localhost:8000/load_comments_post.js', {
                   params: {
                     userID: body.userID,
-                    postID: body.postID.slice(body.postID.length - 20, body.postID.length)
+                    postID: body.postID
                   }
                 }).then(function (response) {
                   if (response.data.length > 0) {

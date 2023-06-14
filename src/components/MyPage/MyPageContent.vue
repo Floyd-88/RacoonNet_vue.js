@@ -127,7 +127,6 @@ export default {
                         this.LOAD_COMMENTS_POST({ userID: this.$route.params.id, postID: data })
                             .then((response) => {
                                 this.LOAD_COMMENTS_COMMENT({ userID: this.$route.params.id, postID: response.data.map(post => post.id) });
-
                             })
                             .catch((err) => {
                                 if (err.code === "ERR_CANCELED") {

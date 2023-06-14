@@ -509,6 +509,8 @@ export default {
   font-size: 23px;
   border-bottom: 2px solid;
   padding-bottom: 5px;
+  font-family: Russo One, fantasy, sans-serif;
+  font-weight: 400;
 }
 
 .wrapper_form_register {
@@ -596,15 +598,18 @@ export default {
 
 .form_register_btn {
   width: 100%;
-  height: 100%;
-  border: 1px solid;
-  border-radius: 5px;
-  background: cornflowerblue;
-  cursor: pointer;
-  font-size: 28px;
-  color: white;
-  font-family: emoji;
+    height: 100%;
+    border: 1px solid;
+    border-radius: 5px;
+    background: cornflowerblue;
+    cursor: pointer;
+    font-size: 27px;
+    color: white;
+    font-family: Russo One, fantasy, sans-serif;
+    font-weight: 400;
+    letter-spacing: 1px;
 }
+
 .error-msg {
   color: red;
   font-size: 14px;

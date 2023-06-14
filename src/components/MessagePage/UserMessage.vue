@@ -160,8 +160,8 @@ export default {
     justify-content: space-between;
     height: 25px;
     margin-bottom: 10px;
-    font-family: fantasy;
-    font-size: 18px;
+    font-family: Russo One, fantasy, sans-serif;
+    font-size: 16px;
 }
 .message_user_content p {
     cursor: pointer;
@@ -186,7 +186,8 @@ export default {
     margin-bottom: 10px;
 }
 .message_user_date {
-    font-size: 14px;
+    font-size: 12px;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
     display: flex;
     justify-content: flex-end;
     flex-direction: column;

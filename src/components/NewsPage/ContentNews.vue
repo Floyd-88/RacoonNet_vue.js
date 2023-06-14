@@ -72,7 +72,7 @@
               <img class="photo_post" 
                 :src="require(`../../assets/photo/${photo.photo_name}`)" 
                 :alt="'photo' + photo.id"
-                @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">             
+                @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index+1, id: photo.id, postID: post.id })">             
             </div>
           </template>
         </div>
@@ -188,7 +188,7 @@ export default {
 }
 
 .ava_posts {
-  width: 35px;
+  width: 90px;
   border-radius: 100%;
 }
 
@@ -218,10 +218,10 @@ export default {
 }
 
 .post_name {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 300;
   cursor: pointer;
-  font-family: fantasy;
+  font-family: Russo One, fantasy, sans-serif;
 }
 
 .wrapper_params_post {
@@ -234,8 +234,8 @@ export default {
 
 .data_post {
   padding-top: 2px;
-  font-size: 13px;
-  font-family: none;
+  font-size: 12px;
+  font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
 }
 
 .wrapper_text_post {
@@ -243,14 +243,18 @@ export default {
 }
 
 .text_post {
+  font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
   word-break: break-word;
 }
 
 .more_text_post {
   font-weight: 600;
-    cursor: pointer;
-    display: inline-block;
-    color: #008edb;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .btn_post {

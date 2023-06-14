@@ -25,6 +25,10 @@
             <div class="error-msg" v-if="error.$message === 'Value is required'">
               Вы не можете отправить пустое сообщение
             </div>
+
+            <div class="error-msg" v-else-if="error.$message === 'The maximum length allowed is 10000'">
+              Вы превысили допустимое количество символов
+            </div>
           </div>
 
           <textarea class="new_message" id="name" placeholder="Введите сообщение" v-model="changeMessage"
@@ -51,7 +55,7 @@
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
-import { required, minLength } from "@vuelidate/validators";
+import { required, minLength, maxLength } from "@vuelidate/validators";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 import CloseModal from "@/components/UI/CloseModal";
 // import SocketioService from "../../services/socketio.service"
@@ -76,6 +80,7 @@ export default {
     messageUser: {
       required,
       min: minLength(1),
+      max: maxLength(10000),
     },
   },
   methods: {
@@ -146,9 +151,11 @@ export default {
   display: flex;
   justify-content: center;
   margin: 15px;
-  font-size: 23px;
+  font-size: 21px;
   border-bottom: 2px solid;
   padding-bottom: 5px;
+  font-family: Russo One, fantasy, sans-serif;
+  font-weight: 400;  
 }
 .wrapper_form_message {
   display: flex;
@@ -174,7 +181,7 @@ export default {
 }
 .message_user_name {
   margin-bottom: 10px;
-  font-family: fantasy;
+  font-family: Russo One, fantasy, sans-serif;
   font-size: 16px;
 }
 .new_message {
@@ -198,14 +205,15 @@ export default {
 }
 .form_message_btn {
   width: 130px;
-  height: 100%;
-  border: 1px solid;
-  border-radius: 5px;
-  background: cornflowerblue;
-  cursor: pointer;
-  font-size: 23px;
-  color: white;
-  font-family: emoji;
+    height: 100%;
+    border: 1px solid;
+    border-radius: 5px;
+    background: cornflowerblue;
+    cursor: pointer;
+    font-size: 19px;
+    color: white;
+    font-family: Russo One, fantasy, sans-serif;
+    letter-spacing: 1px;
 }
 .error-msg {
   color: red;

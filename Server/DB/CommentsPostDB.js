@@ -16,7 +16,7 @@ class CommentsPostDB {
 
     //создаем таблицу БД с комментариями к комментариям
     createTableCommentsComment() {
-        const sql = `CREATE TABLE IF NOT EXISTS comments_comment (id integer PRIMARY KEY AUTO_INCREMENT, comment_id integer not null, comment_comment_text text not null, author_comment integer not null, user_page integer not null, date varchar(50) not null, comment_commentID integer null, author_comment_comment integer null, answer_comment_comment_text text null, CONSTRAINT FK_CommentsComment_Author FOREIGN KEY (author_comment) REFERENCES users (userID), CONSTRAINT FK_CommentsComment_userPage  FOREIGN KEY (user_page) REFERENCES users (userID), CONSTRAINT FK_CommentsComment_Comment FOREIGN KEY (comment_id) REFERENCES comments_post (id)  ON DELETE CASCADE)`;
+        const sql = `CREATE TABLE IF NOT EXISTS comments_comment (id integer PRIMARY KEY AUTO_INCREMENT, comment_id integer not null, comment_comment_text text not null, author_comment integer not null, nameAddresse varchar(150), user_page integer not null, date varchar(50) not null, comment_commentID integer null, author_comment_comment integer null, answer_comment_comment_text text null, CONSTRAINT FK_CommentsComment_Author FOREIGN KEY (author_comment) REFERENCES users (userID), CONSTRAINT FK_CommentsComment_userPage  FOREIGN KEY (user_page) REFERENCES users (userID), CONSTRAINT FK_CommentsComment_Comment FOREIGN KEY (comment_id) REFERENCES comments_post (id)  ON DELETE CASCADE)`;
         this.connection.execute(sql);
     }
 

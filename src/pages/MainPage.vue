@@ -7,10 +7,10 @@
 
     <div class="wrapper_mainPage">
       <div class="wrapper_title">
-        <h2 class="welcome_title">
-          <span class="name_net_title">RacсoonNet</span>
-          Добро пожаловать в социальную сеть для общения со своими близкими
+        <h2 class=" name_net_title">
+          RacсoonNet
         </h2>
+        <h3 class="welcome_title">Добро пожаловать в социальную сеть для общения со своими друзьями и родными</h3>  
       </div>
       <div class="wrapper_form"> <LoginNet/> </div>
     </div>
@@ -65,16 +65,16 @@ computed: {
   max-width: 500px;
   font-weight: 400;
   font-size: 26px;
-  font-family: emoji;
+  opacity: 0.7;
+  font-family: Pattaya-Regular, cursive, sans-serif;
 }
 
 .name_net_title {
   margin-bottom: 10px;
-  font-size: 55px;
+  font-size: 50px;
   padding-top: 10px;
-  font-family: emoji;
+  font-family: Russo One, fantasy, sans-serif;
   color: cornflowerblue;
-  font-weight: 600;
 }
 
 .wrapper_form {
