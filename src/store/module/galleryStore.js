@@ -53,6 +53,10 @@ export const galleryStore = {
 
         async GET_PHOTO_NOT_FILTER({ commit, rootGetters }) {
             commit("setCheckedCat", []);
+            commit("setIsShowCat", false);
+            commit("loadPhotoStore/setLimitAllPhotoRemove", null, {
+                root: true
+            })
             let allPhotos = rootGetters["loadPhotoStore/getAllPhotosMyPage"];
             await commit("setArrayFilterPhotos", allPhotos);
 

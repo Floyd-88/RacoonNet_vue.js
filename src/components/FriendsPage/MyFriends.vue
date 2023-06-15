@@ -271,8 +271,8 @@ export default {
 
 .my_friends_header h3 {
     padding: 0 0 8px 0;
-    font-size: 17px;
-    font-family: fantasy;
+    font-size: 18px;
+    font-family: Russo One, fantasy, sans-serif;
     font-weight: 300;
 }
 

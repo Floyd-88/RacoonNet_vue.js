@@ -165,6 +165,9 @@ var loadPhotoStore = {
     setLimitAllPhoto: function setLimitAllPhoto(state, count) {
       state.limitAllPhoto += count;
     },
+    setLimitAllPhotoRemove: function setLimitAllPhotoRemove(state) {
+      state.limitAllPhoto = 8;
+    },
     setAvaPhoto: function setAvaPhoto(state, value) {
       state.avaPhoto = value;
     },
@@ -433,13 +436,27 @@ var loadPhotoStore = {
               document.body.style.overflow = "auto";
 
             case 13:
-              if (body.photoID) {
-                _context3.next = 24;
+              if (!(rootGetters["galleryStore/getArrayFilterPhotos"].length <= 1)) {
+                _context3.next = 17;
                 break;
               }
 
-              _context3.prev = 14;
-              _context3.next = 17;
+              _context3.next = 16;
+              return regeneratorRuntime.awrap(commit("showFullPhotoStore/setIsModalFullSize", false, {
+                root: true
+              }));
+
+            case 16:
+              document.body.style.overflow = "auto";
+
+            case 17:
+              if (body.photoID) {
+                _context3.next = 28;
+                break;
+              }
+
+              _context3.prev = 18;
+              _context3.next = 21;
               return regeneratorRuntime.awrap(_axios["default"]["delete"]('http://localhost:8000/remove_photo', {
                 params: {
                   idPhoto: getters.getIdPhoto,
@@ -459,22 +476,22 @@ var loadPhotoStore = {
                 });
               }));
 
-            case 17:
-              _context3.next = 22;
+            case 21:
+              _context3.next = 26;
               break;
 
-            case 19:
-              _context3.prev = 19;
-              _context3.t0 = _context3["catch"](14);
+            case 23:
+              _context3.prev = 23;
+              _context3.t0 = _context3["catch"](18);
               console.log(_context3.t0);
 
-            case 22:
-              _context3.next = 32;
+            case 26:
+              _context3.next = 36;
               break;
 
-            case 24:
-              _context3.prev = 24;
-              _context3.next = 27;
+            case 28:
+              _context3.prev = 28;
+              _context3.next = 31;
               return regeneratorRuntime.awrap(_axios["default"].put('http://localhost:8000/remove_photo_post', {
                 idPhoto: getters.getIdPhoto,
                 id: getters.getUser.userID
@@ -490,21 +507,21 @@ var loadPhotoStore = {
                 });
               }));
 
-            case 27:
-              _context3.next = 32;
+            case 31:
+              _context3.next = 36;
               break;
 
-            case 29:
-              _context3.prev = 29;
-              _context3.t1 = _context3["catch"](24);
+            case 33:
+              _context3.prev = 33;
+              _context3.t1 = _context3["catch"](28);
               console.log(_context3.t1);
 
-            case 32:
+            case 36:
             case "end":
               return _context3.stop();
           }
         }
-      }, null, null, [[14, 19], [24, 29]]);
+      }, null, null, [[18, 23], [28, 33]]);
     },
     //удаление аватрки
     removeAvaPhoto: function removeAvaPhoto(_ref7) {

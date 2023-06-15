@@ -249,8 +249,6 @@ export default {
 
     },
 
-
-
     async beforeUnmount() {
         this.UPDATE_FLAGS_UNREAD_MESSAGE(this.conv_id);
         this.setPhotosMessagesArray([]);

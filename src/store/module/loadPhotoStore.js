@@ -124,6 +124,10 @@ export const loadPhotoStore = {
             state.limitAllPhoto += count
         },
 
+        setLimitAllPhotoRemove(state) {
+            state.limitAllPhoto = 8;
+        },
+
         setAvaPhoto(state, value) {
             state.avaPhoto = value
         },
@@ -347,6 +351,14 @@ export const loadPhotoStore = {
                     root: true
                 });
                 await commit("showFullPhotoStore/setPostID", "", { root: true });
+                document.body.style.overflow = "auto";
+            }
+
+            //если закончились картинки по выбранной теме
+            if (rootGetters["galleryStore/getArrayFilterPhotos"].length <= 1) {
+                await commit("showFullPhotoStore/setIsModalFullSize", false, {
+                    root: true
+                });
                 document.body.style.overflow = "auto";
             }
 

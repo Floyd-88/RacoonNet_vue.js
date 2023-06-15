@@ -15,7 +15,7 @@
       <p :class="{ 'new_message': getUsersFriendsMe.length > 0 }"></p>
     </div>
     <div class="wrapper_nav_link">
-      <button class="link" @click="$router.push('/gallery')"> Галерея</button>
+      <button class="link" @click="goMyGallery()">Галерея</button>
     </div>
     <div class="wrapper_nav_link_help">
       <button class="link_help" @click="setIsModalFeedBack(true)"> Обратная связь </button>
@@ -42,6 +42,7 @@ export default {
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
       LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
       UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE",
+      GET_PHOTO_NOT_FILTER: "galleryStore/GET_PHOTO_NOT_FILTER"
     }),
 
     ...mapMutations({
@@ -111,6 +112,11 @@ export default {
         });
         this.blockBtnMessage = true;
       this.$router.push('/message');
+    },
+
+    goMyGallery() {
+      this.$router.push('/gallery');
+      this.GET_PHOTO_NOT_FILTER();
     }
 
   },

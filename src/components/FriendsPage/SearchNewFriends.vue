@@ -287,7 +287,7 @@ export default {
 
 .wrapper_search_new_friends_title {
     padding-bottom: 5px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     font-weight: 300;
     font-size: 14px;
 }

@@ -63,15 +63,16 @@ export default {
 
 
   async mounted() {
-    this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
+    if(this.getCheckedCat.length === 0) {
+      this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
     this.loadUser({ id: JSON.parse(localStorage.getItem('user')).userID })
     .catch((err) => {
           if (err.code === "ERR_CANCELED") {
               console.log("Загрузка была отменена")
             }
         });
-
-
+    }
+  
     // this.setFilterPhoto(this.getAllPhotosMyPage);
     // console.log(this.getFilterPhoto)
 
@@ -106,6 +107,7 @@ export default {
       fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
       // modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
       closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
+      
     }),
 
     dateLoadPhotos(photo, index) {
@@ -144,16 +146,13 @@ export default {
       // getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",
       getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
 
-      getArrayFilterPhotos: "galleryStore/getArrayFilterPhotos"
+      getArrayFilterPhotos: "galleryStore/getArrayFilterPhotos",
+
+      getCheckedCat: "galleryStore/getCheckedCat"
     }),
 
-    // datePhotoLoad() {
-    //   return this.getArrayFilterPhotos.map((photo) => {
-
-    //   })
-    // }
-
   },
+
 }
 </script>
 
@@ -259,8 +258,8 @@ export default {
 
 .date_load_photos {
   font-size: 15px;
-    font-family: fantasy;
-    padding-left: 10px;
+  font-family: Russo One, fantasy, sans-serif;
+  padding-left: 10px;
 }
 
 .active_all_photos {

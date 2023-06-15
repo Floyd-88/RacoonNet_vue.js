@@ -25,12 +25,11 @@
                                 </option>
                                 <option class="select_cat_photo_opt" value="Аниме">Аниме</option>
                                 <option class="select_cat_photo_opt" value="Арты">Арты</option>
-                                <option class="select_cat_photo_opt" value="Города">Город</option>
+                                <option class="select_cat_photo_opt" value="Город">Город</option>
                                 <option class="select_cat_photo_opt" value="Горы">Горы</option>
                                 <option class="select_cat_photo_opt" value="Девушки">Девушки</option>
                                 <option class="select_cat_photo_opt" value="Друзья">Друзья</option>
                                 <option class="select_cat_photo_opt" value="Животные">Животные</option>
-                                <option class="select_cat_photo_opt" value="Игры">Игры</option>
                                 <option class="select_cat_photo_opt" value="Компьютер">Компьютер</option>
                                 <option class="select_cat_photo_opt" value="Космос">Космос</option>
                                 <option class="select_cat_photo_opt" value="Любовь">Любовь</option>
@@ -158,11 +157,11 @@ export default {
 .select_cat_photo {}
 
 .select_cat_photo_sel_change {
-    width: 165px;
+    width: 190px;
     border-radius: 5px;
     border: 0px solid black;
     padding: 5px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     cursor: pointer;
     color: black;
     box-shadow: 0px 2px 3px 0px rgb(0 0 0 / 40%);
@@ -170,12 +169,12 @@ export default {
 }
 
 .select_cat_photo_sel {
-    width: 117px;
+    width: 135px;
     border-radius: 5px;
     border: 0px solid black;
     padding: 5px;
     background: gainsboro;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     cursor: pointer;
     color: black;
     box-shadow: 0px 2px 3px 0px rgb(0 0 0 / 40%);

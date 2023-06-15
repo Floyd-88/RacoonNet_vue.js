@@ -12,10 +12,10 @@
                     <p class="my_friend_card_name">{{ user.name + " " + user.surname }}</p>
                 </div>
                 <div class="wrapper_my_friend_card_country">
-                    <p class="my_friend_card_country">Страна: {{ user.country }}</p>
+                    <p class="my_friend_card_country">Страна: <span>{{ user.country }}</span></p>
                 </div>
                 <div class="wrapper_my_friend_card_city">
-                    <p class="my_friend_card_city">Город: {{ user.city }}</p>
+                    <p class="my_friend_card_city">Город: <span>{{ user.city }}</span></p>
                 </div>
             </div>
         </div>    
@@ -73,14 +73,16 @@ export default {
 }
 
 .wrapper_my_friend_card_name {
+    padding-bottom: 5px;
     font-size: 16px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
    
 }
 
 .my_friend_card_name {
     display: inline;
     cursor: pointer;
+    
 }
 
 .wrapper_my_friend_card_country {
@@ -88,14 +90,32 @@ export default {
 
 }
 
-.my_friend_card_country {}
+.my_friend_card_country {
+    font-family: Russo One, fantasy, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.my_friend_card_country span {
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+}
 
 .wrapper_my_friend_card_city {
     margin-top: 1px;
-
+    
 }
 
-.my_friend_card_city {}
-
+.my_friend_card_city {
+    font-family: Russo One, fantasy, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+}
+.my_friend_card_city span {
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+}
 
 </style>

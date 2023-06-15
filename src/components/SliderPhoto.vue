@@ -15,7 +15,7 @@
                 <div class="wrapper_block_info_photo">
                     <div class="wrapper_block_info_name_count_photo">
                         <div class="wrapper_block_info_name">
-                            <p>Фотографии: {{ getIndexPhoto + 1 }} из {{ currentImg.photosMessageArray?.length || currentImg.photosPostArray?.length || getAllPhotosMyPage.length }}</p>
+                            <p>Фотографии: {{ getIndexPhoto + 1 }} из {{ currentImg.photosMessageArray?.length || currentImg.photosPostArray?.length || getArrayFilterPhotos.length || getAllPhotosMyPage.length }}</p>
                         </div>
                     </div>
                     <div class="wrapper_block_info_remove_photo">
@@ -139,14 +139,37 @@ export default {
             getPhotosMessagesArray: "messageStore/getPhotosMessagesArray",
             getPostID: "showFullPhotoStore/getPostID",
             getIsFocusComment: "commentsPhoto/getIsFocusComment",
-            getMessageID: "showFullPhotoStore/getMessageID"
+            getMessageID: "showFullPhotoStore/getMessageID",
+            getArrayFilterPhotos: "galleryStore/getArrayFilterPhotos",
+            getCheckedCat: "galleryStore/getCheckedCat"
         }),
 
         currentImg: function () {
 
             if (this.getPostID === "" && this.getMessageID === "") {
-                
-                if (this.getAllPhotosMyPage.length > 0) {
+
+                if (this.getArrayFilterPhotos.length > 0 || this.getCheckedCat) {
+                    this.setCommentsPhotoArray([])
+
+                    if (this.getIndexPhoto === -1) {
+                        this.setIndexPhoto(this.getArrayFilterPhotos.length - 1);
+                    }
+                    let photo = this.getArrayFilterPhotos[Math.abs(this.getIndexPhoto) % this.getArrayFilterPhotos.length];
+                    if (this.getIndexPhoto >= this.getArrayFilterPhotos.length) {
+                        this.setIndexPhoto(0);
+                    } else if (this.getIndexPhoto < 0) {
+                        this.setIndexPhoto(this.getArrayFilterPhotos.length - 1);
+                    }
+                    if(photo) {
+                        this.setPhotoId(photo.id);
+                        this.LOAD_COMMENTS_PHOTO(photo.id)
+                        return { photo };
+                    } else {
+                        this.setIsModalFullSize(false);
+                        document.body.style.overflow = "auto";
+                    }
+
+                } else if (this.getAllPhotosMyPage.length > 0) {
                     this.setCommentsPhotoArray([])
 
                     if (this.getIndexPhoto === -1) {
@@ -158,9 +181,11 @@ export default {
                     } else if (this.getIndexPhoto < 0) {
                         this.setIndexPhoto(this.getAllPhotosMyPage.length - 1);
                     }
-                    this.setPhotoId(photo.id);
-                    this.LOAD_COMMENTS_PHOTO(photo.id)
-                    return { photo };
+                    if(photo) {
+                        this.setPhotoId(photo.id);
+                        this.LOAD_COMMENTS_PHOTO(photo.id)
+                        return { photo };
+                    }
                 }
                 return [];
             } else if (this.getMessageID) {
@@ -214,11 +239,7 @@ export default {
                             return { photo, photosPostArray };
                         }
                     } else {
-                        console.log('tttt')
-
                         this.setIsModalFullSize(false);
-                        console.log(this.getPostID)
-
                         document.body.style.overflow = "auto";
                         this.setPostID("");
                     }
@@ -400,7 +421,7 @@ export default {
 /* .wrapper_save_editPost_btn {} */
 
 .save_editPost_btn {
-    width: 70px;
+    width: 80px;
     margin-left: 5px;
     margin-right: 5px;
 }
