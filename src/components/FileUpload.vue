@@ -94,7 +94,9 @@ export default {
         ...mapActions({
             removePreviewImage: "loadPhotoStore/removePreviewImage",
             addPhotoServer: "loadPhotoStore/addPhotoServer",
-            cancelLoadPhoto: "loadPhotoStore/cancelLoadPhoto"
+            cancelLoadPhoto: "loadPhotoStore/cancelLoadPhoto",
+            LOAD_MESSAGES_PHOTOS: "messageStore/LOAD_MESSAGES_PHOTOS"
+
         }),
 
         choosePhoto() {
@@ -151,12 +153,15 @@ export default {
         },
 
         addNewPhotoServer(event) {
-                console.log(this.addresseeID)
                 this.addPhotoServer({event: event, addresseeID: this.addresseeID})
                 .then((resp) => {
                     if(resp[0][5] === 0 || resp[0][5] === undefined) {
                     window.location.href = `/id${JSON.parse(this.getUser.userID)}`;
+                    } else {
+                        // this.LOAD_MESSAGES_PHOTOS({messageID: +resp[0][5] });
+                    window.location.href = `/message/id${JSON.parse(+resp[0][2] )}`;
                     }
+
                 })
             },
 
@@ -290,7 +295,19 @@ export default {
     color: red;
 }
 
-/* .message_error {
-} */
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+    .form_load_photo {
+    width: 350px;
+}
+
+.wrapper_preview_photos {
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: center;
+}
+}
 </style>
 

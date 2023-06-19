@@ -396,4 +396,21 @@ export default {
   width: 50%;
   height: auto;
 } */
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+  .text_post{
+    font-size: 13px;
+    line-height: 17px;
+}
+.ava_posts {
+    width: 50px;
+    border-radius: 100%;
+}
+.wrapper_post_user {
+    padding-top: 20px;
+}
+
+}
 </style>

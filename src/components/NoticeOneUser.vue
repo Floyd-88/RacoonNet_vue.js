@@ -811,4 +811,41 @@ wrapper_under_comment {
     margin-left: 10px;
     /* font-size: 13px; */
 }
+
+@media (max-width: 761px) {
+
+.wrapper_post {
+    flex-direction: column;
+}
+
+.wrapper_ava_posts {
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+}
+
+.wrapper_post_name {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.wrapper_post_user {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.wrapper_all_messages_users {
+    max-width: 350px;
+    min-width: 350px;
+}
+
+.wrapper_text_post{
+    padding-right: 0px;
+    padding-left: 0px;
+}
+}
 </style>

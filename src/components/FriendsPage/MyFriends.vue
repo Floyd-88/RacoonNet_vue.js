@@ -290,7 +290,7 @@ export default {
 
 .wrapper_text_not_friends {
     font-size: 15px;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     text-align: center;
     margin-top: 20px;
     opacity: .6;
@@ -328,7 +328,7 @@ export default {
 }
 
 .btn_write_add_friend {
-    min-width: 140px;
+    min-width: 155px;
 }
 
 .btn_delete_friend {

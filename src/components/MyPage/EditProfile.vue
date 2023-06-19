@@ -584,13 +584,22 @@ export default {
     border: none;
 }
 
-/* .wrapper_change_password {
+/* МЕДИА-ЗАПРОСЫ */
 
-} */
+@media (max-width: 761px) {
 
-/* .change_password_modal {
+  .form_register_title {
+    font-size: 17px;
+}
 
-} */
+.form_register{
+    width: 320px;
+}
+
+.form_register_btn {
+    font-size: 24px;
+}
+}
 
 </style>
 

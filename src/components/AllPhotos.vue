@@ -130,5 +130,15 @@ export default {
     right: 0;
     cursor: auto;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+    .wrapper_contents_allPhotos {
+    width: 360px;
+    padding: 0px;
+}
+}
 </style>
 

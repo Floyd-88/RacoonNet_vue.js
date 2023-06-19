@@ -101,5 +101,18 @@ export default {
 .observer {
     /* border: 1px solid; */
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+  .wrapper_main {
+    padding: 0px 0px 5px;
+}
+
+.main{
+    margin-left: 0px;
+}
+}
 </style>
 

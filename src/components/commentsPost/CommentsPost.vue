@@ -110,7 +110,7 @@ export default {
             post.isShowWriteComment = !post.isShowWriteComment;
 
             if (post.isShowWriteComment) {
-                let top = window.scrollY + this.$refs[ref].getBoundingClientRect().y - document.documentElement.clientHeight + 60;
+                let top = window.scrollY + this.$refs[ref].getBoundingClientRect().y - document.documentElement.clientHeight + 85;
                 window.scrollTo({ top, behavior: 'smooth' })
             }
 

@@ -19,7 +19,7 @@
                :key="index">
             <div class="error-msg"
                  v-if="error.$message === 'Value is required'">
-              Необходимо указать корректное имя
+              Не корректное имя
             </div>
           </div>
           <input class="form_register_input"
@@ -39,7 +39,7 @@
                :key="index">
             <div class="error-msg"
                  v-if="error.$message === 'Value is required'">
-              Необходимо указать корректную фамилию
+              Не корректная фамилия
             </div>
           </div>
           <input class="form_register_input"
@@ -531,7 +531,7 @@ export default {
 
 .wrapper_form_register_input {
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }
 
 .form_register_surname {
@@ -593,7 +593,7 @@ export default {
   display: flex;
   justify-content: center;
   height: 45px;
-  margin: 20px 5px 15px 5px;
+  margin: 15px 5px 15px 5px;
 }
 
 .form_register_btn {
@@ -616,5 +616,17 @@ export default {
 }
 .invalid {
   border: 1px solid red;
+}
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+.wrapper_form_register {
+  width: 350px;
+}
+.form_register_btn {
+  font-size: 23px;
+}
 }
 </style>

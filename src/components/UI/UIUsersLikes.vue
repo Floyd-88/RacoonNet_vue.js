@@ -49,22 +49,12 @@ export default {
     justify-content: center;
 }
 
-/* .my_friend {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 5px;
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+    .list_my_friends[data-v-04e84efa] {
+        max-width: 355px;
+    }
 }
-
-.my_friend_ava {}
-
-.my_friend_ava img {
-    width: 64px;
-    border-radius: 100%;
-    cursor: pointer;
-}
-
-.my_friend_name {
-    cursor: pointer;
-} */
 </style>

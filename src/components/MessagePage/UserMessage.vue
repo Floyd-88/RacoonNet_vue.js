@@ -210,7 +210,13 @@ export default {
     height: 30px;
     margin-right: 5px;
 }
-/* .observer {
-    border: 1px solid;
-} */
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+.wrapper_message_user_btn{
+    display: none;
+}
+}
 </style>

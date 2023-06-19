@@ -11,6 +11,8 @@ class SocketioService {
 
     }
 
+    // socket.on('error', function(e){ console.log('error' + e); });
+
     //получаем сообщение с сервера для дальнейшей отправки адресатам
     subscribeToMessages(cb) {
         if (!this.socket) return (true);

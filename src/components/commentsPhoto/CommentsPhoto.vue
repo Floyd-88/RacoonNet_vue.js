@@ -1,6 +1,7 @@
 <template>
     <div class="wrapper_block_comments">
-        <div class="wrapper_block_comments_title">
+        <div class="wrapper_block_comments_flex_column">
+            <div class="wrapper_block_comments_title">
             <div class="wrapper_block_comments_title_name_ava">
                 <div class="wrapper_block_comments_ava">
                     <img class="ava_posts" :src="loadAva" alt="ava">
@@ -13,39 +14,43 @@
             <div class="wrapper_block_comments_date">
                 <p class="block_comments_date">{{ currentImg.date.slice(0, 10) }}</p>
             </div>
-        </div>
 
+            
+        </div>
         <div class="wrapper_block_comments_item" @mouseleave="closeUserLikes(currentImg)">
-            <div class="wrapper_block_comments_item_like">
-                <p class="count_likes" v-if="currentImg.likes !== 0">{{ currentImg.likes }}</p>
+                <div class="wrapper_block_comments_item_like">
+                    <p class="count_likes" v-if="currentImg.likes !== 0">{{ currentImg.likes }}</p>
 
-                <img class="likes" src="../../assets/icons/like.svg" alt="like" v-if="currentImg.like_photo == 0"
-                    @click="countLikes(currentImg)" @mouseover="getUserLike(currentImg)">
+                    <img class="likes" src="../../assets/icons/like.svg" alt="like" v-if="currentImg.like_photo == 0"
+                        @click="countLikes(currentImg)" @mouseover="getUserLike(currentImg)">
 
-                <!-- подкрашивать сердце если пост лайкнут -->
-                <img class="likes" src="../../assets/icons/like_full.png" alt="like" v-if="currentImg.like_photo == 1"
-                    @click="countLikes(currentImg)" @mouseover="getUserLike(currentImg)">
-            </div>
-
-            <!-- при наведении всплывающее окно с теми кто лайкнул -->
-            <div class="wrapper_likes_users" v-show="currentImg.activeLikesUsers">
-                <div class="likes_users" v-for="user in getUsersLikesPhoto.slice(0, 4)" :key="user.author_likes_photo">
-                    <div class="my_friend_ava" @mouseover.stop="user.isNameUserLike = true"
-                        @mouseleave.stop="user.isNameUserLike = false"
-                        @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
-                        <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava">
-                    </div>
-                    <div class="wrapper_like_user_name" v-if="user.isNameUserLike">
-                        <p class="like_user_name" @mouseleave="closeUserLikes(currentImg)">{{ user.name + " " + user.surname
-                        }}</p>
-                    </div>
+                    <!-- подкрашивать сердце если пост лайкнут -->
+                    <img class="likes" src="../../assets/icons/like_full.png" alt="like" v-if="currentImg.like_photo == 1"
+                        @click="countLikes(currentImg)" @mouseover="getUserLike(currentImg)">
                 </div>
 
-                <div class="wrapper_more_users_likes" v-if="getUsersLikesPhoto.length > 4">
-                    <p class="more_users_likes" @click="setShowModalBlockUsersLikesPhoto(true)">еще</p>
+                <!-- при наведении всплывающее окно с теми кто лайкнул -->
+                <div class="wrapper_likes_users" v-show="currentImg.activeLikesUsers">
+                    <div class="likes_users" v-for="user in getUsersLikesPhoto.slice(0, 4)" :key="user.author_likes_photo">
+                        <div class="my_friend_ava" @mouseover.stop="user.isNameUserLike = true"
+                            @mouseleave.stop="user.isNameUserLike = false"
+                            @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
+                            <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava">
+                        </div>
+                        <div class="wrapper_like_user_name" v-if="user.isNameUserLike">
+                            <p class="like_user_name" @mouseleave="closeUserLikes(currentImg)">{{ user.name + " " +
+                                user.surname
+                            }}</p>
+                        </div>
+                    </div>
+
+                    <div class="wrapper_more_users_likes" v-if="getUsersLikesPhoto.length > 4">
+                        <p class="more_users_likes" @click="setShowModalBlockUsersLikesPhoto(true)">еще</p>
+                    </div>
                 </div>
             </div>
         </div>
+        
 
         <!-- комментарии -->
         <div class="wrapper_block_comments_comment" ref="scrollToMe">
@@ -61,7 +66,7 @@
     <div @click.stop="closeModalWindowLikesUserPhoto()">
         <div class="modal_show_users_likes_fone" v-if="getShowModalBlockUsersLikesPhoto">
             <div class="modal_show_users_likes_window">
-                <UIUsersLikes> 
+                <UIUsersLikes>
                     <div class="my_friend" v-for="user in getUsersLikesPhoto" :key="user.author_likes_photo">
                         <div class="my_friend_ava_full"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
@@ -300,14 +305,17 @@ export default {
     border-radius: 5px;
     box-shadow: 1px 1px 3px 0px rgb(0 0 0 / 40%);
 }
+
 .likes_users {
     position: relative;
 }
+
 .my_friend_ava {
     height: 100%;
     padding: 2px;
-    
+
 }
+
 .my_friend_ava img {
     height: 100%;
     border-radius: 100%;
@@ -320,35 +328,40 @@ export default {
     padding-left: 10px;
     padding-right: 5px;
 }
+
 .more_users_likes {
     cursor: pointer;
 }
-.more_users_likes:hover{
+
+.more_users_likes:hover {
     font-weight: 600;
 }
+
 .modal_show_users_likes_fone {
-  display: flex;
-  position: fixed;
-  background: rgba(0,0,0,0.5);
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  align-items: center;
-  justify-content: center;
-  z-index: 3;
-  /* opacity: 0.1; */
+    display: flex;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    /* opacity: 0.1; */
 }
+
 .modal_show_users_likes_window {
     position: relative;
-  width: max-content;
-  height: max-content;
-  /* padding-bottom: 10px; */
-  border-radius: 5px;
-  background: whitesmoke;
-  box-shadow: 3px 6px 5px 1px rgb(0 0 0 / 5%);
-  overflow: auto;
+    width: max-content;
+    height: max-content;
+    /* padding-bottom: 10px; */
+    border-radius: 5px;
+    background: whitesmoke;
+    box-shadow: 3px 6px 5px 1px rgb(0 0 0 / 5%);
+    overflow: auto;
 }
+
 .wrapper_like_user_name {
     position: absolute;
     width: max-content;
@@ -359,8 +372,9 @@ export default {
     left: -50%;
     bottom: -20px;
 }
-.like_user_name {
-}
+
+.like_user_name {}
+
 .my_friend {
     display: flex;
     flex-direction: column;
@@ -379,5 +393,40 @@ export default {
 .my_friend_name {
     cursor: pointer;
     text-align: center;
+    font-family: Russo One, fantasy, sans-serif;
+    font-size: 13px;
 }
-</style>
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+    .wrapper_block_comments_flex_column {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .wrapper_block_comments {
+        width: auto;
+        max-height: 36vh;
+    }
+
+    .ava_posts {
+        width: 40px;
+    }
+
+    .wrapper_block_comments_item {
+        flex-direction: row-reverse;
+    }
+
+    .wrapper_block_comments_item_like {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    .wrapper_block_comments_date {
+        display: none;
+    }
+
+}</style>

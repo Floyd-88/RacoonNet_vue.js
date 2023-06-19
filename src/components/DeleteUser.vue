@@ -2,7 +2,7 @@
   <form class="form_password" @submit.prevent="deleteUserProfile">
     <div class="wrapper_title_delete_profile">
       <p class="title_delete_profile">Если Вы уверены что хотите удалить свой профиль с сайта RaccoonNet, введи пароль
-        указанный Вами при регистрации. Учтите что данные будут потеряны безвозвратно</p>
+        указанный Вами при регистрации. Учтите, что данные будут потеряны безвозвратно</p>
     </div>
 
     <div class="wrapper_form_register_input">
@@ -194,6 +194,19 @@ export default {
   display: block;
   text-align: center;
   font-size: 18px;
-  font-family: fantasy;
+  font-family: Russo One, fantasy, sans-serif;
+}
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+  .form_password {
+    width: 340px;
+}
+
+.title_delete_profile[data-v-2aeb3746] {
+    font-size: 15px;
+}
 }
 </style>

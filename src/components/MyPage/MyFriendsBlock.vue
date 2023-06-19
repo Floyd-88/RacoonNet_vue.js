@@ -23,4 +23,14 @@ export default {
   position: sticky;
   top: 120px;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+  .wrapper_myFriends {
+    margin-bottom: 20px;
+    position: static;
+}
+}
 </style>

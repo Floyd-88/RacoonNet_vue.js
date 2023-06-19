@@ -96,12 +96,12 @@ export default {
     justify-content: center;
     font-size: 20px;
     opacity: .8;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     color: dimgray;
     position: absolute;
     top: 50%;
     margin-top: -100px;
-    left: 50%;
+    left: 45%;
     margin-left: -100px;
 }
 .wrapper_messages_load_more_message {

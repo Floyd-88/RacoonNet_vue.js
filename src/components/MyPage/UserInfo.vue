@@ -310,4 +310,51 @@ export default {
     background: content-box;
     /* transition: 0.3s; */
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+.wrapper_user {
+flex-direction: column;
+}
+
+.wrapper_info {
+    flex-direction: column;
+    align-items: center;
+}
+
+.block_ava_user {
+    width: 100px;
+    height: 100px;
+    margin-top: 10px;
+}
+
+.wrapper_info_user{
+    margin: 10px;
+}
+
+.wrapper_name_user {
+    display: flex;
+    justify-content: center;
+}
+
+.wrapper_city_user{
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.city_user{
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+.city_user_name{
+    font-size: 14px;
+}
+
+.redaction_profile_btn {
+    font-size: 13px;
+}
+}
 </style>

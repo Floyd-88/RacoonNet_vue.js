@@ -232,4 +232,6 @@ export default {
     margin-right: 10px;
     height: 90%;
 }
+
+
 </style>

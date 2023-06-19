@@ -160,4 +160,19 @@ export default {
     padding: 10px;
     background: black;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+  .wrapper_contents_myPhoto {
+  margin-right: 0px
+}
+
+.show_more_photo_btn {
+    width: 290px;
+    margin: 0px 0px 10px 0px;
+    font-size: 13px;
+}
+}
 </style>

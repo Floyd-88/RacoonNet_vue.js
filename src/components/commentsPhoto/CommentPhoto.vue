@@ -196,4 +196,17 @@ export default {
 .more_text_post:hover {
   opacity: 0.7;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+.wrapper_message_user {
+    margin-left: 10px;
+}
+
+.wrapper_message_dialog_user[data-v-83aca5d8] {
+    margin-bottom: 10px;
+}
+}
 </style>

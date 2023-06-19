@@ -48,7 +48,8 @@
                             <p>{{ message.date }}</p>
                         </div>
                         <div class="message_btn_delete" v-if="message.isMesssageDel">
-                            <UIbtn @click="DELETE_MESSAGES({ messageID: message.id, photos: message.photos })">Удалить</UIbtn>
+                            <UIbtn @click="DELETE_MESSAGES({ messageID: message.id, photos: message.photos })">Удалить
+                            </UIbtn>
                         </div>
                     </div>
 
@@ -57,14 +58,29 @@
 
                         <!-- фотографии к сообщению -->
                         <div class="wrapper_block_photo_post">
-                            <template v-for="(photo, index) in getPhotosMessagesArray.filter(i => i.id === message.id)"
-                                :key="index">
-                                <div class="wrapper_photo_post" v-if="message.id === photo.id"
-                                    :class="{ 'size_photo_1': index === 0 }">
-                                    <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
-                                        @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index, id: photo.id, messageID: message.id })">
-                                </div>
-                            </template>
+                            <div class="wrapper_block_photo_post_first">
+                                <template
+                                    v-for="(photo, index) in getPhotosMessagesArray.filter(i => i.id === message.id).slice(0, 1)"
+                                    :key="index">
+                                    <div class="wrapper_photo_post size_photo_1" v-if="message.id === photo.id">
+                                        <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
+                                            @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index, id: photo.id, messageID: message.id })"
+                                            @load="scrollToElement()">
+                                    </div>
+                                </template>
+                            </div>
+
+                            <div class="wrapper_block_photo_post_another" v-if="getPhotosMessagesArray.filter(i => i.id === message.id).slice(1).length > 0">
+                                <template
+                                    v-for="(photo, index) in getPhotosMessagesArray.filter(i => i.id === message.id).slice(1)"
+                                    :key="index">
+                                    <div class="wrapper_photo_post photo_another" v-if="message.id === photo.id">
+                                        <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
+                                            @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index, id: photo.id, messageID: message.id })"
+                                            @load="scrollToElement()">
+                                    </div>
+                                </template>
+                            </div>
                         </div>
 
 
@@ -194,6 +210,7 @@ export default {
         //     if (err) return console.log(err)
         //     this.setArrayMessages([...this.getArrayMessages, data])
         // });
+
         //подгрузка новой партии сообщений при скроле страницы
         const options = {
             rootMargin: "0px",
@@ -234,7 +251,7 @@ export default {
                 })
             }
         }
-
+        // this.scrolPhotoDown = false;
     },
 
     async unmounted() {
@@ -283,22 +300,28 @@ export default {
 
         //отправляем сообщение
         async submitMessage() {
+            this.scrolPhotoDown = true;
+
             // при отпарвке сообщения убирать фон с непрачитанных
             this.setArrayMessagesUnread();
             //сохраянем сообщение в БД
             this.WRITE_MESSAGE_USER({ addresseeID: this.$route.params.id })
                 .then(() => {
                     this.$nextTick(function () {
+                        this.scrolPhotoDown = false;
                         this.scrollToElement();
                     });
                 });
         },
         showBtnDelete(message) {
+            this.scrolPhotoDown = false;
             message.isMesssageDel = !message.isMesssageDel;
         },
+        
         //автоматическая прокрутка сообщений вниз
         scrollToElement() {
-            try {
+            if (this.scrolPhotoDown === true) {
+                try {
                 const el = this.$refs.scrollToMe;
                 if (el) {
                     el.scrollTop = el.scrollHeight;
@@ -307,6 +330,8 @@ export default {
             catch (err) {
                 console.log(err);
             }
+        }
+            
         },
         //прокрутка сообщений вверх
         scrollToElementUP(top) {
@@ -329,6 +354,7 @@ export default {
         addPostPhoto() {
             this.setIsLoadPhotoMessage(true);
             this.setIsModalLoadPhoto(true);
+            this.scrolPhotoDown = true;
         },
 
         myPhotos(photo) {
@@ -394,6 +420,7 @@ export default {
             }
         },
     },
+
     components: { UImodal, FileUpload }
 }
 </script>
@@ -406,7 +433,7 @@ export default {
     background: #ffffff;
     box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
     flex-direction: column;
-    height: 80vh;
+    height: 82vh;
 }
 
 .wrapper_header_user {
@@ -576,6 +603,7 @@ export default {
 }
 
 .wrapper_not_messages {
+    width: 100%;
     font-size: 16px;
     line-height: 26px;
     position: absolute;
@@ -584,7 +612,7 @@ export default {
     text-align: center;
     padding: 0 30px;
     opacity: .3;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     color: dimgray;
 }
 
@@ -599,32 +627,53 @@ export default {
 }
 
 .wrapper_block_photo_post {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+  display: flex;
+    justify-content: center;
+    flex-direction: row;
+    max-height: 360px;
+    width: 75%;
+    padding: 0 8%;
+}
+
+.wrapper_block_photo_post_first {
+  display: flex;
+  width: 75%;
+  /* flex: 1.5; */
+  /* background-color: rgb(0 0 0 / 10%); */
+    align-items: center;
+    justify-content: center;
+}
+
+.wrapper_block_photo_post_another {
+  display: flex;
+    flex-direction: column;
+    width: 25%;
+  /* flex: 1; */
+    /* background-color: rgb(0 0 0 / 10%); */
+    margin-left: 10px;
 }
 
 .wrapper_photo_post {
-    width: 18%;
-    height: 150px;
-    margin: 10px 5px;
-    border-radius: 8px;
+  height: -webkit-fill-available;
+    /* margin: 10px; */
+    padding-bottom: 10px;
+    /* border-radius: 8px; */
     overflow: hidden;
 }
 
 .photo_post {
-    width: 100%;
-    height: 100%;
-    /* height: inherit; */
-    -o-object-fit: cover;
-    object-fit: cover;
-    cursor: pointer;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .size_photo_1 {
-    width: 18%;
-    height: auto;
-    max-height: 150px;
+  width: 100%;
+  height: 100%;
+  /* max-height: 450px; */
 }
 
 .more_text_message {
@@ -633,5 +682,14 @@ export default {
     display: inline-block;
     font-size: 14px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+    .wrapper_block_write_message {
+        flex-direction: column;
+    }
 }
 </style>

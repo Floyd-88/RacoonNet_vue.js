@@ -193,4 +193,21 @@ export default {
     font-family: fantasy;
     color: dimgray;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+.wrapper_main {
+padding: 0px 0px 0px;
+}
+
+.main {
+  margin-left: 0;
+}
+
+.wrapper_myPage {
+    display: flex;
+    flex-direction: column-reverse;
+}
+}
 </style>

@@ -287,7 +287,7 @@ export default {
     margin-top: -100px;
     text-align: center;
     opacity: .7;
-    font-family: fantasy;
+    font-family: Russo One, fantasy, sans-serif;
     color: dimgray;
     left: 30%;
     margin-left: -50px;

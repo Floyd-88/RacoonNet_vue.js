@@ -296,4 +296,16 @@ export default {
     height: 35px;
     margin-top: 10px;
 }
+
+@media (max-width: 761px) {
+
+.wrapper_form {
+  width: 350px;
+}
+
+.wrapper_form_change_password_input {
+  width: 190px;
+}
+}
+
 </style>

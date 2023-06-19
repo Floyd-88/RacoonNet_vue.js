@@ -1898,23 +1898,37 @@ io.on("connection", function (socket) {
   //получаем сообщение
 
   socket.on("message", function (newMessage) {
-    //отправляем сообщение всем кто находится в комнате кроме отправителя
-    socket.to(Number(newMessage.destinationID)).emit("message", newMessage); // отправляем сообщение всем кто находится в комнате включая отправителя
-    // io.to(roomName).emit("message", outgoingMessage);
+    try {
+      //отправляем сообщение всем кто находится в комнате кроме отправителя
+      socket.to(Number(newMessage.destinationID)).emit("message", newMessage); // отправляем сообщение всем кто находится в комнате включая отправителя
+      // io.to(roomName).emit("message", outgoingMessage);
+    } catch (error) {
+      newMessage({
+        status: '!OK',
+        error: error
+      });
+    }
   }); //получаем уведомление
 
   socket.on("notice", function (addresseeID) {
-    if (Object.prototype.toString.call(addresseeID) !== '[object Object]') {
-      notice.get_notice_DB([addresseeID, addresseeID], function (err, newNotice) {
-        if (err) return res.status(500).send('При получении уведомлений произошла ошибка' + " " + err); //отправляем сообщение всем кто находится в комнате кроме отправителя
+    try {
+      if (Object.prototype.toString.call(addresseeID) !== '[object Object]') {
+        notice.get_notice_DB([addresseeID, addresseeID], function (err, newNotice) {
+          if (err) return res.status(500).send('При получении уведомлений произошла ошибка' + " " + err); //отправляем сообщение всем кто находится в комнате кроме отправителя
 
-        socket.to(Number(addresseeID)).emit("notice", newNotice); // res.status(200).json(newNotice);
-      }); // отправляем сообщение всем кто находится в комнате включая отправителя
-      // io.to(roomName).emit("message", outgoingMessage);
-    } else {
-      var newNotice = [addresseeID]; //отправляем сообщение всем кто находится в комнате кроме отправителя
+          socket.to(Number(addresseeID)).emit("notice", newNotice); // res.status(200).json(newNotice);
+        }); // отправляем сообщение всем кто находится в комнате включая отправителя
+        // io.to(roomName).emit("message", outgoingMessage);
+      } else {
+        var newNotice = [addresseeID]; //отправляем сообщение всем кто находится в комнате кроме отправителя
 
-      socket.to(Number(addresseeID.id)).emit("notice", newNotice);
+        socket.to(Number(addresseeID.id)).emit("notice", newNotice);
+      }
+    } catch (error) {
+      addresseeID({
+        status: '!OK',
+        error: error
+      });
     }
   });
 });

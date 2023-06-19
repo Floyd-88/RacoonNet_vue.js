@@ -425,4 +425,59 @@ export default {
     margin-left: 5px;
     margin-right: 5px;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+    .wrapper_block_full_size {
+    width: 360px;
+    height: auto;
+    flex-direction: column;
+}
+
+.wrapper_block_full_size_img {
+    width: 100%;
+    max-height: 54vh;
+    height: auto;
+}
+
+
+.wrapper_full_size_img{
+    height: auto;
+}
+
+.full_size_img {
+    height: 54vh;
+}
+
+.wrapper_block_info_photo {
+    justify-content: space-between;
+    padding: 6px 10px;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wrapper_block_info_name_count_photo {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.wrapper_block_info_remove_photo {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 3px;
+}
+
+.remove_photo {
+    padding-left: 0px;
+    font-size: 14px;
+}
+
+.wrapper_block_full_size_ava {
+    width: 350px;
+}
+
+}
 </style>

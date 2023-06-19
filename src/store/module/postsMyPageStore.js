@@ -249,7 +249,6 @@ export const postsMyPageStore = {
                 .then(function(response) {
                     console.log(response);
                     commit("setCountPostDel");
-                    console.log(state.countPosts)
                 })
                 .catch(function(error) {
                     console.log(error)

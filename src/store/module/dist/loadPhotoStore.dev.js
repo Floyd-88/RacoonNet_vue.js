@@ -254,7 +254,7 @@ var loadPhotoStore = {
 
               if (rootGetters["galleryStore/getSelectedLoadThemaPhoto"]) {
                 formData.append('category', rootGetters["galleryStore/getSelectedLoadThemaPhoto"]);
-              } //проверяем отправлены ли фотографии через пост
+              } //проверяем отправлены ли фотографии через пост или сообщения
 
 
               if (!state.isLoadPhotoPost) {
@@ -371,7 +371,7 @@ var loadPhotoStore = {
               }));
 
             case 4:
-              _context2.next = 9;
+              _context2.next = 10;
               break;
 
             case 6:
@@ -380,11 +380,11 @@ var loadPhotoStore = {
 
               if (_context2.t0.code === "ERR_CANCELED") {
                 console.log("Загрузка была отменена");
-              } else {
-                console.log(_context2.t0);
               }
 
-            case 9:
+              console.log(_context2.t0);
+
+            case 10:
             case "end":
               return _context2.stop();
           }
@@ -581,8 +581,7 @@ var loadPhotoStore = {
               photoID.date = _context5.sent;
               _context5.next = 7;
               return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/likes_photo', photoID).then(function (response) {
-                commit("setLikesPhoto", response.data);
-                console.log(response.data); //отправляем уведомление адресату без перезагрузки страницы
+                commit("setLikesPhoto", response.data); //отправляем уведомление адресату без перезагрузки страницы
 
                 if (response.data.flag) {
                   _socketio["default"].sendNotice(response.data.likes.userID, function (cb) {

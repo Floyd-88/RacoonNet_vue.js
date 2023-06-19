@@ -239,4 +239,13 @@ export default {
 .titleMyFriendsBlock:hover {
     color: rgb(0 0 0 / 50%);
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+.wrapper_posts {
+    margin-right: 0;
+}
+}
 </style>

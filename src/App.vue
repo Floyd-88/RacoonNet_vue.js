@@ -250,4 +250,13 @@ body {
 .wrapper_main {
   padding: 120px 20px 5px;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+  .wrapper {
+  margin: 0 5%;
+}
+}
 </style>

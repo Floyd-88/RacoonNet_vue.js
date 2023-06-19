@@ -175,4 +175,5 @@ export default {
 .active_load {
     bottom: 4px;
 }
+
 </style>

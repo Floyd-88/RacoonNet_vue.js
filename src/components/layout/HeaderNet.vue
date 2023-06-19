@@ -6,7 +6,7 @@
         <img class="header_logo" src="../../assets/logo/logo.png" alt="logo" @click="$router.push(`/id${userID}`)">
       </div>
       <div class="header_wrapper_title">
-        <button class="btn_title" @click="$router.push(`/id${userID}`)">RaccoonNet</button>
+        <button class="btn_title" @click="$router.push(pathID)">RaccoonNet</button>
       </div>
       <div class="wrapper_notice" v-if="isLoggedIn">
         <img class="new_message_img" src="../../assets/icons/notice.png" alt="new_message"
@@ -70,6 +70,10 @@ export default {
 
     countNotice() {
       return this.getNoticeArray.filter(notice => notice.show_notice !== 1);
+    },
+
+    pathID() {
+      return (this.userID) ? '/id' + this.userID : '/';
     }
   },
   components: { UImodal }
@@ -189,5 +193,54 @@ export default {
   font-size: 13px;
     font-family: emoji;
     font-weight: 600;
+}
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+  .header {
+    justify-content: center;
+  }
+
+  .header_logo {
+    width: 40px;
+    margin-right: 5px;
+  }
+
+  .header_wrapper_exit {
+    display: none;
+  }
+
+  .header_wrapper_logo_title {
+    margin-left: 0px;
+  }
+
+  .header_wrapper_title {
+    margin-left: 0px;
+  }
+
+  .btn_title {
+    font-size: 35px;
+  }
+
+  .wrapper_notice{
+    margin-top: 3px;
+    margin-left: 20px;
+    position: relative;
+}
+
+.new_message_img {
+    width: 25px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.notice_true[data-v-2dc6f19b] {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    left: 25px;
+    margin-left: 0px;
+}
 }
 </style>

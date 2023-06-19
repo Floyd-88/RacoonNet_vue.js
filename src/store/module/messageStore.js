@@ -142,6 +142,7 @@ export const messageStore = {
 
                 await axios.post("http://localhost:8000/user_message", message)
                     .then(function(res) {
+                        commit("setCountMessages", 1);
 
                         //отпраляем сообщение на сервер для передачи его адресату через сокет
                         let newMessage = res.data[0];
@@ -149,10 +150,11 @@ export const messageStore = {
                         SocketioService.sendMessage(newMessage, cb => {
                             console.log(cb);
                         });
-
                         commit("setArrayMessages", [...state.arrayMessages, newMessage]);
                         // state.arrayMessages.push(resp.data)
-                    })
+
+
+                    });
 
             } catch (err) {
                 console.log(err)

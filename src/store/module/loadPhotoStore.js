@@ -230,7 +230,7 @@ export const loadPhotoStore = {
                 formData.append('category', rootGetters["galleryStore/getSelectedLoadThemaPhoto"])
             }
 
-            //проверяем отправлены ли фотографии через пост
+            //проверяем отправлены ли фотографии через пост или сообщения
             if (state.isLoadPhotoPost) {
                 await dispatch("postsMyPageStore/addPost", state.isLoadPhotoPost, { root: true });
                 const posts = rootGetters["postsMyPageStore/getPosts"];
@@ -322,9 +322,8 @@ export const loadPhotoStore = {
             } catch (err) {
                 if (err.code === "ERR_CANCELED") {
                     console.log("Загрузка была отменена")
-                } else {
-                    console.log(err)
                 }
+                console.log(err)
             }
         },
 
@@ -437,8 +436,7 @@ export const loadPhotoStore = {
                     .then((response) => {
                         commit("setLikesPhoto", response.data)
 
-                        console.log(response.data)
-                            //отправляем уведомление адресату без перезагрузки страницы
+                        //отправляем уведомление адресату без перезагрузки страницы
                         if (response.data.flag) {
                             SocketioService.sendNotice(response.data.likes.userID, cb => {
                                 console.log(cb);

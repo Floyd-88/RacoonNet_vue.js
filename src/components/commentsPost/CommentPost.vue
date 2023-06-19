@@ -113,7 +113,7 @@ export default {
             comment.isShowWriteUnderComment = !comment.isShowWriteUnderComment;
             if (comment.isShowWriteUnderComment) {
 
-                let topWriteUnderComment = window.scrollY + this.$refs[ref][0].getBoundingClientRect().y - document.documentElement.clientHeight + 60;
+                let topWriteUnderComment = window.scrollY + this.$refs[ref][0].getBoundingClientRect().y - document.documentElement.clientHeight + 70;
                 window.scrollTo(0, topWriteUnderComment)
                 comment.isBtnsAnsw = false;
             }
@@ -258,71 +258,16 @@ export default {
 
 .wrapper_under_write_comments {}
 
-/* .message_btn_delete {
-    margin-left: 10px;
-}
+/* МЕДИА-ЗАПРОСЫ */
 
-.message_btn_delete button {
-    height: 20px;
-    display: flex;
-    align-items: center;
-}
+@media (max-width: 761px) {
 
-.wrapper_block_write_message {
-    display: flex;
-    align-items: center;
-    margin: 10px;
-    flex-shrink: 0;
+    .text_post{
+    font-size: 12px;
+    line-height: 17px;
 }
-
-.wrapper_form_message_name {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
+.wrapper_message_dialog_user {
+    margin: 10px 10px 10px 50px;
 }
-
-.wrapper_form_message_input {
-    width: 100%;
-    margin-bottom: 0px;
 }
-
-.new_message {
-    width: 100%;
-    min-height: 50px;
-    resize: none;
-    border-radius: 5px;
-    padding: 5px;
-}
-
-.wrapper_form_message_btn {
-    display: flex;
-    justify-content: flex-end;
-    height: 35px;
-    margin: 5px 0px 10px 5px;
-}
-
-.form_message_btn {
-    width: 130px;
-    height: 100%;
-    border: 1px solid;
-    border-radius: 5px;
-    background: cornflowerblue;
-    cursor: pointer;
-    font-size: 23px;
-    color: white;
-    font-family: emoji;
-}
-
-.error-msg {
-    color: red;
-    font-size: 14px;
-}
-
-.active_text_fone {
-    background: aliceblue;
-}
-
-.not_read_message {
-    background-color: #ddffe6b3;
-} */
 </style>

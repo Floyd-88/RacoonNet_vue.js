@@ -182,7 +182,8 @@ var messageStore = {
               commit("setModalWriteMessage", false);
               _context.next = 11;
               return regeneratorRuntime.awrap(_axios["default"].post("http://localhost:8000/user_message", message).then(function (res) {
-                //отпраляем сообщение на сервер для передачи его адресату через сокет
+                commit("setCountMessages", 1); //отпраляем сообщение на сервер для передачи его адресату через сокет
+
                 var newMessage = res.data[0];
                 newMessage.destinationID = body.addresseeID;
 

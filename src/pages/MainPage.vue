@@ -47,6 +47,7 @@ computed: {
 }
 .wrapper_mainPage {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
   margin-top: 10%;
@@ -82,5 +83,25 @@ computed: {
   border-radius: 5px;
   background: white;
   box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 50%);
+}
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+  .wrapper_mainPage {
+  /* display: flex; */
+  flex-direction: column;
+  /* align-items: center;
+  justify-content: space-evenly;
+  margin-top: 10%; */
+}
+
+.wrapper_title {
+  display: none;
+}
+
+.wrapper_form {
+  width: 350px;
+}
 }
 </style>

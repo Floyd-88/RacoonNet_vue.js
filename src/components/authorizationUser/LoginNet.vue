@@ -233,7 +233,7 @@ export default {
   font-size: 28px;
   color: white;
   font-family: Russo One, fantasy, sans-serif;
-  letter-spacing: 5px;
+  letter-spacing: 3px;
 }
 
 .form_wrapper_not_password {
@@ -293,5 +293,21 @@ export default {
   font-size: 16px;
   width: 340px;
   margin-bottom: 10px;
+}
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+.form_login_input {
+  min-width: 295px;
+}
+
+
+.form_login {
+  display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 }
 </style>

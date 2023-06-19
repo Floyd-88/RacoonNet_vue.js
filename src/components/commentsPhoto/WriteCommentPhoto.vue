@@ -167,5 +167,14 @@ export default {
 .invalid {
     border: 1px solid red;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+.write_comments {
+    margin-top: 5px;
+}
+}
 </style>
 

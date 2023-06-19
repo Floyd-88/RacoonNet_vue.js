@@ -256,4 +256,40 @@ export default {
     font-family: Russo One, fantasy, sans-serif;
     background: #dcdcdc;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+    .wrapper_all_messages_users {
+    min-width: 350px;
+}
+
+    .ava_posts {
+    width: 55px;
+}
+
+.wrapper_message_user {
+padding: 10px 5px 5px 5px;
+    flex-direction: column-reverse;
+}
+
+.wrapper_message_user_content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.message_user_content {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+padding-left: 0px;
+}
+
+.message_user_text p{
+    min-width: 300px;
+    width: 330px;
+}
+}
 </style>

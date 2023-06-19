@@ -246,7 +246,26 @@ export default {
 
 .link_help:hover {
   filter: brightness(80%);
-}</style>
+}
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+  .wrapper_nav {
+  padding: 100px 30px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: static;
+  top: 0;
+  height: auto;
+  min-width: auto;
+}
+}
+
+
+</style>
 
 
 
