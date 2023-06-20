@@ -18,9 +18,9 @@
                     </div>
                 </div>
                 <div class="message_user_text" 
-                    @click="openDialogUser(dialog.userID)"
+                    
                     :class="{'new_message_color': dialog.unread}">
-                    <p>
+                    <p @click="openDialogUser(dialog.userID)">
                         <img class="new_message_icon_photo" src="../../assets/icons/icon_photo.png" alt="photo" v-if="dialogText(dialog.message) === ''">
                         {{ (dialogText(dialog.message) === "") ? "Фотография" : dialogText(dialog.message)}}
                     </p>
@@ -30,8 +30,10 @@
 
         <div class="wrapper_message_user_btn">
             <div class="message_user_date">
-                <p>{{ dialog.date.slice(0, 10) }}</p>
+                <p class="message_user_date_date">{{ dialog.date.slice(0, 10) }}</p>
                 <p class="show_btn_delete" v-if="dialog.isShowBtnDelete" @click="btnDialogDel(dialog)">...</p>
+                <p class="show_btn_delete_mobile" @click="btnDialogDel(dialog)">...</p>
+
             </div>
         </div>
         <!-- <div ref="observer" class="observer"></div> -->
@@ -158,7 +160,7 @@ export default {
 .message_user_name {
     display: flex;
     justify-content: space-between;
-    height: 25px;
+    max-height: 35px;
     margin-bottom: 10px;
     font-family: Russo One, fantasy, sans-serif;
     font-size: 16px;
@@ -198,6 +200,11 @@ export default {
     font-family: fantasy;
     cursor: pointer;
 }
+
+.show_btn_delete_mobile {
+display: none;
+}
+
 .message_user_del {
     width: max-content;
 }
@@ -214,9 +221,48 @@ export default {
 /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
+    .wrapper_message_user_content {
+    /* max-width: 270px; */
+}
+.message_user_text {
+    /* max-width: 80%; */
+}
 
-.wrapper_message_user_btn{
+.message_user_date_date{
     display: none;
 }
+.ava_posts {
+    width: 60px;
+}
+
+.message_user_name {
+    max-height: 60px;
+}
+
+.message_user_content p {
+    max-width: 165px;
+    word-wrap: break-word;
+    font-size: 13px;
+}
+.message_user_del {
+    max-width: 75px;
+}
+
+.message_user_del button {
+    font-size: 12px;
+    padding: 5px 2px;
+}
+
+.show_btn_delete {
+display: none;
+}
+.show_btn_delete_mobile {
+    display: flex;
+    font-size: 25px;
+    font-family: fantasy;
+    line-height: 1px;
+    cursor: pointer;
+}
+
 }
 </style>

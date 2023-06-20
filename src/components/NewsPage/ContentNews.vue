@@ -298,7 +298,7 @@ export default {
   display: flex;
     justify-content: center;
     flex-direction: row;
-    max-height: 650px;
+    max-height: 450px;
     width: 75%;
     padding: 0 8%;
 }
@@ -341,5 +341,28 @@ export default {
   width: 100%;
   height: 100%;
   /* max-height: 450px; */
+}
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+  .wrapper_block_photo_post {
+    width: 100%;
+    padding: 2% 2% 0 2%;
+}
+
+.wrapper_block_photo_post_another {
+    width: 22%;
+}
+
+.wrapper_not_news {
+    position: static;
+    top: 50%;
+    margin-top: 0;
+    left: 30%;
+    margin-left: 0;
+    padding: 0;
+}
 }
 </style>

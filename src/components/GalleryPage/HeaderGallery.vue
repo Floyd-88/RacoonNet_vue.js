@@ -2,7 +2,7 @@
     <div class="wrapper_contents_myPhoto wrapper_contents_myPhoto_header">
         <div class="wrapper_header_btns">
             <div class="header_btn_show cat">
-                <UIbtn @click="setIsShowCat">Отфильтровать по темам</UIbtn>
+                <UIbtn class="header_btn_filter" @click="setIsShowCat">Отфильтровать по темам</UIbtn>
             </div>
             <div class="header_btns_load_photo">
 
@@ -187,5 +187,44 @@ export default {
 
 .show_more_photo_btn {}
 
+
+@media (max-width: 761px) {
+    .wrapper_header_btns {
+    height: auto;
+    flex-direction: column;
+}
+
+.header_btn_show {
+    margin-bottom: 10px;
+}
+
+.btn_load_cat_photo {
+    display: flex;
+    align-items: center;
+    margin-left: 0px;
+    margin-top: 10px;
+}
+
+.btn_load_photo {
+    margin-top: 10px;
+}
+
+.select_cat_photo_sel {
+width: 190px;
+    font-size: 13px;
+}
+
+.show_more_photo_btn {
+    width: 190px;
+}
+
+.header_btns_load_photo{
+    flex-direction: column;
+}
+
+.header_btn_filter {
+    width: 190px;
+}
+}
 </style>
   

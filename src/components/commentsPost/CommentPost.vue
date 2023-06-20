@@ -267,7 +267,17 @@ export default {
     line-height: 17px;
 }
 .wrapper_message_dialog_user {
-    margin: 10px 10px 10px 50px;
+    margin: 10px 10px 10px 40px;
+}
+
+.message_name {
+	font-size: 13px;
+    max-width: 170px;
+    word-wrap: break-word;
+}
+
+.dialog_ava_user img {
+    width: 40px;
 }
 }
 </style>

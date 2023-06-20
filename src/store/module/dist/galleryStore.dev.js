@@ -13,7 +13,9 @@ var galleryStore = {
       //отображение блока с категориями
       checkedCat: [],
       //выбранные категории при фильтрации
-      arrayFilterPhotos: [] //массив фотографий полсе фильтрации
+      arrayFilterPhotos: [],
+      //массив фотографий полсе фильтрации
+      isNotCat: false //отображать надпись об отсутствии фотографий по выбранной категории
 
     };
   },
@@ -29,6 +31,9 @@ var galleryStore = {
     },
     getArrayFilterPhotos: function getArrayFilterPhotos(state) {
       return state.arrayFilterPhotos;
+    },
+    getIsNotCat: function getIsNotCat(state) {
+      return state.isNotCat;
     }
   },
   mutations: {
@@ -48,6 +53,9 @@ var galleryStore = {
       state.arrayFilterPhotos = state.arrayFilterPhotos.filter(function (photo) {
         return photo.id !== id;
       });
+    },
+    setIsNotCat: function setIsNotCat(state, value) {
+      state.isNotCat = value;
     }
   },
   actions: {
@@ -58,12 +66,13 @@ var galleryStore = {
           switch (_context.prev = _context.next) {
             case 0:
               state = _ref.state, commit = _ref.commit, rootGetters = _ref.rootGetters;
+              commit("setIsNotCat", false);
               allPhotos = rootGetters["loadPhotoStore/getAllPhotosMyPage"];
-              _context.next = 4;
+              _context.next = 5;
               return regeneratorRuntime.awrap(commit("setArrayFilterPhotos", allPhotos));
 
-            case 4:
-              _context.next = 6;
+            case 5:
+              _context.next = 7;
               return regeneratorRuntime.awrap(state.arrayFilterPhotos.filter(function (photo) {
                 if (state.checkedCat.length > 0) {
                   return state.checkedCat.includes(photo.category);
@@ -72,12 +81,17 @@ var galleryStore = {
                 }
               }));
 
-            case 6:
+            case 7:
               categoryPhotos = _context.sent;
-              _context.next = 9;
+              _context.next = 10;
               return regeneratorRuntime.awrap(commit("setArrayFilterPhotos", categoryPhotos));
 
-            case 9:
+            case 10:
+              if (categoryPhotos.length === 0) {
+                commit("setIsNotCat", true);
+              }
+
+            case 11:
             case "end":
               return _context.stop();
           }

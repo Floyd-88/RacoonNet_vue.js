@@ -118,4 +118,26 @@ export default {
     font-weight: 400;
 }
 
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+    .wrapper_my_friend_card_name {
+    max-width: 114px;
+    word-break: break-word;
+}
+.wrapper_my_friend_card_ava {
+    width: 70px;
+    height: 70px;
+}
+
+.wrapper_my_friend_card_city {
+    max-width: 114px;
+    word-wrap: break-word;
+}
+
+.wrapper_my_friend_card_country {
+    max-width: 114px;
+    word-wrap: break-word;
+}
+}
 </style>

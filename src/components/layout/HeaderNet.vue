@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       userID: (localStorage.getItem("user")) ? JSON.parse(localStorage.getItem("user")).userID : "",
-      nameUser: (localStorage.getItem("token")) ? atob(localStorage.getItem("token").split(".")[1]) : "",
+      // nameUser: (localStorage.getItem("token")) ? atob(localStorage.getItem("token").split(".")[1]) : "",
 
     };
   },

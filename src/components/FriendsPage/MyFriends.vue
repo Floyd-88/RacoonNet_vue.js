@@ -344,4 +344,43 @@ export default {
     padding-right: 5px;
     cursor: pointer;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+    .wrapper_my_friend_card_show_btns {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding-right: 0;
+}
+.btn_write_message {
+    min-width: 95px;
+    width: 95px;
+    margin-bottom: 10px;
+}
+
+.btn_delete_friend {
+    min-width: 95px;
+    width: 95px;
+    margin-bottom: 7px;
+}
+
+.my_friend_card_btn_write_show_block {
+    flex-direction: column;
+}
+
+.btn_write_add_friend {
+    min-width: 95px;
+    margin-bottom: 7px;
+}
+
+.btn_write_add_friend {
+    width: 95px;
+}
+.wrapper_my_friend_card_name {
+    max-width: 110px;
+    word-break: break-word;
+}
+}
 </style>

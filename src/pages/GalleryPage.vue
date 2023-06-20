@@ -30,16 +30,28 @@
 
             <!--при прокрутки страницы до данного элемента - подгружать следующие фотографии -->
             <div ref="observer" class="observer"></div>
+
+            <div class="wrapper_not_photos">
+              <p class="not_photos" v-if="getIsNotPhoto">
+                У вас нет загруженных фотографий!
+              </p>
+
+              <p class="not_photos" v-if="getIsNotCat">
+                Фотографии в данной категории отсутствуют!
+              </p>
+            </div>
           </div>
         </div>
       </div>
+
+
 
     </div>
   </div>
 
   <!-- окно загрузки -->
   <UImodal class="modal_fone" v-if="getIsModalLoadPhoto">
-    <FileUpload :addresseeID="String(this.getUser.userID)"/>
+    <FileUpload :addresseeID="String(this.getUser.userID)" />
   </UImodal>
 
   <!-- слайдер -->
@@ -63,16 +75,16 @@ export default {
 
 
   async mounted() {
-    if(this.getCheckedCat.length === 0) {
+    if (this.getCheckedCat.length === 0) {
       this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
-    this.loadUser({ id: JSON.parse(localStorage.getItem('user')).userID })
-    .catch((err) => {
+      this.loadUser({ id: JSON.parse(localStorage.getItem('user')).userID })
+        .catch((err) => {
           if (err.code === "ERR_CANCELED") {
-              console.log("Загрузка была отменена")
-            }
+            console.log("Загрузка была отменена")
+          }
         });
     }
-  
+
     // this.setFilterPhoto(this.getAllPhotosMyPage);
     // console.log(this.getFilterPhoto)
 
@@ -107,7 +119,7 @@ export default {
       fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
       // modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
       closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
-      
+
     }),
 
     dateLoadPhotos(photo, index) {
@@ -115,9 +127,9 @@ export default {
         photo.newDate = true;
 
         return new Date(photo.date).toLocaleDateString('ru-RU', {
-        month: 'long',
-        year: 'numeric',
-    })
+          month: 'long',
+          year: 'numeric',
+        })
       } else {
         return "";
       }
@@ -126,7 +138,7 @@ export default {
     myPhotos(photo) {
       try {
         return require(`../assets/photo/${photo}`);
-      } catch(err) {
+      } catch (err) {
         return require(`../assets/ava/ava_1.jpg`);
       }
     },
@@ -148,7 +160,11 @@ export default {
 
       getArrayFilterPhotos: "galleryStore/getArrayFilterPhotos",
 
-      getCheckedCat: "galleryStore/getCheckedCat"
+      getCheckedCat: "galleryStore/getCheckedCat",
+
+      getIsNotPhoto: "loadPhotoStore/getIsNotPhoto",
+
+      getIsNotCat: "galleryStore/getIsNotCat"
     }),
 
   },
@@ -213,9 +229,9 @@ export default {
 
 .wrapper_preview_allPhotos {
   display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
 }
 
 .all_photos {
@@ -253,7 +269,7 @@ export default {
 
 .wrapper_date_load_photos {
   background: #0197d617;
-    width: 100%;
+  width: 100%;
 }
 
 .date_load_photos {
@@ -264,5 +280,30 @@ export default {
 
 .active_all_photos {
   display: contents;
+}
+
+.not_photos {
+  padding: 20px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  opacity: .8;
+  font-family: Russo One, fantasy, sans-serif;
+  color: dimgray;
+  text-align: center;
+}
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+  .wrapper_main {
+    padding: 0px 0px 5px;
+  }
+
+  .main {
+    margin-left: 0px;
+  }
 }
 </style>

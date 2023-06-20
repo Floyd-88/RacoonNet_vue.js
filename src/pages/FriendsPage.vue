@@ -269,4 +269,24 @@ export default {
 .observer {
   /* border: 1px solid black */
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+.wrapper_main {
+  padding: 0px 0px 5px;
+}
+
+.main{
+  margin-left: 0px;
+}
+.wrapper_my_friends {
+    display: flex;
+    flex-direction: column-reverse;
+}
+.my_friends {
+    margin-right: 0px;
+}
+}
 </style>

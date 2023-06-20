@@ -35,6 +35,10 @@
                     <p>{{ friend.name }}</p>
                 </div>
             </div>
+
+            <div class="wrapper_not_friends" >
+                <p class="not_friends" v-if="getIsNotFriends">Ваш список друзей пуст!</p>
+            </div>
         </div>
     </MyFriendsBlock>
 </template>
@@ -91,6 +95,7 @@ export default {
             getPosts: "postsMyPageStore/getPosts",
             getUsersMyFriends: "friendsStore/getUsersMyFriends",
             getUser: "authorizationStore/getUser",
+            getIsNotFriends: "friendsStore/getIsNotFriends",
         }),
     },
     watch: {
@@ -185,8 +190,23 @@ export default {
     color: dimgray;
 }
 
+.not_friends {
+    padding-top: 1px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    opacity: .7;
+    font-family: Russo One, fantasy, sans-serif;
+    color: dimgray;
+    text-align: center;
+}
+
 .observer {
-    /* border: 1px solid; */
+    border: 1px solid;
+    opacity: 0;
+    margin: 5px;
 }
 
 
@@ -227,9 +247,15 @@ export default {
 }
 
 .my_friend_name {
+    max-width: 70px;
     font-size: 14px;
     font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
     cursor: pointer;
+    
+}
+.my_friend_name p {
+    word-wrap: break-word;
+    
 }
 
 .titleMyFriendsBlock {

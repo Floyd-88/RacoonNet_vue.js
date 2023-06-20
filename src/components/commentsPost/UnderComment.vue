@@ -265,7 +265,12 @@ font-size: 12px;
 line-height: 16px;
 }
 .wrapper_under_comment {
-    margin: 10px 10px 10px 20px;
+    margin: 10px 10px 10px 10px;
+}
+
+.under_comment_name {
+    font-size: 12px;
+    max-width: 170px;
 }
 }
 </style>

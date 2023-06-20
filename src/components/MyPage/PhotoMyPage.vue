@@ -9,6 +9,12 @@
           :src="myPhotos(photo.photo_name)" 
           :alt="photo.photo_name" @click="fullSizePhoto({'bool': true, 'elem': index, id: photo.id})">     
       </div>
+
+      <div class="wrapper_not_photos">
+      <p class="not_photos" v-if="getIsNotPhoto">
+        У вас нет загруженных фотографий!
+      </p>
+    </div>
     </div>
 
     <UIbtn class="show_more_photo_btn" 
@@ -86,6 +92,8 @@ export default {
       getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
       getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",
       getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
+      getIsNotPhoto: "loadPhotoStore/getIsNotPhoto"
+
     }),
 
     
@@ -161,6 +169,19 @@ export default {
     background: black;
 }
 
+.not_photos {
+  padding-top: 10px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    opacity: .7;
+    font-family: Russo One, fantasy, sans-serif;
+    color: dimgray;
+    text-align: center;
+}
+
 /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
@@ -173,6 +194,11 @@ export default {
     width: 290px;
     margin: 0px 0px 10px 0px;
     font-size: 13px;
+}
+
+.not_photos {
+    padding: 10px;
+    font-size: 15px;
 }
 }
 </style>

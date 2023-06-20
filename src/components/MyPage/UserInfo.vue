@@ -330,7 +330,9 @@ flex-direction: column;
 }
 
 .wrapper_info_user{
-    margin: 10px;
+  margin: 10px;
+    width: 100%;
+    padding: 0 20px;
 }
 
 .wrapper_name_user {
@@ -345,16 +347,20 @@ flex-direction: column;
 }
 
 .city_user{
-    font-size: 15px;
+    font-size: 17px;
     opacity: 0.9;
 }
 
 .city_user_name{
-    font-size: 14px;
+    font-size: 17px;
 }
 
 .redaction_profile_btn {
-    font-size: 13px;
+    font-size: 15px;
+}
+
+.name_user{
+  text-align: center;
 }
 }
 </style>

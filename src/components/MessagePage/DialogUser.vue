@@ -70,7 +70,8 @@
                                 </template>
                             </div>
 
-                            <div class="wrapper_block_photo_post_another" v-if="getPhotosMessagesArray.filter(i => i.id === message.id).slice(1).length > 0">
+                            <div class="wrapper_block_photo_post_another"
+                                v-if="getPhotosMessagesArray.filter(i => i.id === message.id).slice(1).length > 0">
                                 <template
                                     v-for="(photo, index) in getPhotosMessagesArray.filter(i => i.id === message.id).slice(1)"
                                     :key="index">
@@ -317,21 +318,21 @@ export default {
             this.scrolPhotoDown = false;
             message.isMesssageDel = !message.isMesssageDel;
         },
-        
+
         //автоматическая прокрутка сообщений вниз
         scrollToElement() {
             if (this.scrolPhotoDown === true) {
                 try {
-                const el = this.$refs.scrollToMe;
-                if (el) {
-                    el.scrollTop = el.scrollHeight;
+                    const el = this.$refs.scrollToMe;
+                    if (el) {
+                        el.scrollTop = el.scrollHeight;
+                    }
+                }
+                catch (err) {
+                    console.log(err);
                 }
             }
-            catch (err) {
-                console.log(err);
-            }
-        }
-            
+
         },
         //прокрутка сообщений вверх
         scrollToElementUP(top) {
@@ -627,7 +628,7 @@ export default {
 }
 
 .wrapper_block_photo_post {
-  display: flex;
+    display: flex;
     justify-content: center;
     flex-direction: row;
     max-height: 360px;
@@ -636,25 +637,25 @@ export default {
 }
 
 .wrapper_block_photo_post_first {
-  display: flex;
-  width: 75%;
-  /* flex: 1.5; */
-  /* background-color: rgb(0 0 0 / 10%); */
+    display: flex;
+    width: 75%;
+    /* flex: 1.5; */
+    /* background-color: rgb(0 0 0 / 10%); */
     align-items: center;
     justify-content: center;
 }
 
 .wrapper_block_photo_post_another {
-  display: flex;
+    display: flex;
     flex-direction: column;
     width: 25%;
-  /* flex: 1; */
+    /* flex: 1; */
     /* background-color: rgb(0 0 0 / 10%); */
     margin-left: 10px;
 }
 
 .wrapper_photo_post {
-  height: -webkit-fill-available;
+    height: -webkit-fill-available;
     /* margin: 10px; */
     padding-bottom: 10px;
     /* border-radius: 8px; */
@@ -662,18 +663,18 @@ export default {
 }
 
 .photo_post {
-  width: 100%;
-  height: 100%;
-  -o-object-fit: cover;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
+    width: 100%;
+    height: 100%;
+    -o-object-fit: cover;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 .size_photo_1 {
-  width: 100%;
-  height: 100%;
-  /* max-height: 450px; */
+    width: 100%;
+    height: 100%;
+    /* max-height: 450px; */
 }
 
 .more_text_message {
@@ -690,6 +691,19 @@ export default {
 
     .wrapper_block_write_message {
         flex-direction: column;
+    }
+
+    .header_name_user {
+        font-size: 16px;
+    }
+
+    .header_name_user p {
+        max-width: 140px;
+        word-wrap: break-word;
+    }
+
+    .message_name_user {
+        font-size: 15px;
     }
 }
 </style>

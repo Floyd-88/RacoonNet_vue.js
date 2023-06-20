@@ -111,4 +111,20 @@ export default {
 .observer {
   /* border: 1px solid; */
 }
+
+@media (max-width: 761px) {
+  .wrapper_main {
+    padding: 0px 0px 5px;
+}
+
+.wrapper_not_messages {
+    position: static;
+    margin-top: 0;
+    margin-left: 0;
+}
+
+.wrapper_not_messages p {
+    text-align: center;
+}
+}
 </style>

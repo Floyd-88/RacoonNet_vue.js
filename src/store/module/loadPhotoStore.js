@@ -27,8 +27,9 @@ export const loadPhotoStore = {
 
         likesPhoto: "", //количество лайков фото
         isLoadPhotoPost: "", //загрузка фотографий в пост
-        isLoadPhotoMessage: "" //загрузка фотографий в сообщения
+        isLoadPhotoMessage: "", //загрузка фотографий в сообщения
 
+        isNotPhoto: false //отображать надпись об отсутствии фотографий
 
     }),
 
@@ -49,6 +50,8 @@ export const loadPhotoStore = {
         getLikesPhoto: (state) => state.likesPhoto,
         getIsLoadPhotoPost: (state) => state.isLoadPhotoPost,
         getIsLoadPhotoMessage: (state) => state.isLoadPhotoMessage,
+        getIsNotPhoto: (state) => state.isNotPhoto,
+
 
 
     },
@@ -148,9 +151,9 @@ export const loadPhotoStore = {
             state.isLoadPhotoMessage = bool;
         },
 
-        // setRequest(state, body) {
-        //     state.request = body;
-        // }
+        setIsNotPhoto(state, bool) {
+            state.isNotPhoto = bool;
+        },
     },
 
     actions: {
@@ -262,6 +265,8 @@ export const loadPhotoStore = {
                         commit("setIsLoadPhotoPost", false);
                         commit("setIsLoadPhotoMessage", false);
 
+
+
                         resolve(resp.data);
                         // window.location.href = `/id${JSON.parse(getters.getUser.userID)}`;
                     })
@@ -302,12 +307,15 @@ export const loadPhotoStore = {
             commit("removeUrlsImages", name);
         },
 
+
         //получить все фотографии
         async loadAllPhotos({
             commit,
             // state
         }, id) {
             try {
+                commit("setIsNotPhoto", false);
+
                 await axios.get('http://localhost:8000/upload_all_photo', {
                     params: {
                         id: id,
@@ -318,6 +326,10 @@ export const loadPhotoStore = {
                     commit("galleryStore/setArrayFilterPhotos", response.data, {
                         root: true
                     });
+
+                    if (response.data.length === 0) {
+                        commit("setIsNotPhoto", true);
+                    }
                 });
             } catch (err) {
                 if (err.code === "ERR_CANCELED") {
@@ -326,6 +338,7 @@ export const loadPhotoStore = {
                 console.log(err)
             }
         },
+
 
         //удаление картинки
         async removePhoto({

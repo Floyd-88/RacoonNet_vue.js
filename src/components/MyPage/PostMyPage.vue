@@ -60,13 +60,42 @@
 
     <!-- фотографии к посту -->
     <div class="wrapper_block_photo_post">
+      <div class="wrapper_block_photo_post_first">
+          <template 
+            v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(0, 1)" 
+            :key="index">
+          <div class="wrapper_photo_post size_photo_1" 
+            v-if="post.id === photo.id">
+              <img class="photo_post" 
+              :src="myPhotos(photo)"
+                :alt="'photo' + photo.id"
+                @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">             
+          </div>
+        </template>
+        </div>
+        
+        <div class="wrapper_block_photo_post_another" v-if="getPhotosPostsArray.filter(i => i.id === post.id).slice(1).length
+           > 0">
+          <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(1)" 
+            :key="index">
+            <div class="wrapper_photo_post photo_another" 
+            v-if="post.id === photo.id">
+              <img class="photo_post" 
+              :src="myPhotos(photo)"
+                :alt="'photo' + photo.id"
+                @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index+1, id: photo.id, postID: post.id })">             
+            </div>
+          </template>
+        </div>
+      </div>
+    <!-- <div class="wrapper_block_photo_post">
       <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id)" :key="index">
         <div class="wrapper_photo_post" v-if="post.id === photo.id" :class="{ 'size_photo_1': index === 0 }">
           <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
             @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
         </div>
       </template>
-    </div>
+    </div> -->
 
     <!-- комментарии к посту -->
     <CommentsPost :post="post" />
@@ -364,32 +393,53 @@ export default {
 }
 
 .wrapper_block_photo_post {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    max-height: 450px;
+    width: 100%;
+    padding: 2% 2% 0 2%;
+}
+
+.wrapper_block_photo_post_first {
+    display: flex;
+    width: 75%;
+    /* flex: 1.5; */
+    /* background-color: rgb(0 0 0 / 10%); */
+    align-items: center;
+    justify-content: center;
+}
+
+.wrapper_block_photo_post_another {
+    display: flex;
+    flex-direction: column;
+    width: 22%;
+    /* flex: 1; */
+    /* background-color: rgb(0 0 0 / 10%); */
+    margin-left: 10px;
 }
 
 .wrapper_photo_post {
-  width: 22%;
-  height: 150px;
-  margin: 10px;
-  border-radius: 8px;
-  overflow: hidden;
+  height: -webkit-fill-available;
+    /* margin: 10px; */
+    padding-bottom: 10px;
+    /* border-radius: 8px; */
+    overflow: hidden;
 }
 
 .photo_post {
   width: 100%;
   height: 100%;
-  /* height: inherit; */
   -o-object-fit: cover;
   object-fit: cover;
+  border-radius: 8px;
   cursor: pointer;
 }
 
 .size_photo_1 {
   width: 100%;
-  height: auto;
-  max-height: 450px;
+  height: 100%;
+  /* max-height: 450px; */
 }
 
 /* .size_photo_2 {
@@ -410,6 +460,10 @@ export default {
 }
 .wrapper_post_user {
     padding-top: 20px;
+}
+
+.size_photo_1 {
+    max-height: 350px;
 }
 
 }

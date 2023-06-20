@@ -45,7 +45,9 @@ var loadPhotoStore = {
       //количество лайков фото
       isLoadPhotoPost: "",
       //загрузка фотографий в пост
-      isLoadPhotoMessage: "" //загрузка фотографий в сообщения
+      isLoadPhotoMessage: "",
+      //загрузка фотографий в сообщения
+      isNotPhoto: false //отображать надпись об отсутствии фотографий
 
     };
   },
@@ -97,6 +99,9 @@ var loadPhotoStore = {
     },
     getIsLoadPhotoMessage: function getIsLoadPhotoMessage(state) {
       return state.isLoadPhotoMessage;
+    },
+    getIsNotPhoto: function getIsNotPhoto(state) {
+      return state.isNotPhoto;
     }
   },
   mutations: {
@@ -182,10 +187,10 @@ var loadPhotoStore = {
     },
     setIsLoadPhotoMessage: function setIsLoadPhotoMessage(state, bool) {
       state.isLoadPhotoMessage = bool;
-    } // setRequest(state, body) {
-    //     state.request = body;
-    // }
-
+    },
+    setIsNotPhoto: function setIsNotPhoto(state, bool) {
+      state.isNotPhoto = bool;
+    }
   },
   actions: {
     //загрузка автарки
@@ -357,7 +362,8 @@ var loadPhotoStore = {
             case 0:
               commit = _ref5.commit;
               _context2.prev = 1;
-              _context2.next = 4;
+              commit("setIsNotPhoto", false);
+              _context2.next = 5;
               return regeneratorRuntime.awrap(_axios["default"].get('http://localhost:8000/upload_all_photo', {
                 params: {
                   id: id
@@ -368,14 +374,18 @@ var loadPhotoStore = {
                 commit("galleryStore/setArrayFilterPhotos", response.data, {
                   root: true
                 });
+
+                if (response.data.length === 0) {
+                  commit("setIsNotPhoto", true);
+                }
               }));
 
-            case 4:
-              _context2.next = 10;
+            case 5:
+              _context2.next = 11;
               break;
 
-            case 6:
-              _context2.prev = 6;
+            case 7:
+              _context2.prev = 7;
               _context2.t0 = _context2["catch"](1);
 
               if (_context2.t0.code === "ERR_CANCELED") {
@@ -384,12 +394,12 @@ var loadPhotoStore = {
 
               console.log(_context2.t0);
 
-            case 10:
+            case 11:
             case "end":
               return _context2.stop();
           }
         }
-      }, null, null, [[1, 6]]);
+      }, null, null, [[1, 7]]);
     },
     //удаление картинки
     removePhoto: function removePhoto(_ref6, body) {

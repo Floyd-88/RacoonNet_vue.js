@@ -252,6 +252,9 @@ export default {
 .block_comments_name {
     font-family: Russo One, fantasy, sans-serif;
     font-size: 17px;
+    max-width: 150px;
+    word-break: break-word;
+    white-space: normal;
 }
 
 .wrapper_block_comments_date {}
@@ -428,5 +431,10 @@ export default {
     .wrapper_block_comments_date {
         display: none;
     }
+
+    .block_comments_name[data-v-99ffbf26] {
+    max-width: 205px;
+    white-space: normal;
+}
 
 }</style>

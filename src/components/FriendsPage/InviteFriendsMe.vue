@@ -135,4 +135,36 @@ export default {
     margin-top: 20px;
     opacity: .6;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+    .wrapper_my_friend_card_btns {
+        flex-direction: column;
+    }
+
+    .my_friend_card_btn_write_message {
+        padding-right: 0px;
+        max-width: 90px;
+    }
+
+    .wrapper_my_friend_card_btns {
+        align-items: flex-end;
+    }
+
+    .btn_write_message {
+        font-size: 12px;
+        padding: 2px;
+        margin-bottom: 10px;
+    }
+
+    .my_friend_card_btn_delete_friend {
+        max-width: 90px;
+    }
+
+    .btn_delete_friend {
+        font-size: 12px;
+        padding: 2px;
+    }
+}
 </style>

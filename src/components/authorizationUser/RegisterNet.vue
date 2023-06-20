@@ -276,7 +276,7 @@ export default {
       name: {
         required, 
         min: minLength(2), 
-        max: maxLength(30),
+        max: maxLength(20),
         name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
@@ -285,7 +285,7 @@ export default {
       surname: {
         required, 
         min: minLength(2),
-        max: maxLength(30), 
+        max: maxLength(20), 
         name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
@@ -295,13 +295,13 @@ export default {
       password: {required, min: minLength(8), max: maxLength(30),},
       password_confirmation: {required},
       country: {
-        required, min: minLength(2), max: maxLength(30), name_validation: {
+        required, min: minLength(2), max: maxLength(20), name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
         }
       },
       city: {
-        required, min: minLength(2), max: maxLength(30), name_validation: {
+        required, min: minLength(2), max: maxLength(20), name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
         }
