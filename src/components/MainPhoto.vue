@@ -189,5 +189,17 @@ justify-content: space-between;
   margin-right: 5px;
 }
 
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+  .wrapper_block_full_size {
+    width: 350px;
+}
+.full_size_img {
+    width: inherit;
+
+}
+}
+
 </style>
 

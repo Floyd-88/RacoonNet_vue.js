@@ -465,6 +465,19 @@ export default {
 .size_photo_1 {
     max-height: 350px;
 }
+.btn_post{
+    flex-direction: column;
+}
+
+.delete_post_btn {
+    width: auto;
+}
+
+.redaction_post_btn {
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+
 
 }
 </style>

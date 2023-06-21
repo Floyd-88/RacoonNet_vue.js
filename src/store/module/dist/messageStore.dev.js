@@ -293,8 +293,14 @@ var messageStore = {
                       while (1) {
                         switch (_context4.prev = _context4.next) {
                           case 0:
-                            arrayMessage = resp.data.reverse();
                             commit("setIsUIloadMoreMessages", false);
+
+                            if (!(resp.data !== "Переписка с данным пользователем отсутствует")) {
+                              _context4.next = 8;
+                              break;
+                            }
+
+                            arrayMessage = resp.data.reverse();
                             commit("setArrayMessages", [].concat(_toConsumableArray(arrayMessage), _toConsumableArray(state.arrayMessages)));
 
                             if (resp.data.length > 0) {
@@ -303,7 +309,7 @@ var messageStore = {
                               commit("setIsNotMessages", true);
                             }
 
-                            _context4.next = 6;
+                            _context4.next = 7;
                             return regeneratorRuntime.awrap(resp.data.forEach(function _callee(message) {
                               return regeneratorRuntime.async(function _callee$(_context3) {
                                 while (1) {
@@ -327,10 +333,10 @@ var messageStore = {
                               });
                             }));
 
-                          case 6:
+                          case 7:
                             resolve(resp);
 
-                          case 7:
+                          case 8:
                           case "end":
                             return _context4.stop();
                         }

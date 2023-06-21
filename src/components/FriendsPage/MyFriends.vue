@@ -121,7 +121,7 @@
                                 <template v-else>
                                     <div class="my_friend_card_btn_write_show_block">
                                     <div class="my_friend_card_btn_write_message">
-                                        <UIbtn class="btn_write_add_friend" 
+                                        <UIbtn class="btn_write_add_friend add_friend" 
                                             @click="acceptFriend(user)">
                                             Принять
                                         </UIbtn>
@@ -331,9 +331,13 @@ export default {
     min-width: 155px;
 }
 
+.add_friend {
+    min-width: 100px;
+}
+
 .btn_delete_friend {
     filter: opacity(0.7);
-    min-width: 140px;
+    /* min-width: auto; */
 }
 .wrapper_show_btns {
     margin-left: 10px;

@@ -362,5 +362,17 @@ flex-direction: column;
 .name_user{
   text-align: center;
 }
+
+/* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+  .wrapper_btn_main_photo {
+  width: 146%;
+}
+.btn_main_photo {
+  font-size: 12px;
+}
+
+}
 }
 </style>

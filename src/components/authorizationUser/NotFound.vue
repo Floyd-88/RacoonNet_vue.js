@@ -1,5 +1,6 @@
 <template>
-  <NavigationNetEnter/>
+  <NavigationNet v-if="isLoggedIn" />
+  <NavigationNetEnter  v-if="!isLoggedIn" />
   <div class="wrapper_main">
     <div class="main">
       <div class="wrapper_not_found">
@@ -14,12 +15,18 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: "NotFound",
   data() {
     return {
       title: 'Ошибка 404. Страница не найдена...'
     }
+  },
+
+  computed: {
+    ...mapGetters({isLoggedIn: "authorizationStore/isLoggedIn"})
   }
 }
 </script>
@@ -47,25 +54,29 @@ export default {
 
 
     .not_found {
-      margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
+    /* position: absolute; */
+    text-align: center;
+    margin-top: 80px;
+    /* top: 50%;
+    left: 50%; */
+    /* margin-right: -50%; */
+    /* transform: translate(-50%, -50%); */
     font-family: Russo One, fantasy, sans-serif;
-    font-size: 35px;
+    font-size: 30px;
     opacity: .7;
+
     } 
 
     /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
 
+  .main {
+  margin-left: 0;
+}
+
   .not_found {
-    font-size: 25px;
-    width: 100%;
-    text-align: center;
+    font-size: 24px;
     } 
 }
 

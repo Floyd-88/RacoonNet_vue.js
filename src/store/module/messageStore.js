@@ -211,25 +211,26 @@ export const messageStore = {
                             }
                         })
                         .then(async function(resp) {
-                            let arrayMessage = resp.data.reverse();
                             commit("setIsUIloadMoreMessages", false);
-                            commit("setArrayMessages", [...arrayMessage, ...state.arrayMessages]);
-                            if (resp.data.length > 0) {
-                                commit("setCountMessages", 10);
-                            } else {
-                                commit("setIsNotMessages", true);
-                            }
-
-                            await resp.data.forEach(async message => {
-                                if (message.photos === "1") {
-                                    await dispatch("LOAD_MESSAGES_PHOTOS", { messageID: message.id });
+                            if (resp.data !== "Переписка с данным пользователем отсутствует") {
+                                let arrayMessage = resp.data.reverse();
+                                commit("setArrayMessages", [...arrayMessage, ...state.arrayMessages]);
+                                if (resp.data.length > 0) {
+                                    commit("setCountMessages", 10);
+                                } else {
+                                    commit("setIsNotMessages", true);
                                 }
-                            });
 
-                            resolve(resp);
+                                await resp.data.forEach(async message => {
+                                    if (message.photos === "1") {
+                                        await dispatch("LOAD_MESSAGES_PHOTOS", { messageID: message.id });
+                                    }
+                                });
+                                resolve(resp);
+                            }
                         })
                 } catch (err) {
-                    console.log(err)
+                    console.log(err);
                 }
             })
 

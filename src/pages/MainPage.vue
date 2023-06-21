@@ -87,16 +87,24 @@ export default {
 /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
-  .wrapper_mainPage {
-  /* display: flex; */
-  flex-direction: column;
-  /* align-items: center;
-  justify-content: space-evenly;
-  margin-top: 10%; */
+
+  .wrapper_main {
+  padding: 105px 0px 5px;
 }
 
-.wrapper_title {
+.name_net_title {
   display: none;
+}
+
+  .wrapper_mainPage {
+  flex-direction: column;
+  margin-top: 0;
+}
+
+.welcome_title {
+  text-align: center;
+  font-size: 22px;
+
 }
 
 .wrapper_form {

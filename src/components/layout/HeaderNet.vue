@@ -286,6 +286,7 @@ export default {
     border-bottom: 5px solid black;
     width: 100%;
     padding-bottom: 5px;
+    cursor: pointer;
   }
 }
 </style>

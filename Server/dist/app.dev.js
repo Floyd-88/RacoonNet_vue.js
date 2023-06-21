@@ -337,9 +337,7 @@ router.post('/load_user', authenticateJWT, function (req, res) {
 
     authorization.loadUser(userID, function (err, user) {
       if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
-      if (!user) return res.status(403).send({
-        err: 'Такого пользователя не существует'
-      });
+      if (!user) return res.status(403).send('Такого пользователя не существует');
       res.status(200).send({
         user: {
           userID: user.userID,
@@ -1367,7 +1365,7 @@ router.get('/user_messages', authenticateJWT, function (req, res) {
       if (err) return res.status(500).send('При получении id переписки из БД произошла ошибка:' + ' ' + err); // Если диалог не создан ранее
 
       if (row_conversation.length == 0) {
-        return res.status(200);
+        return res.status(200).send("Переписка с данным пользователем отсутствует");
       } else {
         //иначе возвращаем переписку из БД
         messages.get_messages_user_DB([row_conversation[0].id, tokenID, row_conversation[0].id, tokenID, tokenID, req.query._count, req.query._limit], function (err, messages_user) {

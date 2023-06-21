@@ -38,9 +38,7 @@
                             <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava">
                         </div>
                         <div class="wrapper_like_user_name" v-if="user.isNameUserLike">
-                            <p class="like_user_name" @mouseleave="closeUserLikes(currentImg)">{{ user.name + " " +
-                                user.surname
-                            }}</p>
+                            <p class="like_user_name" @mouseleave="closeUserLikes(currentImg)">{{user.name + " " + user.surname}}</p>
                         </div>
                     </div>
 
@@ -367,16 +365,23 @@ export default {
 
 .wrapper_like_user_name {
     position: absolute;
+    margin-top: 5px;
+    width: -moz-max-content;
     width: max-content;
     font-size: 11px;
     font-family: Russo One, fantasy, sans-serif;
     background: gainsboro;
-    padding: 0px 2px 0px 2px;
-    left: -50%;
-    bottom: -20px;
+    padding: 0;
+    white-space: normal;
+    max-width: 106px;
+    text-align: center;
+    transform: translateX(-34%);
+    z-index: 1;
 }
 
-.like_user_name {}
+.like_user_name {
+    
+}
 
 .my_friend {
     display: flex;
@@ -421,11 +426,13 @@ export default {
 
     .wrapper_block_comments_item {
         flex-direction: row-reverse;
+        align-items: center;
     }
 
     .wrapper_block_comments_item_like {
         margin-top: 0px;
         margin-bottom: 0px;
+        margin-left: 5px;
     }
 
     .wrapper_block_comments_date {

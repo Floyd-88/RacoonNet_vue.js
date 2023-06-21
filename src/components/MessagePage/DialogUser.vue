@@ -109,7 +109,7 @@
 
             <!-- -- -->
             <div class="wrapper_not_messages" v-if="getArrayMessages.length < 1 && getIsNotMessages">
-                <p class="not_messages">
+                <p class="not_messages" v-if="getUser.delete !== 1">
                     У вас отстутвует перписка с данным пользователем, но Вы можете начать общение прямо сейчас.
                 </p>
             </div>
@@ -129,7 +129,7 @@
                         </div>
                     </div>
 
-                    <textarea class="new_message" id="name" placeholder="Введите сообщение" v-model="changeMessage"
+                    <textarea class="new_message" id="name" placeholder="Введите сообщение" v-model="changeMessage" :disabled="getUser.delete === 1"
                         :class="{ invalid: (v$.messageUser.$error) }">
                     </textarea>
                 </div>
@@ -139,10 +139,10 @@
             <!-- button -->
             <div class="wrapper_form_message_btn">
 
-                <UIbtn class="btn_addPhoto" @click="addPostPhoto()">
+                <UIbtn class="btn_addPhoto" @click="addPostPhoto()" :disabled="getUser.delete === 1">
                 </UIbtn>
 
-                <button class="form_message_btn" type="submit" @click="submitMessage()" :disabled="v$.$invalid">
+                <button class="form_message_btn" type="submit" @click="submitMessage()" :disabled="v$.$invalid || getUser.delete === 1">
                     Написать
                 </button>
             </div>
