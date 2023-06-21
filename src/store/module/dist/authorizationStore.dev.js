@@ -22,7 +22,9 @@ var authorizationStore = {
       //ошибка возникающая при вводе неверного пароля или почты
       isForgetPassword: true,
       //показывать ввод логина и пароля или восстановление пароля
-      messageEmailPassword: "" //сообщение о восстановлении пароля
+      messageEmailPassword: "",
+      //сообщение о восстановлении пароля
+      isShowMenu: false //показывать бургер-меню
 
     };
   },
@@ -45,6 +47,9 @@ var authorizationStore = {
     },
     getMessageEmailPassword: function getMessageEmailPassword(state) {
       return state.messageEmailPassword;
+    },
+    getIsShowMenu: function getIsShowMenu(state) {
+      return state.isShowMenu;
     }
   },
   mutations: {
@@ -82,6 +87,12 @@ var authorizationStore = {
     },
     setMessageEmailPassword: function setMessageEmailPassword(state, value) {
       state.messageEmailPassword = value;
+    },
+    setIsShowMenu: function setIsShowMenu(state) {
+      state.isShowMenu = !state.isShowMenu;
+    },
+    setIsShowMenuClose: function setIsShowMenuClose(state) {
+      state.isShowMenu = false;
     }
   },
   actions: {

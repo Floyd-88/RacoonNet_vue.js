@@ -214,9 +214,10 @@ export default {
             // this.loadAllPhotos();
             // this.loadPostServer(this.$route.params.id);
           })
-          .catch(() => {
-            // console.log(err)
-            // this.$router.push('notFound')
+          .catch((err) => {
+            if(err.response.data === "Такого пользователя не существует") {
+              this.$router.push('notFound')
+            }
           })
       }
     }

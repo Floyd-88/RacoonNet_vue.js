@@ -1,4 +1,6 @@
 import NavigationNet from "@/components/layout/NavigationNet";
+import NavigationNetEnter from "@/components/layout/NavigationNetEnter";
+
 import HeaderNet from "@/components/layout/HeaderNet";
 
 import LoginNet from "@/components/authorizationUser/LoginNet";
@@ -72,6 +74,7 @@ import NoticeOneUser from "@/components/NoticeOneUser";
 export default [
     UserInfo,
     NavigationNet,
+    NavigationNetEnter,
     HeaderNet,
     PostMyPage,
     UIbtn,

@@ -45,7 +45,7 @@ export default {
 @media (max-width: 761px) {
 
 .wrapper_main {
-  padding: 0px 0px 5px;
+  padding: 120px 0px 5px;
 }
 
 .main{

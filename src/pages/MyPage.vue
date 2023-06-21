@@ -1,6 +1,7 @@
 <template>
 
   <NavigationNet v-if="isLoggedIn" />
+  <NavigationNetEnter v-else />
 
   <template v-if="getUser.delete === 0">
     <div class="wrapper_main">
@@ -169,11 +170,13 @@ export default {
   font-size: 14px;
   border-bottom: 1px solid black;
   padding-bottom: 10px;
-  font-family: fantasy;
+  font-family: Russo One, fantasy, sans-serif;
+  
 }
 
 .title_warning_auth {
   text-align: center;
+  font-weight: 400;
 }
 
 .wrapper_delete_user{
@@ -182,23 +185,22 @@ export default {
 }
 
 .wrapper_delete_user p {
-  font-size: 16px;
-    line-height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 30px;
-    font-size: 20px;
-    opacity: .8;
+  margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
     font-family: Russo One, fantasy, sans-serif;
-    color: dimgray;
+    font-size: 30px;
+    opacity: .7;
 }
 
 /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
 .wrapper_main {
-padding: 0px 0px 0px;
+padding: 120px 0px 0px;
 }
 
 .main {
@@ -211,12 +213,20 @@ padding: 0px 0px 0px;
 }
 
 .wrapper_delete_user {
-    padding: 0px 5px 5px;
+    padding: 120px 5px 5px;
     margin-left: 0px;
+    text-align: center;
 }
 
 .wrapper_delete_user p  {
     font-size: 17px;
 }
+
+.wrapper_delete_user p {
+    font-size: 22px;
+    width: 100%;
+    text-align: center;
+    padding: 5px;
+    } 
 }
 </style>

@@ -1,4 +1,5 @@
 <template>
+  <NavigationNetEnter/>
   <div class="wrapper_main">
     <template v-if="getModulRegister">
       <UImodal> <RegisterNet/> </UImodal>
@@ -20,24 +21,22 @@
 </template>
 
 <script>
+// import NavigationNet from "@/components/layout/NavigationNet.vue";
 import SocketioService from "../services/socketio.service";
 import { mapGetters } from 'vuex';
 export default {
-  name: "MainPage",
-  data() {
-    return {}
-  },
-
-  created() {
-    SocketioService.disconnect();
-    console.log("disconnected")
-  },
-
-computed: {
-  ...mapGetters({getModulRegister: "registrationStore/getModulRegister"})
-}
-  
-
+    name: "MainPage",
+    data() {
+        return {};
+    },
+    created() {
+        SocketioService.disconnect();
+        console.log("disconnected");
+    },
+    computed: {
+        ...mapGetters({ getModulRegister: "registrationStore/getModulRegister" })
+    },
+    // components: { NavigationNet }
 }
 </script>
 

@@ -376,7 +376,7 @@ router.post('/load_user', authenticateJWT, function(req, res) {
         //возвращаем данные о пользователе
         authorization.loadUser(userID, (err, user) => {
             if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
-            if (!user) return res.status(404).send({
+            if (!user) return res.status(403).send({
                 err: 'Такого пользователя не существует'
             });
             res.status(200).send({
@@ -401,7 +401,7 @@ router.post('/load_user', authenticateJWT, function(req, res) {
     } else {
         authorization.loadUser(userID, (err, user) => {
             if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
-            if (!user) return res.status(404).send('Такого пользователя не существует');
+            if (!user) return res.status(403).send('Такого пользователя не существует');
             res.status(200).send({
                 user: {
                     ava: user.ava,

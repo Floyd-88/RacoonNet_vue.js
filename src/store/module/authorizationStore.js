@@ -9,6 +9,7 @@ export const authorizationStore = {
         errorLogin: "", //ошибка возникающая при вводе неверного пароля или почты
         isForgetPassword: true, //показывать ввод логина и пароля или восстановление пароля
         messageEmailPassword: "", //сообщение о восстановлении пароля
+        isShowMenu: false, //показывать бургер-меню
     }),
 
     getters: {
@@ -18,6 +19,7 @@ export const authorizationStore = {
         getErrorLogin: (state) => state.errorLogin,
         getIsForgetPassword: (state) => state.isForgetPassword,
         getMessageEmailPassword: (state) => state.messageEmailPassword,
+        getIsShowMenu: (state) => state.isShowMenu,
 
     },
 
@@ -66,7 +68,12 @@ export const authorizationStore = {
             state.messageEmailPassword = value;
         },
 
-
+        setIsShowMenu(state) {
+            state.isShowMenu = !state.isShowMenu;
+        },
+        setIsShowMenuClose(state) {
+            state.isShowMenu = false;
+        },
     },
 
     actions: {

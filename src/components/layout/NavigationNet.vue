@@ -1,26 +1,34 @@
 <template>
-  <div class="wrapper_nav">
-    <div class="wrapper_nav_link">
-      <button class="link" @click="goMyPage()"> Моя страница </button>
+  <transition name="slideDown">
+
+    <div class="wrapper_nav" v-show="getIsShowMenu || isSmallScreen">
+    <div class="wrapper_nav_link" @click="goMyPage()">
+      <button class="link" > Моя страница </button>
     </div>
-    <div class="wrapper_nav_link">
-      <button class="link" @click="goNews()"> Новости </button>
+    <div class="wrapper_nav_link" @click="goNews()">
+      <button class="link" > Новости </button>
     </div>
-    <div class="wrapper_nav_link">
-      <button class="link" @click="goMessage()" :disabled="!blockBtnMessage">Сообщения</button>
+    <div class="wrapper_nav_link" @click="goMessage()" :disabled="!blockBtnMessage">
+      <button class="link" >Сообщения</button>
       <p :class="{ 'new_message': newMessage }"></p>
     </div>
-    <div class="wrapper_nav_link">
-      <button class="link" @click="goMyFriend()" :disabled="!blockBtnFriends"> Мои друзья</button>
+    <div class="wrapper_nav_link" @click="goMyFriend()" :disabled="!blockBtnFriends">
+      <button class="link" > Мои друзья</button>
       <p :class="{ 'new_message': getUsersFriendsMe.length > 0 }"></p>
     </div>
-    <div class="wrapper_nav_link">
-      <button class="link" @click="goMyGallery()">Галерея</button>
+    <div class="wrapper_nav_link" @click="goMyGallery()">
+      <button class="link" >Галерея</button>
     </div>
-    <div class="wrapper_nav_link_help">
-      <button class="link_help" @click="setIsModalFeedBack(true)"> Обратная связь </button>
+    <div class="wrapper_nav_link exit" @click="runLogout">
+      <button class="link" >Выход</button>
+    </div>
+    <div class="wrapper_nav_link_help" @click="openFeedBack()">
+      <button class="link_help" > Обратная связь </button>
     </div>
   </div>
+
+  </transition>
+
 </template>
 
 <script>
@@ -33,7 +41,17 @@ export default {
       userID: JSON.parse(localStorage.getItem('user')).userID,
       blockBtnFriends: true,
       blockBtnMessage: true,
+      isSmallScreen: false,
     }
+  },
+
+  created() {
+    window.addEventListener('resize', this.checkSize);
+    this.checkSize();
+  },
+  unmounted() {
+    this.setIsShowMenuClose();
+    window.removeEventListener('resize', this.checkSize);
   },
 
   methods: {
@@ -42,7 +60,8 @@ export default {
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
       LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
       UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE",
-      GET_PHOTO_NOT_FILTER: "galleryStore/GET_PHOTO_NOT_FILTER"
+      GET_PHOTO_NOT_FILTER: "galleryStore/GET_PHOTO_NOT_FILTER",
+      logout: "authorizationStore/logout",
     }),
 
     ...mapMutations({
@@ -55,7 +74,8 @@ export default {
       setCountDialogsNull: "messageStore/setCountDialogsNull",
       setArrayDialogs: "messageStore/setArrayDialogs",
       setArrayMessages: "messageStore/setArrayMessages",
-      setTitleFriend: "friendsStore/setTitleFriend"
+      setTitleFriend: "friendsStore/setTitleFriend",
+      setIsShowMenuClose: "authorizationStore/setIsShowMenuClose"
     }),
 
     goMyPage() {
@@ -117,6 +137,25 @@ export default {
     goMyGallery() {
       this.$router.push('/gallery');
       this.GET_PHOTO_NOT_FILTER();
+    },
+
+    openFeedBack() {
+     this.setIsModalFeedBack(true);
+     this.setIsShowMenuClose();
+    },
+
+    //проверяем размер экрана
+    checkSize(){
+      this.isSmallScreen = innerWidth > 761;
+      this.setIsShowMenuClose();
+    },
+
+    runLogout() {
+    this.logout()
+        .then(() => {
+          window.location.href = "/";
+          // this.$router.push('/')
+        });
     }
 
   },
@@ -131,30 +170,13 @@ export default {
       getTitleFriend: "friendsStore/getTitleFriend",
       getCountFriends: "friendsStore/getCountFriends",
       getArrayMessages: "messageStore/getArrayMessages",
+      getIsShowMenu: "authorizationStore/getIsShowMenu"
     }),
 
     newMessage() {
       return this.getArrayDialogs.some(dialog => dialog.unread)
     }
   }
-
-  // watch: {
-  //   $route() {
-  //     const id = this.$route.params.id;
-
-  //     if (id) {
-  //       this.loadUser({ id })
-  //         .then(() => {
-  //         })
-  //         .catch(() => {
-  //           // if (err) {
-  //             // console.log(err.response.data)
-  //             this.$router.push('notFound')
-  //           // }
-  //         })
-  //     }
-  //   }
-  // }
 
 }
 </script>
@@ -175,6 +197,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: max-content;
 }
 
 /* .new_message {
@@ -233,6 +256,7 @@ export default {
   border-top: 1px solid black;
   padding-top: 10px;
   margin-top: 5px;
+  width: max-content;
 }
 
 .link_help {
@@ -248,23 +272,73 @@ export default {
   filter: brightness(80%);
 }
 
+.exit {
+  display: none;
+}
 /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
 
   .wrapper_nav {
-  padding: 100px 30px 30px 30px;
+    width: 90%;
+    padding: 100px 0px 0px 0px;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    height: auto;
+    min-width: auto;
+    border-radius: 5px;
+    background: #f2f2f2;
+    box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
+    position: fixed;
+    z-index: 1;
+}
+
+.wrapper_nav_link {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    position: static;
-  top: 0;
-  height: auto;
-  min-width: auto;
-}
+    /* background-color: cornflowerblue; */
+    width: 100%;
+    box-shadow: 0px 2px 3px 0px rgb(0 0 0 / 30%);
 }
 
+.wrapper_nav_link:hover {
+  background-color: #e2e0e0;
+}
 
+.link:hover {
+  filter:none;
+}
+
+.wrapper_nav_link_help {
+    border-top: none;
+    padding: 10px;
+    margin-top: 0;
+    /* background-color: cornflowerblue; */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.link_help {
+    font-size: 14px;
+    color: black;
+    opacity: .5;
+}
+.exit {
+  display:flex;
+}
+
+.slideDown-enter-active, .slideDown-leave-active {
+  transition: all 0.3s ease;
+  /* overflow: hidden; */
+}
+.slideDown-enter-from, .slideDown-leave-to  {
+  transform: translateY(-100%);
+  transition: all 0.3s ease-in 0s
+}
+}
 </style>
 
 

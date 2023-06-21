@@ -1,5 +1,5 @@
 <template>
-
+  <NavigationNetEnter/>
   <div class="wrapper_main">
     <div class="main">
       <div class="wrapper_not_found">
@@ -53,8 +53,20 @@ export default {
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
-    font-family: fantasy;
-    font-size: 45px;
+    font-family: Russo One, fantasy, sans-serif;
+    font-size: 35px;
+    opacity: .7;
     } 
+
+    /* МЕДИА-ЗАПРОСЫ */
+
+@media (max-width: 761px) {
+
+  .not_found {
+    font-size: 25px;
+    width: 100%;
+    text-align: center;
+    } 
+}
 
 </style>

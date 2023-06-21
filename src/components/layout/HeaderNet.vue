@@ -2,21 +2,29 @@
   <header class="header">
 
     <div class="header_wrapper_logo_title">
-      <div class="header_wrapper_logo">
-        <img class="header_logo" src="../../assets/logo/logo.png" alt="logo" @click="$router.push(`/id${userID}`)">
-      </div>
-      <div class="header_wrapper_title">
-        <button class="btn_title" @click="$router.push(pathID)">RaccoonNet</button>
-      </div>
-      <div class="wrapper_notice" v-if="isLoggedIn">
-        <img class="new_message_img" src="../../assets/icons/notice.png" alt="new_message"
-          @click="setIsShowModalWindowNotice(true)">
-        <div class="notice_true" 
-            v-if="countNotice.length > 0" 
-            @click="setIsShowModalWindowNotice(true)">
-          <p>{{ (countNotice.length > 99) ? 99 : countNotice.length }} </p>
+      <div class="header_wrapper_logo_title_notice">
+        <div class="header_wrapper_logo">
+          <img class="header_logo" src="../../assets/logo/logo.png" alt="logo" @click="$router.push(`/id${userID}`)">
         </div>
+        <div class="header_wrapper_title">
+          <button class="btn_title" @click="$router.push(pathID)">RaccoonNet</button>
+        </div>
+        <div class="wrapper_notice" v-if="isLoggedIn">
+          <img class="new_message_img" src="../../assets/icons/notice.png" alt="new_message"
+            @click="setIsShowModalWindowNotice(true)">
+          <div class="notice_true" v-if="countNotice.length > 0" @click="setIsShowModalWindowNotice(true)">
+            <p>{{ (countNotice.length > 99) ? 99 : countNotice.length }} </p>
+          </div>
+        </div>
+
       </div>
+
+      <div class="wrapper_menu_burger" @click="setIsShowMenu()">
+        <div class="menu_burger"></div>
+        <div class="menu_burger"></div>
+        <div class="menu_burger"></div>
+      </div>
+
     </div>
 
     <div class="header_wrapper_exit">
@@ -48,10 +56,11 @@ export default {
   methods: {
     ...mapMutations({
       setIsShowModalWindowNotice: "noticeStore/setIsShowModalWindowNotice",
+      setIsShowMenu: "authorizationStore/setIsShowMenu"
     }),
-    ...mapActions({ 
+    ...mapActions({
       logout: "authorizationStore/logout",
-     }),
+    }),
     runLogout() {
       this.logout()
         .then(() => {
@@ -97,6 +106,10 @@ export default {
   margin-left: 5%;
 }
 
+.header_wrapper_logo_title_notice {
+    display: flex;
+}
+
 .header_wrapper_logo {
   display: flex;
   align-items: center;
@@ -116,13 +129,13 @@ export default {
 
 .btn_title {
   border: none;
-    background: none;
-    text-shadow: 1px 1px 0 #ccc, 4px 4px 0 rgb(0 0 0 / 15%);
-    display: flex;
-    align-items: center;
-    font-size: 45px;
-    font-family: "Russo One", fantasy, sans-serif;
-    cursor: pointer;
+  background: none;
+  text-shadow: 1px 1px 0 #ccc, 4px 4px 0 rgb(0 0 0 / 15%);
+  display: flex;
+  align-items: center;
+  font-size: 45px;
+  font-family: "Russo One", fantasy, sans-serif;
+  cursor: pointer;
 }
 
 .header_wrapper_exit {
@@ -189,10 +202,19 @@ export default {
   background-color: #FF6B6B;
   cursor: pointer;
 }
+
 .notice_true p {
   font-size: 13px;
-    font-family: emoji;
-    font-weight: 600;
+  font-family: emoji;
+  font-weight: 600;
+}
+
+.wrapper_menu_burger {
+  display: none;
+}
+
+.menu_burger {
+    display: none;
 }
 
 /* МЕДИА-ЗАПРОСЫ */
@@ -201,6 +223,19 @@ export default {
   .header {
     justify-content: center;
   }
+
+  .header_wrapper_logo_title {
+    margin-left: 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.header_wrapper_logo {
+    display: none;
+}
 
   .header_logo {
     width: 40px;
@@ -211,10 +246,6 @@ export default {
     display: none;
   }
 
-  .header_wrapper_logo_title {
-    margin-left: 0px;
-  }
-
   .header_wrapper_title {
     margin-left: 0px;
   }
@@ -223,24 +254,38 @@ export default {
     font-size: 35px;
   }
 
-  .wrapper_notice{
+  .wrapper_notice {
     margin-top: 3px;
     margin-left: 20px;
     position: relative;
-}
+  }
 
-.new_message_img {
+  .new_message_img {
     width: 25px;
     margin-right: 0px;
     margin-left: 0px;
-}
+  }
 
-.notice_true[data-v-2dc6f19b] {
+  .notice_true[data-v-2dc6f19b] {
     width: 18px;
     height: 18px;
     position: absolute;
     left: 25px;
     margin-left: 0px;
-}
+  }
+
+  .wrapper_menu_burger {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    flex-direction: column;
+  }
+
+  .menu_burger {
+    display: flex;
+    border-bottom: 5px solid black;
+    width: 100%;
+    padding-bottom: 5px;
+  }
 }
 </style>
