@@ -39,8 +39,6 @@ var loadPhotoStore = {
       //количество фотографий отображаемых каждый раз при прокрутке вниз
       avaPhoto: "",
       progressLoadPhoto: 0,
-      request: null,
-      //прерывание запроса
       likesPhoto: "",
       //количество лайков фото
       isLoadPhotoPost: "",
@@ -234,18 +232,13 @@ var loadPhotoStore = {
     },
     //загрузка картинок на сервер
     addPhotoServer: function addPhotoServer(_ref2, body) {
-      var getters, commit, state, rootGetters, dispatch, axiosSource, formData, i, file, posts, messages;
+      var getters, commit, state, rootGetters, dispatch, formData, i, file, posts, messages;
       return regeneratorRuntime.async(function addPhotoServer$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
               getters = _ref2.getters, commit = _ref2.commit, state = _ref2.state, rootGetters = _ref2.rootGetters, dispatch = _ref2.dispatch;
-              //остановка загрузки картинок
-              axiosSource = _axios["default"].CancelToken.source();
-              state.request = {
-                cancel: axiosSource.cancel
-              }; //сокрытие кнопки загрузить картинки после ее нажатия
-
+              //сокрытие кнопки загрузить картинки после ее нажатия
               body.event.target.style.opacity = '0';
               formData = new FormData();
 
@@ -263,28 +256,28 @@ var loadPhotoStore = {
 
 
               if (!state.isLoadPhotoPost) {
-                _context.next = 15;
+                _context.next = 13;
                 break;
               }
 
-              _context.next = 11;
+              _context.next = 9;
               return regeneratorRuntime.awrap(dispatch("postsMyPageStore/addPost", state.isLoadPhotoPost, {
                 root: true
               }));
 
-            case 11:
+            case 9:
               posts = rootGetters["postsMyPageStore/getPosts"];
               formData.append('postIDLast', posts[0].id);
-              _context.next = 20;
+              _context.next = 18;
               break;
 
-            case 15:
+            case 13:
               if (!state.isLoadPhotoMessage) {
-                _context.next = 20;
+                _context.next = 18;
                 break;
               }
 
-              _context.next = 18;
+              _context.next = 16;
               return regeneratorRuntime.awrap(dispatch("messageStore/WRITE_MESSAGE_USER", {
                 addresseeID: body.addresseeID,
                 isPhoto: state.isLoadPhotoMessage
@@ -292,17 +285,16 @@ var loadPhotoStore = {
                 root: true
               }));
 
-            case 18:
+            case 16:
               messages = rootGetters["messageStore/getArrayMessages"];
               formData.append('dialogIDLast', messages[messages.length - 1].id);
 
-            case 20:
+            case 18:
               return _context.abrupt("return", new Promise(function (resolve, reject) {
                 _axios["default"].post('http://localhost:8000/upload_photo', formData, {
                   headers: {
                     'Content-Type': 'multipart/form-data'
                   },
-                  cancelToken: axiosSource.token,
                   onUploadProgress: function onUploadProgress(ProgressEvent) {
                     var progress = Math.round(ProgressEvent.loaded / ProgressEvent.total * 100) + "%";
                     commit("setProgressLoadPhoto", progress);
@@ -314,7 +306,25 @@ var loadPhotoStore = {
                   commit("setIsLoadPhotoMessage", false);
                   resolve(resp.data); // window.location.href = `/id${JSON.parse(getters.getUser.userID)}`;
                 })["catch"](function (err) {
+                  console.log(err);
+
                   if (_axios["default"].isCancel(err)) {
+                    //удаление пустого поста при отмене загрузки фотогрфий
+                    if (state.isLoadPhotoPost) {
+                      commit('postsMyPageStore/setModulePost', {
+                        task: 'remove',
+                        id: formData.get('postIDLast')
+                      }, {
+                        root: true
+                      });
+                      dispatch('postsMyPageStore/removePost', null, {
+                        root: true
+                      });
+                      commit('postsMyPageStore/setRemovePost', +formData.get('postIDLast'), {
+                        root: true
+                      });
+                    }
+
                     console.info("Загрузка фотографий была прервана");
                     return;
                   }
@@ -328,7 +338,7 @@ var loadPhotoStore = {
                 });
               }));
 
-            case 21:
+            case 19:
             case "end":
               return _context.stop();
           }
@@ -337,13 +347,11 @@ var loadPhotoStore = {
     },
     //остановка загрузки картиновк на сервер
     cancelLoadPhoto: function cancelLoadPhoto(_ref3) {
-      var state = _ref3.state,
-          commit = _ref3.commit;
-
-      if (state.request) {
-        state.request.cancel();
-      }
-
+      var commit = _ref3.commit,
+          dispatch = _ref3.dispatch;
+      dispatch('cancelLoadAxios/CANCEL_PENDING_REQUESTS', null, {
+        root: true
+      });
       commit("setIsModalLoadPhoto", false);
       commit("setProgressLoadPhoto", 0);
     },
@@ -511,10 +519,9 @@ var loadPhotoStore = {
                 });
                 commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                   root: true
-                });
-                commit("galleryStore/removeArrayFilterPhotos", getters.getIdPhoto, {
-                  root: true
-                });
+                }); // commit("galleryStore/removeArrayFilterPhotos", getters.getIdPhoto, {
+                //     root: true
+                // });
               }));
 
             case 31:

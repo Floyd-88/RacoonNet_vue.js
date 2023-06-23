@@ -39,8 +39,32 @@ class SocketioService {
     subscribeToNotice(cb) {
         if (!this.socket) return (true);
         this.socket.on('notice', (newNotice) => {
+            // console.log(newNotice)
             return cb(null, newNotice);
         });
+    }
+
+    //отправляем информацию на сервер о вошедшем на моя странице пользователе
+    sendUserID(id) {
+        if (this.socket) {
+            this.socket.emit('enterUserMyPage', id);
+        }
+    }
+
+    //получаем информацию о написанном посте для дальнейшей отправки всем кто находится на моей странице
+    subscribeUsersID(cb) {
+        if (!this.socket) return (true);
+        this.socket.on('enterUserMyPage', (status_post) => {
+            // console.log(body)
+            return cb(null, status_post);
+        });
+    }
+
+    //отправляем информацию о написаном посте на сервер для дальнейшей передачи этой информации всем кто в комнате
+    sendInfoNewPost(status_post) {
+        if (this.socket) {
+            this.socket.emit('newPost', status_post);
+        }
     }
 
     // прерываем соеденение

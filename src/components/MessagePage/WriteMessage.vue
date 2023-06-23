@@ -233,5 +233,12 @@ export default {
     height: 90%;
 }
 
+@media (max-width: 761px) {
+
+  .form_message {
+  width: 330px;
+}
+}
 
 </style>
+

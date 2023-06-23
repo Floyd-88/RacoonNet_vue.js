@@ -74,7 +74,6 @@ export const showFullPhotoStore = {
             const bool = body.bool;
             const index = body.elem;
             const id = body.id;
-
             commit("setIsModalFullSize", bool);
             commit("setIndexPhoto", index);
             commit('loadPhotoStore/setPhotoId', id, { root: true });

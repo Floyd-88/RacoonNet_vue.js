@@ -35,7 +35,8 @@ export const postsMyPageStore = {
         // getIsLoadPhotoPost: (state) => state.isLoadPhotoPost
         getPhotosPostsArray: (state) => state.photosPostsArray,
 
-        getIsNotRepeatAddPost: (state) => state.isNotRepeatAddPost
+        getIsNotRepeatAddPost: (state) => state.isNotRepeatAddPost,
+        getCountPosts: (state) => state.countPosts
     },
 
     mutations: {
@@ -155,7 +156,6 @@ export const postsMyPageStore = {
                         reject(err)
                     })
             })
-
         },
 
         // добавление нового поста на мою страницу
@@ -188,12 +188,18 @@ export const postsMyPageStore = {
 
                     await commit("setAddPosts", response.data);
                     await commit("setCountPosts", 1);
-
                     await commit("setIsNotRepeatAddPost", true);
+
                     //отправляем уведомление адресату без перезагрузки страницы
                     SocketioService.sendNotice(newPost.id, cb => {
                         console.log(cb);
                     });
+
+                    //отправляем уведомление всем кто находится в комнате(MyPage)
+                    SocketioService.sendInfoNewPost("add post", cb => {
+                        console.log(cb);
+                    });
+
                 })
                 .catch(function(error) {
                     commit("setIsNotRepeatAddPost", true);
@@ -234,7 +240,7 @@ export const postsMyPageStore = {
             commit,
             state
         }) {
-            const [post] = state.posts.filter(post => post.id === state.id);
+            const [post] = state.posts.filter(post => post.id == state.id);
             commit("setRemovePost", state.id);
             commit("setCloseModulePost");
             let paramsBody = {
@@ -249,6 +255,11 @@ export const postsMyPageStore = {
                 .then(function(response) {
                     console.log(response);
                     commit("setCountPostDel");
+
+                    //отправляем уведомление всем кто находится в комнате(MyPage)
+                    SocketioService.sendInfoNewPost("delete post", cb => {
+                        console.log(cb);
+                    });
                 })
                 .catch(function(error) {
                     console.log(error)

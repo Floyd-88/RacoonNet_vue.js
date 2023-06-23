@@ -106,6 +106,7 @@ export default {
     SocketioService.setupSocketConnection();
     console.log("connected");
 
+    //получаем сообщение
     SocketioService.subscribeToMessages((err, data) => {
       // if (err) return console.log(err)
       this.setArrayMessages([...this.getArrayMessages, data]);
@@ -117,16 +118,33 @@ export default {
       } else {
         this.setIsNewMessageNotify(true);
       }
-
       if(err) {
         console.log(err)
       }
     });
 
+    //изменяем количество подгружаемых постов при скроллинге
+    SocketioService.subscribeUsersID((err, status_post) => {
+      if(status_post === 'add post') {
+        this.setCountPosts(1);
+      } else if(status_post === 'delete post') {
+        this.setCountPostDel();
+      }
+      if(err) {
+        console.log(err)
+      }
+    });
+
+    //получаем уведомления
     SocketioService.subscribeToNotice((err, data) => {
         if(data.length > 0) {
           if(data[0].text_notice !== "Пользователь удален из ваших друзей") {
             this.setNoticeArray([...data]);
+
+          //   if(data[0].text_notice === "написал что то на Вашей стене" && this.getCountPosts !== 0) {
+          //   console.log(data[0])
+          //   this.setCountPosts(1);
+          // } 
           } 
         this.changeTextBTN(data[0])
       }
@@ -156,7 +174,9 @@ export default {
       setUsersMyFriends: "friendsStore/setUsersMyFriends",
       setNoticeArray: "noticeStore/setNoticeArray",
       // setCancelTokens: "cancelLoadAxios/setCancelTokens",
-      changeTextBTN: "friendsStore/changeTextBTN"
+      changeTextBTN: "friendsStore/changeTextBTN",
+      setCountPosts: "postsMyPageStore/setCountPosts",
+      setCountPostDel: "postsMyPageStore/setCountPostDel"
 
     }),
 
@@ -187,7 +207,8 @@ export default {
       getisModalFeedBack: "feedBackStore/getisModalFeedBack",
       getCountFriends: "friendsStore/getCountFriends",
       getNoticeArray: "noticeStore/getNoticeArray",
-      getSearchUsersFriends: "friendsStore/getSearchUsersFriends"
+      getSearchUsersFriends: "friendsStore/getSearchUsersFriends",
+      getCountPosts: "postsMyPageStore/getCountPosts"
     })
   },
 

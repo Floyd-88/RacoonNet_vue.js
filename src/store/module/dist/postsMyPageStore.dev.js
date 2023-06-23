@@ -89,6 +89,9 @@ var postsMyPageStore = {
     },
     getIsNotRepeatAddPost: function getIsNotRepeatAddPost(state) {
       return state.isNotRepeatAddPost;
+    },
+    getCountPosts: function getCountPosts(state) {
+      return state.countPosts;
     }
   },
   mutations: {
@@ -250,9 +253,14 @@ var postsMyPageStore = {
                         //отправляем уведомление адресату без перезагрузки страницы
                         _socketio["default"].sendNotice(newPost.id, function (cb) {
                           console.log(cb);
+                        }); //отправляем уведомление всем кто находится в комнате(MyPage)
+
+
+                        _socketio["default"].sendInfoNewPost("add post", function (cb) {
+                          console.log(cb);
                         });
 
-                      case 7:
+                      case 8:
                       case "end":
                         return _context2.stop();
                     }
@@ -320,7 +328,7 @@ var postsMyPageStore = {
             case 0:
               getters = _ref5.getters, commit = _ref5.commit, state = _ref5.state;
               _state$posts$filter3 = state.posts.filter(function (post) {
-                return post.id === state.id;
+                return post.id == state.id;
               }), _state$posts$filter4 = _slicedToArray(_state$posts$filter3, 1), post = _state$posts$filter4[0];
               commit("setRemovePost", state.id);
               commit("setCloseModulePost");
@@ -335,7 +343,11 @@ var postsMyPageStore = {
                 data: paramsBody
               }).then(function (response) {
                 console.log(response);
-                commit("setCountPostDel");
+                commit("setCountPostDel"); //отправляем уведомление всем кто находится в комнате(MyPage)
+
+                _socketio["default"].sendInfoNewPost("delete post", function (cb) {
+                  console.log(cb);
+                });
               })["catch"](function (error) {
                 console.log(error);
               }));

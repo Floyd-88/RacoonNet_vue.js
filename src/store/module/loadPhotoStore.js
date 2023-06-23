@@ -23,7 +23,6 @@ export const loadPhotoStore = {
 
         avaPhoto: "",
         progressLoadPhoto: 0,
-        request: null, //прерывание запроса
 
         likesPhoto: "", //количество лайков фото
         isLoadPhotoPost: "", //загрузка фотографий в пост
@@ -210,12 +209,6 @@ export const loadPhotoStore = {
             rootGetters,
             dispatch
         }, body) {
-            //остановка загрузки картинок
-            const axiosSource = axios.CancelToken.source();
-            state.request = {
-                cancel: axiosSource.cancel
-            };
-
             //сокрытие кнопки загрузить картинки после ее нажатия
             body.event.target.style.opacity = '0'
 
@@ -250,8 +243,6 @@ export const loadPhotoStore = {
                             headers: {
                                 'Content-Type': 'multipart/form-data'
                             },
-
-                            cancelToken: axiosSource.token,
                             onUploadProgress: ProgressEvent => {
                                 let progress =
                                     Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) +
@@ -265,13 +256,23 @@ export const loadPhotoStore = {
                         commit("setIsLoadPhotoPost", false);
                         commit("setIsLoadPhotoMessage", false);
 
-
-
                         resolve(resp.data);
                         // window.location.href = `/id${JSON.parse(getters.getUser.userID)}`;
                     })
                     .catch((err) => {
+                        console.log(err)
                         if (axios.isCancel(err)) {
+
+                            //удаление пустого поста при отмене загрузки фотогрфий
+                            if (state.isLoadPhotoPost) {
+                                commit('postsMyPageStore/setModulePost', { task: 'remove', id: formData.get('postIDLast') }, {
+                                    root: true
+                                });
+                                dispatch('postsMyPageStore/removePost', null, { root: true });
+                                commit('postsMyPageStore/setRemovePost', +formData.get('postIDLast'), {
+                                    root: true
+                                });
+                            }
                             console.info("Загрузка фотографий была прервана");
                             return
                         }
@@ -288,13 +289,10 @@ export const loadPhotoStore = {
 
         //остановка загрузки картиновк на сервер
         cancelLoadPhoto({
-            state,
-            commit
+            commit,
+            dispatch
         }) {
-
-            if (state.request) {
-                state.request.cancel();
-            }
+            dispatch('cancelLoadAxios/CANCEL_PENDING_REQUESTS', null, { root: true })
             commit("setIsModalLoadPhoto", false)
             commit("setProgressLoadPhoto", 0)
         },
@@ -405,9 +403,9 @@ export const loadPhotoStore = {
                         commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                             root: true
                         });
-                        commit("galleryStore/removeArrayFilterPhotos", getters.getIdPhoto, {
-                            root: true
-                        });
+                        // commit("galleryStore/removeArrayFilterPhotos", getters.getIdPhoto, {
+                        //     root: true
+                        // });
                     });
                 } catch (err) {
                     console.log(err);

@@ -148,7 +148,7 @@ export default {
 
             if (this.getPostID === "" && this.getMessageID === "") {
 
-                if (this.getArrayFilterPhotos.length > 0 || this.getCheckedCat) {
+                if ((this.getArrayFilterPhotos.length > 0 || this.getCheckedCat) && this.$route.path === '/gallery') {
                     this.setCommentsPhotoArray([])
 
                     if (this.getIndexPhoto === -1) {
@@ -170,6 +170,8 @@ export default {
                     }
 
                 } else if (this.getAllPhotosMyPage.length > 0) {
+                    console.log(2)
+
                     this.setCommentsPhotoArray([])
 
                     if (this.getIndexPhoto === -1) {

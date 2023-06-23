@@ -593,7 +593,7 @@ export default {
   display: flex;
   justify-content: center;
   height: 45px;
-  margin: 15px 5px 15px 5px;
+  margin: 10px 5px 15px 5px;
 }
 
 .form_register_btn {

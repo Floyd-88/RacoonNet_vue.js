@@ -946,9 +946,8 @@ router.get("/load_comments_one_post.js", authenticateJWT, function(req, res) {
 //ПОДГРУЗКА КОММЕНТАРИЕВ К КОММЕНТАРИЮ
 router.get("/load_comments_comment.js", authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
-
     commentsPost.load_comments_comment_DB([req.query.userID, req.query.postID], (err, comments) => {
-        if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
+        if (err) return res.status(500).send('Во время загрузки комментариев к комментарию произошла ошибка' + " " + err);
         // if (!comments) return res.status(404).send('Комментарии отстутствуют' + " " + err);
         res.status(200).json(comments);
     })
@@ -959,7 +958,7 @@ router.get("/load_comments_comment_one_post.js", authenticateJWT, function(req, 
     tokenID = req.tokenID; //id из сохраненного токена 
 
     commentsPost.load_comments_comment_one_DB([req.query.postID], (err, comments) => {
-        if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
+        if (err) return res.status(500).send('Во время загрузки комментариев к комментарию одного поста произошла ошибка' + " " + err);
         if (!comments) return res.status(404).send('Комментарии отстутствуют' + " " + err);
 
         res.status(200).json(comments);
@@ -2305,7 +2304,6 @@ io.on("connection", (socket) => {
 
     //получаем сообщение
     socket.on("message", (newMessage) => {
-
         try {
             //отправляем сообщение всем кто находится в комнате кроме отправителя
             socket.to(Number(newMessage.destinationID)).emit("message", newMessage);
@@ -2314,6 +2312,26 @@ io.on("connection", (socket) => {
             // io.to(roomName).emit("message", outgoingMessage);
         } catch (error) {
             (newMessage)({
+                status: '!OK',
+                error
+            })
+        }
+    });
+
+
+    //получаем информацию обо всех кто открым мою страницу
+    socket.on('enterUserMyPage', function(id) {
+        let room = `room${id}`;
+        socket.join(room);
+        try {
+            //получаем информацию о том что кто то написал новый пост
+            socket.on("newPost", (status_post) => {
+
+                //отправляем информацию о написанном посте всем кто находится на моей странице
+                socket.to(room).emit("enterUserMyPage", status_post);
+            });
+        } catch (error) {
+            (room)({
                 status: '!OK',
                 error
             })
@@ -2332,14 +2350,14 @@ io.on("connection", (socket) => {
 
                     //отправляем сообщение всем кто находится в комнате кроме отправителя
                     socket.to(Number(addresseeID)).emit("notice", newNotice);
-                    // res.status(200).json(newNotice);
                 });
 
                 // отправляем сообщение всем кто находится в комнате включая отправителя
                 // io.to(roomName).emit("message", outgoingMessage);
             } else {
                 let newNotice = [addresseeID]
-                    //отправляем сообщение всем кто находится в комнате кроме отправителя
+
+                //отправляем сообщение всем кто находится в комнате кроме отправителя
                 socket.to(Number(addresseeID.id)).emit("notice", newNotice);
             }
         } catch (error) {
@@ -2348,9 +2366,8 @@ io.on("connection", (socket) => {
                 error
             })
         }
-
-
     });
+
 
 });
 

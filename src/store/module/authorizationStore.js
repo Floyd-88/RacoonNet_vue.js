@@ -1,5 +1,5 @@
 import axios from "axios";
-// import SocketioService from "../../services/socketio.service";
+import SocketioService from "../../services/socketio.service";
 
 export const authorizationStore = {
     state: () => ({
@@ -181,6 +181,12 @@ export const authorizationStore = {
                                 root: true
                             });
                             commit("postsMyPageStore/setPostText", "", { root: true })
+
+                            //при открытии профиля сохраняем информацию об id в комнате
+                            SocketioService.sendUserID(id.id, cb => {
+                                console.log(cb);
+                            });
+
                             resolve(resp);
                         }
                     })
