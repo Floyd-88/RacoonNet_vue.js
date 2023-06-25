@@ -16,21 +16,21 @@
           </p>
           <div class="wrapper_post_redaction_btn">
             <div class="btn_post" v-show="post.isPostDel">
-            <UIbtn class="redaction_post_btn" v-if="getUser.enterUser == post.authorPost"
-              @click="setModulePost({ task: 'edit', id: post.id, text: post.postText })">
-              Редактировать
-            </UIbtn>
+              <UIbtn class="redaction_post_btn" v-if="getUser.enterUser == post.authorPost"
+                @click="setModulePost({ task: 'edit', id: post.id, text: post.postText })">
+                Редактировать
+              </UIbtn>
 
-            <UIbtn class="delete_post_btn" v-if="getUser.is_editProfile || getUser.enterUser == post.authorPost"
-              @click="setModulePost({ task: 'remove', id: post.id })">
-              Удалить
-            </UIbtn>
+              <UIbtn class="delete_post_btn" v-if="getUser.is_editProfile || getUser.enterUser == post.authorPost"
+                @click="setModulePost({ task: 'remove', id: post.id })">
+                Удалить
+              </UIbtn>
+            </div>
+            <div>
+              <p class="post_show_btn" v-show="post.isShowBtn" @click="btnPost(post)">...</p>
+            </div>
           </div>
-          <div>
-            <p class="post_show_btn" v-show="post.isShowBtn" @click="btnPost(post)">...</p>
-          </div>
-          </div>
-          
+
         </div>
 
         <div class="wrapper_data_post">
@@ -61,46 +61,29 @@
     <!-- фотографии к посту -->
     <div class="wrapper_block_photo_post">
       <div class="wrapper_block_photo_post_first">
-          <template 
-            v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(0, 1)" 
-            :key="index">
-          <div class="wrapper_photo_post size_photo_1" 
-            v-if="post.id === photo.id">
-              <img class="photo_post" 
-              :src="myPhotos(photo)"
-                :alt="'photo' + photo.id"
-                @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">             
+        <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(0, 1)" :key="index">
+          <div class="wrapper_photo_post size_photo_1" v-if="post.id === photo.id">
+            <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
+              @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
           </div>
         </template>
-        </div>
-        
-        <div class="wrapper_block_photo_post_another" v-if="getPhotosPostsArray.filter(i => i.id === post.id).slice(1).length
-           > 0">
-          <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(1)" 
-            :key="index">
-            <div class="wrapper_photo_post photo_another" 
-            v-if="post.id === photo.id">
-              <img class="photo_post" 
-              :src="myPhotos(photo)"
-                :alt="'photo' + photo.id"
-                @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index+1, id: photo.id, postID: post.id })">             
-            </div>
-          </template>
-        </div>
       </div>
-    <!-- <div class="wrapper_block_photo_post">
-      <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id)" :key="index">
-        <div class="wrapper_photo_post" v-if="post.id === photo.id" :class="{ 'size_photo_1': index === 0 }">
-          <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
-            @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
-        </div>
-      </template>
-    </div> -->
+
+      <div class="wrapper_block_photo_post_another" v-if="getPhotosPostsArray.filter(i => i.id === post.id).slice(1).length
+        > 0">
+        <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(1)" :key="index">
+          <div class="wrapper_photo_post photo_another" v-if="post.id === photo.id">
+            <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
+              @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index + 1, id: photo.id, postID: post.id })">
+          </div>
+        </template>
+      </div>
+    </div>
 
     <!-- комментарии к посту -->
     <CommentsPost :post="post" />
     <!-- ------------------ -->
-    
+
   </div>
 
   <template v-if="getModulePost === 'edit'">
@@ -193,7 +176,7 @@ export default {
     myPhotos(photo) {
       try {
         return require(`../../assets/photo/${photo.photo_name}`);
-      } catch(err) {
+      } catch (err) {
         console.log(err)
         return require(`../../assets/ava/ava_1.jpg`);
       }
@@ -322,7 +305,7 @@ export default {
   cursor: pointer;
   display: inline-block;
   font-size: 14px;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .more_text_post:hover {
@@ -393,38 +376,38 @@ export default {
 }
 
 .wrapper_block_photo_post {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    max-height: 450px;
-    width: 100%;
-    padding: 2% 2% 0 2%;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  max-height: 450px;
+  width: 100%;
+  padding: 2% 2% 0 2%;
 }
 
 .wrapper_block_photo_post_first {
-    display: flex;
-    width: 75%;
-    /* flex: 1.5; */
-    /* background-color: rgb(0 0 0 / 10%); */
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  width: 75%;
+  /* flex: 1.5; */
+  /* background-color: rgb(0 0 0 / 10%); */
+  align-items: center;
+  justify-content: center;
 }
 
 .wrapper_block_photo_post_another {
-    display: flex;
-    flex-direction: column;
-    width: 22%;
-    /* flex: 1; */
-    /* background-color: rgb(0 0 0 / 10%); */
-    margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 22%;
+  /* flex: 1; */
+  /* background-color: rgb(0 0 0 / 10%); */
+  margin-left: 10px;
 }
 
 .wrapper_photo_post {
   height: -webkit-fill-available;
-    /* margin: 10px; */
-    padding-bottom: 10px;
-    /* border-radius: 8px; */
-    overflow: hidden;
+  /* margin: 10px; */
+  padding-bottom: 10px;
+  /* border-radius: 8px; */
+  overflow: hidden;
 }
 
 .photo_post {
@@ -450,33 +433,36 @@ export default {
 /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
-  .text_post{
+  .text_post {
     font-size: 13px;
     line-height: 17px;
-}
-.ava_posts {
+  }
+
+  .ava_posts {
     width: 50px;
     border-radius: 100%;
-}
-.wrapper_post_user {
+  }
+
+  .wrapper_post_user {
     padding-top: 20px;
-}
+  }
 
-.size_photo_1 {
+  .size_photo_1 {
     max-height: 350px;
-}
-.btn_post{
+  }
+
+  .btn_post {
     flex-direction: column;
-}
+  }
 
-.delete_post_btn {
+  .delete_post_btn {
     width: auto;
-}
+  }
 
-.redaction_post_btn {
+  .redaction_post_btn {
     font-size: 11px;
     margin-bottom: 10px;
-}
+  }
 
 
 }

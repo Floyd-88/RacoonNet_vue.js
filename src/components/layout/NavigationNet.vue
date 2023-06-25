@@ -75,7 +75,8 @@ export default {
       setArrayDialogs: "messageStore/setArrayDialogs",
       setArrayMessages: "messageStore/setArrayMessages",
       setTitleFriend: "friendsStore/setTitleFriend",
-      setIsShowMenuClose: "authorizationStore/setIsShowMenuClose"
+      setIsShowMenuClose: "authorizationStore/setIsShowMenuClose",
+      setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
     }),
 
     goMyPage() {
@@ -87,9 +88,21 @@ export default {
     },
 
     goNews() {
-      this.setUserEditProfile(false)
+      this.setUserEditProfile(false);
+      this.setPhotosPostsArray([]);
       this.$router.push('/news');
     },
+
+    goMyGallery() {
+      this.$router.push('/gallery');
+      this.GET_PHOTO_NOT_FILTER();
+    },
+
+    openFeedBack() {
+     this.setIsModalFeedBack(true);
+     this.setIsShowMenuClose();
+    },
+
     async goMyFriend() {
       this.blockBtnFriends = false;
       this.setUsersMyFriends([]);
@@ -132,16 +145,6 @@ export default {
         });
         this.blockBtnMessage = true;
       this.$router.push('/message');
-    },
-
-    goMyGallery() {
-      this.$router.push('/gallery');
-      this.GET_PHOTO_NOT_FILTER();
-    },
-
-    openFeedBack() {
-     this.setIsModalFeedBack(true);
-     this.setIsShowMenuClose();
     },
 
     //проверяем размер экрана

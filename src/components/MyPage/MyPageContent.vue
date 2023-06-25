@@ -37,7 +37,7 @@
             </div>
 
             <div class="wrapper_not_friends" >
-                <p class="not_friends" v-if="getIsNotFriends">Ваш список друзей пуст!</p>
+                <p class="not_friends" v-if="getIsNotFriends && getUsersMyFriends.length === 0">Ваш список друзей пуст!</p>
             </div>
         </div>
     </MyFriendsBlock>

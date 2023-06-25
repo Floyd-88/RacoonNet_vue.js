@@ -18,6 +18,7 @@ class PostsDB {
             authorPost integer,
             likes integer default 0,
             photos varchar(10) default 'false',
+            delete_post int(1) default 0,
             CONSTRAINT FK_Posts_Users FOREIGN KEY (authorPost) REFERENCES users (userID) ON DELETE CASCADE)`;
         this.connection.execute(sql);
     }
@@ -139,7 +140,7 @@ class PostsDB {
         });
     }
 
-    // загрузка одного пота из базы данных
+    // загрузка одного поста из базы данных
     load_one_post_DB(postID, callback) {
         return this.connection.execute(`SELECT 
             posts.id, 

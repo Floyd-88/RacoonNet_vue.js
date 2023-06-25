@@ -44,7 +44,7 @@ class SocketioService {
         });
     }
 
-    //отправляем информацию на сервер о вошедшем на моя странице пользователе
+    //отправляем информацию на сервер о вошедшем на мою странице пользователе
     sendUserID(id) {
         if (this.socket) {
             this.socket.emit('enterUserMyPage', id);
@@ -71,6 +71,12 @@ class SocketioService {
     disconnect() {
         if (this.socket) {
             this.socket.disconnect();
+        }
+    }
+
+    exitRoom(id) {
+        if (this.socket) {
+            this.socket.emit('exitRoom', id);
         }
     }
 }

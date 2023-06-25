@@ -77,7 +77,7 @@
                                     :key="index">
                                     <div class="wrapper_photo_post photo_another" v-if="message.id === photo.id">
                                         <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
-                                            @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index, id: photo.id, messageID: message.id })"
+                                            @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index + 1, id: photo.id, messageID: message.id })"
                                             @load="scrollToElement()">
                                     </div>
                                 </template>

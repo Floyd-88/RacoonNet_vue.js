@@ -1906,7 +1906,7 @@ io.on("connection", function (socket) {
         error: error
       });
     }
-  }); //получаем информацию обо всех кто открым мою страницу
+  }); //получаем информацию обо всех кто открыл мою страницу
 
   socket.on('enterUserMyPage', function (id) {
     var room = "room".concat(id);
@@ -1917,6 +1917,10 @@ io.on("connection", function (socket) {
       socket.on("newPost", function (status_post) {
         //отправляем информацию о написанном посте всем кто находится на моей странице
         socket.to(room).emit("enterUserMyPage", status_post);
+      });
+      socket.on('exitRoom', function (id) {
+        socket.leave(room);
+        console.log(room);
       });
     } catch (error) {
       room({

@@ -2319,17 +2319,22 @@ io.on("connection", (socket) => {
     });
 
 
-    //получаем информацию обо всех кто открым мою страницу
+    //получаем информацию обо всех кто открыл мою страницу
     socket.on('enterUserMyPage', function(id) {
         let room = `room${id}`;
         socket.join(room);
         try {
             //получаем информацию о том что кто то написал новый пост
             socket.on("newPost", (status_post) => {
-
                 //отправляем информацию о написанном посте всем кто находится на моей странице
                 socket.to(room).emit("enterUserMyPage", status_post);
             });
+
+            socket.on('exitRoom', function(id) {
+                socket.leave(room);
+                console.log(room);
+            })
+
         } catch (error) {
             (room)({
                 status: '!OK',

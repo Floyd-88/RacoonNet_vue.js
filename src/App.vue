@@ -125,6 +125,7 @@ export default {
 
     //изменяем количество подгружаемых постов при скроллинге
     SocketioService.subscribeUsersID((err, status_post) => {
+      console.log(status_post)
       if(status_post === 'add post') {
         this.setCountPosts(1);
       } else if(status_post === 'delete post') {

@@ -17,13 +17,24 @@
 
                                     <!-- фотографии к посту -->
                                     <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
+                                        <div class="wrapper_block_photo_post_first">
+                                            <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
+                                                <div class="wrapper_photo_post size_photo_1">
+                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                        :alt="'photo' + photo.id">
+                                                </div>
+                                            </template>
+                                        </div>
 
-                                        <template v-for="(photo, index) in getPhotosPostNotice" :key="photo.id">
-                                            <div class="wrapper_photo_post" :class="{ 'size_photo_1': index === 0 }">
-                                                <img class="photo_post" :src="myPhotos(photo.photo_name)"
-                                                    :alt="'photo' + photo.id">
-                                            </div>
-                                        </template>
+                                        <div class="wrapper_block_photo_post_another"
+                                            v-if="getPhotosPostNotice.slice(1).length > 0">
+                                            <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
+                                                <div class="wrapper_photo_post photo_another">
+                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                        :alt="'photo' + photo.id">
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
                                     <!-- ------ -->
 
@@ -71,7 +82,8 @@
                                             </p>
                                         </div>
                                         <div v-else>
-                                            <p class="text_post text_post_comment" v-if="!getSelectNotice.isFullTextComment">
+                                            <p class="text_post text_post_comment"
+                                                v-if="!getSelectNotice.isFullTextComment">
                                                 {{ postText(getSelectNotice.comment_post_text).slice(0, 200) }}
                                             </p>
                                             <p class="text_post text_post_comment" v-else>
@@ -111,7 +123,8 @@
                                                         </p>
                                                     </div>
                                                     <div v-else>
-                                                        <p class="text_post text_post_under_comment" v-if="!getSelectNotice.isFullTextUnderComment">
+                                                        <p class="text_post text_post_under_comment"
+                                                            v-if="!getSelectNotice.isFullTextUnderComment">
                                                             {{ postText(getSelectNotice.comment_comment_text).slice(0,
                                                                 200) }}
                                                         </p>
@@ -156,13 +169,24 @@
 
                                     <!-- фотографии к посту -->
                                     <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
+                                        <div class="wrapper_block_photo_post_first">
+                                            <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
+                                                <div class="wrapper_photo_post size_photo_1">
+                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                        :alt="'photo' + photo.id">
+                                                </div>
+                                            </template>
+                                        </div>
 
-                                        <template v-for="(photo, index) in getPhotosPostNotice" :key="photo.id">
-                                            <div class="wrapper_photo_post" :class="{ 'size_photo_1': index === 0 }">
-                                                <img class="photo_post" :src="myPhotos(photo.photo_name)"
-                                                    :alt="'photo' + photo.id">
-                                            </div>
-                                        </template>
+                                        <div class="wrapper_block_photo_post_another"
+                                            v-if="getPhotosPostNotice.slice(1).length > 0">
+                                            <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
+                                                <div class="wrapper_photo_post photo_another">
+                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                        :alt="'photo' + photo.id">
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
 
                                     <!-- пост -->
@@ -209,7 +233,8 @@
                                             </p>
                                         </div>
                                         <div v-else>
-                                            <p class="text_post text_post_comment" v-if="!getSelectNotice.isFullTextComment">
+                                            <p class="text_post text_post_comment"
+                                                v-if="!getSelectNotice.isFullTextComment">
                                                 {{ postText(getSelectNotice.comment_post_text).slice(0, 200) }}
                                             </p>
                                             <p class="text_post text_post_comment" v-else>
@@ -252,13 +277,25 @@
 
                                 <!-- фотографии к посту -->
                                 <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
-                                    <template v-for="(photo, index) in getPhotosPostNotice" :key="photo.id">
-                                        <div class="wrapper_photo_post" :class="{ 'size_photo_1': index === 0 }">
-                                            <img class="photo_post" :src="myPhotos(photo.photo_name)"
-                                                :alt="'photo' + photo.id">
+                                        <div class="wrapper_block_photo_post_first">
+                                            <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
+                                                <div class="wrapper_photo_post size_photo_1">
+                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                        :alt="'photo' + photo.id">
+                                                </div>
+                                            </template>
                                         </div>
-                                    </template>
-                                </div>
+
+                                        <div class="wrapper_block_photo_post_another"
+                                            v-if="getPhotosPostNotice.slice(1).length > 0">
+                                            <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
+                                                <div class="wrapper_photo_post photo_another">
+                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                        :alt="'photo' + photo.id">
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
 
                                 <div class="wrapper_text_post" v-if="getSelectNotice.postText.length < 400">
                                     <div>
@@ -295,13 +332,25 @@
 
                                 <!-- фотографии к посту -->
                                 <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
-                                    <template v-for="(photo, index) in getPhotosPostNotice" :key="photo.id">
-                                        <div class="wrapper_photo_post" :class="{ 'size_photo_1': index === 0 }">
-                                            <img class="photo_post" :src="myPhotos(photo.photo_name)"
-                                                :alt="'photo' + photo.id">
+                                        <div class="wrapper_block_photo_post_first">
+                                            <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
+                                                <div class="wrapper_photo_post size_photo_1">
+                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                        :alt="'photo' + photo.id">
+                                                </div>
+                                            </template>
                                         </div>
-                                    </template>
-                                </div>
+
+                                        <div class="wrapper_block_photo_post_another"
+                                            v-if="getPhotosPostNotice.slice(1).length > 0">
+                                            <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
+                                                <div class="wrapper_photo_post photo_another">
+                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                        :alt="'photo' + photo.id">
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
 
                                 <div class="wrapper_text_post" v-if="getSelectNotice.postText.length < 400">
                                     <div>
@@ -692,30 +741,58 @@ export default {
 
 .wrapper_block_photo_post {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: row;
+    max-height: 450px;
+    width: 100%;
+    padding: 2% 2% 0 2%;
+}
+
+.wrapper_block_photo_post_first {
+    display: flex;
+    width: 75%;
+    /* flex: 1.5; */
+    /* background-color: rgb(0 0 0 / 10%); */
+    align-items: center;
     justify-content: center;
 }
 
+.wrapper_block_photo_post_another {
+    display: flex;
+    flex-direction: column;
+    width: 22%;
+    /* flex: 1; */
+    /* background-color: rgb(0 0 0 / 10%); */
+    margin-left: 10px;
+}
+
 .wrapper_photo_post {
-    width: 20%;
-    height: 150px;
-    margin: 10px;
-    border-radius: 8px;
+    height: -webkit-fill-available;
+    /* margin: 10px; */
+    padding-bottom: 10px;
+    /* border-radius: 8px; */
     overflow: hidden;
 }
 
 .photo_post {
     width: 100%;
-    /* height: 240px; */
-    height: inherit;
+    height: 100%;
     -o-object-fit: cover;
     object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 .size_photo_1 {
     width: 100%;
     height: auto;
     max-height: 450px;
+}
+
+.size_photo_1 {
+    width: 100%;
+    height: 100%;
+    /* max-height: 450px; */
 }
 
 .wrapper_message_user {
@@ -814,38 +891,38 @@ wrapper_under_comment {
 
 @media (max-width: 761px) {
 
-.wrapper_post {
-    flex-direction: column;
-}
+    .wrapper_post {
+        flex-direction: column;
+    }
 
-.wrapper_ava_posts {
-    margin: 5px;
-    display: flex;
-    justify-content: center;
-}
+    .wrapper_ava_posts {
+        margin: 5px;
+        display: flex;
+        justify-content: center;
+    }
 
-.wrapper_post_name {
-    display: flex;
-    justify-content: center;
-    margin-top: 5px;
-}
+    .wrapper_post_name {
+        display: flex;
+        justify-content: center;
+        margin-top: 5px;
+    }
 
-.wrapper_post_user {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-left: 10px;
-    padding-right: 10px;
-}
+    .wrapper_post_user {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
 
-.wrapper_all_messages_users {
-    max-width: 350px;
-    min-width: 350px;
-}
+    .wrapper_all_messages_users {
+        max-width: 350px;
+        min-width: 350px;
+    }
 
-.wrapper_text_post{
-    padding-right: 0px;
-    padding-left: 0px;
-}
+    .wrapper_text_post {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
 }
 </style>

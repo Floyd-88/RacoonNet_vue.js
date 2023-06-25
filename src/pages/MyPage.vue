@@ -1,72 +1,68 @@
 <template>
-
   <NavigationNet v-if="isLoggedIn" />
   <NavigationNetEnter v-else />
 
   <template v-if="getUser.delete === 0">
     <div class="wrapper_main">
-    <div class="main">
-      <!-- модальное окно для редактирования профиля -->
-      <template v-if="getModulEditProfile">
-        <UImodal>
-          <EditProfile/>
-        </UImodal>
-      </template>
+      <div class="main">
+        <!-- модальное окно для редактирования профиля -->
+        <template v-if="getModulEditProfile">
+          <UImodal>
+            <EditProfile />
+          </UImodal>
+        </template>
 
-      <!-- модальное окно для написания сообщения -->
-      <template v-if="getModalWriteMessage && $route.params.id">
-        <UImodal>
-          <WriteMessage :user="{
-            name: getUser.name,
-            surname: getUser.surname,
-            ava: getUser.ava,
-            userID: getUser.userID
-          }" />
-        </UImodal>
-      </template>
+        <!-- модальное окно для написания сообщения -->
+        <template v-if="getModalWriteMessage && $route.params.id">
+          <UImodal>
+            <WriteMessage :user="{
+                name: getUser.name,
+                surname: getUser.surname,
+                ava: getUser.ava,
+                userID: getUser.userID
+              }" />
+          </UImodal>
+        </template>
 
-      <UserInfo />
+        <UserInfo />
 
-      <div v-if="getUser.enterUser" class="wrapper_myPage">
-        <MyPageContent />
+        <div v-if="getUser.enterUser" class="wrapper_myPage">
+          <MyPageContent />
+        </div>
+        <div v-if="!getUser.enterUser" class="wrapper_title_warning_auth">
+          <h2 class="title_warning_auth">Для просмотра контента страницы Вам необходимо авторизоваться</h2>
+        </div>
+
       </div>
-      <div v-if="!getUser.enterUser" class="wrapper_title_warning_auth">
-        <h2 class="title_warning_auth">Для просмотра контента страницы Вам необходимо авторизоваться</h2>
-      </div>
-
     </div>
-  </div>
   </template>
-  <template v-else-if = "getUser.delete === 1">
+  <template v-else-if="getUser.delete === 1">
     <div class="wrapper_delete_user">
       <p>Профиль пользователя был удален</p>
     </div>
   </template>
- 
 </template>
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import EditProfile from "@/components/MyPage/EditProfile";
 import MyPageContent from "@/components/MyPage/MyPageContent.vue";
-
-// import SocketioService from "../services/socketio.service";
-
+import SocketioService from "../services/socketio.service"
 
 export default {
   name: "MyPage",
   components: { EditProfile, MyPageContent },
 
   created() {
-        //вызываем метод для отправки сообщения всем участникам комнаты
-        // SocketioService.setupSocketConnection();
-        // console.log("connected")
+    //вызываем метод для отправки сообщения всем участникам комнаты
+    // SocketioService.setupSocketConnection();
+    // console.log("connected")
 
-        // SocketioService.subscribeToMessages((err, data) => {
-        //     if (err) return console.log(err)
-        //     this.setArrayMessages([...this.getArrayMessages, data])
-        //     // console.log(this.getArrayMessages)
-        // });
-  }, 
+    // SocketioService.subscribeToMessages((err, data) => {
+    //     if (err) return console.log(err)
+    //     this.setArrayMessages([...this.getArrayMessages, data])
+    //     // console.log(this.getArrayMessages)
+    // });
+  },
 
   mounted() {
     this.loadAllPhotos(this.$route.params.id);
@@ -77,6 +73,14 @@ export default {
     // this.LOAD_DIALOGS();
   },
 
+  beforeUnmount() {
+    // SocketioService.disconnect();
+    SocketioService.exitRoom(this.getUser.userID, cb => {
+      console.log(cb);
+    });
+    console.log('покинул страницу');
+  },
+
   methods: {
     ...mapActions({
       loadAllPhotos: "loadPhotoStore/loadAllPhotos",
@@ -85,11 +89,11 @@ export default {
     }),
 
     ...mapMutations({
-    setPosts: "postsMyPageStore/setPosts",
-    setCountPostsNull: "postsMyPageStore/setCountPostsNull",
-    setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
-    // setArrayMessages: "messageStore/setArrayMessages"
-  })
+      setPosts: "postsMyPageStore/setPosts",
+      setCountPostsNull: "postsMyPageStore/setCountPostsNull",
+      setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
+      // setArrayMessages: "messageStore/setArrayMessages"
+    })
 
   },
 
@@ -171,7 +175,7 @@ export default {
   border-bottom: 1px solid black;
   padding-bottom: 10px;
   font-family: Russo One, fantasy, sans-serif;
-  
+
 }
 
 .title_warning_auth {
@@ -179,54 +183,54 @@ export default {
   font-weight: 400;
 }
 
-.wrapper_delete_user{
+.wrapper_delete_user {
   padding: 120px 20px 5px;
   margin-left: 180px;
 }
 
 .wrapper_delete_user p {
   margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    font-family: Russo One, fantasy, sans-serif;
-    font-size: 30px;
-    opacity: .7;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  font-family: Russo One, fantasy, sans-serif;
+  font-size: 30px;
+  opacity: .7;
 }
 
 /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
-.wrapper_main {
-padding: 120px 0px 0px;
-}
+  .wrapper_main {
+    padding: 120px 0px 0px;
+  }
 
-.main {
-  margin-left: 0;
-}
+  .main {
+    margin-left: 0;
+  }
 
-.wrapper_myPage {
+  .wrapper_myPage {
     display: flex;
     flex-direction: column-reverse;
-}
+  }
 
-.wrapper_delete_user {
+  .wrapper_delete_user {
     padding: 120px 5px 5px;
     margin-left: 0px;
     text-align: center;
-}
+  }
 
-.wrapper_delete_user p  {
+  .wrapper_delete_user p {
     font-size: 17px;
-}
+  }
 
-.wrapper_delete_user p {
+  .wrapper_delete_user p {
     font-size: 22px;
     width: 100%;
     text-align: center;
     padding: 5px;
-    } 
+  }
 }
 </style>

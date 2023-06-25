@@ -373,6 +373,12 @@ flex-direction: column;
   font-size: 12px;
 }
 
+.add_friend_btn {
+  width: auto;
+  font-size: 15px;
+
+}
+
 }
 }
 </style>

@@ -26,7 +26,7 @@ function () {
   _createClass(PostsDB, [{
     key: "createTablePosts",
     value: function createTablePosts() {
-      var sql = "CREATE TABLE IF NOT EXISTS posts (\n            id integer PRIMARY KEY AUTO_INCREMENT,\n            date varchar(50), \n            postText text, \n            page_userID integer,\n            authorPost integer,\n            likes integer default 0,\n            photos varchar(10) default 'false',\n            CONSTRAINT FK_Posts_Users FOREIGN KEY (authorPost) REFERENCES users (userID) ON DELETE CASCADE)";
+      var sql = "CREATE TABLE IF NOT EXISTS posts (\n            id integer PRIMARY KEY AUTO_INCREMENT,\n            date varchar(50), \n            postText text, \n            page_userID integer,\n            authorPost integer,\n            likes integer default 0,\n            photos varchar(10) default 'false',\n            delete_post int(1) default 0,\n            CONSTRAINT FK_Posts_Users FOREIGN KEY (authorPost) REFERENCES users (userID) ON DELETE CASCADE)";
       this.connection.execute(sql);
     } //создаем таблицу БД с лайками к постам
 
@@ -59,7 +59,7 @@ function () {
       return this.connection.execute("SELECT \n        posts.id, \n        users.ava, \n        posts.date, \n        posts.postText, \n        users.name, \n        users.surname,\n        posts.authorPost, \n        posts.likes,\n        posts.photos,\n        SUM(CASE WHEN posts_likes.author_likes_post = ? THEN 1 ELSE 0 END) as like_post\n        FROM posts \n        INNER JOIN users ON posts.authorPost = users.userID LEFT JOIN posts_likes ON posts_likes.post_id = posts.id\n        WHERE page_userID IN (SELECT \n                             U.userID FROM users U \n                             INNER JOIN friends F ON \n                                 CASE\n                             WHEN addressee_user_id = ?\n                                 THEN\n                                U.userID=sender_user_id\n                                 WHEN\n                             sender_user_id = ?\n                                 THEN\n                             U.userID=addressee_user_id\n                                 END\n                             WHERE (confirm_addressee=1 AND confirm_sender=1))\n         AND posts.authorPost = page_userID \n         GROUP BY \n         posts.id, \n         users.ava, \n         posts.date, \n         posts.postText, \n         posts.likes,\n         users.name, \n         users.surname,\n         posts.authorPost,\n         posts.photos\n         ORDER BY posts.id DESC LIMIT ?, ?", params, function (err, row) {
         callback(err, row);
       });
-    } // загрузка одного пота из базы данных
+    } // загрузка одного поста из базы данных
 
   }, {
     key: "load_one_post_DB",
