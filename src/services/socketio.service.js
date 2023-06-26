@@ -45,27 +45,27 @@ class SocketioService {
     }
 
     //отправляем информацию на сервер о вошедшем на мою странице пользователе
-    sendUserID(id) {
-        if (this.socket) {
-            this.socket.emit('enterUserMyPage', id);
-        }
-    }
+    // sendUserID(id) {
+    //     if (this.socket) {
+    //         this.socket.emit('enterUserMyPage', id);
+    //     }
+    // }
 
     //получаем информацию о написанном посте для дальнейшей отправки всем кто находится на моей странице
-    subscribeUsersID(cb) {
-        if (!this.socket) return (true);
-        this.socket.on('enterUserMyPage', (status_post) => {
-            // console.log(body)
-            return cb(null, status_post);
-        });
-    }
+    // subscribeUsersID(cb) {
+    //     if (!this.socket) return (true);
+    //     this.socket.on('enterUserMyPage', (status_post) => {
+    //         // console.log(body)
+    //         return cb(null, status_post);
+    //     });
+    // }
 
     //отправляем информацию о написаном посте на сервер для дальнейшей передачи этой информации всем кто в комнате
-    sendInfoNewPost(status_post) {
-        if (this.socket) {
-            this.socket.emit('newPost', status_post);
-        }
-    }
+    // sendInfoNewPost(status_post) {
+    //     if (this.socket) {
+    //         this.socket.emit('newPost', status_post);
+    //     }
+    // }
 
     // прерываем соеденение
     disconnect() {

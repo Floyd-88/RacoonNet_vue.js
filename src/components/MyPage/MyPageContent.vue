@@ -17,7 +17,6 @@
                 <UIloadMoreContent />
             </template>
         </div>
-
     </div>
 
     <MyFriendsBlock>
@@ -53,7 +52,8 @@ export default {
     data() {
         return {
             isUIloadMoreContent: false, //отображать индикотор загрузки новых постов
-            isNotPosts: false //надпись что посты отсутсвуют
+            isNotPosts: false, //надпись что посты отсутсвуют
+            loadPost: true //разрешать загрузку постов
         }
     },
 
@@ -119,13 +119,17 @@ export default {
             if (entries[0].isIntersecting) {
                 this.isUIloadMoreContent = true; //показывать что идет загрузка
 
-                this.loadPostServer(this.$route.params.id)
+                if(this.loadPost) {
+                    this.loadPost = false;
+                    this.loadPostServer(this.$route.params.id)
                     .then((response) => {
                         this.isNotPosts = false;
                         if (response.data.length === 0) {
                             this.isNotPosts = true;
                         }
                         this.isUIloadMoreContent = false;
+                        this.loadPost = true;
+
                         return response.data.map(post => post.id)
                     })
                     .then((data) => {
@@ -143,7 +147,9 @@ export default {
                         if (err.code === "ERR_CANCELED") {
                             console.log("Загрузка была отменена")
                         }
+                        this.loadPost = true;
                     });
+                }
             } else {
                 this.isUIloadMoreContent = false; //отключать загрузку
             }

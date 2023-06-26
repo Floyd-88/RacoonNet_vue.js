@@ -590,7 +590,7 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
             friends.delete_user_friends_DB([tokenID, tokenID], (err) => {
                 if (err) return res.status(500).send("При удалении пользователя из друзей, произошла ошибка" + " " + err);
 
-                //удаление фотографий пользователя
+                //удаление фотографий пользователя из БД
                 photos.remove_all_photos([
                     tokenID
                 ], (err) => {
@@ -618,7 +618,13 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
                             //удаление данных пользователя
                             authorization.deleteUserDB([tokenID], (err) => {
                                 if (err) return res.status(500).send("При удалении пользователя возникли проблемы" + " " + err);
-                                res.status(200).send("Пользователь успешно удален");
+
+                                notice.delete_all_notice_DB([tokenID], (err) => {
+                                    if (err) return res.status(500).send("При удалении всех уведомлений возникли проблемы" + " " + err);
+
+                                    res.status(200).send("Пользователь успешно удален");
+                                })
+
                             })
                         })
                     })
@@ -2092,6 +2098,23 @@ router.post('/problem_user', authenticateJWT, feedBackUser, function(req, res) {
                 <p>Данное письмо не требует ответа.<p>`
             }
             mailer(message);
+
+            const newMessage = {
+                to: 'raccoonnet@mail.ru',
+                subject: 'FeedBack RaccoonNet.ru',
+                html: `
+                <h2>Новое обращение от пользователя:</h2>
+                <ul>
+                    <li>ID пользователя: <b>${tokenID}</b></li>
+                    <li>Имя пользователя: <b>${user.name}</b></li>
+                    <li>Фамилия пользователя: <b>${user.surname}</b></li>
+                    <li>Почта пользователя: <b>${user.email}</b></li>
+                    <li>Причина обращения: <b>${req.body.cause}</b></li>
+                    <li>Краткое наименование: <b>${req.body.title}</b></li>
+                    <li>Подробное описание: <b>${req.body.description}</b></li>
+                </ul>`
+            }
+            mailer(newMessage);
 
             res.status(200).send("Ваша заявка принята");
         })

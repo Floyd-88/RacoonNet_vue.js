@@ -116,6 +116,14 @@ function () {
       return this.connection.execute("DELETE from notice WHERE photo_id=?", params, function (err) {
         callback(err);
       });
+    } // удаление всех уведомлений при удалении профиля
+
+  }, {
+    key: "delete_all_notice_DB",
+    value: function delete_all_notice_DB(id, callback) {
+      return this.connection.execute("DELETE from notice WHERE user_id_addressee= ?", id, function (err) {
+        callback(err);
+      });
     }
   }]);
 

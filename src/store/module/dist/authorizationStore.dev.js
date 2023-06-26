@@ -7,10 +7,9 @@ exports.authorizationStore = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
-var _socketio = _interopRequireDefault(require("../../services/socketio.service"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+// import SocketioService from "../../services/socketio.service";
 var authorizationStore = {
   state: function state() {
     return {
@@ -184,10 +183,9 @@ var authorizationStore = {
             commit("postsMyPageStore/setPostText", "", {
               root: true
             }); //при открытии профиля сохраняем информацию об id в комнате
-
-            _socketio["default"].sendUserID(id.id, function (cb) {
-              console.log(cb);
-            });
+            // SocketioService.sendUserID(id.id, cb => {
+            //     console.log(cb);
+            // });
 
             resolve(resp);
           }

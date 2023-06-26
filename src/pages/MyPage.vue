@@ -46,7 +46,7 @@
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import EditProfile from "@/components/MyPage/EditProfile";
 import MyPageContent from "@/components/MyPage/MyPageContent.vue";
-import SocketioService from "../services/socketio.service"
+// import SocketioService from "../services/socketio.service"
 
 export default {
   name: "MyPage",
@@ -73,13 +73,13 @@ export default {
     // this.LOAD_DIALOGS();
   },
 
-  beforeUnmount() {
+  // beforeUnmount() {
     // SocketioService.disconnect();
-    SocketioService.exitRoom(this.getUser.userID, cb => {
-      console.log(cb);
-    });
-    console.log('покинул страницу');
-  },
+    // SocketioService.exitRoom(this.getUser.userID, cb => {
+    //   console.log(cb);
+    // });
+    // console.log('покинул страницу');
+  // },
 
   methods: {
     ...mapActions({

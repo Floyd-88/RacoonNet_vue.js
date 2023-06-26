@@ -196,9 +196,9 @@ export const postsMyPageStore = {
                     });
 
                     //отправляем уведомление всем кто находится в комнате(MyPage)
-                    SocketioService.sendInfoNewPost("add post", cb => {
-                        console.log(cb);
-                    });
+                    // SocketioService.sendInfoNewPost("add post", cb => {
+                    //     console.log(cb);
+                    // });
 
                 })
                 .catch(function(error) {
@@ -257,9 +257,9 @@ export const postsMyPageStore = {
                     commit("setCountPostDel");
 
                     //отправляем уведомление всем кто находится в комнате(MyPage)
-                    SocketioService.sendInfoNewPost("delete post", cb => {
-                        console.log(cb);
-                    });
+                    // SocketioService.sendInfoNewPost("delete post", cb => {
+                    //     console.log(cb);
+                    // });
                 })
                 .catch(function(error) {
                     console.log(error)

@@ -22,7 +22,9 @@ export default {
   data() {
     return {
       isUIloadMoreContent: false, //отображать индикотор загрузки новых постов
-      isNotNews: false //надпись что посты отсутсвуют
+      isNotNews: false, //надпись что посты отсутсвуют
+      loadNews: true //разрешать загрузку постов
+
     }
   },
 
@@ -36,7 +38,9 @@ export default {
       if (entries[0].isIntersecting) {
         this.isUIloadMoreContent = true; //показывать что идет загрузка
 
-        this.LOAD_NEWS_FRIENDS_USERS()
+        if(this.loadNews) {
+          this.loadNews = false;
+          this.LOAD_NEWS_FRIENDS_USERS()
         .then((response) => {
         this.isNotNews = false;
 
@@ -44,12 +48,18 @@ export default {
           if(response.data.length === 0) {
               this.isNotNews = true;
             }
+
+          this.loadNews = true;
+
         })
         .catch((err) => {
           if (err.code === "ERR_CANCELED") {
               console.log("Загрузка была отменена")
             }
+
+          this.loadNews = true;
         });
+        }
       } else {
         this.isUIloadMoreContent = false; //отключать загрузку
       }

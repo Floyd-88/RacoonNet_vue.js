@@ -124,24 +124,23 @@ export default {
     });
 
     //изменяем количество подгружаемых постов при скроллинге
-    SocketioService.subscribeUsersID((err, status_post) => {
-      console.log(status_post)
-      if(status_post === 'add post') {
-        this.setCountPosts(1);
-      } else if(status_post === 'delete post') {
-        this.setCountPostDel();
-      }
-      if(err) {
-        console.log(err)
-      }
-    });
+    // SocketioService.subscribeUsersID((err, status_post) => {
+    //   console.log(status_post)
+    //   if(status_post === 'add post') {
+    //     this.setCountPosts(1);
+    //   } else if(status_post === 'delete post') {
+    //     this.setCountPostDel();
+    //   }
+    //   if(err) {
+    //     console.log(err)
+    //   }
+    // });
 
     //получаем уведомления
     SocketioService.subscribeToNotice((err, data) => {
         if(data.length > 0) {
           if(data[0].text_notice !== "Пользователь удален из ваших друзей") {
             this.setNoticeArray([...data]);
-
           //   if(data[0].text_notice === "написал что то на Вашей стене" && this.getCountPosts !== 0) {
           //   console.log(data[0])
           //   this.setCountPosts(1);

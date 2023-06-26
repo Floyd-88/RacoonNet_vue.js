@@ -1,5 +1,5 @@
 <template>
-  <div class="post" v-for="post in getNewsPostsFriends" :key="post.id" @mouseover="showBtnPost(post)"
+  <div class="post" v-for="post in newsPostsFriendsArray.filter(post => post.delete_post !== 1)" :key="post.id" @mouseover="showBtnPost(post)"
     @mouseleave="notShowBtnPost(post)">
 
     <div class="wrapper_post">
@@ -56,7 +56,7 @@
           <div class="wrapper_photo_post size_photo_1" 
             v-if="post.id === photo.id">
               <img class="photo_post" 
-                :src="require(`../../assets/photo/${photo.photo_name}`)" 
+                :src="myPhotos(photo)"
                 :alt="'photo' + photo.id"
                 @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">             
           </div>
@@ -70,7 +70,7 @@
             <div class="wrapper_photo_post photo_another" 
             v-if="post.id === photo.id">
               <img class="photo_post" 
-                :src="require(`../../assets/photo/${photo.photo_name}`)" 
+                :src="myPhotos(photo)"
                 :alt="'photo' + photo.id"
                 @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index+1, id: photo.id, postID: post.id })">             
             </div>
@@ -134,6 +134,15 @@ export default {
 
     },
 
+    myPhotos(photo) {
+      try {
+        return require(`../../assets/photo/${photo.photo_name}`)
+      } catch (err) {
+        // console.log(err)
+        return require(`../../assets/ava/ava_1.jpg`);
+      }
+    },
+
     postText(value) {
       let doc = new DOMParser().parseFromString(value, "text/html");
       return doc.documentElement.textContent;
@@ -162,6 +171,11 @@ export default {
       getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
       getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
     }),
+
+    newsPostsFriendsArray() {
+      let notDoubleNews = this.getNewsPostsFriends.filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i);
+      return notDoubleNews;
+    }
   }
 }
 </script>

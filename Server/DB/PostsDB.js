@@ -45,10 +45,12 @@ class PostsDB {
         users.surname,
         posts.authorPost,
         posts.photos,
+        posts.delete_post,
         SUM(CASE WHEN posts_likes.author_likes_post = ? THEN 1 ELSE 0 END) as like_post
         FROM posts 
         INNER JOIN users ON posts.authorPost = users.userID LEFT JOIN posts_likes ON posts_likes.post_id = posts.id
-        WHERE page_userID = ? GROUP BY 
+        WHERE page_userID = ?
+        GROUP BY 
         posts.id, 
         users.ava, 
         posts.date, 
@@ -80,6 +82,7 @@ class PostsDB {
         FROM posts 
         INNER JOIN photos ON photos.post_id_photo = posts.id INNER JOIN users ON photos.userID = users.userID LEFT JOIN photos_likes ON photos_likes.photo_id = photos.id
         WHERE posts.id = ? AND
+        delete_post=0 AND
         pageID = ? GROUP BY 
         photos.id, 
         photos.photo_name, 
@@ -108,6 +111,7 @@ class PostsDB {
         posts.authorPost, 
         posts.likes,
         posts.photos,
+        posts.delete_post,
         SUM(CASE WHEN posts_likes.author_likes_post = ? THEN 1 ELSE 0 END) as like_post
         FROM posts 
         INNER JOIN users ON posts.authorPost = users.userID LEFT JOIN posts_likes ON posts_likes.post_id = posts.id
@@ -151,7 +155,7 @@ class PostsDB {
             users.surname,
             posts.authorPost FROM posts 
             INNER JOIN users ON posts.authorPost = users.userID 
-            WHERE id = ?`, [postID], (err, row) => {
+            WHERE id = ? AND delete_post=0`, [postID], (err, row) => {
             callback(err, row[0])
         });
     }
@@ -180,14 +184,24 @@ class PostsDB {
 
     // удаление поста
     remove_post_DB(postID, callback) {
-        return this.connection.execute(`DELETE from posts WHERE id = ?`, [postID], (err) => {
+        return this.connection.execute(`UPDATE posts SET  
+        date="", 
+        postText="", 
+        likes=0,
+        photos="0",
+        delete_post=1 WHERE id = ?`, [postID], (err) => {
             callback(err);
         });
     }
 
     // удаление постов на странице пользователя перед удалением профиля
     remove_all_posts_DB(user, callback) {
-        return this.connection.execute(`DELETE from posts WHERE page_userID = ?`, [user], (err) => {
+        return this.connection.execute(`UPDATE posts SET  
+        date="", 
+        postText="", 
+        likes=0,
+        photos="0",
+        delete_post=1 WHERE page_userID = ?`, [user], (err) => {
             callback(err);
         });
     }

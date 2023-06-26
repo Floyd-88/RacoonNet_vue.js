@@ -1,5 +1,5 @@
 <template>
-  <div class="post" v-for="post of getPost" :key="post.id" @mouseover="showBtnPost(post)"
+  <div class="post" v-for="post of postArray.filter(post => post.delete_post !== 1)" :key="post.id" @mouseover="showBtnPost(post)"
     @mouseleave="notShowBtnPost(post)">
 
     <div class="wrapper_post">
@@ -177,7 +177,7 @@ export default {
       try {
         return require(`../../assets/photo/${photo.photo_name}`);
       } catch (err) {
-        console.log(err)
+        // console.log(err)
         return require(`../../assets/ava/ava_1.jpg`);
       }
     },
@@ -219,6 +219,11 @@ export default {
         this.setBeforePostText(value);
       }
     },
+
+    postArray() {
+      let notDoublePost = this.getPost.filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i);
+      return notDoublePost;
+    }
   },
 }
 </script>

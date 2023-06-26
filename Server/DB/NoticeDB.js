@@ -140,5 +140,12 @@ class NoticeDB {
         });
     }
 
+    // удаление всех уведомлений при удалении профиля
+    delete_all_notice_DB(id, callback) {
+        return this.connection.execute(`DELETE from notice WHERE user_id_addressee= ?`, id, (err) => {
+            callback(err);
+        });
+    }
+
 }
 module.exports = NoticeDB;

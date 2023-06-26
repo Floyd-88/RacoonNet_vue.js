@@ -513,7 +513,7 @@ router["delete"]('/delete_user', authenticateJWT, passwordDelValidate, function 
       }); // удаление пользователя из друзей у других пользователей
 
       friends.delete_user_friends_DB([tokenID, tokenID], function (err) {
-        if (err) return res.status(500).send("При удалении пользователя из друзей, произошла ошибка" + " " + err); //удаление фотографий пользователя
+        if (err) return res.status(500).send("При удалении пользователя из друзей, произошла ошибка" + " " + err); //удаление фотографий пользователя из БД
 
         photos.remove_all_photos([tokenID], function (err) {
           if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err); //удаление постов пользователя на его странице
@@ -530,7 +530,10 @@ router["delete"]('/delete_user', authenticateJWT, passwordDelValidate, function 
 
               authorization.deleteUserDB([tokenID], function (err) {
                 if (err) return res.status(500).send("При удалении пользователя возникли проблемы" + " " + err);
-                res.status(200).send("Пользователь успешно удален");
+                notice.delete_all_notice_DB([tokenID], function (err) {
+                  if (err) return res.status(500).send("При удалении всех уведомлений возникли проблемы" + " " + err);
+                  res.status(200).send("Пользователь успешно удален");
+                });
               });
             });
           });
@@ -1721,6 +1724,12 @@ router.post('/problem_user', authenticateJWT, feedBackUser, function (req, res) 
         html: "\n                <h2>\u0414\u043E\u0431\u0440\u044B\u0439 \u0434\u0435\u043D\u044C, \u0412\u0430\u0448\u0435 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435 \u043F\u0440\u0438\u043D\u044F\u0442\u043E \u0432 \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u0441\u043B\u0443\u0436\u0431\u043E\u0439 \u0442\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u043E\u0439 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438 \u0441\u0430\u0439\u0442\u0430 RaccoonNet.ru</h2>  \n                <i>\u0434\u0430\u043D\u043D\u044B\u0435 \u043F\u043E \u0412\u0430\u0448\u0435\u043C\u0443 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044E:</i>\n                <ul>\n                    <li>\u041F\u0440\u0438\u0447\u0438\u043D\u0430 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F: ".concat(req.body.cause, "</li>\n                    <li>\u041A\u0440\u0430\u0442\u043A\u043E\u0435 \u043D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435: ").concat(req.body.title, "</li>\n                    <li>\u041F\u043E\u0434\u0440\u043E\u0431\u043D\u043E\u0435 \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435: ").concat(req.body.description, "</li>\n                </ul>\n                <p>\u0414\u0430\u043D\u043D\u043E\u0435 \u043F\u0438\u0441\u044C\u043C\u043E \u043D\u0435 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043E\u0442\u0432\u0435\u0442\u0430.<p>")
       };
       mailer(message);
+      var newMessage = {
+        to: 'raccoonnet@mail.ru',
+        subject: 'FeedBack RaccoonNet.ru',
+        html: "\n                <h2>\u041D\u043E\u0432\u043E\u0435 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435 \u043E\u0442 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F:</h2>\n                <ul>\n                    <li>ID \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F: <b>".concat(tokenID, "</b></li>\n                    <li>\u0418\u043C\u044F \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F: <b>").concat(user.name, "</b></li>\n                    <li>\u0424\u0430\u043C\u0438\u043B\u0438\u044F \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F: <b>").concat(user.surname, "</b></li>\n                    <li>\u041F\u043E\u0447\u0442\u0430 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F: <b>").concat(user.email, "</b></li>\n                    <li>\u041F\u0440\u0438\u0447\u0438\u043D\u0430 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F: <b>").concat(req.body.cause, "</b></li>\n                    <li>\u041A\u0440\u0430\u0442\u043A\u043E\u0435 \u043D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435: <b>").concat(req.body.title, "</b></li>\n                    <li>\u041F\u043E\u0434\u0440\u043E\u0431\u043D\u043E\u0435 \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435: <b>").concat(req.body.description, "</b></li>\n                </ul>")
+      };
+      mailer(newMessage);
       res.status(200).send("Ваша заявка принята");
     });
   });

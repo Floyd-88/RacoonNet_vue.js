@@ -40,7 +40,7 @@ function () {
   }, {
     key: "load_posts_DB",
     value: function load_posts_DB(params, callback) {
-      return this.connection.execute("SELECT \n        posts.id, \n        users.ava, \n        posts.date, \n        posts.postText, \n        posts.likes,\n        users.name, \n        users.surname,\n        posts.authorPost,\n        posts.photos,\n        SUM(CASE WHEN posts_likes.author_likes_post = ? THEN 1 ELSE 0 END) as like_post\n        FROM posts \n        INNER JOIN users ON posts.authorPost = users.userID LEFT JOIN posts_likes ON posts_likes.post_id = posts.id\n        WHERE page_userID = ? GROUP BY \n        posts.id, \n        users.ava, \n        posts.date, \n        posts.postText, \n        posts.likes,\n        users.name, \n        users.surname,\n        posts.authorPost,\n        posts.photos\n        ORDER BY posts.id DESC LIMIT ?, ?", params, function (err, row) {
+      return this.connection.execute("SELECT \n        posts.id, \n        users.ava, \n        posts.date, \n        posts.postText, \n        posts.likes,\n        users.name, \n        users.surname,\n        posts.authorPost,\n        posts.photos,\n        posts.delete_post,\n        SUM(CASE WHEN posts_likes.author_likes_post = ? THEN 1 ELSE 0 END) as like_post\n        FROM posts \n        INNER JOIN users ON posts.authorPost = users.userID LEFT JOIN posts_likes ON posts_likes.post_id = posts.id\n        WHERE page_userID = ?\n        GROUP BY \n        posts.id, \n        users.ava, \n        posts.date, \n        posts.postText, \n        posts.likes,\n        users.name, \n        users.surname,\n        posts.authorPost,\n        posts.photos\n        ORDER BY posts.id DESC LIMIT ?, ?", params, function (err, row) {
         callback(err, row);
       });
     } //загрузка фотографий к постам 
@@ -48,7 +48,7 @@ function () {
   }, {
     key: "load_photos_posts_DB",
     value: function load_photos_posts_DB(params, callback) {
-      return this.connection.execute("SELECT \n        photos.category, \n        users.name, \n        users.surname, \n        users.ava, \n        users.userID,\n        photos.date, \n        photos.likes,\n        SUM(CASE WHEN photos_likes.author_likes_photo = ? THEN 1 ELSE 0 END) as like_photo, \n        posts.id, \n        photos.photo_name,\n        photos.id as photoID\n        FROM posts \n        INNER JOIN photos ON photos.post_id_photo = posts.id INNER JOIN users ON photos.userID = users.userID LEFT JOIN photos_likes ON photos_likes.photo_id = photos.id\n        WHERE posts.id = ? AND\n        pageID = ? GROUP BY \n        photos.id, \n        photos.photo_name, \n        photos.category, \n        users.name, \n        users.surname, \n        users.userID,\n        users.ava, \n        photos.date, \n        photos.likes,\n        photos.id\n        ", params, function (err, row) {
+      return this.connection.execute("SELECT \n        photos.category, \n        users.name, \n        users.surname, \n        users.ava, \n        users.userID,\n        photos.date, \n        photos.likes,\n        SUM(CASE WHEN photos_likes.author_likes_photo = ? THEN 1 ELSE 0 END) as like_photo, \n        posts.id, \n        photos.photo_name,\n        photos.id as photoID\n        FROM posts \n        INNER JOIN photos ON photos.post_id_photo = posts.id INNER JOIN users ON photos.userID = users.userID LEFT JOIN photos_likes ON photos_likes.photo_id = photos.id\n        WHERE posts.id = ? AND\n        delete_post=0 AND\n        pageID = ? GROUP BY \n        photos.id, \n        photos.photo_name, \n        photos.category, \n        users.name, \n        users.surname, \n        users.userID,\n        users.ava, \n        photos.date, \n        photos.likes,\n        photos.id\n        ", params, function (err, row) {
         callback(err, row);
       });
     } // получение новостной ленты от друзей
@@ -56,7 +56,7 @@ function () {
   }, {
     key: "load_news_friens_DB",
     value: function load_news_friens_DB(params, callback) {
-      return this.connection.execute("SELECT \n        posts.id, \n        users.ava, \n        posts.date, \n        posts.postText, \n        users.name, \n        users.surname,\n        posts.authorPost, \n        posts.likes,\n        posts.photos,\n        SUM(CASE WHEN posts_likes.author_likes_post = ? THEN 1 ELSE 0 END) as like_post\n        FROM posts \n        INNER JOIN users ON posts.authorPost = users.userID LEFT JOIN posts_likes ON posts_likes.post_id = posts.id\n        WHERE page_userID IN (SELECT \n                             U.userID FROM users U \n                             INNER JOIN friends F ON \n                                 CASE\n                             WHEN addressee_user_id = ?\n                                 THEN\n                                U.userID=sender_user_id\n                                 WHEN\n                             sender_user_id = ?\n                                 THEN\n                             U.userID=addressee_user_id\n                                 END\n                             WHERE (confirm_addressee=1 AND confirm_sender=1))\n         AND posts.authorPost = page_userID \n         GROUP BY \n         posts.id, \n         users.ava, \n         posts.date, \n         posts.postText, \n         posts.likes,\n         users.name, \n         users.surname,\n         posts.authorPost,\n         posts.photos\n         ORDER BY posts.id DESC LIMIT ?, ?", params, function (err, row) {
+      return this.connection.execute("SELECT \n        posts.id, \n        users.ava, \n        posts.date, \n        posts.postText, \n        users.name, \n        users.surname,\n        posts.authorPost, \n        posts.likes,\n        posts.photos,\n        posts.delete_post,\n        SUM(CASE WHEN posts_likes.author_likes_post = ? THEN 1 ELSE 0 END) as like_post\n        FROM posts \n        INNER JOIN users ON posts.authorPost = users.userID LEFT JOIN posts_likes ON posts_likes.post_id = posts.id\n        WHERE page_userID IN (SELECT \n                             U.userID FROM users U \n                             INNER JOIN friends F ON \n                                 CASE\n                             WHEN addressee_user_id = ?\n                                 THEN\n                                U.userID=sender_user_id\n                                 WHEN\n                             sender_user_id = ?\n                                 THEN\n                             U.userID=addressee_user_id\n                                 END\n                             WHERE (confirm_addressee=1 AND confirm_sender=1))\n         AND posts.authorPost = page_userID \n         GROUP BY \n         posts.id, \n         users.ava, \n         posts.date, \n         posts.postText, \n         posts.likes,\n         users.name, \n         users.surname,\n         posts.authorPost,\n         posts.photos\n         ORDER BY posts.id DESC LIMIT ?, ?", params, function (err, row) {
         callback(err, row);
       });
     } // загрузка одного поста из базы данных
@@ -64,7 +64,7 @@ function () {
   }, {
     key: "load_one_post_DB",
     value: function load_one_post_DB(postID, callback) {
-      return this.connection.execute("SELECT \n            posts.id, \n            users.ava, \n            posts.date, \n            posts.postText, \n            users.name, \n            users.surname,\n            posts.authorPost FROM posts \n            INNER JOIN users ON posts.authorPost = users.userID \n            WHERE id = ?", [postID], function (err, row) {
+      return this.connection.execute("SELECT \n            posts.id, \n            users.ava, \n            posts.date, \n            posts.postText, \n            users.name, \n            users.surname,\n            posts.authorPost FROM posts \n            INNER JOIN users ON posts.authorPost = users.userID \n            WHERE id = ? AND delete_post=0", [postID], function (err, row) {
         callback(err, row[0]);
       });
     } //добавление поста в базу данных
@@ -96,7 +96,7 @@ function () {
   }, {
     key: "remove_post_DB",
     value: function remove_post_DB(postID, callback) {
-      return this.connection.execute("DELETE from posts WHERE id = ?", [postID], function (err) {
+      return this.connection.execute("UPDATE posts SET  \n        date=\"\", \n        postText=\"\", \n        likes=0,\n        photos=\"0\",\n        delete_post=1 WHERE id = ?", [postID], function (err) {
         callback(err);
       });
     } // удаление постов на странице пользователя перед удалением профиля
@@ -104,7 +104,7 @@ function () {
   }, {
     key: "remove_all_posts_DB",
     value: function remove_all_posts_DB(user, callback) {
-      return this.connection.execute("DELETE from posts WHERE page_userID = ?", [user], function (err) {
+      return this.connection.execute("UPDATE posts SET  \n        date=\"\", \n        postText=\"\", \n        likes=0,\n        photos=\"0\",\n        delete_post=1 WHERE page_userID = ?", [user], function (err) {
         callback(err);
       });
     } //поверяем на повторный лайк поста

@@ -254,13 +254,12 @@ var postsMyPageStore = {
                         _socketio["default"].sendNotice(newPost.id, function (cb) {
                           console.log(cb);
                         }); //отправляем уведомление всем кто находится в комнате(MyPage)
+                        // SocketioService.sendInfoNewPost("add post", cb => {
+                        //     console.log(cb);
+                        // });
 
 
-                        _socketio["default"].sendInfoNewPost("add post", function (cb) {
-                          console.log(cb);
-                        });
-
-                      case 8:
+                      case 7:
                       case "end":
                         return _context2.stop();
                     }
@@ -344,10 +343,9 @@ var postsMyPageStore = {
               }).then(function (response) {
                 console.log(response);
                 commit("setCountPostDel"); //отправляем уведомление всем кто находится в комнате(MyPage)
-
-                _socketio["default"].sendInfoNewPost("delete post", function (cb) {
-                  console.log(cb);
-                });
+                // SocketioService.sendInfoNewPost("delete post", cb => {
+                //     console.log(cb);
+                // });
               })["catch"](function (error) {
                 console.log(error);
               }));
