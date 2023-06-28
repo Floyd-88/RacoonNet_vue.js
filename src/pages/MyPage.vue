@@ -3,8 +3,18 @@
   <NavigationNetEnter v-else />
 
   <template v-if="getUser.delete === 0">
-    <div class="wrapper_main">
+    
+      <!-- показывать загрузчик -->
+  <template v-if="getStatus === 'loading'">
+    <div class="loading_show">
+      <UIloadMoreContent />
+    </div>
+  </template>
+
+
+    <div class="wrapper_main" v-if="getStatus === 'success'">
       <div class="main">
+
         <!-- модальное окно для редактирования профиля -->
         <template v-if="getModulEditProfile">
           <UImodal>
@@ -104,17 +114,19 @@ export default {
       getUser: "authorizationStore/getUser",
       getModalWriteMessage: "messageStore/getModalWriteMessage",
       // getArrayMessages: "messageStore/getArrayMessages"
+      getStatus: "authorizationStore/getStatus"
     }),
   },
 
 
 
-  // watch: {
-  //   $route() {
-  //     // this.$route.params.id
-  //     this.loadAllPhotos();
-  //   }
-  // }
+  watch: {
+    $route() {
+      if (this.$route.params.id) {
+      window.location.href = `/id${this.$route.params.id}`;
+      }
+    }
+  }
 
 }
 
@@ -200,6 +212,11 @@ export default {
   opacity: .7;
 }
 
+.loading_show {
+  margin-left: 180px;
+  padding: 130px;
+}
+
 /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
@@ -232,5 +249,10 @@ export default {
     text-align: center;
     padding: 5px;
   }
+
+  .loading_show {
+  margin-left: 0px;
+  padding: 130px;
+}
 }
 </style>

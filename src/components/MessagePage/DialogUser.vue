@@ -1,8 +1,8 @@
 <template >
     <div class="wrapper_dialog_user">
 
-        <!-- headre -->
-        <div class="wrapper_header_user">
+        <!-- header -->
+        <div class="wrapper_header_user" v-if="getStatus === 'success'">
             <div class="header_btn_back">
                 <button @click="goBackMessage()">Назад</button>
             </div>
@@ -23,18 +23,21 @@
         <div class="wrapper_main_messages" ref="scrollToMe">
             <!-- message -->
             <template v-if="getIsUIloadMoreMessages">
-                <UIloadMoreContent />
+                <div class="wrapper_loader">
+                    <UIloadMoreContent />
+                </div>
             </template>
             <div ref="observer" class="observer"></div>
 
-            <div class="wrapper_message_dialog_user" v-for="(message, index) in getArrayMessages" :key="message.id">
+            <template v-if="getStatus === 'success'">
+                <div class="wrapper_message_dialog_user" v-for="(message, index) in getArrayMessages" :key="message.id">
                 <div class="dialog_ava_user" :ref="'message' + message.id">
                     <template v-if="message.sender == $route.params.id">
                         <img :src="pathAva" alt="ava"
                             @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
                     </template>
                     <template v-else>
-                        <img :src="pathAvaMy" alt="ava">
+                        <img :src="pathAvaMy" alt="ava" @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
                     </template>
 
                 </div>
@@ -106,6 +109,8 @@
 
                 </div>
             </div>
+            </template>
+            
 
             <!-- -- -->
             <div class="wrapper_not_messages" v-if="getArrayMessages.length < 1 && getIsNotMessages">
@@ -193,6 +198,7 @@ export default {
     },
 
     mounted() {
+        this.setCountMessagesNull();
         this.setArrayMessages([]);
         // this.scrollToElement();
         this.id = this.$route.params.id;
@@ -203,7 +209,9 @@ export default {
                         this.scrollToElement();
                     });
                 }
-                this.conv_id = this.getArrayMessages[0].conv_id;
+                if(this.getArrayMessages[0]) {
+                    this.conv_id = this.getArrayMessages[0].conv_id;
+                }
             });
         // this.scrollToElement();
         // console.log(this.getArrayMessages)
@@ -386,6 +394,7 @@ export default {
             getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
             getPhotosMessagesArray: "messageStore/getPhotosMessagesArray",
             getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
+            getStatus: "authorizationStore/getStatus"
 
         }),
         ...mapState({
@@ -683,6 +692,10 @@ export default {
     display: inline-block;
     font-size: 14px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.wrapper_loader {
+    padding: 30px;
 }
 
 /* МЕДИА-ЗАПРОСЫ */

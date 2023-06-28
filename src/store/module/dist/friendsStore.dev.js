@@ -63,7 +63,9 @@ var friendsStore = {
       },
       isUIloadMoreFriends: false,
       //отображать индикатор загрузки
-      isNotFriends: false //отображать надпись об отсутствии друзей
+      isNotFriends: false,
+      //отображать надпись об отсутствии друзей
+      isBtnsBlock: true //отображать блок с кнопками в UserInfo
 
     };
   },
@@ -130,6 +132,9 @@ var friendsStore = {
     },
     getIsNotFriends: function getIsNotFriends(state) {
       return state.isNotFriends;
+    },
+    getIsBtnsBlock: function getIsBtnsBlock(state) {
+      return state.isBtnsBlock;
     }
   },
   mutations: {
@@ -208,6 +213,9 @@ var friendsStore = {
     },
     setIsNotFriends: function setIsNotFriends(state, bool) {
       state.isNotFriends = bool;
+    },
+    setIsBtnsBlock: function setIsBtnsBlock(state, bool) {
+      state.isBtnsBlock = bool;
     },
     changeTextBTN: function changeTextBTN(state, data) {
       if (data.text_notice === "пригласил Вас в друзья") {
@@ -387,7 +395,8 @@ var friendsStore = {
             case 0:
               commit = _ref3.commit;
               _context3.prev = 1;
-              _context3.next = 4;
+              commit('setIsBtnsBlock', false);
+              _context3.next = 5;
               return regeneratorRuntime.awrap(_axios["default"].get("http://localhost:8000/check_request_friend", {
                 params: {
                   id: id
@@ -407,14 +416,16 @@ var friendsStore = {
                 } else {
                   commit("setTextBtnFfriend", res.data);
                 }
+
+                commit('setIsBtnsBlock', true);
               }));
 
-            case 4:
-              _context3.next = 9;
+            case 5:
+              _context3.next = 10;
               break;
 
-            case 6:
-              _context3.prev = 6;
+            case 7:
+              _context3.prev = 7;
               _context3.t0 = _context3["catch"](1);
 
               if (_context3.t0.code === "ERR_CANCELED") {
@@ -423,12 +434,12 @@ var friendsStore = {
                 console.log(_context3.t0);
               }
 
-            case 9:
+            case 10:
             case "end":
               return _context3.stop();
           }
         }
-      }, null, null, [[1, 6]]);
+      }, null, null, [[1, 7]]);
     },
     //получить пользователей отправивших мне заявку в друзья
     GET_USER_ADD_FRIENDS_ME: function GET_USER_ADD_FRIENDS_ME(_ref4) {

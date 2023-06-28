@@ -215,6 +215,7 @@ export const messageStore = {
                             if (resp.data !== "Переписка с данным пользователем отсутствует") {
                                 let arrayMessage = resp.data.reverse();
                                 commit("setArrayMessages", [...arrayMessage, ...state.arrayMessages]);
+
                                 if (resp.data.length > 0) {
                                     commit("setCountMessages", 10);
                                 } else {

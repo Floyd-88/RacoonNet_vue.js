@@ -47,7 +47,7 @@
 
     </div>
 
-    <div class="wrapper_btn" >
+    <div class="wrapper_btn" v-if="getIsBtnsBlock">
       <UIbtn 
       v-if="getUser.is_editProfile"
       class="redaction_profile_btn" 
@@ -142,7 +142,9 @@ export default {
       getShowFullAvaPhoto: "showFullPhotoStore/getShowFullAvaPhoto",
       getToken: "authorizationStore/getToken",
       getTextBtnFfriend: "friendsStore/getTextBtnFfriend",
-      getIsFriend: "friendsStore/getIsFriend"
+      getIsFriend: "friendsStore/getIsFriend",
+      getStatus: "authorizationStore/getStatus",
+      getIsBtnsBlock: "friendsStore/getIsBtnsBlock"
     }),
 
     pathAva() {

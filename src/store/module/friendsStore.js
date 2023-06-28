@@ -30,7 +30,8 @@ export const friendsStore = {
         },
 
         isUIloadMoreFriends: false, //отображать индикатор загрузки
-        isNotFriends: false //отображать надпись об отсутствии друзей
+        isNotFriends: false, //отображать надпись об отсутствии друзей
+        isBtnsBlock: true, //отображать блок с кнопками в UserInfo
     }),
 
     getters: {
@@ -59,7 +60,9 @@ export const friendsStore = {
         getCountFriends: (state) => state.countFriends,
 
         getIsUIloadMoreFriends: (state) => state.isUIloadMoreFriends,
-        getIsNotFriends: (state) => state.isNotFriends
+        getIsNotFriends: (state) => state.isNotFriends,
+        getIsBtnsBlock: (state) => state.isBtnsBlock
+
     },
 
     mutations: {
@@ -153,6 +156,10 @@ export const friendsStore = {
 
         setIsNotFriends(state, bool) {
             state.isNotFriends = bool;
+        },
+
+        setIsBtnsBlock(state, bool) {
+            state.isBtnsBlock = bool;
         },
 
         changeTextBTN(state, data) {
@@ -284,6 +291,7 @@ export const friendsStore = {
             commit
         }, id) {
             try {
+                commit('setIsBtnsBlock', false);
                 await axios.get("http://localhost:8000/check_request_friend", {
                         params: {
                             id
@@ -304,6 +312,8 @@ export const friendsStore = {
                         } else {
                             commit("setTextBtnFfriend", res.data);
                         }
+
+                        commit('setIsBtnsBlock', true);
 
                     })
             } catch (err) {

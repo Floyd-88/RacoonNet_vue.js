@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const authorizationStore = {
     state: () => ({
-        status: "",
+        status: "success",
         token: localStorage.getItem('token') || '', //получаем токен создаваемый при авторизации
         user: {}, //получаем данные юзера при авторизаци
         errorLogin: "", //ошибка возникающая при вводе неверного пароля или почты
@@ -14,6 +14,7 @@ export const authorizationStore = {
 
     getters: {
         getToken: (state) => state.token,
+        getStatus: (state) => state.status,
         isLoggedIn: (state) => !!state.token, //показываем кнопку выход в header
         getUser: (state) => state.user,
         getErrorLogin: (state) => state.errorLogin,
@@ -100,30 +101,6 @@ export const authorizationStore = {
                             localStorage.setItem('user', JSON.stringify(user));
 
                             window.location.href = `/id${user.userID}`;
-
-
-                            //записываем токен во все заголовки отправляемые на сервер
-                            // axios.defaults.headers.common['Authorization'] = token;
-
-                            // commit('auth_success', {
-                            //     // user,
-                            //     token
-                            // });
-
-                            // вызываем метод для отправки сообщения всем участникам комнаты
-                            // SocketioService.setupSocketConnection();
-                            // console.log("connected")
-
-                            // SocketioService.subscribeToMessages((err) => {
-                            //     if (err) return console.log(err)
-                            //         // this.setArrayMessages([...this.getArrayMessages, data])
-                            // });
-
-
-                            // resolve(resp);
-
-                            // window.location.href = `/id${user.userID}`;
-
                         }
                     })
                     .catch((err) => {
@@ -166,6 +143,7 @@ export const authorizationStore = {
         }, id) {
             return new Promise((resolve, reject) => {
                 commit("auth_request", "loading")
+
                 axios({
                         url: "http://localhost:8000/load_user",
                         data: id,
@@ -175,12 +153,15 @@ export const authorizationStore = {
                         const user = resp.data.user;
 
                         if (user !== null) {
+
                             commit("setUser", user)
-                            commit("auth_request", "success")
                             commit("editProfileStore/setEditingUser", user, {
                                 root: true
                             });
                             commit("postsMyPageStore/setPostText", "", { root: true })
+
+                            commit("auth_request", "success")
+                                // window.location.href = `/id${user.userID}`;
 
                             //при открытии профиля сохраняем информацию об id в комнате
                             // SocketioService.sendUserID(id.id, cb => {
@@ -218,7 +199,7 @@ export const authorizationStore = {
 
         //обновление токена
         UPDATE_TOKEN({ commit }) {
-
+            commit("auth_request", "loading")
             return new Promise((resolve) => {
                 axios({
                         url: "http://localhost:8000/refresh",
@@ -232,6 +213,7 @@ export const authorizationStore = {
                             localStorage.setItem('token', token);
                             resolve(response)
                         }
+                        commit("auth_request", "success")
                     })
                     .catch((err) => {
                         if (err) {

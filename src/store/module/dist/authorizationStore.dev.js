@@ -13,7 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 var authorizationStore = {
   state: function state() {
     return {
-      status: "",
+      status: "success",
       token: localStorage.getItem('token') || '',
       //получаем токен создаваемый при авторизации
       user: {},
@@ -31,6 +31,9 @@ var authorizationStore = {
   getters: {
     getToken: function getToken(state) {
       return state.token;
+    },
+    getStatus: function getStatus(state) {
+      return state.status;
     },
     isLoggedIn: function isLoggedIn(state) {
       return !!state.token;
@@ -114,21 +117,7 @@ var authorizationStore = {
             localStorage.setItem('token', token);
             localStorage.setItem('refreshToken', refreshToken);
             localStorage.setItem('user', JSON.stringify(user));
-            window.location.href = "/id".concat(user.userID); //записываем токен во все заголовки отправляемые на сервер
-            // axios.defaults.headers.common['Authorization'] = token;
-            // commit('auth_success', {
-            //     // user,
-            //     token
-            // });
-            // вызываем метод для отправки сообщения всем участникам комнаты
-            // SocketioService.setupSocketConnection();
-            // console.log("connected")
-            // SocketioService.subscribeToMessages((err) => {
-            //     if (err) return console.log(err)
-            //         // this.setArrayMessages([...this.getArrayMessages, data])
-            // });
-            // resolve(resp);
-            // window.location.href = `/id${user.userID}`;
+            window.location.href = "/id".concat(user.userID);
           }
         })["catch"](function (err) {
           commit('auth_error');
@@ -176,13 +165,14 @@ var authorizationStore = {
 
           if (user !== null) {
             commit("setUser", user);
-            commit("auth_request", "success");
             commit("editProfileStore/setEditingUser", user, {
               root: true
             });
             commit("postsMyPageStore/setPostText", "", {
               root: true
-            }); //при открытии профиля сохраняем информацию об id в комнате
+            });
+            commit("auth_request", "success"); // window.location.href = `/id${user.userID}`;
+            //при открытии профиля сохраняем информацию об id в комнате
             // SocketioService.sendUserID(id.id, cb => {
             //     console.log(cb);
             // });
@@ -214,6 +204,7 @@ var authorizationStore = {
     //обновление токена
     UPDATE_TOKEN: function UPDATE_TOKEN(_ref5) {
       var commit = _ref5.commit;
+      commit("auth_request", "loading");
       return new Promise(function (resolve) {
         (0, _axios["default"])({
           url: "http://localhost:8000/refresh",
@@ -228,6 +219,8 @@ var authorizationStore = {
             localStorage.setItem('token', token);
             resolve(response);
           }
+
+          commit("auth_request", "success");
         })["catch"](function (err) {
           if (err) {
             commit('logout');

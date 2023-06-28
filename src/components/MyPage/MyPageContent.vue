@@ -19,6 +19,7 @@
         </div>
     </div>
 
+    <!-- список друзей -->
     <MyFriendsBlock>
         <div class="wrapper_my_friends_title">
             <h4 class="titleMyFriendsBlock" @click="goMyFriends()">
@@ -96,12 +97,12 @@ export default {
             getUsersMyFriends: "friendsStore/getUsersMyFriends",
             getUser: "authorizationStore/getUser",
             getIsNotFriends: "friendsStore/getIsNotFriends",
-        }),
+        }), 
     },
     watch: {
         $route() {
             if (this.$route.params.id) {
-                this.loadAllPhotos(this.$route.params.id);
+                // this.loadAllPhotos(this.$route.params.id);
                 window.location.href = `/id${this.$route.params.id}`;
                 // window.scrollTo(0, 0);
                 // this.setPosts([]);

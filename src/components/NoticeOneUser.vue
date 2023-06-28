@@ -277,25 +277,25 @@
 
                                 <!-- фотографии к посту -->
                                 <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
-                                        <div class="wrapper_block_photo_post_first">
-                                            <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
-                                                <div class="wrapper_photo_post size_photo_1">
-                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
-                                                        :alt="'photo' + photo.id">
-                                                </div>
-                                            </template>
-                                        </div>
-
-                                        <div class="wrapper_block_photo_post_another"
-                                            v-if="getPhotosPostNotice.slice(1).length > 0">
-                                            <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
-                                                <div class="wrapper_photo_post photo_another">
-                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
-                                                        :alt="'photo' + photo.id">
-                                                </div>
-                                            </template>
-                                        </div>
+                                    <div class="wrapper_block_photo_post_first">
+                                        <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
+                                            <div class="wrapper_photo_post size_photo_1">
+                                                <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                    :alt="'photo' + photo.id">
+                                            </div>
+                                        </template>
                                     </div>
+
+                                    <div class="wrapper_block_photo_post_another"
+                                        v-if="getPhotosPostNotice.slice(1).length > 0">
+                                        <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
+                                            <div class="wrapper_photo_post photo_another">
+                                                <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                    :alt="'photo' + photo.id">
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
 
                                 <div class="wrapper_text_post" v-if="getSelectNotice.postText.length < 400">
                                     <div>
@@ -332,25 +332,25 @@
 
                                 <!-- фотографии к посту -->
                                 <div class="wrapper_block_photo_post" v-if="getSelectNotice.photos">
-                                        <div class="wrapper_block_photo_post_first">
-                                            <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
-                                                <div class="wrapper_photo_post size_photo_1">
-                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
-                                                        :alt="'photo' + photo.id">
-                                                </div>
-                                            </template>
-                                        </div>
-
-                                        <div class="wrapper_block_photo_post_another"
-                                            v-if="getPhotosPostNotice.slice(1).length > 0">
-                                            <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
-                                                <div class="wrapper_photo_post photo_another">
-                                                    <img class="photo_post" :src="myPhotos(photo.photo_name)"
-                                                        :alt="'photo' + photo.id">
-                                                </div>
-                                            </template>
-                                        </div>
+                                    <div class="wrapper_block_photo_post_first">
+                                        <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
+                                            <div class="wrapper_photo_post size_photo_1">
+                                                <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                    :alt="'photo' + photo.id">
+                                            </div>
+                                        </template>
                                     </div>
+
+                                    <div class="wrapper_block_photo_post_another"
+                                        v-if="getPhotosPostNotice.slice(1).length > 0">
+                                        <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
+                                            <div class="wrapper_photo_post photo_another">
+                                                <img class="photo_post" :src="myPhotos(photo.photo_name)"
+                                                    :alt="'photo' + photo.id">
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
 
                                 <div class="wrapper_text_post" v-if="getSelectNotice.postText.length < 400">
                                     <div>
@@ -390,10 +390,13 @@
 
                             <div class="wrapper_text_post">
                                 <div class="text_post">
-                                    <div v-if="getSelectNotice.photo_name">
-                                        <img class="photo_post" :src="myPhotos(getSelectNotice.photo_name)"
-                                            :alt="'photo' + getSelectNotice.id">
+                                    <div class="wrapper_block_photo_post_first wrapper_block_photo_post_first_one_photo">
+                                        <div class="wrapper_photo_post size_photo_1" v-if="getSelectNotice.photo_name">
+                                            <img class="photo_post" :src="myPhotos(getSelectNotice.photo_name)"
+                                                :alt="'photo' + getSelectNotice.id">
+                                        </div>
                                     </div>
+
 
                                     <div class="wrapper_message_user">
                                         <div class="message_name_user">
@@ -449,11 +452,14 @@
                                     {{ getSelectNotice.name_addressee + " " + getSelectNotice.surname_addressee }}
                                 </p>
                             </div>
-
                             <div class="wrapper_text_post">
                                 <div class="text_post">
-                                    <img class="photo_post" :src="myPhotos(getSelectNotice.photo_name)"
-                                        :alt="'photo' + getSelectNotice.id">
+                                    <div class="wrapper_block_photo_post_first wrapper_block_photo_post_first_one_photo">
+                                        <div class="wrapper_photo_post size_photo_1">
+                                            <img class="photo_post" :src="myPhotos(getSelectNotice.photo_name)"
+                                                :alt="'photo' + getSelectNotice.id">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -745,7 +751,7 @@ export default {
     flex-direction: row;
     max-height: 450px;
     width: 100%;
-    padding: 2% 2% 0 2%;
+    padding: 2% 3% 0 2%;
 }
 
 .wrapper_block_photo_post_first {
@@ -780,7 +786,7 @@ export default {
     -o-object-fit: cover;
     object-fit: cover;
     border-radius: 8px;
-    cursor: pointer;
+    /* cursor: pointer; */
 }
 
 .size_photo_1 {
@@ -923,6 +929,10 @@ wrapper_under_comment {
     .wrapper_text_post {
         padding-right: 0px;
         padding-left: 0px;
+    }
+
+    .wrapper_block_photo_post_first_one_photo {
+        margin: 0 auto;
     }
 }
 </style>
