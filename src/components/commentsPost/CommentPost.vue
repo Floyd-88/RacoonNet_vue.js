@@ -5,7 +5,9 @@
                 <div class="message_name_user">
                     <div class="dialog_ava_user"
                         @click="$router.push({ name: 'mypage', params: { id: comment.author_comment_id } })">
-                        <img :src="pathAva(comment.ava)" alt="ava">
+                        <!-- <img :src="pathAva(comment.ava)" alt="ava"> -->
+                        <UIAva :ava="comment.ava"/>
+
                     </div>
                     <p class="message_name"
                         @click="$router.push({ name: 'mypage', params: { id: comment.author_comment_id } })">

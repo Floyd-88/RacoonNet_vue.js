@@ -139,18 +139,35 @@ export const postsMyPageStore = {
                             userID: id
                         }
                     }).then((response) => {
+                        console.log('1')
+
                         if (response.data.length > 0) {
-                            commit("setPosts", [...state.posts, ...response.data]);
-                            commit("setCountPosts", 20);
+                            console.log('2')
+                            response.data = response.data.filter(post => post.delete_post !== 1)
 
-                            response.data.forEach(post => {
-                                if (post.photos === "1") {
-                                    dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: getters.getUser.userID });
-                                }
-                            });
+                            if (response.data.length === 0) {
+                                console.log('3')
+                                commit("setCountPosts", 20);
+                                dispatch('loadPostServer', id);
+                                resolve(response)
+                            } else {
+                                console.log('4')
+                                commit("setPosts", [...state.posts, ...response.data]);
+                                commit("setCountPosts", 20);
+
+                                response.data.forEach(post => {
+                                    if (post.photos === "1") {
+                                        dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: getters.getUser.userID });
+                                    }
+                                });
+                                resolve(response.data)
+                            }
+                        } else {
+                            console.log('5')
+                            resolve(response.data)
                         }
-
-                        resolve(response)
+                        // console.log(response)
+                        // resolve(response)
                     })
                     .catch((err) => {
                         reject(err)
@@ -185,6 +202,7 @@ export const postsMyPageStore = {
                     // newPost.surname = response.data.user.surname;
                     // newPost.ava = response.data.user.ava
 
+                    console.log(response.data)
 
                     await commit("setAddPosts", response.data);
                     await commit("setCountPosts", 1);

@@ -3,8 +3,10 @@
         <div class="wrapper_block_under_comment_user">
             <div class="wrapper_under_comment_user">
                 <div class="under_comment_name_user">
-                    <div class="under_comment_ava_user">
-                        <img :src="pathAva(comment.ava)" alt="ava" @click="$router.push({ name: 'mypage', params: { id: comment.author_comment } })">
+                    <div class="under_comment_ava_user"
+                        @click="$router.push({ name: 'mypage', params: { id: comment.author_comment } })">
+                        <!-- <img :src="pathAva(comment.ava)" alt="ava" > -->
+                        <UIAva :ava="comment.ava"/>
                     </div>
                     <p class="under_comment_name" @click="$router.push({ name: 'mypage', params: { id: comment.author_comment } })">{{comment.name + " " + comment.surname}}</p>
                 </div>
@@ -108,13 +110,13 @@ export default {
             this.$emit('showWriteUnderComments', {id: comment.id, author_comment: comment.author_comment, comment_comment_text: comment.comment_comment_text, comment_comment_name: comment.name});
         },
 
-        pathAva(ava) {
-            try {
-                return require(`../../assets/photo/${ava}`);
-            } catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
+        // pathAva(ava) {
+        //     try {
+        //         return require(`../../assets/photo/${ava}`);
+        //     } catch {
+        //         return require(`../../assets/ava/ava_1.jpg`);
+        //     }
+        // },
 
         messageText(comment) {
             let doc = new DOMParser().parseFromString(comment.comment_comment_text, "text/html");

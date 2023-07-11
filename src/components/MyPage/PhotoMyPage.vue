@@ -1,13 +1,14 @@
 <template>
   <div class="wrapper_contents_myPhoto">
     <div class="wrapper_preview_myPhoto">
+
+      <!-- блок с фотографиями -->
       <div class="preview_myPhoto" 
            id="preview_myPhoto" 
            v-for="(photo, index) in getMyPhotosMyPage.slice(0, 8)" 
-           :key="index">
-          <img class="myPhoto" 
-          :src="myPhotos(photo.photo_name)" 
-          :alt="photo.photo_name" @click="fullSizePhoto({'bool': true, 'elem': index, id: photo.id})">     
+           :key="index"
+           @click="fullSizePhoto({'bool': true, 'elem': index, id: photo.id})">
+           <UIPhoto :photo="photo"/>
       </div>
 
       <div class="wrapper_not_photos">
@@ -53,52 +54,46 @@
 
 <script>
 import {mapGetters, mapMutations, mapActions} from "vuex";
+import UIPhoto from "../UI/UIPhoto.vue";
 
 
 export default {
-  name: "PhotoMyPage",
-
-  data() {
-    return {
-    }
-  },
-
-  methods: {
-    ...mapMutations({
-      setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
-      setIsModalAllPhotos: "loadPhotoStore/setIsModalAllPhotos",
-    }),
-
-    ...mapActions({
-      modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
-      fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
-      closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
-    }),
-
-    myPhotos(photo) {
-      try {
-        return require(`../../assets/photo/${photo}`);
-      } catch(err) {
-        return require(`../../assets/ava/ava_1.jpg`);
-      }
+    name: "PhotoMyPage",
+    data() {
+        return {};
     },
-
-  },
-
-  computed: {
-  ...mapGetters({
-      getUser: "authorizationStore/getUser",
-      getMyPhotosMyPage: "loadPhotoStore/getMyPhotosMyPage",
-      getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
-      getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",
-      getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
-      getIsNotPhoto: "loadPhotoStore/getIsNotPhoto"
-
-    }),
-
-    
-  }
-
+    mounted() {
+        console.log("ddd");
+    },
+    methods: {
+        ...mapMutations({
+            setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
+            setIsModalAllPhotos: "loadPhotoStore/setIsModalAllPhotos",
+        }),
+        ...mapActions({
+            modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
+            fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
+            closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
+        }),
+        // myPhotos(photo) {
+        //   try {
+        //     return require(`../../assets/photo/${photo}`);
+        //   } catch(err) {
+        //     return require(`../../assets/ava/ava_1.jpg`);
+        //   }
+        // },
+    },
+    computed: {
+        ...mapGetters({
+            getUser: "authorizationStore/getUser",
+            getMyPhotosMyPage: "loadPhotoStore/getMyPhotosMyPage",
+            getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
+            getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",
+            getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
+            getIsNotPhoto: "loadPhotoStore/getIsNotPhoto"
+        }),
+    },
+    components: { UIPhoto }
 }
 </script>
 

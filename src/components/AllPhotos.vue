@@ -4,12 +4,11 @@
     <h2 class="title_pthoto_name">Все фотографии</h2>
     <div class="wrapper_contents_allPhotos">
         <div class="wrapper_preview_allPhotos">
-            <div class="all_photos" id="preview_myPhoto" v-for="(photo, index) in getAllPhotosMyPage.slice(0, getLimitAllPhoto)" :key="index">
-                <img class="photo" 
-                :src="myPhotos(photo.photo_name)" 
-                :alt="photo.photo_name"
-                @click="fullSizePhoto({bool: true, elem: index, id: photo.id})">
-
+            <div class="all_photos" id="preview_myPhoto" 
+            v-for="(photo, index) in getAllPhotosMyPage.slice(0, getLimitAllPhoto)" 
+            :key="index"
+            @click="fullSizePhoto({bool: true, elem: index, id: photo.id})">
+                <UIPhoto :photo="photo"/>
             </div>
 
             <!--при прокрутки страницы до данного элемента - подгружать следующие фотографии -->
@@ -58,13 +57,14 @@ export default {
             fullSizePhoto: "showFullPhotoStore/fullSizePhoto"
         }),
 
-        myPhotos(photo) {
-      try {
-        return require(`../assets/photo/${photo}`);
-      } catch(err) {
-        return require(`../assets/ava/ava_1.jpg`);
-      }
-    },
+    //     myPhotos(photo) {
+    //   try {
+    //     return require(`../assets/photo/${photo}`);
+    //   } catch(err) {
+    //     return require(`../assets/ava/ava_1.jpg`);
+    //   }
+    // },
+
     },
     computed: {
         ...mapGetters({

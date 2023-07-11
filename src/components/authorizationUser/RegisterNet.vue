@@ -1,96 +1,61 @@
 <template>
   <!--  Закрыть модальное окно-->
-  <CloseModal @click="setModulRegister(false)"/>
+  <CloseModal @click="setModulRegister(false)" />
 
   <h4 class="form_register_title">Регистрация</h4>
 
   <div class="wrapper_form_register">
 
-    <form class="form_register"
-          @submit.prevent="handleSubmit"
-          novalidate>
+    <form class="form_register" @submit.prevent="handleSubmit" novalidate>
 
       <div class="wrapper_form_register_name">
 
         <!--вставить имя-->
         <div class="wrapper_form_register_input">
-          <div class="input-errors"
-               v-for="(error, index) of v$.name.$errors"
-               :key="index">
-            <div class="error-msg"
-                 v-if="error.$message === 'Value is required'">
+          <div class="input-errors" v-for="(error, index) of v$.name.$errors" :key="index">
+            <div class="error-msg" v-if="error.$message === 'Value is required'">
               Не корректное имя
             </div>
           </div>
-          <input class="form_register_input"
-                 id="name"
-                 type="text"
-                 placeholder="Имя"
-                 autofocus
-                 v-model="registerName"
-                 :class="{invalid: (v$.name.$error)}"
-          >
+          <input class="form_register_input" id="name" type="text" placeholder="Имя" autofocus v-model="registerName"
+            :class="{ invalid: (v$.name.$error) }">
         </div>
 
         <!--вставить фамилию-->
         <div class="wrapper_form_register_input form_register_surname ">
-          <div class="input-errors"
-               v-for="(error, index) of v$.surname.$errors"
-               :key="index">
-            <div class="error-msg"
-                 v-if="error.$message === 'Value is required'">
+          <div class="input-errors" v-for="(error, index) of v$.surname.$errors" :key="index">
+            <div class="error-msg" v-if="error.$message === 'Value is required'">
               Не корректная фамилия
             </div>
           </div>
-          <input class="form_register_input"
-                 id="surname"
-                 type="text"
-                 placeholder="Фамилия"
-                 v-model="registerSurname"
-                 :class="{invalid: (v$.surname.$error)}">
+          <input class="form_register_input" id="surname" type="text" placeholder="Фамилия" v-model="registerSurname"
+            :class="{ invalid: (v$.surname.$error) }">
         </div>
       </div>
 
       <!--вставить почту-->
       <div class="wrapper_form_register_input">
-        <div class="input-errors"
-             v-for="(error, index) of v$.email.$errors"
-             :key="index">
-          <div class="error-msg"
-               v-if="error.$message === 'Value is not a valid email address'">
+        <div class="input-errors" v-for="(error, index) of v$.email.$errors" :key="index">
+          <div class="error-msg" v-if="error.$message === 'Value is not a valid email address'">
             Некорректный адрес электронной почты
           </div>
         </div>
         <div class="error-msg" v-if="getDouble_email">
-          Пользователь с такой почтой уже зарегистрирован
+          {{ errorEmail }}
         </div>
-        <input class="form_register_input"
-               id="email"
-               type="email"
-               placeholder="Электронная почта"
-               @input="setDouble_email(false)"
-               v-model="registerEmail"
-               :class="{invalid: (v$.email.$error)}"
-        >
+        <input class="form_register_input" id="email" type="email" placeholder="Электронная почта"
+          @input="setDouble_email(false)" v-model="registerEmail" :class="{ invalid: (v$.email.$error) }">
       </div>
 
       <!--вставить пароль-->
       <div class="wrapper_form_register_input">
-        <div class="input-errors"
-             v-for="(error, index) of v$.password.$errors"
-             :key="index">
+        <div class="input-errors" v-for="(error, index) of v$.password.$errors" :key="index">
           <div class="error-msg" v-if="error.$message === 'This field should be at least 8 characters long'">
             Пароль должен состоять минимум из 8 символов
           </div>
         </div>
-        <input class="form_register_input"
-               id="password"
-               type="password"
-               placeholder="Пароль"
-               v-model="registerPassword"
-               :class="{invalid: (v$.password.$error)}"
-               @change="setCheckPassword"
-               >
+        <input class="form_register_input" id="password" type="password" placeholder="Пароль" v-model="registerPassword"
+          :class="{ invalid: (v$.password.$error) }" @change="setCheckPassword">
       </div>
 
       <!--продублировать пароль-->
@@ -98,52 +63,31 @@
         <div class="input-errors">
           <div class="error-msg" v-if="getDouble_password">Пароли не свопадают</div>
         </div>
-        <input class="form_register_input"
-               id="password-confirm"
-               type="password"
-               placeholder="Подтвердите пароль"
-               @input="setCheckPassword"
-               v-model="registerPasswordConfirmation"
-               :class="{invalid: (v$.password_confirmation.$error)}"
-        >
+        <input class="form_register_input" id="password-confirm" type="password" placeholder="Подтвердите пароль"
+          @input="setCheckPassword" v-model="registerPasswordConfirmation"
+          :class="{ invalid: (v$.password_confirmation.$error) }">
       </div>
 
       <!--вставить страну-->
       <div class="wrapper_form_register_input">
-        <div class="input-errors"
-             v-for="(error, index) of v$.country.$errors"
-             :key="index">
-          <div class="error-msg"
-               v-if="error.$message === 'Value is required'">
+        <div class="input-errors" v-for="(error, index) of v$.country.$errors" :key="index">
+          <div class="error-msg" v-if="error.$message === 'Value is required'">
             Необходимо указать корректную страну
           </div>
         </div>
-        <input class="form_register_input"
-               id="country"
-               type="text"
-               placeholder="Страна"
-               v-model="registerCountry"
-               :class="{invalid: (v$.country.$error)}"
-        >
+        <input class="form_register_input" id="country" type="text" placeholder="Страна" v-model="registerCountry"
+          :class="{ invalid: (v$.country.$error) }">
       </div>
 
       <!--вставить город-->
       <div class="wrapper_form_register_input">
-        <div class="input-errors"
-             v-for="(error, index) of v$.city.$errors"
-             :key="index">
-          <div class="error-msg"
-               v-if="error.$message === 'Value is required'">
+        <div class="input-errors" v-for="(error, index) of v$.city.$errors" :key="index">
+          <div class="error-msg" v-if="error.$message === 'Value is required'">
             Необходимо указать корректный населенный пункт
           </div>
         </div>
-        <input class="form_register_input"
-               id="city"
-               type="text"
-               placeholder="Населенный пункт"
-               v-model="registerCity"
-               :class="{invalid: (v$.city.$error)}"
-        >
+        <input class="form_register_input" id="city" type="text" placeholder="Населенный пункт" v-model="registerCity"
+          :class="{ invalid: (v$.city.$error) }">
       </div>
 
       <!--указать дату рождения-->
@@ -152,73 +96,48 @@
         <div class="form_register_date">
 
           <!--день-->
-          <select class="select_form_register_date"
-                  v-model="registerSelectedDay">
-            <option class="option_form_register_date"
-                    disabled
-                    value="">
+          <select class="select_form_register_date" v-model="registerSelectedDay">
+            <option class="option_form_register_date" disabled value="">
               день
             </option>
-            <option class="option_form_register_date"
-                    v-for="n in 31"
-                    :key="n"
-                    :value="n"
-            >{{n}}
+            <option class="option_form_register_date" v-for="n in 31" :key="n" :value="n">{{ n }}
             </option>
           </select>
         </div>
 
-         <!--месяц-->
+        <!--месяц-->
         <div class="form_register_date form_register_date_month">
-          <select class="select_form_register_date"
-                  v-model="registerSelectedMonth">
-            <option class="option_form_register_date"
-                    disabled
-                    value="">
+          <select class="select_form_register_date" v-model="registerSelectedMonth">
+            <option class="option_form_register_date" disabled value="">
               месяц
             </option>
-            <option class="option_form_register_date"
-                    v-for="(month, index) in getArrMonth"
-                    :key="month"
-                    :value="index"
-            >{{month}}
+            <option class="option_form_register_date" v-for="(month, index) in getArrMonth" :key="month" :value="index">
+              {{ month }}
             </option>
           </select>
         </div>
 
         <!--год-->
         <div class="form_register_date">
-          <select class="select_form_register_date"
-                  v-model="registerSelectedYear">
-            <option class="option_form_register_date"
-                    disabled
-                    value="">
+          <select class="select_form_register_date" v-model="registerSelectedYear">
+            <option class="option_form_register_date" disabled value="">
               год
             </option>
-            <option class="option_form_register_date"
-                    v-for="year in years"
-                    :key="year"
-                    :value="year"
-            >{{year}}
+            <option class="option_form_register_date" v-for="year in years" :key="year" :value="year">{{ year }}
             </option>
           </select>
         </div>
       </div>
 
       <!--указать пол-->
-      <label class="form_label_register"
-             for="gender">
+      <label class="form_label_register" for="gender">
         Ваш пол
       </label>
       <div class="wrapper_form_register_gender">
         <div class="form_register_gender">
 
-          <select class="select_form_register_gender"
-                  v-model="registerSelectedGender">
-            <option class="option_form_register_gender"
-                    value=""
-                    disabled
-            > пол
+          <select class="select_form_register_gender" v-model="registerSelectedGender">
+            <option class="option_form_register_gender" value="" disabled> пол
             </option>
             <option class="option_form_register_gender" value="man">Мужской</option>
             <option class="option_form_register_gender" value="woman">Женский</option>
@@ -236,9 +155,8 @@
       <!--      </div>-->
 
       <div class="wrapper_form_register_btn">
-        <button class="form_register_btn"
-                type="submit"
-                :disabled="v$.$invalid && !getDouble_password && getUserRegister.selectedDay && getUserRegister.selectedMonth && getUserRegister.selectedYear && getUserRegister.selectedGender">
+        <button class="form_register_btn" type="submit"
+          :disabled="v$.$invalid && !getDouble_password && getUserRegister.selectedDay && getUserRegister.selectedMonth && getUserRegister.selectedYear && getUserRegister.selectedGender">
           Зарегистрироваться
         </button>
       </div>
@@ -247,9 +165,9 @@
 </template>
 
 <script>
-import {useVuelidate} from "@vuelidate/core";
-import {required, email, minLength, maxLength} from "@vuelidate/validators";
-import {mapActions, mapMutations, mapGetters, mapState} from "vuex";
+import { useVuelidate } from "@vuelidate/core";
+import { required, email, minLength, maxLength } from "@vuelidate/validators";
+import { mapActions, mapMutations, mapGetters, mapState } from "vuex";
 import CloseModal from "@/components/UI/CloseModal";
 
 //функция для валидации имяни и фамилии
@@ -260,22 +178,24 @@ export function validName(name) {
 
 export default {
   name: "RegisterNet",
-  components: {CloseModal},
+  components: { CloseModal },
   props: ["nextUrl"],
 
   setup() {
-    return {v$: useVuelidate()}
+    return { v$: useVuelidate() }
   },
 
   data() {
-    return {}
+    return {
+      errorEmail: "",
+    }
   },
 
   validations() {
     return {
       name: {
-        required, 
-        min: minLength(2), 
+        required,
+        min: minLength(2),
         max: maxLength(20),
         name_validation: {
           $validator: validName,
@@ -283,17 +203,17 @@ export default {
         }
       },
       surname: {
-        required, 
+        required,
         min: minLength(2),
-        max: maxLength(20), 
+        max: maxLength(20),
         name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
         }
       },
-      email: {required, email},
-      password: {required, min: minLength(8), max: maxLength(30),},
-      password_confirmation: {required},
+      email: { required, email },
+      password: { required, min: minLength(8), max: maxLength(30), },
+      password_confirmation: { required },
       country: {
         required, min: minLength(2), max: maxLength(20), name_validation: {
           $validator: validName,
@@ -306,15 +226,15 @@ export default {
           $message: 'Invalid Name'
         }
       },
-      selectedDay: {required},
-      selectedMonth: {required},
-      selectedYear: {required},
-      selectedGender: {required},
+      selectedDay: { required },
+      selectedMonth: { required },
+      selectedYear: { required },
+      selectedGender: { required },
     }
   },
 
   methods: {
-    ...mapActions({register: "registrationStore/register"}),
+    ...mapActions({ register: "registrationStore/register" }),
 
     ...mapMutations({
       //закрыть модальное окно с регистрацией
@@ -356,19 +276,26 @@ export default {
           city: this.getUserRegister.city.charAt(0).toUpperCase() + this.getUserRegister.city.slice(1),
           is_admin: this.getUserRegister.is_admin
         }
+
         this.register(user)
-            .then((resp) => {
-              this.setModulRegister(false)
-              // window.location.href = '/';
-              this.$router.push(`/id${resp.data.user.userID}`)
-              // this.$router.push('mypage');
-            })
-            .catch((err) => {
-              if(err === "Пользователь с такой почтой уже зарегистрирован") {
-                this.setDouble_email(true);
+          .then((resp) => {
+            this.setModulRegister(false)
+            // window.location.href = '/';
+            this.$router.push(`/id${resp.data.user.userID}`)
+            // this.$router.push('mypage');
+          })
+          .catch((err) => {
+            if (err.response) {
+              this.setDouble_email(true);
+              if (err.response.data === "Пользователь с такой почтой уже зарегистрирован") {
+                this.errorEmail = "Пользователь с такой почтой уже зарегистрирован";
+              } else if (err.response.data === "Указанный e-mail не действует") {
+                console.log(err.response.data)
+                this.errorEmail = "Указанный e-mail не действует";
               }
-              console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err));
-            })
+            }
+
+          })
       } else {
         this.setUserRegisterPassword("");
         this.setUserRegisterPasswordConfirmation("")
@@ -384,7 +311,7 @@ export default {
       getDouble_password: "registrationStore/getDouble_password",
       getArrMonth: "registrationStore/getArrMonth",
       years: "registrationStore/years"
-    
+
     }),
 
     ...mapState({
@@ -598,22 +525,23 @@ export default {
 
 .form_register_btn {
   width: 100%;
-    height: 100%;
-    border: 1px solid;
-    border-radius: 5px;
-    background: cornflowerblue;
-    cursor: pointer;
-    font-size: 27px;
-    color: white;
-    font-family: Russo One, fantasy, sans-serif;
-    font-weight: 400;
-    letter-spacing: 1px;
+  height: 100%;
+  border: 1px solid;
+  border-radius: 5px;
+  background: cornflowerblue;
+  cursor: pointer;
+  font-size: 27px;
+  color: white;
+  font-family: Russo One, fantasy, sans-serif;
+  font-weight: 400;
+  letter-spacing: 1px;
 }
 
 .error-msg {
   color: red;
   font-size: 14px;
 }
+
 .invalid {
   border: 1px solid red;
 }
@@ -622,11 +550,12 @@ export default {
 
 @media (max-width: 761px) {
 
-.wrapper_form_register {
-  width: 350px;
-}
-.form_register_btn {
-  font-size: 23px;
-}
+  .wrapper_form_register {
+    width: 350px;
+  }
+
+  .form_register_btn {
+    font-size: 23px;
+  }
 }
 </style>

@@ -3,7 +3,7 @@
         <div class="block_vue_avatar">
             <vue-avatar class="vue_avatar" :width="400" :height="400" :borderRadius="borderRadius" :scale="scale" ref="vueavatar"
                 @vue-avatar-editor:image-ready="onImageReady"
-                :image="pathAva">
+                :image="photo_name ? require(`../assets/${photo_name}`) : ''">
             </vue-avatar>
             <div class="preview_info" :class="{'active_load': getProgressLoadPhoto}">              
                    <!-- полоса загрузки фото -->
@@ -40,7 +40,7 @@
 <script>
 import { VueAvatar } from 'vue-avatar-editor-improved'
 import UIbtn from './UI/UIbtn.vue';
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
     name: "AvatarEditor",
@@ -66,12 +66,18 @@ export default {
 
     methods: {
     ...mapActions({
-        addAvaServer: "loadPhotoStore/addAvaServer"
+        addAvaServer: "loadPhotoStore/addAvaServer",
         }),
+    ...mapMutations({setUserAva: "authorizationStore/setUserAva"}),
 
         saveClicked: function saveClicked() {
             let img = this.$refs.vueavatar.getImageScaled();
             this.addAvaServer(img.toDataURL())
+                .then((res) => {
+                    setTimeout(() => {
+                        this.setUserAva(res.data.ava);
+                    }, 3000)
+                } ) 
             this.btn_save = false
         },
 
@@ -85,14 +91,14 @@ export default {
 
         ...mapGetters({getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto"}),
      
-        pathAva() {
-      try {
-        return require(`../assets/photo/${this.photo_name}`);
-      } catch {
-        return "";
-      }
-
-    },
+    //     pathAva() {
+    //   try {
+    //     console.log(this.photo_name)
+    //     return require(`../assets/${this.photo_name}`);
+    //   } catch {
+    //     return "";
+    //   }
+    // },
 
         computedScaleNumber: {
             get() {

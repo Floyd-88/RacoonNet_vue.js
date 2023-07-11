@@ -64,7 +64,7 @@ function () {
   }, {
     key: "get_last_message_DB",
     value: function get_last_message_DB(id_message, callback) {
-      return this.connection.execute("SELECT \n        M.id,\n        M.date,\n        M.message,\n        M.sender,\n        M.conv_id,\n        U.name,\n        U.surname,\n        U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  WHERE M.id = ?", id_message, function (err, newMessage) {
+      return this.connection.execute("SELECT \n        M.id,\n        M.date,\n        M.message,\n        M.sender,\n        M.conv_id,\n        M.photos,\n        M.readed,\n        U.name,\n        U.surname,\n        U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  WHERE M.id = ?", id_message, function (err, newMessage) {
         callback(err, newMessage);
       });
     } //обновление таблицы с диалогами
@@ -88,7 +88,7 @@ function () {
   }, {
     key: "get_messages_user_DB",
     value: function get_messages_user_DB(params, callback) {
-      return this.connection.execute("SELECT\n        M.id,\n        M.date,\n        M.message,\n        M.sender,\n        U.name,\n        U.surname,\n        M.conv_id,\n        M.photos,\n       \t(SELECT unread FROM conversation WHERE id = ? AND CASE WHEN sender = ? THEN unread = 0 ELSE unread END) as unread,\n        U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  LEFT JOIN conversation C ON C.id = M.conv_id\n        WHERE M.conv_id = ?\n        AND CASE\n            WHEN M.sender = ?\n                THEN sender_delete = '0'\n            WHEN M.addressee = ?\n                THEN addressee_delete = '0'\n            END ORDER BY id DESC LIMIT ?, ?", params, function (err, messages_user) {
+      return this.connection.execute("SELECT\n        M.id,\n        M.date,\n        M.message,\n        M.sender,\n        U.name,\n        U.surname,\n        M.conv_id,\n        M.photos,\n        M.readed,\n       \t(SELECT unread FROM conversation WHERE id = ? AND CASE WHEN sender = ? THEN unread = 0 ELSE unread END) as unread,\n        U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  LEFT JOIN conversation C ON C.id = M.conv_id\n        WHERE M.conv_id = ?\n        AND CASE\n            WHEN M.sender = ?\n                THEN sender_delete = '0'\n            WHEN M.addressee = ?\n                THEN addressee_delete = '0'\n            END ORDER BY id DESC LIMIT ?, ?", params, function (err, messages_user) {
         callback(err, messages_user);
       });
     } //загрузка фотографий к сообщениям 
@@ -96,7 +96,7 @@ function () {
   }, {
     key: "load_photos_messages_DB",
     value: function load_photos_messages_DB(params, callback) {
-      return this.connection.execute("SELECT \n        users.name, \n        users.surname, \n        users.ava, \n        users.userID,\n        photos.date, \n        messages.id, \n        photos.photo_name,\n        photos.id as photoID\n        FROM messages \n        INNER JOIN photos ON photos.message_id_photo = messages.id \n        INNER JOIN users ON photos.userID = users.userID \n        WHERE messages.id = ?", params, function (err, row) {
+      return this.connection.execute("SELECT \n        users.name, \n        users.surname, \n        users.ava, \n        users.userID,\n        photos.date, \n        messages.id as messageID, \n        photos.photo_name,\n        photos.id as photoID\n        FROM messages \n        INNER JOIN photos ON photos.message_id_photo = messages.id \n        INNER JOIN users ON photos.userID = users.userID \n        WHERE messages.id = ?", params, function (err, row) {
         callback(err, row);
       });
     } //обновляем флаг просмотра сообщений в таблице сообщений

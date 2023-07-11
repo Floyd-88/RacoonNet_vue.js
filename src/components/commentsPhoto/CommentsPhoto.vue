@@ -4,7 +4,8 @@
             <div class="wrapper_block_comments_title">
             <div class="wrapper_block_comments_title_name_ava">
                 <div class="wrapper_block_comments_ava">
-                    <img class="ava_posts" :src="loadAva" alt="ava">
+                    <!-- <img class="ava_posts" :src="loadAva" alt="ava"> -->
+                    <UIAva :ava="currentImg.ava"/>
                 </div>
                 <div class="wrapper_block_comments_name">
                     <p class="block_comments_name">{{ currentImg.name + " " + currentImg.surname }}</p>
@@ -35,7 +36,9 @@
                         <div class="my_friend_ava" @mouseover.stop="user.isNameUserLike = true"
                             @mouseleave.stop="user.isNameUserLike = false"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
-                            <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava">
+                            <!-- <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava"> -->
+                            <UIAva :ava="user.ava" :my_friend_ava="true"/>
+
                         </div>
                         <div class="wrapper_like_user_name" v-if="user.isNameUserLike">
                             <p class="like_user_name" @mouseleave="closeUserLikes(currentImg)">{{user.name + " " + user.surname}}</p>
@@ -68,7 +71,8 @@
                     <div class="my_friend" v-for="user in getUsersLikesPhoto" :key="user.author_likes_photo">
                         <div class="my_friend_ava_full"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
-                            <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava">
+                            <!-- <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava"> -->
+                            <UIAva :ava="user.ava"/>
                         </div>
                         <div class="my_friend_name"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
@@ -236,12 +240,15 @@ export default {
     align-items: center;
 }
 
-.wrapper_block_comments_ava {}
-
-.ava_posts {
+.wrapper_block_comments_ava {
     width: 50px;
     border-radius: 100%;
 }
+
+/* .ava_posts {
+    width: 50px;
+    border-radius: 100%;
+} */
 
 .wrapper_block_comments_name {
     margin-left: 5px;
@@ -300,7 +307,7 @@ export default {
 
 .wrapper_likes_users {
     display: flex;
-    max-width: 170px;
+    max-width: 185px;
     height: 32px;
     background: white;
     border-radius: 5px;
@@ -317,11 +324,11 @@ export default {
 
 }
 
-.my_friend_ava img {
+/* .my_friend_ava img {
     height: 100%;
     border-radius: 100%;
     cursor: pointer;
-}
+} */
 
 .wrapper_more_users_likes {
     display: flex;
@@ -420,9 +427,9 @@ export default {
         max-height: 36vh;
     }
 
-    .ava_posts {
+    /* .ava_posts {
         width: 40px;
-    }
+    } */
 
     .wrapper_block_comments_item {
         flex-direction: row-reverse;

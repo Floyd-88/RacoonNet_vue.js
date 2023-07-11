@@ -40,7 +40,7 @@ function () {
   }, {
     key: "load_comments_DB",
     value: function load_comments_DB(params, callback) {
-      return this.connection.query("SELECT id, name, surname, ava, post_id, comment_post_text, author_comment_id, date FROM comments_post INNER JOIN users ON author_comment_id = userID WHERE user_page_id=? AND post_id IN (?)", params, function (err, comments) {
+      return this.connection.query("SELECT \n        comments_post.id, \n        name, \n        surname, \n        ava, \n        post_id, \n        comment_post_text, \n        author_comment_id,\n        SUM(CASE WHEN comments_comment.comment_id = comments_post.id THEN 1 ELSE 0 END) as commentCommentID,\n        comments_post.date FROM comments_post INNER JOIN users ON author_comment_id = userID\n        LEFT JOIN comments_comment ON comments_comment.comment_id = comments_post.id\n        WHERE user_page_id=? AND post_id IN (?) \n        GROUP BY \n        comments_post.id, \n        name, \n        surname, \n        ava, \n        post_id,\n        comment_post_text,\n        author_comment_id, \n        comments_post.date", params, function (err, comments) {
         callback(err, comments);
       });
     } //получаем комментарии к одномк посту
@@ -83,6 +83,14 @@ function () {
       return this.connection.execute("SELECT comments_post.id, name, surname, ava, post_id, comment_post_text, author_comment_id, authorPost, comments_post.date FROM comments_post INNER JOIN users ON author_comment_id = userID INNER JOIN posts ON comments_post.post_id = posts.id WHERE comments_post.id = ?", [newCommentID], function (err, row) {
         callback(err, row[0]);
       });
+    } //получаем ID комментариев к удаляемому посту
+
+  }, {
+    key: "get_id_comments_post",
+    value: function get_id_comments_post(postID, callback) {
+      return this.connection.execute("SELECT id FROM comments_post  WHERE post_id = ?", [postID], function (err, arrayCommentsID) {
+        callback(err, arrayCommentsID);
+      });
     } //добавляем комментарий к другому комментарию в БД
 
   }, {
@@ -113,6 +121,22 @@ function () {
     key: "remove_comment_post_DB",
     value: function remove_comment_post_DB(commentID, callback) {
       return this.connection.execute("DELETE from comments_post WHERE id = ?", [commentID], function (err) {
+        callback(err);
+      });
+    } //удаление всех комментариев к посту
+
+  }, {
+    key: "remove_comments_post_DB",
+    value: function remove_comments_post_DB(postID, callback) {
+      return this.connection.execute("DELETE from comments_post WHERE post_id = ?", [postID], function (err) {
+        callback(err);
+      });
+    } //удаление всех комментариев к комментарию удаляемого поста
+
+  }, {
+    key: "remove_comments_comment_DB",
+    value: function remove_comments_comment_DB(arrayCommentsID, callback) {
+      return this.connection.execute("DELETE from comments_comment WHERE comment_id IN (?)", arrayCommentsID, function (err) {
         callback(err);
       });
     }

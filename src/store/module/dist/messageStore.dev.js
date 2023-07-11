@@ -187,11 +187,13 @@ var messageStore = {
                 var newMessage = res.data[0];
                 newMessage.destinationID = body.addresseeID;
 
-                _socketio["default"].sendMessage(newMessage, function (cb) {
-                  console.log(cb);
-                });
+                if (newMessage.photos === "0") {
+                  _socketio["default"].sendMessage(newMessage, function (cb) {
+                    console.log(cb);
+                  });
+                }
 
-                commit("setArrayMessages", [].concat(_toConsumableArray(state.arrayMessages), [newMessage])); // state.arrayMessages.push(resp.data)
+                commit("setArrayMessages", [].concat(_toConsumableArray(state.arrayMessages), [newMessage]));
               }));
 
             case 11:
@@ -296,7 +298,7 @@ var messageStore = {
                             commit("setIsUIloadMoreMessages", false);
 
                             if (!(resp.data !== "Переписка с данным пользователем отсутствует")) {
-                              _context4.next = 8;
+                              _context4.next = 10;
                               break;
                             }
 
@@ -335,8 +337,13 @@ var messageStore = {
 
                           case 7:
                             resolve(resp);
+                            _context4.next = 11;
+                            break;
 
-                          case 8:
+                          case 10:
+                            commit("setIsNotMessages", true);
+
+                          case 11:
                           case "end":
                             return _context4.stop();
                         }

@@ -3,27 +3,27 @@
 
     <div class="wrapper_nav" v-show="getIsShowMenu || isSmallScreen">
     <div class="wrapper_nav_link" @click="goMyPage()">
-      <button class="link" > Моя страница </button>
+      <button class="link" :disabled="!blockBtnNavigation"> Моя страница </button>
     </div>
     <div class="wrapper_nav_link" @click="goNews()">
-      <button class="link" > Новости </button>
+      <button class="link" :disabled="!blockBtnNavigation"> Новости </button>
     </div>
-    <div class="wrapper_nav_link" @click="goMessage()" :disabled="!blockBtnMessage">
-      <button class="link" >Сообщения</button>
+    <div class="wrapper_nav_link" @click="goMessage()" >
+      <button class="link" :disabled="!blockBtnNavigation">Сообщения</button>
       <p :class="{ 'new_message': newMessage }"></p>
     </div>
-    <div class="wrapper_nav_link" @click="goMyFriend()" :disabled="!blockBtnFriends">
-      <button class="link" > Мои друзья</button>
+    <div class="wrapper_nav_link" @click="goMyFriend()">
+      <button class="link" :disabled="!blockBtnNavigation"> Мои друзья</button>
       <p :class="{ 'new_message': getUsersFriendsMe.length > 0 }"></p>
     </div>
     <div class="wrapper_nav_link" @click="goMyGallery()">
-      <button class="link" >Галерея</button>
+      <button class="link" :disabled="!blockBtnNavigation">Галерея</button>
     </div>
     <div class="wrapper_nav_link exit" @click="runLogout">
-      <button class="link" >Выход</button>
+      <button class="link" :disabled="!blockBtnNavigation">Выход</button>
     </div>
     <div class="wrapper_nav_link_help" @click="openFeedBack()">
-      <button class="link_help" > Обратная связь </button>
+      <button class="link_help"> Обратная связь </button>
     </div>
   </div>
 
@@ -39,9 +39,10 @@ export default {
   data() {
     return {
       userID: JSON.parse(localStorage.getItem('user')).userID,
-      blockBtnFriends: true,
-      blockBtnMessage: true,
-      isSmallScreen: false,
+      blockBtnNavigation: true,
+      // blockBtnMessage: true,
+      // isSmallScreen: false,
+      
     }
   },
 
@@ -79,23 +80,36 @@ export default {
       setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
     }),
 
-    goMyPage() {
-      this.$router.push(`/id${this.userID}`);
-      this.setUsersMyFriends([]);
-      this.setUsersMyFriendsFilter([]);
-      this.setCountFriendsNull()
-      this.GET_USER_MY_FRIENDS(this.userID);
+    async goMyPage() {
+      this.blockBtnNavigation = false;
+
+      await this.$router.push(`/id${this.userID}`);
+      // this.setUsersMyFriends([]);
+      // this.setUsersMyFriendsFilter([]);
+      // this.setCountFriendsNull()
+      // await this.GET_USER_MY_FRIENDS(this.userID);
+
+      this.blockBtnNavigation = true;
     },
 
-    goNews() {
+    async goNews() {
+      this.blockBtnNavigation = false;
+
       this.setUserEditProfile(false);
       this.setPhotosPostsArray([]);
-      this.$router.push('/news');
+      await this.$router.push('/news');
+
+      this.blockBtnNavigation = true;
     },
 
-    goMyGallery() {
-      this.$router.push('/gallery');
-      this.GET_PHOTO_NOT_FILTER();
+    async goMyGallery() {
+      this.blockBtnNavigation = false;
+
+      await this.$router.push('/gallery');
+      await this.GET_PHOTO_NOT_FILTER();
+
+      this.blockBtnNavigation = true;
+
     },
 
     openFeedBack() {
@@ -104,7 +118,8 @@ export default {
     },
 
     async goMyFriend() {
-      this.blockBtnFriends = false;
+      this.blockBtnNavigation = false;
+
       this.setUsersMyFriends([]);
       this.setUsersMyFriendsFilter([]);
       this.setCountFriendsNull();
@@ -114,20 +129,18 @@ export default {
       if (this.getCountFriends === 0) {
         await this.GET_USER_MY_FRIENDS(this.userID);
         await this.$router.push({ name: 'friendspage', query: { id: this.userID } });
-        this.blockBtnFriends = true;
-      }
+        } 
+        this.blockBtnNavigation = true;
     },
 
     async goMessage() {
-      this.blockBtnMessage = false
+      this.blockBtnNavigation = false;
+
       this.setCountDialogsNull();
       this.setArrayDialogs([]);
       this.setArrayMessages([]);
       await this.LOAD_DIALOGS()
-        .then((resp) => () => {
-          if(resp) {
-            this.blockBtnMessage = true;
-          }
+        .then(() => {
         })
         .catch((err) => {
           if (err.code === "ERR_CANCELED") {
@@ -138,13 +151,12 @@ export default {
               .catch((err) => {
                 if (err.code === "ERR_CANCELED") {
                   console.log("Загрузка была отменена")
-                  this.blockBtnMessage = true;
                 }
               });
           }
         });
-        this.blockBtnMessage = true;
-      this.$router.push('/message');
+      await this.$router.push('/message');
+      this.blockBtnNavigation = true;
     },
 
     //проверяем размер экрана
@@ -153,12 +165,14 @@ export default {
       this.setIsShowMenuClose();
     },
 
-    runLogout() {
-    this.logout()
+    async runLogout() {
+    this.blockBtnNavigation = false;
+    await this.logout()
         .then(() => {
           window.location.href = "/";
           // this.$router.push('/')
         });
+    this.blockBtnNavigation = true;
     }
 
   },

@@ -64,6 +64,15 @@ class AuthorizationUserDB {
             })
     }
 
+    //проверка на существование почты в базе данны
+    check_double_email(email, callback) {
+        return this.connection.execute(
+            `SELECT email FROM users WHERE email = ?`, [email],
+            function(err, email) {
+                callback(err, email);
+            })
+    }
+
     // добавляем пользователя в базу данных без метки админ
     insert(user, callback) {
         return this.connection.execute(

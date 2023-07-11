@@ -143,6 +143,7 @@ var showFullPhotoStore = {
           switch (_context3.prev = _context3.next) {
             case 0:
               commit = _ref4.commit;
+              console.log(body);
               bool = body.bool;
               index = body.elem;
               id = body.id;
@@ -154,7 +155,7 @@ var showFullPhotoStore = {
               commit('setMessageID', body.messageID);
               document.body.style.overflow = "hidden";
 
-            case 9:
+            case 10:
             case "end":
               return _context3.stop();
           }

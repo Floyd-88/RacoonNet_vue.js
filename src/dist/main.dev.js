@@ -30,3 +30,4 @@ _components["default"].forEach(function (comp) {
 app.use(_router["default"]);
 app.use(_index["default"]);
 app.mount('#app');
+window.fallbackImage = require('./assets/ava/ava_1.jpg');

@@ -9,7 +9,8 @@
             <div class="wrapper_header_user_name">
                 <div class="header_ava_user" @click="$router.push({ name: 'mypage', params: { id: getUser.userID } })">
                     <template v-if="getUser.ava != undefined || getUser.ava != null">
-                        <img :src="pathAva" alt="ava">
+                        <!-- <img :src="pathAva" alt="ava"> -->
+                        <UIAva :ava="this.getUser.ava"/>
                     </template>
                 </div>
                 <div class="header_name_user" @click="$router.push({ name: 'mypage', params: { id: getUser.userID } })">
@@ -30,14 +31,19 @@
             <div ref="observer" class="observer"></div>
 
             <template v-if="getStatus === 'success'">
-                <div class="wrapper_message_dialog_user" v-for="(message, index) in getArrayMessages" :key="message.id">
+                <div class="wrapper_message_dialog_user" v-for="(message, index) in messageArray" :key="message.id">
                 <div class="dialog_ava_user" :ref="'message' + message.id">
                     <template v-if="message.sender == $route.params.id">
-                        <img :src="pathAva" alt="ava"
-                            @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
+                        <div @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
+                            <!-- <img :src="pathAva" alt="ava"> -->
+                            <UIAva :ava="this.getUser.ava"/>
+                        </div>
                     </template>
                     <template v-else>
-                        <img :src="pathAvaMy" alt="ava" @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
+                        <!-- <img :src="pathAvaMy" alt="ava" > -->
+                        <div @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
+                            <UIAva :ava="message.ava"/>
+                        </div>
                     </template>
 
                 </div>
@@ -56,32 +62,44 @@
                         </div>
                     </div>
 
-                    <div class="message_text" :class="{ 'active_text_fone': message.isMesssageDel }"
+                    <div class="message_text" :class="{ 'active_text_fone': message.isMesssageDel, 'not_read_message': message.readed === 0 && message.sender === +id}"
                         @click="showBtnDelete(message, index)">
 
                         <!-- фотографии к сообщению -->
                         <div class="wrapper_block_photo_post">
                             <div class="wrapper_block_photo_post_first">
                                 <template
-                                    v-for="(photo, index) in getPhotosMessagesArray.filter(i => i.id === message.id).slice(0, 1)"
+                                    v-for="(photo, index) in messagePhotos.filter(i => i.messageID === message.id).slice(0, 1)"
                                     :key="index">
-                                    <div class="wrapper_photo_post size_photo_1" v-if="message.id === photo.id">
-                                        <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
-                                            @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index, id: photo.id, messageID: message.id })"
-                                            @load="scrollToElement()">
+                                    <div class="wrapper_photo_post size_photo_1" 
+                                        v-if="message.id === photo.messageID"
+                                        @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index, id: photo.messageID, messageID: message.id })"
+                                        @load="scrollToElement()">
+                                        <!-- <img class="photo_post" 
+                                            :src="myPhotos(photo)" 
+                                            :alt="'photo' + photo.id"
+                                            > -->
+                                            <UIPhoto :photo="photo"/>
+
                                     </div>
                                 </template>
                             </div>
 
                             <div class="wrapper_block_photo_post_another"
-                                v-if="getPhotosMessagesArray.filter(i => i.id === message.id).slice(1).length > 0">
+                                v-if="messagePhotos.filter(i => i.messageID === message.id).slice(1).length > 0">
                                 <template
-                                    v-for="(photo, index) in getPhotosMessagesArray.filter(i => i.id === message.id).slice(1)"
+                                    v-for="(photo, index) in messagePhotos.filter(i => i.messageID === message.id).slice(1)"
                                     :key="index">
-                                    <div class="wrapper_photo_post photo_another" v-if="message.id === photo.id">
-                                        <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
-                                            @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index + 1, id: photo.id, messageID: message.id })"
-                                            @load="scrollToElement()">
+                                    <div class="wrapper_photo_post photo_another" 
+                                        v-if="message.id === photo.messageID"
+                                        @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index + 1, id: photo.messageID, messageID: message.id })"
+                                        @load="scrollToElement()">
+                                        <!-- <img class="photo_post" 
+                                            :src="myPhotos(photo)" 
+                                            :alt="'photo' + photo.id"
+                                            > -->
+                                            <UIPhoto :photo="photo"/>
+
                                     </div>
                                 </template>
                             </div>
@@ -113,7 +131,7 @@
             
 
             <!-- -- -->
-            <div class="wrapper_not_messages" v-if="getArrayMessages.length < 1 && getIsNotMessages">
+            <div class="wrapper_not_messages" v-if="messageArray.length < 1 && getIsNotMessages">
                 <p class="not_messages" v-if="getUser.delete !== 1">
                     У вас отстутвует перписка с данным пользователем, но Вы можете начать общение прямо сейчас.
                 </p>
@@ -197,6 +215,10 @@ export default {
         },
     },
 
+    created() {
+        console.log('created')
+    },
+
     mounted() {
         this.setCountMessagesNull();
         this.setArrayMessages([]);
@@ -204,13 +226,17 @@ export default {
         this.id = this.$route.params.id;
         this.LOAD_MESSAGES_USER(this.id)
             .then(() => {
+                // ------------------------------------------------------------------------------------
                 if (this.$refs.scrollToMe) {
                     this.$nextTick(function () {
+                        setTimeout(() => {
                         this.scrollToElement();
+                        }, 1000)
                     });
                 }
-                if(this.getArrayMessages[0]) {
-                    this.conv_id = this.getArrayMessages[0].conv_id;
+                // ----------------------------------------------------------------------------------
+                if(this.messageArray[0]) {
+                    this.conv_id = this.messageArray[0].conv_id;
                 }
             });
         // this.scrollToElement();
@@ -227,7 +253,7 @@ export default {
         };
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
-                if (this.getArrayMessages.length !== 0) {
+                if (this.messageArray.length !== 0) {
                     this.scrolPhotoDown = false;
                     this.LOAD_MESSAGES_USER(this.id)
                         .then((resp) => {
@@ -252,33 +278,38 @@ export default {
         observer.observe(this.$refs.observer);
     },
 
-    updated() {
-        if (this.scrolPhotoDown === true) {
-            if (this.$refs.scrollToMe) {
-                this.$nextTick(function () {
-                    this.scrollToElement();
-                })
-            }
-        }
+    // ----------------------------------------------------
+    // updated() {
+        // console.log('updated')
+        // if (this.scrolPhotoDown === true) {
+        //     if (this.$refs.scrollToMe) {
+        //         this.$nextTick(function () {
+        //             console.log('hhhhhhhhhhhhhhhhover')
+        //             // this.scrollToElement();
+        //         })
+        //     }
+        // }
         // this.scrolPhotoDown = false;
-    },
+    // },
+    // ------------------------------------------------------
 
     async unmounted() {
-        if (this.getArrayMessages.length > 0) {
+        console.log('unmounted')
+        if (this.messageArray.length > 0) {
             this.setCountDialogsNull();
             this.setArrayDialogs([]);
-            this.LOAD_DIALOGS({ isExitMessage: true, convID: this.getArrayMessages[0].conv_id });
+            this.LOAD_DIALOGS({ isExitMessage: true, convID: this.messageArray[0].conv_id });
         }
         this.setCountMessagesNull();
         this.setArrayMessages([]);
-
-
     },
 
     async beforeUnmount() {
+        console.log('beforeUnmount')
         this.UPDATE_FLAGS_UNREAD_MESSAGE(this.conv_id);
         this.setPhotosMessagesArray([]);
         this.conv_id = "";
+        this.setMessageUser("");
     },
 
     methods: {
@@ -317,7 +348,7 @@ export default {
             this.WRITE_MESSAGE_USER({ addresseeID: this.$route.params.id })
                 .then(() => {
                     this.$nextTick(function () {
-                        this.scrolPhotoDown = false;
+                        // this.scrolPhotoDown = false;
                         this.scrollToElement();
                     });
                 });
@@ -325,6 +356,7 @@ export default {
         showBtnDelete(message) {
             this.scrolPhotoDown = false;
             message.isMesssageDel = !message.isMesssageDel;
+            message.readed = 1;
         },
 
         //автоматическая прокрутка сообщений вниз
@@ -354,6 +386,7 @@ export default {
                 console.log(err);
             }
         },
+
         //в случае закодированных специсимволов в текcте- переводим их обратно в читаемый вид
         messageText(value) {
             let doc = new DOMParser().parseFromString(value, "text/html");
@@ -366,22 +399,16 @@ export default {
             this.scrolPhotoDown = true;
         },
 
-        myPhotos(photo) {
-            try {
-                return require(`../../assets/photo/${photo.photo_name}`);
-            } catch (err) {
-                console.log(err)
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
-
         moreTextMessage(message) {
+            this.scrolPhotoDown = false;
             message.isFullText = true;
         },
 
         goBackMessage() {
             this.$router.go(-1);
-            this.UPDATE_FLAGS_UNREAD_MESSAGE(this.getArrayMessages[0].conv_id);
+            if(this.messageArray[0]) {
+                this.UPDATE_FLAGS_UNREAD_MESSAGE(this.messageArray[0].conv_id);
+            }
         }
     },
     computed: {
@@ -406,29 +433,28 @@ export default {
                 return this.getMessageUser;
             },
             set(value) {
+                //проматываем вних при печатанье сообщения
+                this.scrolPhotoDown = true;
+                if (this.scrolPhotoDown === true) {
+                    if (this.$refs.scrollToMe) {
+                            this.scrollToElement();
+                        }
+                    }
+                this.scrolPhotoDown = false;
+
                 this.setMessageUser(value);
                 this.v$.messageUser.$touch();
             }
         },
-        //подгрузка автатарки с кем я переписываюсь
-        pathAva() {
-            try {
-                return require(`../../assets/photo/${this.getUser.ava}`);
-            }
-            catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
+        messageArray() {
+            let notDoubleMessage = this.getArrayMessages.filter((v, i, a) => a.findIndex(v2 => (v2.id === v.id)) === i);
+            return notDoubleMessage;
         },
-        //подгрузка аватрки моей
-        pathAvaMy() {
-            let message = this.getArrayMessages.find(message => message.sender === JSON.parse(localStorage.getItem("user")).userID);
-            try {
-                return require(`../../assets/photo/${message.ava}`);
-            }
-            catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
+
+        messagePhotos() {
+            let notDoublePhotos = this.getPhotosMessagesArray.filter((v, i, a) => a.findIndex(v2 => (v2.photoID === v.photoID)) === i);
+            return notDoublePhotos;
+        }
     },
 
     components: { UImodal, FileUpload }
@@ -641,7 +667,7 @@ export default {
     justify-content: center;
     flex-direction: row;
     max-height: 360px;
-    width: 75%;
+    width: 90%;
     padding: 0 8%;
 }
 

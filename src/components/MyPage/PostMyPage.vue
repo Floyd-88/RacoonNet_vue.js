@@ -1,19 +1,34 @@
 <template>
-  <div class="post" v-for="post of postArray.filter(post => post.delete_post !== 1)" :key="post.id" @mouseover="showBtnPost(post)"
-    @mouseleave="notShowBtnPost(post)">
+  <div class="post" v-for="post of postArray" 
+      :key="post.id" 
+      @mouseover="showBtnPost(post)"
+      @mouseleave="notShowBtnPost(post)">
 
     <div class="wrapper_post">
-
-      <div class="wrapper_ava_posts">
-        <img class="ava_posts" alt="ava" ref="img" :src="loadAva(post.ava)"
-          @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
+      
+      <!-- блок с аватаркой -->
+      <div class="wrapper_ava_posts" @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
+      <UIAva :ava="post.ava"/>
       </div>
+
+      <!-- <div class="wrapper_ava_posts">
+        <img class="ava_posts" alt="ava" ref="img" :src="require(`../../assets/${post.ava }`)" 
+          @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
+      </div> -->
 
       <div class="wrapper_post_user">
         <div class="wrapper_post_name">
-          <p class="post_name" @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
+          <div class="wrapper_post_name_column">
+            <p class="post_name" @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
             {{ post.name + " " + post.surname }}
           </p>
+
+          <div class="wrapper_data_post">
+            <p class="data_post">{{ post.date }}</p>
+          </div>
+          </div>
+          
+
           <div class="wrapper_post_redaction_btn">
             <div class="btn_post" v-show="post.isPostDel">
               <UIbtn class="redaction_post_btn" v-if="getUser.enterUser == post.authorPost"
@@ -33,9 +48,7 @@
 
         </div>
 
-        <div class="wrapper_data_post">
-          <p class="data_post">{{ post.date }}</p>
-        </div>
+        
 
         <!-- текст поста -->
         <div class="wrapper_text_post" v-if="post.postText.length < 800">
@@ -62,9 +75,11 @@
     <div class="wrapper_block_photo_post">
       <div class="wrapper_block_photo_post_first">
         <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(0, 1)" :key="index">
-          <div class="wrapper_photo_post size_photo_1" v-if="post.id === photo.id">
-            <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
-              @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
+          <div class="wrapper_photo_post size_photo_1" 
+            v-if="post.id === photo.id"
+            @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
+            <!-- <img class="photo_post" :src="require(`../../assets/${photo.photo_name}`)" :alt="'photo' + photo.id"> -->
+              <UIPhoto :photo="photo"/>
           </div>
         </template>
       </div>
@@ -72,9 +87,10 @@
       <div class="wrapper_block_photo_post_another" v-if="getPhotosPostsArray.filter(i => i.id === post.id).slice(1).length
         > 0">
         <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(1)" :key="index">
-          <div class="wrapper_photo_post photo_another" v-if="post.id === photo.id">
-            <img class="photo_post" :src="myPhotos(photo)" :alt="'photo' + photo.id"
-              @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index + 1, id: photo.id, postID: post.id })">
+          <div class="wrapper_photo_post photo_another" v-if="post.id === photo.id"
+          @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index + 1, id: photo.id, postID: post.id })">
+            <!-- <img class="photo_post" :src="require(`../../assets/${photo.photo_name}`)" :alt="'photo' + photo.id"> -->
+              <UIPhoto :photo="photo"/>
           </div>
         </template>
       </div>
@@ -134,97 +150,107 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
+// import UIAva from "../UI/UIAva.vue";
 
 export default {
-  name: "PostMyPage",
-  data() {
-    return {
-      // isLoaded: false,
-      // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
-    };
-  },
-
-  methods: {
-    ...mapMutations({
-      setBeforePostText: "postsMyPageStore/setBeforePostText",
-      setModulePost: "postsMyPageStore/setModulePost",
-      setCloseModulePost: "postsMyPageStore/setCloseModulePost"
-    }),
-    ...mapActions({
-      editPost: "postsMyPageStore/editPost",
-      removePost: "postsMyPageStore/removePost",
-      fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
-      FULL_SIZE_PHOTO_POST: "showFullPhotoStore/FULL_SIZE_PHOTO_POST"
-      // LOAD_POST_PHOTOS: "postsMyPageStore/LOAD_POST_PHOTOS"
-    }),
-    // onImgLoad() {
-    //   console.log(this.$refs)
-    //   // return this.isLoaded = false
-    // },
-    // loadAva() {
-    //   require(`../../assets/photo/${post.ava}`)
-    // }
-    loadAva(ava) {
-      try {
-        return require(`../../assets/photo/${ava}`);
-      }
-      catch {
-        return require(`../../assets/ava/ava_1.jpg`);
-      }
+    name: "PostMyPage",
+    data() {
+        return {
+        // isLoaded: false,
+        // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
+        };
     },
-
-    myPhotos(photo) {
-      try {
-        return require(`../../assets/photo/${photo.photo_name}`);
-      } catch (err) {
-        // console.log(err)
-        return require(`../../assets/ava/ava_1.jpg`);
-      }
+    methods: {
+        imageLoadError() {
+            console.log("Image failed to load");
+        },
+        ...mapMutations({
+            setBeforePostText: "postsMyPageStore/setBeforePostText",
+            setModulePost: "postsMyPageStore/setModulePost",
+            setCloseModulePost: "postsMyPageStore/setCloseModulePost"
+        }),
+        ...mapActions({
+            editPost: "postsMyPageStore/editPost",
+            removePost: "postsMyPageStore/removePost",
+            fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
+            FULL_SIZE_PHOTO_POST: "showFullPhotoStore/FULL_SIZE_PHOTO_POST"
+            // LOAD_POST_PHOTOS: "postsMyPageStore/LOAD_POST_PHOTOS"
+        }),
+        // onImgLoad() {
+        //   console.log(this.$refs)
+        //   // return this.isLoaded = false
+        // },
+        // loadAva() {
+        //   require(`../../assets/photo/${post.ava}`)
+        // }
+        // loadAva(ava) {
+        //   try {
+        //     return require(`../../assets/photo/${ava}`);
+        //   }
+        //   catch {
+        //     return require(`../../assets/ava/ava_1.jpg`);
+        //   }
+        // },
+        // myPhotos(photo) {
+        //   try {
+        //     return require(`../../assets/photo/${photo.photo_name}`);
+        //   } catch (err) {
+        //     // console.log(err)
+        //     return require(`../../assets/ava/ava_1.jpg`);
+        //   }
+        // },
+        postText(value) {
+            let doc = new DOMParser().parseFromString(value, "text/html");
+            return doc.documentElement.textContent;
+        },
+        showBtnPost(post) {
+            post.isShowBtn = true;
+        },
+        notShowBtnPost(post) {
+            post.isShowBtn = false;
+        },
+        btnPost(post) {
+            post.isPostDel = !post.isPostDel;
+        },
+        moreTextPost(post) {
+            post.isFullText = true;
+        }
     },
-
-    postText(value) {
-      let doc = new DOMParser().parseFromString(value, "text/html");
-      return doc.documentElement.textContent;
+    computed: {
+        ...mapGetters({
+            getPost: "postsMyPageStore/getPosts",
+            getBeforePostText: "postsMyPageStore/getBeforePostText",
+            getModulePost: "postsMyPageStore/getModulePost",
+            getUser: "authorizationStore/getUser",
+            getCommentsArray: "commentsPost/getCommentsArray",
+            getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray"
+        }),
+        beforeModelPostText: {
+            get() {
+                let doc = new DOMParser().parseFromString(this.getBeforePostText, "text/html");
+                return doc.documentElement.textContent;
+                // return this.getBeforePostText;
+            },
+            set(value) {
+                this.setBeforePostText(value);
+            }
+        },
+        postArray() {
+            let notDoublePost = this.getPost.filter((v, i, a) => a.findIndex(v2 => (v2.id === v.id)) === i);
+            return notDoublePost;
+        },
+        //  loadAva() {
+        //   notDoublePost.map(post => {
+        //   })
+        //   try {
+        //     return require(`../../assets/photo/${ava}`);
+        //   }
+        //   catch {
+        //     return require(`../../assets/ava/ava_1.jpg`);
+        //   }
+        // },
     },
-    showBtnPost(post) {
-      post.isShowBtn = true;
-    },
-    notShowBtnPost(post) {
-      post.isShowBtn = false;
-    },
-    btnPost(post) {
-      post.isPostDel = !post.isPostDel;
-    },
-
-    moreTextPost(post) {
-      post.isFullText = true;
-    }
-  },
-  computed: {
-    ...mapGetters({
-      getPost: "postsMyPageStore/getPosts",
-      getBeforePostText: "postsMyPageStore/getBeforePostText",
-      getModulePost: "postsMyPageStore/getModulePost",
-      getUser: "authorizationStore/getUser",
-      getCommentsArray: "commentsPost/getCommentsArray",
-      getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray"
-    }),
-    beforeModelPostText: {
-      get() {
-        let doc = new DOMParser().parseFromString(this.getBeforePostText, "text/html");
-        return doc.documentElement.textContent;
-        // return this.getBeforePostText;
-      },
-      set(value) {
-        this.setBeforePostText(value);
-      }
-    },
-
-    postArray() {
-      let notDoublePost = this.getPost.filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i);
-      return notDoublePost;
-    }
-  },
+    // components: { UIAva }
 }
 </script>
 
@@ -249,13 +275,14 @@ export default {
 
 .wrapper_ava_posts {
   margin: 5px;
-  cursor: pointer
+  cursor: pointer;
+  width: 90px;
+
 }
 
-.ava_posts {
-  width: 90px;
+/* .ava_posts {
   border-radius: 100%;
-}
+} */
 
 .wrapper_post_user {
   display: flex;
@@ -443,17 +470,21 @@ export default {
     line-height: 17px;
   }
 
-  .ava_posts {
+  .wrapper_ava_posts {
+    width: 50px;
+
+  }
+  /* .ava_posts {
     width: 50px;
     border-radius: 100%;
-  }
+  } */
 
   .wrapper_post_user {
     padding-top: 20px;
   }
 
   .size_photo_1 {
-    max-height: 350px;
+    max-height: 424px;
   }
 
   .btn_post {

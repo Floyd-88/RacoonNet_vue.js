@@ -22,7 +22,27 @@ class CommentsPostDB {
 
     //получаем комментарии к постам
     load_comments_DB(params, callback) {
-        return this.connection.query(`SELECT id, name, surname, ava, post_id, comment_post_text, author_comment_id, date FROM comments_post INNER JOIN users ON author_comment_id = userID WHERE user_page_id=? AND post_id IN (?)`, params, (err, comments) => {
+        return this.connection.query(`SELECT 
+        comments_post.id, 
+        name, 
+        surname, 
+        ava, 
+        post_id, 
+        comment_post_text, 
+        author_comment_id,
+        SUM(CASE WHEN comments_comment.comment_id = comments_post.id THEN 1 ELSE 0 END) as commentCommentID,
+        comments_post.date FROM comments_post INNER JOIN users ON author_comment_id = userID
+        LEFT JOIN comments_comment ON comments_comment.comment_id = comments_post.id
+        WHERE user_page_id=? AND post_id IN (?) 
+        GROUP BY 
+        comments_post.id, 
+        name, 
+        surname, 
+        ava, 
+        post_id,
+        comment_post_text,
+        author_comment_id, 
+        comments_post.date`, params, (err, comments) => {
             callback(err, comments);
         })
     }
@@ -62,6 +82,13 @@ class CommentsPostDB {
         });
     }
 
+    //получаем ID комментариев к удаляемому посту
+    get_id_comments_post(postID, callback) {
+        return this.connection.execute(`SELECT id FROM comments_post  WHERE post_id = ?`, [postID], (err, arrayCommentsID) => {
+            callback(err, arrayCommentsID)
+        });
+    }
+
     //добавляем комментарий к другому комментарию в БД
     add_commentComment_DB(body, callback) {
         return this.connection.execute(`INSERT INTO comments_comment (comment_id, comment_comment_text, author_comment, nameAddressee, user_page, date, comment_commentID, author_comment_comment, answer_comment_comment_text) VALUES (?,?,?,?,?,?,?,?,?)`, body, (err, row) => {
@@ -86,6 +113,20 @@ class CommentsPostDB {
     //удаление комментария к посту
     remove_comment_post_DB(commentID, callback) {
         return this.connection.execute(`DELETE from comments_post WHERE id = ?`, [commentID], (err) => {
+            callback(err);
+        });
+    }
+
+    //удаление всех комментариев к посту
+    remove_comments_post_DB(postID, callback) {
+        return this.connection.execute(`DELETE from comments_post WHERE post_id = ?`, [postID], (err) => {
+            callback(err);
+        });
+    }
+
+    //удаление всех комментариев к комментарию удаляемого поста
+    remove_comments_comment_DB(arrayCommentsID, callback) {
+        return this.connection.execute(`DELETE from comments_comment WHERE comment_id IN (?)`, arrayCommentsID, (err) => {
             callback(err);
         });
     }

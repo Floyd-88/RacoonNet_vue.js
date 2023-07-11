@@ -5,7 +5,8 @@
                 <div class="message_name_user">
                     <div class="dialog_ava_user"
                         @click="$router.push({ name: 'mypage', params: { id: comment.author_comment_id } })">
-                        <img :src="pathAva(comment.ava)" alt="ava">
+                        <!-- <img :src="pathAva(comment.ava)" alt="ava"> -->
+                        <UIAva :ava="comment.ava"/>
                     </div>
                     <p class="message_name"
                         @click="$router.push({ name: 'mypage', params: { id: comment.author_comment_id } })">{{ comment.name
@@ -78,13 +79,13 @@ export default {
             comment.isBtnDelete = !comment.isBtnDelete;
         },
 
-        pathAva(ava) {
-            try {
-                return require(`../../assets/photo/${ava}`);
-            } catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
+        // pathAva(ava) {
+        //     try {
+        //         return require(`../../assets/photo/${ava}`);
+        //     } catch {
+        //         return require(`../../assets/ava/ava_1.jpg`);
+        //     }
+        // },
 
         //в случае закодированных специсимволов в тектсе- переводим их обратно в читаемый вид
         messageText(value) {

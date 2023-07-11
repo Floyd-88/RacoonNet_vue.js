@@ -19,10 +19,10 @@ transporter.verify((error, success) => {
         console.log('Server is ready to take our messages: ', success)
 })
 
-const mailer = message => {
-    transporter.sendMail(message, (err, info) => {
-        if (err) return console.log(err)
-        console.log('Email sent: ', info)
+const mailer = (message, callback) => {
+    transporter.sendMail(message, (err) => {
+        callback(err)
+            // console.log('Email sent: ', info)
     })
 }
 

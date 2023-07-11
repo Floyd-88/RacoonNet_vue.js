@@ -16,7 +16,9 @@
                     <div class="my_friend_ava" @mouseover.stop="user.isNameUserLike = true"
                         @mouseleave.stop="user.isNameUserLike = false"
                         @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_post}` } })">
-                        <img :src="loadAva(user.ava)" alt="ava">
+                        <!-- <img :src="loadAva(user.ava)" alt="ava"> -->
+                        <UIAva :ava="user.ava"/>
+
                     </div>
                     <div class="wrapper_like_user_name" v-if="user.isNameUserLike">
                         <p class="like_user_name" @mouseleave="closeUserLikes(post)">{{ user.name + " " + user.surname }}</p>
@@ -56,7 +58,8 @@
                     <div class="my_friend" v-for="user in getUsersLikesPost" :key="user.author_likes_post">
                         <div class="my_friend_ava_full"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_post}` } })">
-                            <img :src="loadAva(user.ava)" alt="ava">
+                            <!-- <img :src="loadAva(user.ava)" alt="ava"> -->
+                            <UIAva :ava="user.ava"/>
                         </div>
                         <div class="my_friend_name"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_post}` } })">
@@ -150,13 +153,13 @@ export default {
             }
         },
 
-        loadAva(ava) {
-            try {
-                return require(`../../assets/photo/${ava}`)
-            } catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
+        // loadAva(ava) {
+        //     try {
+        //         return require(`../../assets/photo/${ava}`)
+        //     } catch {
+        //         return require(`../../assets/ava/ava_1.jpg`);
+        //     }
+        // },
 
         closeModalWindowLikesUser() {
             this.setShowModalBlockUsersLikesPost(false)
@@ -339,5 +342,7 @@ export default {
 .my_friend_name {
     cursor: pointer;
     text-align: center;
+    font-family: Russo One, fantasy, sans-serif;
+    font-size: 13px;
 }
 </style>

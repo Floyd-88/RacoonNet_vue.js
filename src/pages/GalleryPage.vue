@@ -22,9 +22,9 @@
                 </p>
               </div>
 
-              <div class="all_photos">
-                <img class="photo" :src="myPhotos(photo.photo_name)" :alt="photo.photo_name"
-                  @click="fullSizePhoto({ bool: true, elem: index, id: photo.id })">
+              <div class="all_photos" @click="fullSizePhoto({ bool: true, elem: index, id: photo.id })">
+                <UIPhoto :photo="photo"/>
+                <!-- <img class="photo" :src="require(`../assets/${photo.photo_name}`)" :alt="photo.photo_name"> -->
               </div>
             </div>
 
@@ -75,6 +75,8 @@ export default {
 
 
   async mounted() {
+    console.log('consol')
+
     if (this.getCheckedCat.length === 0) {
       this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
       this.loadUser({ id: JSON.parse(localStorage.getItem('user')).userID })
@@ -135,13 +137,13 @@ export default {
       }
     },
 
-    myPhotos(photo) {
-      try {
-        return require(`../assets/photo/${photo}`);
-      } catch (err) {
-        return require(`../assets/ava/ava_1.jpg`);
-      }
-    },
+    // myPhotos(photo) {
+    //   try {
+    //     return require(`../assets/photo/${photo}`);
+    //   } catch (err) {
+    //     return require(`../assets/ava/ava_1.jpg`);
+    //   }
+    // },
 
   },
 

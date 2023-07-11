@@ -8,12 +8,12 @@
             <p class="new_message_title">У Вас новое сообщение!</p>
         </div>
 
-</div>
+    </div>
 </template>
   
 <script>
 import CloseModal from './CloseModal.vue';
-import { mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 
 export default {
@@ -21,38 +21,69 @@ export default {
     components: { CloseModal },
 
 
-//     beforeRouteEnter(to, from, next) {
-//     next(vm => {
-//       if (from.name == 'messagepage') {
-//         console.log(111)
-//         vm.$refs.newMessage.style.display = "none"
-//       }
-//     })
-//   },
+    //     beforeRouteEnter(to, from, next) {
+    //     next(vm => {
+    //       if (from.name == 'messagepage') {
+    //         console.log(111)
+    //         vm.$refs.newMessage.style.display = "none"
+    //       }
+    //     })
+    //   },
 
     methods: {
-        ...mapMutations({setIsNewMessageNotify: "messageStore/setIsNewMessageNotify"}),
+        ...mapMutations({
+            setIsNewMessageNotify: "messageStore/setIsNewMessageNotify",
+            setCountDialogsNull: "messageStore/setCountDialogsNull",
+            setArrayDialogs: "messageStore/setArrayDialogs",
+            setArrayMessages: "messageStore/setArrayMessages",
+        }),
+
+        ...mapActions({
+            LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
+
+        }),
 
         closeNewMessage() {
             this.$refs.newMessage.style.display = "none";
             this.setIsNewMessageNotify(false);
         },
 
-        nextNewMessage() {
-            this.$router.push("/message")
+        async nextNewMessage() {
             this.$refs.newMessage.style.display = "none";
+
             this.setIsNewMessageNotify(false);
 
+            this.setCountDialogsNull();
+            this.setArrayDialogs([]);
+            this.setArrayMessages([]);
+            await this.LOAD_DIALOGS()
+                .then(() => {
+                })
+                .catch((err) => {
+                    if (err.code === "ERR_CANCELED") {
+                        this.setCountDialogsNull();
+                        this.setArrayDialogs([]);
+                        this.setArrayMessages([]);
+                        this.LOAD_DIALOGS()
+                            .catch((err) => {
+                                if (err.code === "ERR_CANCELED") {
+                                    console.log("Загрузка была отменена")
+                                }
+                            });
+                    }
+                });
+            await this.$router.push('/message');
         }
     },
 
     computed: {
-        ...mapGetters({ 
+        ...mapGetters({
             getArrayDialogs: "messageStore/getArrayDialogs",
-            getIsNewMessageNotify: "messageStore/getIsNewMessageNotify" 
+            getIsNewMessageNotify: "messageStore/getIsNewMessageNotify"
         }),
 
         newMessage() {
+            console.log(this.getArrayDialogs)
             return this.getArrayDialogs.some(dialog => dialog.unread)
         }
     },

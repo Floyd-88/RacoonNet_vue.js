@@ -1,21 +1,21 @@
 <template>
-  <HeaderNet />
+    <HeaderNet />
 
-  <!-- показывать загрузчик
+    <!-- показывать загрузчик
   <template v-if="getStatus === 'loading'">
     <div class="loading_show">
       <UIloadMoreContent />
     </div>
   </template> -->
 
-  <div class="wrapper">
-    <router-view></router-view>
-     <UInewMessage />
+    <div class="wrapper">
+        <router-view></router-view>
+        <UInewMessage />
 
-    <UImodal v-if="getisModalFeedBack">
-      <FeedBack />
-    </UImodal>
-  </div>
+        <UImodal v-if="getisModalFeedBack">
+            <FeedBack />
+        </UImodal>
+    </div>
 </template>
 
 <script>
@@ -33,6 +33,7 @@ export default {
             if (token) {
                 config.headers.Authorization = token;
             }
+
             //отмена запросов на сервер
             let source = axios.CancelToken.source();
             config.cancelToken = source.token;
@@ -53,13 +54,13 @@ export default {
                 if (error.response.data === "Неверный токен") {
                     this.UPDATE_TOKEN()
                         .then(res => {
-                        if (res.data.token) {
-                            error.config.headers.Authorization = res.data.token;
-                        }
-                    })
+                            if (res.data.token) {
+                                error.config.headers.Authorization = res.data.token;
+                            }
+                        })
                         .catch(() => {
-                        return window.location.href = "/";
-                    });
+                            return window.location.href = "/";
+                        });
                     return axios.request(error.config);
                 }
             }
@@ -69,45 +70,51 @@ export default {
             return Promise.reject(error);
         });
 
+
         // this.CHECK_CONFIRM_FRIEND();
         if (localStorage.getItem("token")) {
             this.LOAD_DIALOGS()
                 .then(() => () => { })
                 .catch((err) => {
-                if (err.code === "ERR_CANCELED") {
-                    this.LOAD_DIALOGS();
-                }
-            });
+                    if (err.code === "ERR_CANCELED") {
+                        this.LOAD_DIALOGS();
+                    }
+                });
             this.GET_USER_ADD_FRIENDS_ME()
                 .catch((err) => {
-                if (err.code === "ERR_CANCELED") {
-                    console.log("Загрузка была отменена");
-                }
-            });
+                    if (err.code === "ERR_CANCELED") {
+                        console.log("Загрузка была отменена");
+                    }
+                });
             this.GET_NEW_NOTICE()
                 .catch((err) => {
-                if (err.code === "ERR_CANCELED") {
-                    this.GET_NEW_NOTICE();
-                }
-                if (err) {
-                    console.log(err);
-                }
-            });
+                    if (err.code === "ERR_CANCELED") {
+                        this.GET_NEW_NOTICE();
+                    }
+                    if (err) {
+                        console.log(err);
+                    }
+                });
         }
         // this.CHECK_REQUEST_FRIEND(this.$route.params.id);
+        
         //вызываем метод для отправки сообщения всем участникам комнаты
         SocketioService.setupSocketConnection();
         console.log("connected");
-        
+
         //получаем сообщение
         SocketioService.subscribeToMessages((err, data) => {
-            if(+this.$route.params.id === +data.sender) {
-                this.setArrayMessages([...this.getArrayMessages, data]);
-            }
 
+            if (+this.$route.params.id === +data.sender) {
+                this.setArrayMessages([...this.getArrayMessages, data]);
+                console.log(this.getArrayMessages)
+            }
+            
             this.UPDATE_DIALOGS_SOCKETS(data);
+
             if (this.$route.path === `/message/id${data.sender}`) {
                 this.setIsNewMessageNotify(false);
+                
             }
             else {
                 this.setIsNewMessageNotify(true);
@@ -116,6 +123,20 @@ export default {
                 console.log(err);
             }
         });
+
+        // получаем фотографии из сообщения
+        SocketioService.subscribeToMessagesPhotos((err, data) => {
+            if (+this.$route.params.id === +data.arrayPhotos[0].userID) {
+                console.log(data)
+            this.setPhotosMessagesArray([...data.arrayPhotos, ...this.getPhotosMessagesArray]);
+            console.log(this.getPhotosMessagesArray)
+            }
+            if (err) {
+                console.log(err);
+            }
+        });
+        
+
         //изменяем количество подгружаемых постов при скроллинге
         // SocketioService.subscribeUsersID((err, status_post) => {
         //   console.log(status_post)
@@ -165,7 +186,14 @@ export default {
             changeTextBTN: "friendsStore/changeTextBTN",
             setCountPosts: "postsMyPageStore/setCountPosts",
             setCountPostDel: "postsMyPageStore/setCountPostDel",
-            setMyPhotosMyPage: "loadPhotoStore/setMyPhotosMyPage"
+            setMyPhotosMyPage: "loadPhotoStore/setMyPhotosMyPage",
+            setPosts: "postsMyPageStore/setPosts",
+            setCountPostsNull: "postsMyPageStore/setCountPostsNull",
+            setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray",
+            setCommentsArray: "commentsPost/setCommentsArray",
+            setCommentsCommentArray: "commentsPost/setCommentsCommentArray",
+            setPhotosMessagesArray: "messageStore/setPhotosMessagesArray"
+
         }),
         ...mapActions({
             logout: "authorizationStore/logout",
@@ -192,6 +220,7 @@ export default {
             getSearchUsersFriends: "friendsStore/getSearchUsersFriends",
             getCountPosts: "postsMyPageStore/getCountPosts",
             getStatus: "authorizationStore/getStatus",
+            getPhotosMessagesArray: "messageStore/getPhotosMessagesArray"
         })
     },
     watch: {
@@ -199,28 +228,33 @@ export default {
             const id = this.$route.params.id;
             if (id) {
                 this.setMyPhotosMyPage([]);
+                this.setPosts([]);
+                this.setCountPostsNull();
+                this.setPhotosPostsArray([]);
+                this.setCommentsArray([]);
+                this.setCommentsCommentArray([]);
 
                 this.loadUser({ id })
                     .then(() => {
-                    this.setCountFriendsNull();
-                    this.setUsersMyFriends([]);
-                })
+                        this.setCountFriendsNull();
+                        this.setUsersMyFriends([]);
+                    })
                     .then(() => {
-                    this.CHECK_REQUEST_FRIEND(id);
-                    if (this.getCountFriends === 0) {
-                        this.GET_USER_MY_FRIENDS(id);
-                    }
-                    // this.LOAD_DIALOGS();
-                    // this.CHECK_CONFIRM_FRIEND();
-                    // console.log(this.getArrayDialogs.reduce((accum, item) => accum + item.unread, 0));
-                    // this.loadAllPhotos();
-                    // this.loadPostServer(this.$route.params.id);
-                })
+                        this.CHECK_REQUEST_FRIEND(id);
+                        if (this.getCountFriends === 0) {
+                            this.GET_USER_MY_FRIENDS(id);
+                        }
+                        // this.LOAD_DIALOGS();
+                        // this.CHECK_CONFIRM_FRIEND();
+                        // console.log(this.getArrayDialogs.reduce((accum, item) => accum + item.unread, 0));
+                        // this.loadAllPhotos();
+                        // this.loadPostServer(this.$route.params.id);
+                    })
                     .catch((err) => {
-                    if (err.response.data === "Такого пользователя не существует") {
-                        this.$router.push("notFound");
-                    }
-                });
+                        if (err.response.data === "Такого пользователя не существует") {
+                            this.$router.push("notFound");
+                        }
+                    });
             }
         }
     },
@@ -233,38 +267,38 @@ export default {
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  background: #f8f8f9;
+    background: #f8f8f9;
 }
 
 .wrapper {
-  margin: 0 10%;
-  position: static;
+    margin: 0 10%;
+    position: static;
 }
 
 .wrapper_main {
-  padding: 120px 20px 5px;
+    padding: 120px 20px 5px;
 }
 
 .loading_show {
-  padding: 130px;
+    padding: 130px;
 }
 
 /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
 
-  .wrapper {
-  margin: 0 5%;
-}
+    .wrapper {
+        margin: 0 5%;
+    }
 }
 </style>

@@ -15,6 +15,10 @@ import AddPost from "@/components/MyPage/AddPost";
 import PostMyPage from "@/components/MyPage/PostMyPage";
 import MyFriendsBlock from "@/components/MyPage/MyFriendsBlock";
 import UIloadMoreContent from "@/components/UI/UIloadMoreContent";
+import UIAva from "@/components/UI/UIAva";
+import UIPhoto from "@/components/UI/UIPhoto";
+
+
 
 
 
@@ -66,8 +70,8 @@ import ContentNews from "@/components/NewsPage/ContentNews";
 
 import FeedBack from "@/components/FeedBack";
 
-import NoticeUser from "@/components/NoticeUser";
-import NoticeOneUser from "@/components/NoticeOneUser";
+import NoticeUser from "@/components/Notice/NoticeUser";
+import NoticeOneUser from "@/components?Notice/NoticeOneUser";
 
 
 
@@ -122,5 +126,7 @@ export default [
     UIUsersLikes,
     NoticeUser,
     NoticeOneUser,
-    UIloadMoreContent
+    UIloadMoreContent,
+    UIAva,
+    UIPhoto
 ]

@@ -28,9 +28,12 @@
         </div>
         <div class="list_my_friends">
             <div class="my_friend" v-for="friend in getUsersMyFriends.slice(0, 8)" :key="friend.id">
+                
+                <!-- блок с аватаркой -->
                 <div class="my_friend_ava" @click="$router.push({ name: 'mypage', params: { id: `${friend.userID}` } })">
-                    <img :src="loadAva(friend.ava)" alt="ava">
+                    <UIAva :ava="friend.ava"/>
                 </div>
+
                 <div class="my_friend_name" @click="$router.push({ name: 'mypage', params: { id: `${friend.userID}` } })">
                     <p>{{ friend.name }}</p>
                 </div>
@@ -58,6 +61,11 @@ export default {
         }
     },
 
+    created() {
+        // this.setPosts([]);
+        // this.setCountPostsNull();
+    },
+
     methods: {
         ...mapActions({
             loadPostServer: "postsMyPageStore/loadPostServer",
@@ -75,14 +83,6 @@ export default {
             setCountFriendsNull: "friendsStore/setCountFriendsNull",
             setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter"
         }),
-
-        loadAva(ava) {
-            try {
-                return require(`../../assets/photo/${ava}`)
-            } catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
 
         goMyFriends() {
             this.setCountFriendsNull();
@@ -102,8 +102,7 @@ export default {
     watch: {
         $route() {
             if (this.$route.params.id) {
-                // this.loadAllPhotos(this.$route.params.id);
-                window.location.href = `/id${this.$route.params.id}`;
+                this.loadAllPhotos(this.$route.params.id);
                 // window.scrollTo(0, 0);
                 // this.setPosts([]);
                 // this.setCountPostsNull();
@@ -112,6 +111,7 @@ export default {
         },
     },
     mounted() {
+        console.log('moun')
         const options = {
             rootMargin: "0px",
             threshold: 1
@@ -119,23 +119,23 @@ export default {
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
                 this.isUIloadMoreContent = true; //показывать что идет загрузка
-
                 if(this.loadPost) {
                     this.loadPost = false;
                     this.loadPostServer(this.$route.params.id)
                     .then((response) => {
                         this.isNotPosts = false;
-                        if (response.data.length === 0) {
+                        if (response.length === 0) {
                             this.isNotPosts = true;
                         }
                         this.isUIloadMoreContent = false;
                         this.loadPost = true;
 
-                        return response.data.map(post => post.id)
+                        return response.filter(post => post.commentID !=='0').map(post => post.id);
                     })
                     .then((data) => {
-                        this.LOAD_COMMENTS_POST({ userID: this.$route.params.id, postID: data })
+                            this.LOAD_COMMENTS_POST({ userID: this.$route.params.id, postID: data })
                             .then((response) => {
+                                response.data = response.data.filter(data => data.commentCommentID !== '0')
                                 this.LOAD_COMMENTS_COMMENT({ userID: this.$route.params.id, postID: response.data.map(post => post.id) });
                             })
                             .catch((err) => {
@@ -159,9 +159,9 @@ export default {
         observer.observe(this.$refs.observer);
     },
 
-    beforeUnmount() {
-        this.setCommentsArray([]);
-        this.setCommentsCommentArray([]);
+    unmounted() {
+        // this.setCommentsArray([]);
+        // this.setCommentsCommentArray([]);
         // this.setPhotosPostsArray([]);
     },
 
@@ -212,7 +212,7 @@ export default {
 
 .observer {
     border: 1px solid;
-    opacity: 0;
+    opacity: 1;
     margin: 5px;
 }
 
@@ -245,13 +245,14 @@ export default {
     padding: 5px;
 }
 
-.my_friend_ava {}
+.my_friend_ava {
+    width: 64px;
+}
 
-.my_friend_ava img {
+/* .my_friend_ava img {
     width: 64px;
     border-radius: 100%;
-    cursor: pointer;
-}
+} */
 
 .my_friend_name {
     max-width: 70px;

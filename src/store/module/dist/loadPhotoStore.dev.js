@@ -195,39 +195,47 @@ var loadPhotoStore = {
     addAvaServer: function addAvaServer(_ref, img) {
       var getters = _ref.getters,
           commit = _ref.commit;
+      var nameAva = getters.getUser.ava;
+      commit("authorizationStore/setUserAva", 'ava/ava_1.jpg', {
+        root: true
+      });
+      return new Promise(function (resolve, reject) {
+        var paramsPhoto = {
+          img: img,
+          nameAva: nameAva,
+          id: getters.getUser.userID
+        };
 
-      _axios["default"].post('http://localhost:8000/upload_ava', {
-        img: img,
-        nameAva: getters.getUser.ava,
-        id: getters.getUser.userID
-      }, {
-        onUploadProgress: function onUploadProgress(ProgressEvent) {
-          var progress = Math.round(ProgressEvent.loaded / ProgressEvent.total * 100) + "%";
-          commit("setProgressLoadPhoto", progress);
-        }
-      }).then(function (res) {
-        commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-          root: true
+        _axios["default"].post('http://localhost:8000/upload_ava', paramsPhoto, {
+          onUploadProgress: function onUploadProgress(ProgressEvent) {
+            var progress = Math.round(ProgressEvent.loaded / ProgressEvent.total * 100) + "%";
+            commit("setProgressLoadPhoto", progress);
+          }
+        }).then(function (res) {
+          commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+            root: true
+          });
+          commit("setIsModalLoadPhoto", false);
+          commit("showFullPhotoStore/setIsModalFullSize", false, {
+            root: true
+          }); // commit("authorizationStore/setUserAva", res.data.ava, {
+          //     root: true
+          // })
+
+          commit("setProgressLoadPhoto", 0);
+          resolve(res); // commit("setIsModalLoadPhoto", false);
+          // commit("showFullPhotoStore/setIsModalFullSize", false, {
+          //     root: true
+          // });
+          // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+          //     root: true
+          // });
+          // router.push(`/id${getters.getUser.userID}/info`)
+          // this.$router.push('/')
+          // window.location.href = `/id${getters.getUser.userID}`;
+        })["catch"](function (err) {
+          reject(err);
         });
-        commit("setIsModalLoadPhoto", false);
-        commit("showFullPhotoStore/setIsModalFullSize", false, {
-          root: true
-        });
-        commit("authorizationStore/setUserAva", res.data.ava, {
-          root: true
-        });
-        commit("setProgressLoadPhoto", 0); // commit("setIsModalLoadPhoto", false);
-        // commit("showFullPhotoStore/setIsModalFullSize", false, {
-        //     root: true
-        // });
-        // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-        //     root: true
-        // });
-        // router.push(`/id${getters.getUser.userID}/info`)
-        // this.$router.push('/')
-        // window.location.href = `/id${getters.getUser.userID}`;
-      })["catch"](function (err) {
-        console.log(err);
       });
     },
     //загрузка картинок на сервер
@@ -304,7 +312,7 @@ var loadPhotoStore = {
                   commit("setProgressLoadPhoto", 0);
                   commit("setIsLoadPhotoPost", false);
                   commit("setIsLoadPhotoMessage", false);
-                  resolve(resp.data); // window.location.href = `/id${JSON.parse(getters.getUser.userID)}`;
+                  resolve(resp.data);
                 })["catch"](function (err) {
                   console.log(err);
 
@@ -542,43 +550,46 @@ var loadPhotoStore = {
     },
     //удаление аватрки
     removeAvaPhoto: function removeAvaPhoto(_ref7) {
-      var getters, commit;
+      var getters, commit, nameAva;
       return regeneratorRuntime.async(function removeAvaPhoto$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
               getters = _ref7.getters, commit = _ref7.commit;
-              _context4.prev = 1;
-              _context4.next = 4;
+              nameAva = getters.getUser.ava;
+              commit("authorizationStore/setUserAva", 'ava/ava_1.jpg', {
+                root: true
+              });
+              _context4.prev = 3;
+              _context4.next = 6;
               return regeneratorRuntime.awrap(_axios["default"].put('http://localhost:8000/remove_ava_photo', {
                 id: getters.getUser.userID,
-                nameAva: getters.getUser.ava
-              }).then(function (res) {
-                commit("authorizationStore/setUserAva", res.data.user.ava, {
-                  root: true
-                });
+                nameAva: nameAva
+              }).then(function () {
+                // commit("authorizationStore/setUserAva", res.data.user.ava, {
+                //     root: true
+                // });
                 commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                   root: true
                 });
                 commit("setModulePhotoRemove", false);
-                window.location.href = '/';
               }));
 
-            case 4:
-              _context4.next = 9;
+            case 6:
+              _context4.next = 11;
               break;
 
-            case 6:
-              _context4.prev = 6;
-              _context4.t0 = _context4["catch"](1);
+            case 8:
+              _context4.prev = 8;
+              _context4.t0 = _context4["catch"](3);
               console.log(_context4.t0);
 
-            case 9:
+            case 11:
             case "end":
               return _context4.stop();
           }
         }
-      }, null, null, [[1, 6]]);
+      }, null, null, [[3, 8]]);
     },
     //лайкнуть фото
     SAVE_LIKE_COUNT_PHOTO: function SAVE_LIKE_COUNT_PHOTO(_ref8, photoID) {
@@ -622,7 +633,34 @@ var loadPhotoStore = {
           }
         }
       }, null, null, [[1, 9]]);
-    }
+    } //загрузить последнии добавленные фотографии через пост
+    // async LOAD_LAST_PHOTOS(context, photos) {
+    //     return new Promise((resolve, reject) => {
+    //         axios.get('http://localhost:8000/load_last_photos', {
+    //                 params: photos
+    //             })
+    //             .then((response) => {
+    //                 resolve(response)
+    //             }).catch((err) => {
+    //                 reject(err)
+    //             })
+    //     })
+    // },
+    //удаление изображение с сервера
+    // async DELETE_PHOTO_SERVER(context, nameAva) {
+    //     try {
+    //         if (nameAva !== "ava/ava_1.jpg") {
+    //             axios.delete('http://localhost:8000/delete_photo_server', {
+    //                 params: {
+    //                     photo: nameAva,
+    //                 }
+    //             })
+    //         }
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // },
+
   },
   namespaced: true
 };

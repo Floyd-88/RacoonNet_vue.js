@@ -4,7 +4,8 @@
         <div class="wrapper_message_user_content">
             <div class="message_user_ava"
             @click="$router.push({name: 'mypage', params: {id: `${dialog.userID}`}})">
-                <img class="ava_posts" :src="loadAva(dialog.ava)" alt="ava">
+                <!-- <img class="ava_posts" :src="loadAva(dialog.ava)" alt="ava"> -->
+                <UIAva :ava="dialog.ava"/>
             </div>
             <div class="message_user_content">
                 <div class="message_user_name">
@@ -99,13 +100,13 @@ export default {
             })
         },
 
-        loadAva(ava) {
-            try {
-                return require(`../../assets/photo/${ava}`)
-            } catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
+        // loadAva(ava) {
+        //     try {
+        //         return require(`../../assets/photo/${ava}`)
+        //     } catch {
+        //         return require(`../../assets/ava/ava_1.jpg`);
+        //     }
+        // },
 
         showBtnDelete(dialog) {
             dialog.isShowBtnDelete = true;
@@ -240,9 +241,10 @@ display: none;
 }
 
 .message_user_content p {
-    max-width: 165px;
+    max-width: 100%;
     word-wrap: break-word;
-    font-size: 13px;
+    font-size: 14px;
+    
 }
 .message_user_del {
     max-width: 75px;

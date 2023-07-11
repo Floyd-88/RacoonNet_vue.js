@@ -95,6 +95,7 @@ export const showFullPhotoStore = {
         },
 
         async FULL_SIZE_PHOTO_MESSAGE({ commit }, body) {
+            console.log(body)
             const bool = body.bool;
             const index = body.elem;
             const id = body.id;

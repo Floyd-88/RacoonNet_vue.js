@@ -7,9 +7,9 @@
             <div v-for="notice of getNoticeArray" :key="notice.id">
                 <div class="wrapper_message_user">
                     <div class="wrapper_message_user_content">
-                        <div class="message_user_ava">
-                            <img class="ava_posts" :src="loadAva(notice.ava)" alt="ava"
-                                @click="getUserNotice(notice.userID)">
+                        <div class="message_user_ava" @click="getUserNotice(notice.userID)">
+                            <!-- <img class="ava_posts" :src="require(`../assets/${notice.ava}`)" alt="ava"> -->
+                                <UIAva :ava="notice.ava"/>
                         </div>
                         <div class="message_user_content">
                             <div class="message_user_name">
@@ -66,63 +66,52 @@
 </template>
 
 <script>
-import NoticeOneUser from './NoticeOneUser.vue';
-import CloseModal from './UI/CloseModal.vue';
 import { mapActions, mapGetters, mapMutations } from "vuex";
+import CloseModal from "../UI/CloseModal.vue";
+import NoticeOneUser from "./NoticeOneUser.vue";
 export default {
     name: "NoticeUser",
-    components: { CloseModal, NoticeOneUser },
-
     methods: {
         ...mapMutations({
             setIsShowModalWindowNotice: "noticeStore/setIsShowModalWindowNotice",
             setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
             setIsShowModalWindowOneNotice: "noticeStore/setIsShowModalWindowOneNotice",
             setSelectNotice: "noticeStore/setSelectNotice",
-
-
         }),
-
         ...mapActions({
             NOTICE_ARRAY_DELETE: "noticeStore/NOTICE_ARRAY_DELETE",
             GET_PHOTOS_POST_NOTICE: "noticeStore/GET_PHOTOS_POST_NOTICE"
         }),
-
-        loadAva(ava) {
-            try {
-                return require(`../assets/photo/${ava}`)
-            } catch {
-                return require(`../assets/ava/ava_1.jpg`);
-            }
-        },
-
+        // loadAva(ava) {
+        //     try {
+        //         return require(`../assets/photo/${ava}`)
+        //     } catch {
+        //         return require(`../assets/ava/ava_1.jpg`);
+        //     }
+        // },
         showModalWindowOneNotice(notice) {
-            if(notice.text_notice !== "пригласил Вас в друзья" && notice.text_notice !== "принял Вашу заявку в друзья") {
-
+            if (notice.text_notice !== "пригласил Вас в друзья" && notice.text_notice !== "принял Вашу заявку в друзья") {
                 this.setIsShowModalWindowOneNotice(true);
                 this.setSelectNotice(notice);
-
-                if(notice.photos !== "0" && notice.photos !== null) {
-                this.GET_PHOTOS_POST_NOTICE(notice.post_id);
+                if (notice.photos !== "0" && notice.photos !== null) {
+                    this.GET_PHOTOS_POST_NOTICE(notice.post_id);
                 }
             }
-           
         },
-
         getUserNotice(notice) {
             this.setIsShowModalWindowNotice(false);
             this.setIsShowModalWindowOneNotice(false);
-            this.$router.push({ name: 'mypage', params: { id: `${notice}` } });
+            this.$router.push({ name: "mypage", params: { id: `${notice}` } });
         }
-    }
-    ,
+    },
     computed: {
         ...mapGetters({
             getNoticeArray: "noticeStore/getNoticeArray",
             noticeTextArray: "noticeStore/noticeTextArray",
             getIsShowModalWindowOneNotice: "noticeStore/getIsShowModalWindowOneNotice"
         })
-    }
+    },
+    components: { CloseModal, NoticeOneUser }
 }
 </script>
 

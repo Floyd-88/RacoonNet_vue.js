@@ -11,38 +11,33 @@
                 {{ getMessageLoadPhoto }}
             </p>
         </div>
-        
+
         <div class="wrapper_preview_photos">
             <div class="preview_image" v-for="(url, index) in getUrlsImages" :key="index">
 
-                <div class="preview_remove"
-                     v-if="!getProgressLoadPhoto" 
-                     @click="removePreviewImage(url.name)">
-                     &times;
+                <div class="preview_remove" v-if="!getProgressLoadPhoto" @click="removePreviewImage(url.name)">
+                    &times;
                 </div>
 
-                <img class="preview_photo" 
-                    :src="url.url" 
-                    :alt="url.name">
+                <img class="preview_photo" :src="url.url" :alt="url.name">
 
-                <div class="preview_info" :class="{'active_load': getProgressLoadPhoto}">
+                <div class="preview_info" :class="{ 'active_load': getProgressLoadPhoto }">
                     <!-- размер фото -->
-                   <template v-if="!getProgressLoadPhoto">
-                    <span>
-                        {{ url.name }}
-                    </span>
+                    <template v-if="!getProgressLoadPhoto">
+                        <span>
+                            {{ url.name }}
+                        </span>
                         {{ bytesToSize(url.size) }}
-                   </template> 
-                
-                   <!-- полоса загрузки фото -->
-                   <template v-if="getProgressLoadPhoto">
-                    <div class="preview_info_progress" 
-                         :style="{'width': getProgressLoadPhoto}">
-                        {{getProgressLoadPhoto}}
-                    </div>
-                   </template>
+                    </template>
+
+                    <!-- полоса загрузки фото -->
+                    <template v-if="getProgressLoadPhoto">
+                        <div class="preview_info_progress" :style="{ 'width': getProgressLoadPhoto }">
+                            {{ getProgressLoadPhoto }}
+                        </div>
+                    </template>
                 </div>
-                
+
             </div>
         </div>
 
@@ -51,7 +46,8 @@
                 Выбрать фотографии
             </UIbtn>
 
-            <UIbtn v-if="getUrlsImages.length > 0" @click.prevent="addNewPhotoServer($event)" :disabled="getArrayLoadImage.length < 1">
+            <UIbtn v-if="getUrlsImages.length > 0 && this.notShowBtnAddPhotos" @click.prevent="addNewPhotoServer($event)"
+                :disabled="getArrayLoadImage.length < 1">
                 Добавить фотографии
             </UIbtn>
         </div>
@@ -62,14 +58,14 @@
 <script>
 import CloseModal from './UI/CloseModal.vue';
 import UIbtn from './UI/UIbtn.vue';
-import { mapActions, mapGetters, mapMutations} from 'vuex';
-
+import { mapActions, mapGetters, mapMutations } from 'vuex';
+import SocketioService from "../services/socketio.service"
 
 export default {
     components: { CloseModal, UIbtn },
     name: "FileUpload",
 
-    props:{
+    props: {
         addresseeID: {
             type: String,
             default: "",
@@ -78,7 +74,7 @@ export default {
 
     data() {
         return {
-
+            notShowBtnAddPhotos: true,
         };
     },
 
@@ -88,9 +84,11 @@ export default {
             setArrayLoadImage: "loadPhotoStore/setArrayLoadImage",
             setMessageLoadPhoto: "loadPhotoStore/setMessageLoadPhoto",
             setUrlsImages: "loadPhotoStore/setUrlsImages",
-            removeArrayLoadImage: "loadPhotoStore/removeArrayLoadImage"
+            removeArrayLoadImage: "loadPhotoStore/removeArrayLoadImage",
+            setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray",
+            setPhotosMessagesArray: "messageStore/setPhotosMessagesArray"
         }),
-        
+
         ...mapActions({
             removePreviewImage: "loadPhotoStore/removePreviewImage",
             addPhotoServer: "loadPhotoStore/addPhotoServer",
@@ -101,7 +99,9 @@ export default {
 
         choosePhoto() {
             //сбрасываем загрузчик что бы можно было выбрать тот же файл еще раз
-            this.$refs.files.value = null;
+            if (this.$refs) {
+                this.$refs.files.value = null;
+            }
 
             //при клике на кнопку срабатывает инпут
             this.$refs.files.click();
@@ -119,26 +119,26 @@ export default {
                 return
             }
 
-            if(this.$refs.files.files.length > 5) {
+            if (this.$refs.files.files.length > 5) {
                 this.setMessageLoadPhoto("Вы не можете загрузить больше 5 фотографий за один раз");
                 photoFiles = Array.prototype.slice.call(this.$refs.files.files, 0, 5);
             } else {
                 photoFiles = this.$refs.files.files;
             }
-            
+
             //трансформируем выбранные картинки в массив
-            this.setArrayLoadImage(Array.from(photoFiles));  
-            
+            this.setArrayLoadImage(Array.from(photoFiles));
+
             //переберам массив выбранных картинок
             this.getArrayLoadImage.forEach(file => {
                 //если картинка не соответствует формату или размеру показываем сообщение
                 if (!allowedTypes.includes(file.type)) {
-                    this.setMessageLoadPhoto("Формат одного из выбранных файлов не поддерживается, он не будет загружен");
+                    this.setMessageLoadPhoto("Формат одного из выбранных файлов не поддерживается");
                     this.removeArrayLoadImage(file.name);
-                    return   
+                    return
                 }
                 if (file.size > 5000000) {
-                    this.setMessageLoadPhoto("Размер одной из фоторгафий превышает допустимый, она не будет загружена");
+                    this.setMessageLoadPhoto("Размер одной из фоторгафий превышает допустимый");
                     this.removeArrayLoadImage(file.name);
                     return
                 }
@@ -153,17 +153,36 @@ export default {
         },
 
         addNewPhotoServer(event) {
-                this.addPhotoServer({event: event, addresseeID: this.addresseeID})
+            this.notShowBtnAddPhotos = false;
+            this.addPhotoServer({ event: event, addresseeID: this.addresseeID })
                 .then((resp) => {
-                    if(resp[0][5] === 0 || resp[0][5] === undefined) {
-                    window.location.href = `/id${JSON.parse(this.getUser.userID)}`;
-                    } else {
-                        // this.LOAD_MESSAGES_PHOTOS({messageID: +resp[0][5] });
-                    window.location.href = `/message/id${JSON.parse(+resp[0][2] )}`;
-                    }
+                    console.log(resp)
+                    console.log(this.addresseeID)
 
+                    if (resp[0]['userID'] === +JSON.parse(localStorage.getItem("user")).userID) {
+                        if (resp[0]['messageID'] === 0 || resp[0]['messageID'] === undefined) {
+                            this.setPhotosPostsArray([...resp, ...this.getPhotosPostsArray]);
+                        } else {
+                            console.log(resp)
+                            this.setPhotosMessagesArray([...resp, ...this.getPhotosMessagesArray]);
+
+                            //отпраляем сообщение и фотографии в сообщении на сервер для передачи их адресату через сокет
+                            let newMessagePhotos = {};
+                            newMessagePhotos.destinationID = this.addresseeID;
+                            newMessagePhotos.arrayPhotos = resp;
+
+                                SocketioService.sendMessage(this.getArrayMessages[this.getArrayMessages.length - 1], cb => {
+                                    console.log(cb);
+                                });
+
+                                SocketioService.sendMessagePhotos(newMessagePhotos, cb => {
+                                    console.log(cb);
+                                });
+                        }
+                    }
+                    this.notShowBtnAddPhotos = true;
                 })
-            },
+        },
 
         //конвертирует байты
         bytesToSize: function (bytes) {
@@ -182,8 +201,11 @@ export default {
             getArrayLoadImage: "loadPhotoStore/getArrayLoadImage",
             getUrlsImages: "loadPhotoStore/getUrlsImages",
             getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto",
-            getUser: "authorizationStore/getUser"
-    })
+            getUser: "authorizationStore/getUser",
+            getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
+            getPhotosMessagesArray: "messageStore/getPhotosMessagesArray",
+            getArrayMessages: "messageStore/getArrayMessages"
+        })
     }
 }
 </script>
@@ -200,7 +222,8 @@ export default {
 }
 
 .wrapper_add_photo {
-    margin: 5px 10px
+    margin: 5px 10px;
+    height: 30px;
 }
 
 /* .load_photo {} */
@@ -300,14 +323,14 @@ export default {
 @media (max-width: 761px) {
 
     .form_load_photo {
-    width: 350px;
-}
+        width: 350px;
+    }
 
-.wrapper_preview_photos {
-    flex-wrap: nowrap;
-    flex-direction: column;
-    align-items: center;
-}
+    .wrapper_preview_photos {
+        flex-wrap: nowrap;
+        flex-direction: column;
+        align-items: center;
+    }
 }
 </style>
 

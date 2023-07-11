@@ -40,8 +40,8 @@ function () {
   }, {
     key: "add_photo_DB",
     value: function add_photo_DB(arrayPhotos, callback) {
-      return this.connection.query('INSERT INTO photos (photo_name, userID, pageID, category, post_id_photo, message_id_photo) VALUES ?', [arrayPhotos], function (err) {
-        callback(err);
+      return this.connection.query('INSERT INTO photos (photo_name, userID, pageID, category, post_id_photo, message_id_photo) VALUES ?', [arrayPhotos], function (err, row) {
+        callback(err, row);
       });
     } // загрузка фото из базы данны
 
@@ -58,6 +58,14 @@ function () {
     value: function load_all_photos_DB(params, callback) {
       return this.connection.execute("SELECT \n        photos.id, \n        photos.photo_name, \n        photos.category, \n        users.name, \n        users.surname, \n        users.ava, \n        users.userID,\n        photos.date, \n        photos.likes,\n        SUM(CASE WHEN photos_likes.author_likes_photo = ? THEN 1 ELSE 0 END) as like_photo \n        FROM \n        photos INNER JOIN users ON photos.userID = users.userID LEFT JOIN photos_likes ON photos_likes.photo_id = photos.id\n        WHERE pageID = ? AND pageID = photos.userID GROUP BY \n        photos.id, \n        photos.photo_name, \n        photos.category, \n        users.name, \n        users.surname, \n        users.ava, \n        users.userID,\n        photos.date, \n        photos.likes\n        ORDER BY id DESC", params, function (err, row) {
         callback(err, row);
+      });
+    } //получение крайних фотографий загруженных через пост
+
+  }, {
+    key: "load_last_photos_DB",
+    value: function load_last_photos_DB(params, callback) {
+      return this.connection.execute("SELECT \n        users.ava,\n        photos.category,\n        photos.date,\n        photos.post_id_photo as id,\n        photos.message_id_photo as messageID,\n        '0' as like_photo,\n        photos.likes,\n        users.name, \n        photos.id as photoID, \n        photos.photo_name, \n        users.surname, \n        users.userID\n        FROM \n        photos INNER JOIN users ON photos.userID = users.userID LEFT JOIN photos_likes ON photos_likes.photo_id = photos.id\n        WHERE post_id_photo = ? AND message_id_photo = ?\n        ORDER BY photos.id DESC", params, function (err, newPhoto) {
+        callback(err, newPhoto);
       });
     } // удаление лайков перед удалением фотографии
 

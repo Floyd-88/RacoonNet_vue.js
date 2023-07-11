@@ -6,9 +6,10 @@
       <div class="wrapper_post_user">
 
         <div class="wrapper_post_name">
-          <div class="wrapper_ava_posts">
-            <img class="ava_posts" alt="ava" ref="img" :src="loadAva(post.ava)"
-              @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
+          <div class="wrapper_ava_posts"
+          @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
+            <!-- <img class="ava_posts" alt="ava" ref="img" :src= "require(`../../assets/${post.ava}`)"> -->
+              <UIAva :ava="post.ava"/>
           </div>
           <div class="block_post_name">
             <p class="post_name" @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
@@ -54,11 +55,13 @@
             v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(0, 1)" 
             :key="index">
           <div class="wrapper_photo_post size_photo_1" 
-            v-if="post.id === photo.id">
-              <img class="photo_post" 
-                :src="myPhotos(photo)"
+            v-if="post.id === photo.id"
+            @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
+              <!-- <img class="photo_post" 
+                :src="require(`../../assets/${photo.photo_name}`)"
                 :alt="'photo' + photo.id"
-                @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">             
+                >      -->
+                <UIPhoto :photo="photo"/>
           </div>
         </template>
         </div>
@@ -68,11 +71,12 @@
           <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(1)" 
             :key="index">
             <div class="wrapper_photo_post photo_another" 
-            v-if="post.id === photo.id">
-              <img class="photo_post" 
-                :src="myPhotos(photo)"
-                :alt="'photo' + photo.id"
-                @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index+1, id: photo.id, postID: post.id })">             
+            v-if="post.id === photo.id"
+            @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index+1, id: photo.id, postID: post.id })">
+              <!-- <img class="photo_post" 
+                :src="require(`../../assets/${photo.photo_name}`)"
+                :alt="'photo' + photo.id"> -->
+                <UIPhoto :photo="photo"/>
             </div>
           </template>
         </div>
@@ -114,6 +118,10 @@ export default {
   data() {
     return {}
   },
+  
+mounted() {
+  console.log('ggg')
+},
 
   methods: {
     ...mapMutations({
@@ -125,23 +133,22 @@ export default {
       closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
     }),
 
-    loadAva(ava) {
-      try {
-        return require(`../../assets/photo/${ava}`)
-      } catch {
-        return require(`../../assets/ava/ava_1.jpg`);
-      }
+    // loadAva(ava) {
+    //   try {
+    //     return require(`../../assets/photo/${ava}`)
+    //   } catch {
+    //     return require(`../../assets/ava/ava_1.jpg`);
+    //   }
+    // },
 
-    },
-
-    myPhotos(photo) {
-      try {
-        return require(`../../assets/photo/${photo.photo_name}`)
-      } catch (err) {
-        // console.log(err)
-        return require(`../../assets/ava/ava_1.jpg`);
-      }
-    },
+    // myPhotos(photo) {
+    //   try {
+    //     return require(`../../assets/photo/${photo.photo_name}`)
+    //   } catch (err) {
+    //     // console.log(err)
+    //     return require(`../../assets/ava/ava_1.jpg`);
+    //   }
+    // },
 
     postText(value) {
       let doc = new DOMParser().parseFromString(value, "text/html");

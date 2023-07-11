@@ -3,13 +3,13 @@
   <NavigationNetEnter v-else />
 
   <template v-if="getUser.delete === 0">
-    
-      <!-- показывать загрузчик -->
-  <template v-if="getStatus === 'loading'">
-    <div class="loading_show">
-      <UIloadMoreContent />
-    </div>
-  </template>
+
+    <!-- показывать загрузчик -->
+    <template v-if="getStatus === 'loading'">
+      <div class="loading_show">
+        <UIloadMoreContent />
+      </div>
+    </template>
 
 
     <div class="wrapper_main" v-if="getStatus === 'success'">
@@ -35,7 +35,6 @@
         </template>
 
         <UserInfo />
-
         <div v-if="getUser.enterUser" class="wrapper_myPage">
           <MyPageContent />
         </div>
@@ -84,11 +83,11 @@ export default {
   },
 
   // beforeUnmount() {
-    // SocketioService.disconnect();
-    // SocketioService.exitRoom(this.getUser.userID, cb => {
-    //   console.log(cb);
-    // });
-    // console.log('покинул страницу');
+  // SocketioService.disconnect();
+  // SocketioService.exitRoom(this.getUser.userID, cb => {
+  //   console.log(cb);
+  // });
+  // console.log('покинул страницу');
   // },
 
   methods: {
@@ -118,16 +117,12 @@ export default {
     }),
   },
 
-
-
-  watch: {
-    $route() {
-      if (this.$route.params.id) {
-      window.location.href = `/id${this.$route.params.id}`;
-      }
-    }
-  }
-
+  // watch: {
+  //   $route() {
+  //     // this.$route.params.id
+  //     this.loadAllPhotos();
+  //   }
+  // }
 }
 
 </script>
@@ -251,8 +246,8 @@ export default {
   }
 
   .loading_show {
-  margin-left: 0px;
-  padding: 130px;
-}
+    margin-left: 0px;
+    padding: 130px;
+  }
 }
 </style>

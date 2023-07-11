@@ -4,8 +4,13 @@
             <!-- <transition-group name='fade' tag='div'> -->
             <div class="wrapper_block_full_size_img" :class="{'wrapper_block_full_size_img_action': getMessageID}">
                 <div class="wrapper_full_size_img">
-                    <img class="full_size_img" v-if="currentImg.photo"
-                        :src="myPhotos(currentImg.photo.photo_name)" :alt="currentImg.photo.photo_name" />
+                    <!-- <img class="full_size_img" 
+                            v-if="currentImg.photo"
+                            :src="require(`../assets/${currentImg.photo.photo_name}`)" 
+                            :alt="currentImg.photo.photo_name" /> -->
+                        <div class="full_size_img" >
+                            <UIPhoto :photo="currentImg.photo" :full_size="true"/>
+                        </div>
                 </div>
                 <!-- </transition-group> -->
                 <!-- <button class="prev" v-on:click.left="setPrevIndexPhoto" >&#10094;</button> -->
@@ -192,7 +197,7 @@ export default {
                 return [];
             } else if (this.getMessageID) {
                 if (this.getPhotosMessagesArray.length > 0) {
-                    let photosMessageArray = this.getPhotosMessagesArray.filter(photo => photo.id === this.getMessageID)
+                    let photosMessageArray = this.getPhotosMessagesArray.filter(photo => photo.messageID === this.getMessageID)
                     // this.setCommentsPhotoArray([])
 
                     if (photosMessageArray.length > 0) {

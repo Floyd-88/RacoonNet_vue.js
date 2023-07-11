@@ -75,6 +75,14 @@ function () {
       return this.connection.execute("SELECT email, name, surname FROM users WHERE userID = ?", id, function (err, user) {
         callback(err, user[0]);
       });
+    } //проверка на существование почты в базе данны
+
+  }, {
+    key: "check_double_email",
+    value: function check_double_email(email, callback) {
+      return this.connection.execute("SELECT email FROM users WHERE email = ?", [email], function (err, email) {
+        callback(err, email);
+      });
     } // добавляем пользователя в базу данных без метки админ
 
   }, {

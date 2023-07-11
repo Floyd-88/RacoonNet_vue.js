@@ -23,3 +23,5 @@ components.forEach(comp => {
 app.use(router);
 app.use(store);
 app.mount('#app');
+
+window.fallbackImage = require('./assets/ava/ava_1.jpg')

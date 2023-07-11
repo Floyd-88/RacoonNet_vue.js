@@ -19,10 +19,9 @@ transporter.verify(function (error, success) {
   error ? console.log(error) : console.log('Server is ready to take our messages: ', success);
 });
 
-var mailer = function mailer(message) {
-  transporter.sendMail(message, function (err, info) {
-    if (err) return console.log(err);
-    console.log('Email sent: ', info);
+var mailer = function mailer(message, callback) {
+  transporter.sendMail(message, function (err) {
+    callback(err); // console.log('Email sent: ', info)
   });
 };
 

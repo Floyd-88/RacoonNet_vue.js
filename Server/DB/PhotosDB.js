@@ -29,8 +29,8 @@ class PhotosDB {
     // добавление фото в базу данных
     add_photo_DB(arrayPhotos, callback) {
         return this.connection.query(
-            'INSERT INTO photos (photo_name, userID, pageID, category, post_id_photo, message_id_photo) VALUES ?', [arrayPhotos], (err) => {
-                callback(err);
+            'INSERT INTO photos (photo_name, userID, pageID, category, post_id_photo, message_id_photo) VALUES ?', [arrayPhotos], (err, row) => {
+                callback(err, row);
             })
     }
 
@@ -68,6 +68,29 @@ class PhotosDB {
         photos.likes
         ORDER BY id DESC`, params, (err, row) => {
             callback(err, row)
+        });
+    }
+
+    //получение крайних фотографий загруженных через пост
+    load_last_photos_DB(params, callback) {
+        return this.connection.execute(`SELECT 
+        users.ava,
+        photos.category,
+        photos.date,
+        photos.post_id_photo as id,
+        photos.message_id_photo as messageID,
+        '0' as like_photo,
+        photos.likes,
+        users.name, 
+        photos.id as photoID, 
+        photos.photo_name, 
+        users.surname, 
+        users.userID
+        FROM 
+        photos INNER JOIN users ON photos.userID = users.userID LEFT JOIN photos_likes ON photos_likes.photo_id = photos.id
+        WHERE post_id_photo = ? AND message_id_photo = ?
+        ORDER BY photos.id DESC`, params, (err, newPhoto) => {
+            callback(err, newPhoto)
         });
     }
 

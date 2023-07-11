@@ -6,8 +6,9 @@
       <!-- блок с аватаркой -->
       <div class="wrapper_ava_user" @mouseenter="show_btn_photo" @mouseleave="active_btn = false">
         <div class="block_ava_user">
-          <img class="ava_user" :src="pathAva" alt="ava" ref="ava">
+          <UIAva :ava="getUser.ava"/>
         </div>
+
         <div class="wrapper_btn_main_photo" v-if="getUser.is_editProfile">
 
           <transition v-if="text_btn === 'Загрузить главное фото'" name="mainPhoto">
@@ -94,6 +95,10 @@ export default {
   //   this.CHECK_REQUEST_FRIEND(this.$route.params.id);
   // },
 
+  mounted() {
+    console.log('golf')
+  },
+
   methods: {
     ...mapMutations({
       setModulEditProfile: "editProfileStore/setModulEditProfile",
@@ -112,7 +117,7 @@ export default {
 
     show_btn_photo() {
       this.active_btn = true;
-      if (this.pathAva.includes("/img/ava_1")) { //????????????????///
+      if (`${'../../assets/' + this.getUser.ava}`.includes("/img/ava_1")) { //????????????????///
         this.text_btn = "Загрузить главное фото";
       } else {
         this.text_btn = "Редактировать фото";
@@ -147,13 +152,13 @@ export default {
       getIsBtnsBlock: "friendsStore/getIsBtnsBlock"
     }),
 
-    pathAva() {
-      try {
-        return require(`../../assets/photo/${this.getUser.ava}`);
-      } catch {
-        return require(`../../assets/ava/ava_1.jpg`);
-      }
-    },
+    // pathAva() {
+    //   try {
+    //     return require(`../../assets/photo/${this.getUser.ava}`);
+    //   } catch {
+    //     return require(`../../assets/ava/ava_1.jpg`);
+    //   }
+    // },
 
     //вычисляет возраст пользователя
     age() {
@@ -228,10 +233,10 @@ export default {
   border-radius: 100%;
 }
 
-.ava_user {
+/* .ava_user {
   width: 100%;
   height: auto;
-}
+} */
 
 .wrapper_btn_main_photo {
   width: 83%;
@@ -239,7 +244,7 @@ export default {
   position: absolute;
   bottom: 0;
   left: 50%;
-  transform: translate(-50%, -20%);
+  transform: translate(-43%, -20%);
 }
 
 .btn_main_photo {

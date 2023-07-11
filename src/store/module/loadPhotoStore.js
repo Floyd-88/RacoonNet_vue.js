@@ -161,44 +161,54 @@ export const loadPhotoStore = {
             getters,
             commit
         }, img) {
-            axios.post(
-                    'http://localhost:8000/upload_ava', {
-                        img: img,
-                        nameAva: getters.getUser.ava,
-                        id: getters.getUser.userID
 
-                    }, {
-                        onUploadProgress: ProgressEvent => {
-                            let progress = Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) + "%";
-                            commit("setProgressLoadPhoto", progress);
-                        },
-                    }
-                ).then((res) => {
-                    commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                        root: true
-                    });
-                    commit("setIsModalLoadPhoto", false);
-                    commit("showFullPhotoStore/setIsModalFullSize", false, {
-                        root: true
-                    });
-                    commit("authorizationStore/setUserAva", res.data.ava, {
-                        root: true
+            let nameAva = getters.getUser.ava;
+
+            commit("authorizationStore/setUserAva", 'ava/ava_1.jpg', {
+                root: true
+            })
+            return new Promise((resolve, reject) => {
+                let paramsPhoto = {
+                    img: img,
+                    nameAva: nameAva,
+                    id: getters.getUser.userID
+                }
+                axios.post(
+                        'http://localhost:8000/upload_ava', paramsPhoto, {
+                            onUploadProgress: ProgressEvent => {
+                                let progress = Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) + "%";
+                                commit("setProgressLoadPhoto", progress);
+                            },
+                        }
+                    ).then((res) => {
+                        commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                            root: true
+                        });
+                        commit("setIsModalLoadPhoto", false);
+                        commit("showFullPhotoStore/setIsModalFullSize", false, {
+                            root: true
+                        });
+                        // commit("authorizationStore/setUserAva", res.data.ava, {
+                        //     root: true
+                        // })
+                        commit("setProgressLoadPhoto", 0);
+                        resolve(res)
+
+                        // commit("setIsModalLoadPhoto", false);
+                        // commit("showFullPhotoStore/setIsModalFullSize", false, {
+                        //     root: true
+                        // });
+                        // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
+                        //     root: true
+                        // });
+                        // router.push(`/id${getters.getUser.userID}/info`)
+                        // this.$router.push('/')
+                        // window.location.href = `/id${getters.getUser.userID}`;
                     })
-                    commit("setProgressLoadPhoto", 0);
-                    // commit("setIsModalLoadPhoto", false);
-                    // commit("showFullPhotoStore/setIsModalFullSize", false, {
-                    //     root: true
-                    // });
-                    // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                    //     root: true
-                    // });
-                    // router.push(`/id${getters.getUser.userID}/info`)
-                    // this.$router.push('/')
-                    // window.location.href = `/id${getters.getUser.userID}`;
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            })
         },
 
         //загрузка картинок на сервер
@@ -228,11 +238,18 @@ export const loadPhotoStore = {
 
             //проверяем отправлены ли фотографии через пост или сообщения
             if (state.isLoadPhotoPost) {
-                await dispatch("postsMyPageStore/addPost", state.isLoadPhotoPost, { root: true });
+                await dispatch("postsMyPageStore/addPost", state.isLoadPhotoPost, {
+                    root: true
+                });
                 const posts = rootGetters["postsMyPageStore/getPosts"];
                 formData.append('postIDLast', posts[0].id);
             } else if (state.isLoadPhotoMessage) {
-                await dispatch("messageStore/WRITE_MESSAGE_USER", { addresseeID: body.addresseeID, isPhoto: state.isLoadPhotoMessage }, { root: true });
+                await dispatch("messageStore/WRITE_MESSAGE_USER", {
+                    addresseeID: body.addresseeID,
+                    isPhoto: state.isLoadPhotoMessage
+                }, {
+                    root: true
+                });
                 const messages = rootGetters["messageStore/getArrayMessages"]
                 formData.append('dialogIDLast', messages[messages.length - 1].id)
             }
@@ -257,7 +274,6 @@ export const loadPhotoStore = {
                         commit("setIsLoadPhotoMessage", false);
 
                         resolve(resp.data);
-                        // window.location.href = `/id${JSON.parse(getters.getUser.userID)}`;
                     })
                     .catch((err) => {
                         console.log(err)
@@ -265,10 +281,15 @@ export const loadPhotoStore = {
 
                             //удаление пустого поста при отмене загрузки фотогрфий
                             if (state.isLoadPhotoPost) {
-                                commit('postsMyPageStore/setModulePost', { task: 'remove', id: formData.get('postIDLast') }, {
+                                commit('postsMyPageStore/setModulePost', {
+                                    task: 'remove',
+                                    id: formData.get('postIDLast')
+                                }, {
                                     root: true
                                 });
-                                dispatch('postsMyPageStore/removePost', null, { root: true });
+                                dispatch('postsMyPageStore/removePost', null, {
+                                    root: true
+                                });
                                 commit('postsMyPageStore/setRemovePost', +formData.get('postIDLast'), {
                                     root: true
                                 });
@@ -292,7 +313,9 @@ export const loadPhotoStore = {
             commit,
             dispatch
         }) {
-            dispatch('cancelLoadAxios/CANCEL_PENDING_REQUESTS', null, { root: true })
+            dispatch('cancelLoadAxios/CANCEL_PENDING_REQUESTS', null, {
+                root: true
+            })
             commit("setIsModalLoadPhoto", false)
             commit("setProgressLoadPhoto", 0)
         },
@@ -360,7 +383,9 @@ export const loadPhotoStore = {
                 await commit("showFullPhotoStore/setIsModalFullSize", false, {
                     root: true
                 });
-                await commit("showFullPhotoStore/setPostID", "", { root: true });
+                await commit("showFullPhotoStore/setPostID", "", {
+                    root: true
+                });
                 document.body.style.overflow = "auto";
             }
 
@@ -382,7 +407,9 @@ export const loadPhotoStore = {
                         }
                     }).then(() => {
                         commit("removeAllPhotos", getters.getIdPhoto);
-                        commit("postsMyPageStore/removePhotosPostsArray", getters.getIdPhoto, { root: true })
+                        commit("postsMyPageStore/removePhotosPostsArray", getters.getIdPhoto, {
+                            root: true
+                        })
                         commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                             root: true
                         });
@@ -399,7 +426,9 @@ export const loadPhotoStore = {
                         idPhoto: getters.getIdPhoto,
                         id: getters.getUser.userID
                     }).then(() => {
-                        commit("postsMyPageStore/removePhotosPostsArray", getters.getIdPhoto, { root: true })
+                        commit("postsMyPageStore/removePhotosPostsArray", getters.getIdPhoto, {
+                            root: true
+                        })
                         commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                             root: true
                         });
@@ -418,19 +447,23 @@ export const loadPhotoStore = {
             getters,
             commit
         }) {
+            let nameAva = getters.getUser.ava;
+
+            commit("authorizationStore/setUserAva", 'ava/ava_1.jpg', {
+                root: true
+            })
             try {
                 await axios.put('http://localhost:8000/remove_ava_photo', {
                     id: getters.getUser.userID,
-                    nameAva: getters.getUser.ava
-                }).then((res) => {
-                    commit("authorizationStore/setUserAva", res.data.user.ava, {
-                        root: true
-                    });
+                    nameAva: nameAva
+                }).then(() => {
+                    // commit("authorizationStore/setUserAva", res.data.user.ava, {
+                    //     root: true
+                    // });
                     commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                         root: true
                     });
                     commit("setModulePhotoRemove", false)
-                    window.location.href = '/';
                 });
             } catch (err) {
                 console.log(err);
@@ -439,9 +472,14 @@ export const loadPhotoStore = {
 
 
         //лайкнуть фото
-        async SAVE_LIKE_COUNT_PHOTO({ commit, dispatch }, photoID) {
+        async SAVE_LIKE_COUNT_PHOTO({
+            commit,
+            dispatch
+        }, photoID) {
             try {
-                photoID.date = await dispatch("postsMyPageStore/newDate", null, { root: true });
+                photoID.date = await dispatch("postsMyPageStore/newDate", null, {
+                    root: true
+                });
 
                 await axios.post('http://localhost:8000/likes_photo', photoID)
                     .then((response) => {
@@ -458,6 +496,37 @@ export const loadPhotoStore = {
                 console.error(err);
             }
         },
+
+        //загрузить последнии добавленные фотографии через пост
+        // async LOAD_LAST_PHOTOS(context, photos) {
+        //     return new Promise((resolve, reject) => {
+        //         axios.get('http://localhost:8000/load_last_photos', {
+        //                 params: photos
+        //             })
+        //             .then((response) => {
+        //                 resolve(response)
+
+        //             }).catch((err) => {
+        //                 reject(err)
+        //             })
+        //     })
+
+        // },
+
+        //удаление изображение с сервера
+        // async DELETE_PHOTO_SERVER(context, nameAva) {
+        //     try {
+        //         if (nameAva !== "ava/ava_1.jpg") {
+        //             axios.delete('http://localhost:8000/delete_photo_server', {
+        //                 params: {
+        //                     photo: nameAva,
+        //                 }
+        //             })
+        //         }
+        //     } catch (err) {
+        //         console.log(err);
+        //     }
+        // },
 
     },
     namespaced: true

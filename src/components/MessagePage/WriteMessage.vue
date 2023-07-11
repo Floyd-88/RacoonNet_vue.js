@@ -9,7 +9,10 @@
 
       <div class="wrapper_message_user_content">
         <div class="message_user_ava">
-          <img class="ava_message" :src="pathAva" alt="ava" ref="ava">
+          <div class="ava_message">
+            <UIAva :ava="this.user.ava"/>
+          </div>
+          <!-- <img class="ava_message" :src="pathAva" alt="ava" ref="ava"> -->
         </div>
         <div class="message_user_content">
           <div class="message_user_name">
@@ -135,13 +138,13 @@ export default {
         this.v$.messageUser.$touch()
       }
     },
-    pathAva() {
-      try {
-        return require(`../../assets/photo/${this.user.ava}`);
-      } catch {
-        return require(`../../assets/ava/ava_1.jpg`);
-      }
-    },
+    // pathAva() {
+    //   try {
+    //     return require(`../../assets/photo/${this.user.ava}`);
+    //   } catch {
+    //     return require(`../../assets/ava/ava_1.jpg`);
+    //   }
+    // },
   }
 }
 </script>

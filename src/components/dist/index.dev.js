@@ -33,6 +33,10 @@ var _MyFriendsBlock = _interopRequireDefault(require("@/components/MyPage/MyFrie
 
 var _UIloadMoreContent = _interopRequireDefault(require("@/components/UI/UIloadMoreContent"));
 
+var _UIAva = _interopRequireDefault(require("@/components/UI/UIAva"));
+
+var _UIPhoto = _interopRequireDefault(require("@/components/UI/UIPhoto"));
+
 var _CommentsPost = _interopRequireDefault(require("@/components/commentsPost/CommentsPost"));
 
 var _WriteComments = _interopRequireDefault(require("@/components/commentsPost/WriteComments"));
@@ -103,11 +107,11 @@ var _ContentNews = _interopRequireDefault(require("@/components/NewsPage/Content
 
 var _FeedBack = _interopRequireDefault(require("@/components/FeedBack"));
 
-var _NoticeUser = _interopRequireDefault(require("@/components/NoticeUser"));
+var _NoticeUser = _interopRequireDefault(require("@/components/Notice/NoticeUser"));
 
-var _NoticeOneUser = _interopRequireDefault(require("@/components/NoticeOneUser"));
+var _NoticeOneUser = _interopRequireDefault(require("@/components?Notice/NoticeOneUser"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _default = [_UserInfo["default"], _NavigationNet["default"], _NavigationNetEnter["default"], _HeaderNet["default"], _PostMyPage["default"], _UIbtn["default"], _AddPost["default"], _LoginNet["default"], _RegisterNet["default"], _UImodal["default"], _PhotoMyPage["default"], _MyFriendsBlock["default"], _EditProfile["default"], _ChangePassword["default"], _CloseModal["default"], _DeleteUser["default"], _FileUpload["default"], _AllPhotos["default"], _SliderPhoto["default"], _CommentsPhoto["default"], _MainPhoto["default"], _AvatarEditor["default"], _NotFound["default"], _MyPageContent["default"], _AllUsersMessages["default"], _UserMessage["default"], _DialogUser["default"], _WriteMessage["default"], _UInewMessage["default"], _MyFriends["default"], _InviteFriendsMe["default"], _InviteFriendsFromMe["default"], _CardFriend["default"], _FilterName["default"], _SearchNewFriends["default"], _FriendCardBtns["default"], _HeaderGallery["default"], _CategoryFilter["default"], _ContentNews["default"], _CommentsPost["default"], _WriteComments["default"], _CommentPost["default"], _UnderComment["default"], _CommentPhoto["default"], _WriteCommentPhoto["default"], _FeedBack["default"], _ResetPassword["default"], _UIUsersLikes["default"], _NoticeUser["default"], _NoticeOneUser["default"], _UIloadMoreContent["default"]];
+var _default = [_UserInfo["default"], _NavigationNet["default"], _NavigationNetEnter["default"], _HeaderNet["default"], _PostMyPage["default"], _UIbtn["default"], _AddPost["default"], _LoginNet["default"], _RegisterNet["default"], _UImodal["default"], _PhotoMyPage["default"], _MyFriendsBlock["default"], _EditProfile["default"], _ChangePassword["default"], _CloseModal["default"], _DeleteUser["default"], _FileUpload["default"], _AllPhotos["default"], _SliderPhoto["default"], _CommentsPhoto["default"], _MainPhoto["default"], _AvatarEditor["default"], _NotFound["default"], _MyPageContent["default"], _AllUsersMessages["default"], _UserMessage["default"], _DialogUser["default"], _WriteMessage["default"], _UInewMessage["default"], _MyFriends["default"], _InviteFriendsMe["default"], _InviteFriendsFromMe["default"], _CardFriend["default"], _FilterName["default"], _SearchNewFriends["default"], _FriendCardBtns["default"], _HeaderGallery["default"], _CategoryFilter["default"], _ContentNews["default"], _CommentsPost["default"], _WriteComments["default"], _CommentPost["default"], _UnderComment["default"], _CommentPhoto["default"], _WriteCommentPhoto["default"], _FeedBack["default"], _ResetPassword["default"], _UIUsersLikes["default"], _NoticeUser["default"], _NoticeOneUser["default"], _UIloadMoreContent["default"], _UIAva["default"], _UIPhoto["default"]];
 exports["default"] = _default;

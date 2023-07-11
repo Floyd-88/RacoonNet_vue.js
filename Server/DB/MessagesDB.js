@@ -75,6 +75,8 @@ class MessagesDB {
         M.message,
         M.sender,
         M.conv_id,
+        M.photos,
+        M.readed,
         U.name,
         U.surname,
         U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  WHERE M.id = ?`, id_message, (err, newMessage) => {
@@ -152,6 +154,7 @@ class MessagesDB {
         U.surname,
         M.conv_id,
         M.photos,
+        M.readed,
        	(SELECT unread FROM conversation WHERE id = ? AND CASE WHEN sender = ? THEN unread = 0 ELSE unread END) as unread,
         U.ava FROM messages M LEFT JOIN users U ON M.sender = U.userID  LEFT JOIN conversation C ON C.id = M.conv_id
         WHERE M.conv_id = ?
@@ -173,7 +176,7 @@ class MessagesDB {
         users.ava, 
         users.userID,
         photos.date, 
-        messages.id, 
+        messages.id as messageID, 
         photos.photo_name,
         photos.id as photoID
         FROM messages 

@@ -697,7 +697,7 @@ var friendsStore = {
               _context8.prev = 9;
               //если возрастной диапазон не указан, по умолчанию от 0 до 100
               !params.ageAfter ? params.ageAfter = 0 : params.ageAfter;
-              !params.ageBefore ? params.ageBefore = 100 : params.ageBefore;
+              !params.ageBefore ? params.ageBefore = 150 : params.ageBefore;
               params._count = state.countFriends, params._limit = state.limitFriends;
               _context8.next = 15;
               return regeneratorRuntime.awrap(commit("setTitleFriend", "Поиск друзей"));

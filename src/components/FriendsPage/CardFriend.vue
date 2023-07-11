@@ -3,7 +3,8 @@
 
             <div class="wrapper_my_friend_card_ava"
                 @click="$router.push({name: 'mypage', params: {id: `${user.userID}`}})">
-                <img class="my_friend_card_ava" :src="loadAva(user.ava)" alt="ava">
+                <!-- <img class="my_friend_card_ava" :src="loadAva" alt="ava"> -->
+                <UIAva :ava="user.ava"/>
             </div>
 
             <div class="wrapper_my_friend_card_identification">
@@ -34,14 +35,18 @@ export default {
         }
     },
 
-    methods: {
-        loadAva(ava) {
-            try {
-                return require(`../../assets/photo/${ava}`)
-            } catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        }
+    mounted() {
+        console.log('mon')
+    },
+
+    computed: {
+        // loadAva() {
+        //     try {
+        //         return require(`../../assets/photo/${this.user.userID}`)
+        //     } catch {
+        //         return require(`../../assets/ava/ava_1.jpg`);
+        //     }
+        // }
     }
 
 }

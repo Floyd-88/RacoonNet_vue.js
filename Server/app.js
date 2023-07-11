@@ -18,6 +18,8 @@ const jwt = require('jsonwebtoken');
 const tokenKey = require('./tokenKey');
 const authenticateJWT = require('./authenticateJWT');
 
+//проверка фотографий в папке
+const checkPhotos = require('./checkPhotos');
 
 //подключаем экземпляры классов
 const AuthorizationUserDB = require('./DB/AuthorizationUserDB');
@@ -117,70 +119,82 @@ router.post('/register', registerValidate, function(req, res) {
     if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city) {
         return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля)")
     }
-    authorization.insert([
-        req.body.name,
-        req.body.surname,
-        req.body.email,
-        bcrypt.hashSync(req.body.password, 8),
-        req.body.year,
-        req.body.month,
-        req.body.day,
-        req.body.selectedGender,
-        req.body.country,
-        req.body.city
-    ], (err) => {
-        if (err !== null) {
-            if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
-        }
+
+    authorization.check_double_email(req.body.email, (err, email) => {
         if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err);
 
-        //отправляем сообщение с логином и паролем на почту юзера 
-        const message = {
-            to: req.body.email,
-            subject: 'Congratulations! You are successfully registred on our site',
-            html: `
-                <h2>Поздравляем, Вы успешно зарегистрировались в социальной сети RaccoonNet!</h2>  
-                <i>данные вашей учетной записи:</i>
-                <ul>
-                    <li>login: ${req.body.email}</li>
-                    <li>password: ${req.body.password}</li>
-                </ul>
-                <p>Данное письмо не требует ответа.<p>`
+        if (email.length !== 0) {
+            return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+        } else {
+            //отправляем сообщение с логином и паролем на почту юзера 
+            const message = {
+                to: req.body.email,
+                subject: 'Congratulations! You are successfully registred on our site',
+                html: `
+            <h2>Поздравляем, Вы успешно зарегистрировались в социальной сети RaccoonNet!</h2>  
+            <i>данные вашей учетной записи:</i>
+            <ul>
+                <li>login: ${req.body.email}</li>
+                <li>password: ${req.body.password}</li>
+            </ul>
+            <p>Данное письмо не требует ответа.<p>`
+            }
+
+            mailer(message, (err) => {
+                if (err) return res.status(500).send("Указанный e-mail не действует");
+
+                //сохранение в БД информацию о пользователе
+                authorization.insert([
+                    req.body.name,
+                    req.body.surname,
+                    req.body.email,
+                    bcrypt.hashSync(req.body.password, 8),
+                    req.body.year,
+                    req.body.month,
+                    req.body.day,
+                    req.body.selectedGender,
+                    req.body.country,
+                    req.body.city
+                ], (err) => {
+                    if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err);
+
+                    //после регистрации происходит автоматическая авторизация пользователя
+                    authorization.selectByEmail(req.body.email, (err, user) => {
+                        if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
+
+                        //создаем токен для защиты своих данных
+                        let token = jwt.sign({
+                                name: user.name,
+                                id: user.userID,
+                            },
+                            tokenKey.secret, {
+                                expiresIn: 60 * 60
+                            },
+                        );
+
+                        const refreshToken = jwt.sign({
+                            name: user.name,
+                            id: user.userID,
+                        }, tokenKey.refreshTokenSecret);
+
+                        tokenKey.refreshTokens.push(refreshToken);
+
+                        res.status(200).send({
+                            auth: true,
+                            token: token,
+                            refreshToken: refreshToken,
+                            user: {
+                                userID: user.userID,
+                                is_admin: user.is_admin
+                            }
+                        });
+                    });
+                });
+
+
+            })
         }
-        mailer(message);
-
-        //после регистрации происходит автоматическая авторизация пользователя
-        authorization.selectByEmail(req.body.email, (err, user) => {
-            if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
-
-            //создаем токен для защиты своих данных
-            let token = jwt.sign({
-                    name: user.name,
-                    id: user.userID,
-                },
-                tokenKey.secret, {
-                    expiresIn: 60 * 60
-                },
-            );
-
-            const refreshToken = jwt.sign({
-                name: user.name,
-                id: user.userID,
-            }, tokenKey.refreshTokenSecret);
-
-            tokenKey.refreshTokens.push(refreshToken);
-
-            res.status(200).send({
-                auth: true,
-                token: token,
-                refreshToken: refreshToken,
-                user: {
-                    userID: user.userID,
-                    is_admin: user.is_admin
-                }
-            });
-        });
-    });
+    })
 });
 
 //РЕГЕСТРИРУЕМ ПОЛЬЗОВАТЕЛЯ С ПРАВАМИ АДМИНИСТРАТОРА
@@ -369,7 +383,8 @@ router.post('/load_user', authenticateJWT, function(req, res) {
     //если пользователь авторизован
     if (tokenID) {
         //если пользователь заходит на свою страницу - отображать кнопку редактирования профиля, загрузки фото и авы
-        let is_editProfile = false
+        let is_editProfile = false;
+
         if (userID === tokenID) {
             is_editProfile = true
         }
@@ -377,6 +392,11 @@ router.post('/load_user', authenticateJWT, function(req, res) {
         authorization.loadUser(userID, (err, user) => {
             if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
             if (!user) return res.status(403).send('Такого пользователя не существует');
+
+
+            //проверка на наличие аватарки в папке
+            checkPhotos.avaOne(user)
+
             res.status(200).send({
                 user: {
                     userID: user.userID,
@@ -400,6 +420,10 @@ router.post('/load_user', authenticateJWT, function(req, res) {
         authorization.loadUser(userID, (err, user) => {
             if (err) return res.status(500).send('Ошибка на сервере.' + " " + err);
             if (!user) return res.status(403).send('Такого пользователя не существует');
+
+            //проверка на наличие аватарки в папке
+            checkPhotos.avaOne(user)
+
             res.status(200).send({
                 user: {
                     ava: user.ava,
@@ -412,8 +436,6 @@ router.post('/load_user', authenticateJWT, function(req, res) {
             });
         });
     }
-
-
 })
 
 //РЕДАКТИРОВАНИЕ ПРОФИЛЯ ПОЛЬЗОВОТЕЛЯ
@@ -577,15 +599,18 @@ router.delete('/delete_user', authenticateJWT, passwordDelValidate, function(req
 
             //удаление всех фотографий пользователя
             req.body.allPhoto.forEach((photo) => {
-                    fs.unlink(`../src/assets/photo/${photo.photo_name}`, (err) => {
-                        if (err) console.log(err)
-                    });
+                    if (photo.photo_name !== 'ava/ava_1.jpg' && photo.photo_name !== 'ava_1.jpg') {
+                        fs.unlink(`../src/assets/${photo.photo_name}`, (err) => {
+                            if (err) console.log(err)
+                        });
+                    }
                 })
                 //удаление аватарки из папки на сервере
-            fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
-                if (err) console.log(err)
-            });
-
+            if (req.body.nameAva !== 'ava/ava_1.jpg' && req.body.nameAva !== 'ava_1.jpg') {
+                fs.unlink(`../src/assets/${req.body.nameAva}`, (err) => {
+                    if (err) console.log(err)
+                });
+            }
             // удаление пользователя из друзей у других пользователей
             friends.delete_user_friends_DB([tokenID, tokenID], (err) => {
                 if (err) return res.status(500).send("При удалении пользователя из друзей, произошла ошибка" + " " + err);
@@ -659,6 +684,10 @@ router.get('/dataBase.js', authenticateJWT, function(req, res) {
         // console.log(comments)
 
         // })
+
+        //проверка на наличие фотографиий
+        checkPhotos.avaArray(allPosts);
+
         res.status(200).json(allPosts);
     });
 });
@@ -675,22 +704,10 @@ router.get('/post_photos.js', authenticateJWT, function(req, res) {
         if (err) return res.status(500).send('Error on the server.' + " " + err);
         if (!photosPost) return res.status(404).send('No posts found.' + " " + err);
 
-        //массив с названиями фотографий
-        let arr = [];
-        //путь к папке где лежат фотографии
-        let path = "../src/assets/photo/";
-        //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
-        photosPost.forEach(element => {
-            try {
-                //синхронный метод проверки файла ??????????????
-                if (fs.existsSync(`${path + element.photo_name}`)) {
-                    arr.push(element)
-                }
-            } catch (err) {
-                console.error(err)
-            }
-        });
-        res.status(200).json(arr);
+        //проверка на наличие фотографий
+        checkPhotos.photosArray(photosPost);
+
+        res.status(200).json(photosPost);
     });
 });
 
@@ -705,22 +722,10 @@ router.get('/message_photos.js', authenticateJWT, function(req, res) {
         if (err) return res.status(500).send('Error on the server.' + " " + err);
         if (!photosMessage) return res.status(404).send('No message found.' + " " + err);
 
-        //массив с названиями фотографий
-        let arr = [];
-        //путь к папке где лежат фотографии
-        let path = "../src/assets/photo/";
-        //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
-        photosMessage.forEach(element => {
-            try {
-                //синхронный метод проверки файла ??????????????
-                if (fs.existsSync(`${path + element.photo_name}`)) {
-                    arr.push(element)
-                }
-            } catch (err) {
-                console.error(err)
-            }
-        });
-        res.status(200).json(arr);
+        //проверка на наличие фотографий
+        checkPhotos.photosArray(photosMessage);
+
+        res.status(200).json(photosMessage);
     });
 });
 
@@ -766,6 +771,15 @@ router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
+
+            // let path = "../src/assets/photo/";
+
+            // if (fs.existsSync(`${path + post.ava}`)) {
+            //     post.ava = 'photo/' + post.ava;
+            // } else {
+            //     post.ava = 'ava/ava_1.jpg';
+            // }
+
             res.status(200).send(post);
         });
     });
@@ -805,52 +819,80 @@ router.delete('/dataBase_delete', authenticateJWT, function(req, res) {
     //удалять посты может только автор поста или хозяин страницы
     if (tokenID === req.body.authorPost || tokenID === req.body.pageID) {
 
+        //удаление лайков поста
         posts.remove_post_likes_DB(req.body.postID, (err) => {
             if (err) return res.status(500).send('При удалении лайков поста возникли проблемы' + " " + err);
 
+            // удаление поста из БД
             posts.remove_post_DB(req.body.postID, (err) => {
-                if (err) return res.status(500).send('Error on the server' + " " + err);
+                if (err) return res.status(500).send('При удалении поста возникла ошибка' + " " + err);
 
-                //удаление фото из БД в случае если пост с фото создан другим пользователем  
-                if (req.body.authorPost !== req.body.pageID && req.body.photos === "1") {
+                //получение ID комментариев поста
+                commentsPost.get_id_comments_post(req.body.postID, (err, arrayCommentsID) => {
+                    if (err) return res.status(500).send('Произошла ошибка при получении id комментариев у удаляемому посту' + " " + err);
 
-                    posts.post_photos_DB(req.body.postID, (err, photosArray) => {
-                        if (err) return res.status(500).send('При получении фотографий из поста произошла ошибка' + " " + err);
+                    //удаление комментариев к посту из БД
+                    commentsPost.remove_comments_post_DB(req.body.postID, (err) => {
+                        if (err) return res.status(500).send('Произошла ошибка при удалении комментария' + " " + err);
 
-                        photosArray.forEach(photo => {
+                        //удаление комментариев к комментариям к посту из БД
+                        arrayCommentsID = arrayCommentsID.map(i => i.id)
 
-                            photos.remove_photo_likes([photo.id], (err) => {
-                                // if (err) return res.status(500).send('Ошибка на сервере при удалении лайков' + " " + err);
-                                if (err) console.log(err)
+                        if (arrayCommentsID.length > 0) {
+                            commentsPost.remove_comments_comment_DB(arrayCommentsID, (err) => {
+                                if (err) return res.status(500).send('Произошла ошибка при удалении комментариев к комментарию' + " " + err);
+                            });
+                        }
+                        // notice.delete_notice_comment_comments_post_DB([req.body.commentID], (err) => {
+                        //     if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+                        // })
 
-                                photos.remove_photo([photo.id], (err) => {
-                                    // if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err);
-                                    if (err) console.log(err)
+                        // notice.delete_notice_comment_post_DB([req.body.commentID], (err) => {
+                        //     if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
+                        // })
 
-                                    //удаляем уведомление о лайке фото и комментарие
-                                    notice.delete_notice_photo_DB([photo.id], (err) => {
-                                        // if (err) return res.status(500).send('При удалении уведомления о лайке и комментарие произошла ошибка' + " " + err);
+                        //удаление фото из БД в случае если пост с фото создан другим пользователем  
+                        if (req.body.authorPost !== req.body.pageID && req.body.photos === "1") {
+
+                            posts.post_photos_DB(req.body.postID, (err, photosArray) => {
+                                if (err) return res.status(500).send('При получении фотографий из поста произошла ошибка' + " " + err);
+                                photosArray.forEach(photo => {
+                                    photos.remove_photo_likes([photo.id], (err) => {
+                                        // if (err) return res.status(500).send('Ошибка на сервере при удалении лайков' + " " + err);
                                         if (err) console.log(err)
 
-                                        //удаляем фото из папки на сервере
-                                        fs.unlink(`../src/assets/photo/${photo.photo_name}`, (err) => {
-                                            // if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее' + " " + err);
+                                        photos.remove_photo([photo.id], (err) => {
+                                            // if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err);
                                             if (err) console.log(err)
-                                        });
+
+                                            //удаляем уведомление о лайке фото и комментарие
+                                            notice.delete_notice_photo_DB([photo.id], (err) => {
+                                                // if (err) return res.status(500).send('При удалении уведомления о лайке и комментарие произошла ошибка' + " " + err);
+                                                if (err) console.log(err)
+
+                                                //удаляем фото из папки на сервере
+                                                if (photo.photo_name !== 'ava/ava_1.jpg' && photo.photo_name !== 'ava_1.jpg') {
+                                                    fs.unlink(`../src/assets/${photo.photo_name}`, (err) => {
+                                                        // if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее' + " " + err);
+                                                        if (err) console.log(err)
+                                                    });
+                                                }
+                                            })
+                                        })
                                     })
                                 })
+
                             })
+                        }
+                        //удаление уведомления о новом посте
+                        notice.delete_notice_post_DB([req.body.postID], (err) => {
+                            if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
                         })
+                        res.status(200).send("пост удален");
+                    });
+                });
 
-                    })
-                }
-                //удаление уведомления о новом посте
-                notice.delete_notice_post_DB([req.body.postID], (err) => {
-
-                    if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
-                })
-                res.status(200).send("пост удален");
-            });
+            })
 
         })
     }
@@ -923,6 +965,10 @@ router.post('/likes_post', authenticateJWT, function(req, res) {
 router.get('/get_users_likes', authenticateJWT, function(req, res) {
     posts.get_users_likes([req.query.postID], (err, users) => {
         if (err) return res.status(500).send("При получении пользователй лайкнувших пост произошла ошибка" + " " + err);
+
+        //проверка на наличие фотографиий
+        checkPhotos.avaArray(users);
+
         res.status(200).send(users);
     })
 
@@ -933,6 +979,10 @@ router.get("/load_comments_post.js", authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
     commentsPost.load_comments_DB([req.query.userID, req.query.postID], (err, comments) => {
         if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
+
+        //проверка на наличие фотографиий
+        checkPhotos.avaArray(comments);
+
         res.status(200).json(comments);
     })
 })
@@ -945,6 +995,9 @@ router.get("/load_comments_one_post.js", authenticateJWT, function(req, res) {
         if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
         if (!comments) return res.status(404).send('Комментарии к постам отстутствуют' + " " + err);
 
+        //проверка на наличие фотографиий
+        checkPhotos.avaArray(comments);
+
         res.status(200).json(comments);
     })
 })
@@ -955,6 +1008,10 @@ router.get("/load_comments_comment.js", authenticateJWT, function(req, res) {
     commentsPost.load_comments_comment_DB([req.query.userID, req.query.postID], (err, comments) => {
         if (err) return res.status(500).send('Во время загрузки комментариев к комментарию произошла ошибка' + " " + err);
         // if (!comments) return res.status(404).send('Комментарии отстутствуют' + " " + err);
+
+        //проверка на наличие фотографиий
+        checkPhotos.avaArray(comments);
+
         res.status(200).json(comments);
     })
 })
@@ -966,6 +1023,9 @@ router.get("/load_comments_comment_one_post.js", authenticateJWT, function(req, 
     commentsPost.load_comments_comment_one_DB([req.query.postID], (err, comments) => {
         if (err) return res.status(500).send('Во время загрузки комментариев к комментарию одного поста произошла ошибка' + " " + err);
         if (!comments) return res.status(404).send('Комментарии отстутствуют' + " " + err);
+
+        //проверка на наличие фотографиий
+        checkPhotos.avaArray(comments);
 
         res.status(200).json(comments);
     })
@@ -993,7 +1053,8 @@ router.post("/load_comments_post.js", authenticateJWT, messageValidate, function
         if (err) return res.status(500).send('При добавлении комментария произошла ошибка' + " " + err);
 
         const newCommentID = comment.insertId
-            // возвращаем написанный комментарий
+
+        // возвращаем написанный комментарий
         commentsPost.load_one_comment_DB(newCommentID, (err, newComment) => {
             if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
 
@@ -1002,6 +1063,15 @@ router.post("/load_comments_post.js", authenticateJWT, messageValidate, function
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
+
+            // let path = "../src/assets/photo/";
+
+            // if (fs.existsSync(`${path + newComment.ava}`)) {
+            //     newComment.ava = 'photo/' + newComment.ava;
+            // } else {
+            //     newComment.ava = 'ava/ava_1.jpg';
+            // }
+
             res.status(200).send(newComment);
         });
     });
@@ -1046,6 +1116,14 @@ router.post("/load_comments_comment.js", authenticateJWT, messageValidate, funct
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
+
+            // let path = "../src/assets/photo/";
+
+            // if (fs.existsSync(`${path + newComment.ava}`)) {
+            //     newComment.ava = 'photo/' + newComment.ava;
+            // } else {
+            //     newComment.ava = 'ava/ava_1.jpg';
+            // }
 
             res.status(200).send(newComment);
         });
@@ -1097,9 +1175,9 @@ router.post('/upload_ava', authenticateJWT, (req, res) => {
     tokenID = req.tokenID; //id из сохраненного токена 
 
     if (userID === tokenID) {
-        //удаление аватарки из папки на сервере при обновлении
-        if (req.body.nameAva !== "ava_1.jpg") {
-            fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
+        // //удаление аватарки из папки на сервере при обновлении
+        if (req.body.nameAva !== "ava/ava_1.jpg" && req.body.nameAva !== "ava_1.jpg") {
+            fs.unlink(`../src/assets/${req.body.nameAva}`, (err) => {
                 if (err) console.log(err)
             });
         }
@@ -1126,7 +1204,7 @@ router.post('/upload_ava', authenticateJWT, (req, res) => {
             });
 
         let arrayPhotos = [];
-        arrayPhotos.push(nameImg, tokenID);
+        arrayPhotos.push('photo/' + nameImg, tokenID);
 
         //добавление картинки в таблицу Users базы данных 
         authorization.updateAva(arrayPhotos, (err) => {
@@ -1209,13 +1287,38 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
                 // );
 
                 //добавляем в массив название фото и id юзера
-                arrayPhotos.push([updateName, tokenID, userID, category, post, dialog]);
+                arrayPhotos.push(['photo/' + updateName, tokenID, userID, category, post, dialog]);
             }
         }
+
         //загрузка в БД
         photos.add_photo_DB(arrayPhotos, (err) => {
             if (err) return res.status(500).send('Error on the server' + " " + err);
-            res.status(200).send(arrayPhotos);
+
+            setTimeout(() => {
+                photos.load_last_photos_DB([post, dialog], (err, newPhotos) => {
+                    if (err) return res.status(500).send('Неудалось выгрузить фотографии из последнего поста' + " " + err);
+
+                    // let path = "../src/assets/photo/";
+
+                    // //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
+                    // newPhotos.map(element => {
+                    //     try {
+                    //         //синхронный метод проверки файла ??????????????
+                    //         if (fs.existsSync(`${path + element.photo_name}`)) {
+                    //             return element.photo_name;
+                    //         } else {
+                    //             element.photo_name = 'ava/ava_1.jpg';
+                    //             return element.photo_name;
+                    //         }
+                    //     } catch (err) {
+                    //         console.error(err)
+                    //     }
+                    // });
+
+                    res.status(200).send(newPhotos);
+                })
+            }, 2500)
         })
     }
 });
@@ -1236,33 +1339,12 @@ router.get('/upload_all_photo', authenticateJWT, function(req, res) {
             if (err) return res.status(500).send('Ошибка на сервере. Фото не загрузились' + " " + err);
             if (!allPhotos) return res.status(404).send('Фотографии не найдены' + " " + err);
 
-            //массив с названиями фотографий
-            let arr = [];
-            //путь к папке где лежат фотографии
-            let path = "../src/assets/photo/";
-            //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
-            allPhotos.forEach(element => {
-                try {
-                    //синхронный метод проверки файла ??????????????
-                    if (fs.existsSync(`${path + element.photo_name}`)) {
-                        arr.push(element)
-                    }
-                } catch (err) {
-                    console.error(err)
-                }
+            //проверка на наличие фотографии в папке
+            checkPhotos.photosArray(allPhotos);
+            checkPhotos.avaArray(allPhotos);
 
-                // fs.access(`${path + element.photo_name}`, fs.F_OK, (err) => {
-                //     if (!err) {
-                //         console.log(element)
-                //         arr.push(element)
-                //     } else {
-                //         // console.log('not files')
-                //     }
-                // })
-            });
-            res.json(arr);
-
-            // res.status(200).send("Фотографии получены");;
+            res.status(200).json(allPhotos);
+            // res.status(200).send("Фотографии получены");
         })
 
     }
@@ -1276,9 +1358,12 @@ router.delete('/remove_photo', authenticateJWT, function(req, res) {
     tokenID = req.tokenID; //id из сохраненного токена 
 
     if (userID === tokenID) {
-        fs.unlink(`../src/assets/photo/${req.query.namePhoto}`, (err) => {
-            if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее' + " " + err);
-        });
+        if (req.query.namePhoto !== 'ava/ava_1.jpg' && req.query.namePhoto !== 'ava_1.jpg') {
+            fs.unlink(`../src/assets/${req.query.namePhoto}`, (err) => {
+                if (err) return res.status(500).send('Фотография не найдена, возможно она уже удалена ранее' + " " + err);
+            });
+        }
+
 
         photos.remove_photo_likes([req.query.idPhoto], (err) => {
             if (err) return res.status(500).send('Ошибка на сервере при удалении лайков' + " " + err);
@@ -1323,29 +1408,32 @@ router.put('/remove_ava_photo', authenticateJWT, function(req, res) {
     if (userID === tokenID) {
 
         //удаление аватарки из папки на сервере
-        fs.unlink(`../src/assets/photo/${req.body.nameAva}`, (err) => {
-            if (err) console.log(err)
-        });
+        if (req.body.nameAva !== 'ava/ava_1.jpg' && req.body.nameAva !== 'ava_1.jpg') {
+            fs.unlink(`../src/assets/${req.body.nameAva}`, (err) => {
+                if (err) console.log(err)
+            });
+        }
 
         authorization.updateAva([
-            "ava_1.jpg",
+            "photo/ava_1.jpg",
             tokenID
         ], (err) => {
             if (err) return res.status(500).send('Ошибка на сервере. Аватарка не удалилась' + " " + err);
 
+            res.status(200).send("Аватарка была удалена")
+
             //получение обновленного профиля после удаления аватарки
-            authorization.loadUser(tokenID, (err, user) => {
-                if (err) return res.status(500).send("Не удалось получить фотографии с сервера" + " " + err);
-                res.status(200).send({
-                    user: {
-                        ava: user.ava,
-                    }
-                });
-            })
+            // authorization.loadUser(tokenID, (err, user) => {
+            //     if (err) return res.status(500).send("Не удалось получить фотографии с сервера" + " " + err);
+            //     res.status(200).send({
+            //         user: {
+            //             ava: user.ava,
+            //         }
+            //     });
+            // })
+
         })
     }
-
-
 })
 
 //ЛАЙКАЕМ ФОТОГРАФИЮ
@@ -1415,9 +1503,12 @@ router.post('/likes_photo', authenticateJWT, function(req, res) {
 router.get('/get_users_likes_photo', authenticateJWT, function(req, res) {
     photos.get_users_likes_photo([req.query.photoID], (err, users) => {
         if (err) return res.status(500).send("При получении пользователй лайкнувших фото произошла ошибка" + " " + err);
+
+        //проверка на наличие фотографии в папке
+        checkPhotos.avaArray(users);
+
         res.status(200).send(users);
     })
-
 })
 
 //ДОБАВЛЕНИЕ КОММЕНТАРИЯ К ФОТОГРАФИИ В БАЗУ ДАННЫХ
@@ -1452,6 +1543,13 @@ router.post("/load_comments_photo.js", authenticateJWT, messageValidate, functio
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
+            // let path = "../src/assets/photo/";
+
+            // if (fs.existsSync(`${path + newCommentPhoto.ava}`)) {
+            //     newCommentPhoto.ava = 'photo/' + newCommentPhoto.ava;
+            // } else {
+            //     newCommentPhoto.ava = 'ava/ava_1.jpg';
+            // }
 
             res.status(200).send(newCommentPhoto);
         });
@@ -1465,6 +1563,9 @@ router.get("/load_comments_photo.js", authenticateJWT, function(req, res) {
     commentsPhoto.load_commentsPhoto_DB([req.query.photoID], (err, comments) => {
         if (err) return res.status(500).send('Во время загрузки комментариев произошла ошибка' + " " + err);
         if (!comments) return res.status(404).send('Комментарии к постам отстутствуют' + " " + err);
+
+        //проверка на наличие фотографии в папке
+        checkPhotos.avaArray(comments);
 
         res.status(200).json(comments);
     })
@@ -1568,8 +1669,12 @@ router.post('/user_message', authenticateJWT, messageValidate, function(req, res
                         //возвращаем отправленное сообщение
                         messages.get_last_message_DB([row_messages_id], (err, newMessage) => {
                             if (err) return res.status(500).send('Неудалось вернуть добавленное сообщение' + ' ' + err);
-                            res.status(200).send(newMessage);
 
+
+                            //проверка на наличие фотографии в папке
+                            checkPhotos.avaArray(newMessage);
+
+                            res.status(200).send(newMessage);
                         })
                     })
                 })
@@ -1577,7 +1682,7 @@ router.post('/user_message', authenticateJWT, messageValidate, function(req, res
     }
 })
 
-//  ПОЛУЧЕНИЕ ВСЕХ ДИАЛОГОВ С ДРУГИМИ ПОЛЬЗОВАТЕЛЯМИ
+//ПОЛУЧЕНИЕ ВСЕХ ДИАЛОГОВ С ДРУГИМИ ПОЛЬЗОВАТЕЛЯМИ
 router.get('/user_dialogs', authenticateJWT, function(req, res) {
 
     tokenID = req.tokenID //id из сохраненного токена   
@@ -1619,10 +1724,13 @@ router.get('/user_dialogs', authenticateJWT, function(req, res) {
                 }
                 return dialog
             })
+
+            //проверка на наличие фотографии в папке
+            checkPhotos.avaArray(newDialogs);
+
             return res.status(200).send(newDialogs)
         })
     }
-
 })
 
 //ПОЛУЧЕНИЕ ПЕРЕПИСКИ С КОНКРЕТНЫМ ПОЛЬЗОВАТЕЛЕМ
@@ -1661,25 +1769,26 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
                         return res.status(200).send(messages_user);
                     }
 
-                    // if (row_conversation[0].unread !== 0) {
                     // Обновляем флаг просмотров сообщений
-                    messages.update_flag_unread_messages([
-                            row_conversation[0].id,
-                            tokenID
-                        ], (err) => {
-                            if (err) return res.status(500).send('При обновлении флага в таблице сообщений произошла ошибка:' + ' ' + err);
+                    // messages.update_flag_unread_messages([
+                    //         row_conversation[0].id,
+                    //         tokenID
+                    //     ], (err) => {
+                    //         if (err) return res.status(500).send('При обновлении флага в таблице сообщений произошла ошибка:' + ' ' + err);
 
-                            //обновляем флаг с непрочитанными сообщениями в таблице диалогов
-                            messages.update_flag_unread_conersation([
-                                row_conversation[0].id,
-                                tokenID,
-                                row_conversation[0].id,
-                                tokenID
-                            ], (err) => {
-                                if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
-                            })
-                        })
-                        // }
+                    //         //обновляем флаг с непрочитанными сообщениями в таблице диалогов
+                    //         messages.update_flag_unread_conersation([
+                    //             row_conversation[0].id,
+                    //             tokenID,
+                    //             row_conversation[0].id,
+                    //             tokenID
+                    //         ], (err) => {
+                    //             if (err) return res.status(500).send('При обновлении флага в таблице диалогов произошла ошибка:' + ' ' + err);
+                    //         })
+                    //     })
+
+                    //проверка на наличие фотографии в папке
+                    checkPhotos.avaArray(messages_user);
 
                     return res.status(200).send(messages_user)
                 })
@@ -1688,6 +1797,7 @@ router.get('/user_messages', authenticateJWT, function(req, res) {
     }
 })
 
+//ОБНОВЛЕНИЕ ФЛАГОВ НЕПРОЧИТАННЫХ СООБЩЕНИЙ ПРИ ВЫХОДЕ ИЗ ПЕРЕПИСКИ
 router.put('/unread_messages', authenticateJWT, function(req, res) {
     tokenID = req.tokenID //id из сохраненного токена
 
@@ -1748,6 +1858,7 @@ router.delete('/user_messages', authenticateJWT, function(req, res) {
                             }
 
                             if (req.body.photos === "1") {
+                                console.log(req.body.photos)
                                 messages.message_photos_DB(req.body.deleteID, (err, photosArray) => {
                                     if (err) {
                                         'При получении фотографий из сообщения произошла ошибка' + " " + err
@@ -1758,9 +1869,11 @@ router.delete('/user_messages', authenticateJWT, function(req, res) {
                                             if (err) console.log(err)
 
                                             //удаляем фото из папки на сервере
-                                            fs.unlink(`../src/assets/photo/${photo.photo_name}`, (err) => {
-                                                if (err) console.log(err);
-                                            });
+                                            if (photo.photo_name !== 'ava/ava_1.jpg' && photo.photo_name !== 'ava_1.jpg') {
+                                                fs.unlink(`../src/assets/${photo.photo_name}`, (err) => {
+                                                    if (err) console.log(err);
+                                                });
+                                            }
                                         })
                                     })
                                 })
@@ -1839,9 +1952,11 @@ router.put('/user_messages', authenticateJWT, function(req, res) {
                                                     if (err) console.log(err)
 
                                                     //удаляем фото из папки на сервере
-                                                    fs.unlink(`../src/assets/photo/${photo.photo_name}`, (err) => {
-                                                        if (err) console.log(err);
-                                                    });
+                                                    if (photo.photo_name !== 'ava/ava_1.jpg' && photo.photo_name !== 'ava_1.jpg') {
+                                                        fs.unlink(`../src/assets/${photo.photo_name}`, (err) => {
+                                                            if (err) console.log(err);
+                                                        });
+                                                    }
                                                 })
                                             })
 
@@ -1874,7 +1989,10 @@ router.post("/add_friend", authenticateJWT, function(req, res) {
             if (confirmID.length === 0) {
                 friends.add_friend_DB([tokenID, req.body.id], (err, friendID) => {
                     if (err) return res.status(500).send("При отправке запроса в друзья, произошла ошибка" + " " + err);
-                    res.status(200).send({ status: "Заявка отправлена", userID: tokenID });
+                    res.status(200).send({
+                        status: "Заявка отправлена",
+                        userID: tokenID
+                    });
 
                     notice.add_notice_DB([req.body.id, tokenID, null, "пригласил Вас в друзья", 0, 0, 0, 0, 0, friendID.insertId, req.body.date], (err) => {
                         if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
@@ -1891,7 +2009,10 @@ router.post("/add_friend", authenticateJWT, function(req, res) {
                         if (err) return res.status(500).send('При удалении уведомления о лайке произошла ошибка' + " " + err);
                     })
 
-                    res.status(200).send({ status: "Добавить в друзья", userID: tokenID })
+                    res.status(200).send({
+                        status: "Добавить в друзья",
+                        userID: tokenID
+                    })
                 })
             }
         })
@@ -1955,6 +2076,9 @@ router.get("/add_friends_me", authenticateJWT, function(req, res) {
         friends.get_user_confirm_friends_me_DB([tokenID, +req.query._count, +req.query._limit], (err, users) => {
             if (err) return res.status(500).send("При получении пользователей приглашающих меня в друзья, произошла ошибка" + " " + err);
 
+            //проверка на наличие фотографии в папке
+            checkPhotos.avaArray(users);
+
             res.status(200).send(users);
 
         })
@@ -1968,6 +2092,9 @@ router.get("/add_friends_from_me", authenticateJWT, function(req, res) {
         friends.get_user_confirm_friends_from_me_DB([tokenID, +req.query._count, +req.query._limit], (err, users) => {
             if (err) return res.status(500).send("При получении пользователей которых я пригласил в друзья, произошла ошибка" + " " + err);
 
+            //проверка на наличие фотографии в папке
+            checkPhotos.avaArray(users);
+
             res.status(200).send(users);
 
         })
@@ -1980,6 +2107,9 @@ router.get("/my_friends", authenticateJWT, function(req, res) {
     if (tokenID) {
         friends.get_my_friends_DB([req.query.id, req.query.id, +req.query._count, +req.query._limit], (err, users) => {
             if (err) return res.status(500).send("При получении моих друзей, произошла ошибка" + " " + err);
+
+            //проверка на наличие фотографии в папке
+            checkPhotos.avaArray(users);
 
             res.status(200).send(users);
 
@@ -2001,6 +2131,10 @@ router.get("/search_friends", authenticateJWT, searchNewFriendsValidate, functio
     if (tokenID) {
         friends.get_users([tokenID, tokenID, tokenID, tokenID, tokenID, tokenID, `%${req.query.name}%`, `%${req.query.surname}%`, `%${req.query.country}%`, `%${req.query.city}%`, `%${req.query.sex}%`, req.query.ageAfter, req.query.ageBefore, +req.query._count, +req.query._limit], (err, users) => {
             if (err) return res.status(500).send("При получении пользователей, произошла ошибка" + " " + err);
+
+            //проверка на наличие фотографии в папке
+            checkPhotos.avaArray(users);
+
             res.status(200).send(users);
         })
     }
@@ -2059,7 +2193,10 @@ router.get('/news_friends.js', authenticateJWT, function(req, res) {
     ], (err, newsFriends) => {
         if (err) return res.status(500).send('Error on the server.' + " " + err);
         if (!newsFriends) return res.status(404).send('No news found.');
-        // console.log(newsFriends)
+
+        //проверка на наличие фотографии в папке
+        checkPhotos.avaArray(newsFriends);
+
         res.status(200).json(newsFriends);
     });
 });
@@ -2234,6 +2371,12 @@ router.get('/new_notice', authenticateJWT, function(req, res) {
         tokenID
     ], (err, newNotice) => {
         if (err) return res.status(500).send('При получении уведомлений произошла ошибка' + " " + err);
+
+        //проверка на наличие фотографии в папке
+        checkPhotos.avaArray(newNotice);
+        checkPhotos.avaArrayNotice(newNotice);
+        checkPhotos.photosArray(newNotice);
+
         res.status(200).json(newNotice);
     });
 });
@@ -2268,6 +2411,9 @@ router.get('/new_notice_photos', authenticateJWT, function(req, res) {
         req.query.post_id
     ], (err, newPhotoNotice) => {
         if (err) return res.status(500).send('При получении фотографий к посту из уведомления произошла ошибка' + " " + err);
+
+        //проверка на наличие фотографии в папке
+        checkPhotos.photosArray(newPhotoNotice);
 
         res.status(200).json(newPhotoNotice);
     });
@@ -2329,7 +2475,6 @@ io.on("connection", (socket) => {
         try {
             //отправляем сообщение всем кто находится в комнате кроме отправителя
             socket.to(Number(newMessage.destinationID)).emit("message", newMessage);
-
             // отправляем сообщение всем кто находится в комнате включая отправителя
             // io.to(roomName).emit("message", outgoingMessage);
         } catch (error) {
@@ -2340,30 +2485,45 @@ io.on("connection", (socket) => {
         }
     });
 
-
-    //получаем информацию обо всех кто открыл мою страницу
-    socket.on('enterUserMyPage', function(id) {
-        let room = `room${id}`;
-        socket.join(room);
+    //получаем фотографии из сообщения
+    socket.on("photos", (newMessagePhotos) => {
         try {
-            //получаем информацию о том что кто то написал новый пост
-            socket.on("newPost", (status_post) => {
-                //отправляем информацию о написанном посте всем кто находится на моей странице
-                socket.to(room).emit("enterUserMyPage", status_post);
-            });
+            //отправляем сообщение всем кто находится в комнате кроме отправителя
+            socket.to(Number(newMessagePhotos.destinationID)).emit("photos", newMessagePhotos);
 
-            socket.on('exitRoom', function(id) {
-                socket.leave(room);
-                console.log(room);
-            })
-
+            // отправляем сообщение всем кто находится в комнате включая отправителя
+            // io.to(roomName).emit("message", outgoingMessage);
         } catch (error) {
-            (room)({
+            (newMessagePhotos)({
                 status: '!OK',
                 error
             })
         }
     });
+
+
+    //получаем информацию обо всех кто открыл мою страницу
+    // socket.on('enterUserMyPage', function(id) {
+    //     let room = `room${id}`;
+    //     socket.join(room);
+    //     try {
+    //         //получаем информацию о том что кто то написал новый пост
+    //         socket.on("newPost", (status_post) => {
+    //             //отправляем информацию о написанном посте всем кто находится на моей странице
+    //             socket.to(room).emit("enterUserMyPage", status_post);
+    //         });
+
+    //         socket.on('exitRoom', function(id) {
+    //             socket.leave(room);
+    //         })
+
+    //     } catch (error) {
+    //         (room)({
+    //             status: '!OK',
+    //             error
+    //         })
+    //     }
+    // });
 
     //получаем уведомление
     socket.on("notice", (addresseeID) => {
@@ -2394,6 +2554,17 @@ io.on("connection", (socket) => {
             })
         }
     });
+
+
+
+    //удаление фото из папки на сервере
+    // router.delete('/delete_photo_server', authenticateJWT, function(req, res) {
+    //     console.log(req.query.photo)
+    //     fs.unlink(`../src/assets/${req.query.photo}`, (err) => {
+    //         if (err) console.log(err)
+    //     });
+    // })
+
 
 
 });

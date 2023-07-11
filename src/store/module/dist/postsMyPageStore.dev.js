@@ -187,20 +187,39 @@ var postsMyPageStore = {
                     userID: id
                   }
                 }).then(function (response) {
-                  if (response.data.length > 0) {
-                    commit("setPosts", [].concat(_toConsumableArray(state.posts), _toConsumableArray(response.data)));
-                    commit("setCountPosts", 20);
-                    response.data.forEach(function (post) {
-                      if (post.photos === "1") {
-                        dispatch("LOAD_POST_PHOTOS", {
-                          postID: post.id,
-                          userID: getters.getUser.userID
-                        });
-                      }
-                    });
-                  }
+                  console.log('1');
 
-                  resolve(response);
+                  if (response.data.length > 0) {
+                    console.log('2');
+                    response.data = response.data.filter(function (post) {
+                      return post.delete_post !== 1;
+                    });
+
+                    if (response.data.length === 0) {
+                      console.log('3');
+                      commit("setCountPosts", 20);
+                      dispatch('loadPostServer', id);
+                      resolve(response);
+                    } else {
+                      console.log('4');
+                      commit("setPosts", [].concat(_toConsumableArray(state.posts), _toConsumableArray(response.data)));
+                      commit("setCountPosts", 20);
+                      response.data.forEach(function (post) {
+                        if (post.photos === "1") {
+                          dispatch("LOAD_POST_PHOTOS", {
+                            postID: post.id,
+                            userID: getters.getUser.userID
+                          });
+                        }
+                      });
+                      resolve(response.data);
+                    }
+                  } else {
+                    console.log('5');
+                    resolve(response.data);
+                  } // console.log(response)
+                  // resolve(response)
+
                 })["catch"](function (err) {
                   reject(err);
                 });
@@ -238,18 +257,23 @@ var postsMyPageStore = {
                   while (1) {
                     switch (_context2.prev = _context2.next) {
                       case 0:
-                        _context2.next = 2;
+                        // newPost.id = response.data.user.postID;
+                        // newPost.name = response.data.user.name;
+                        // newPost.surname = response.data.user.surname;
+                        // newPost.ava = response.data.user.ava
+                        console.log(response.data);
+                        _context2.next = 3;
                         return regeneratorRuntime.awrap(commit("setAddPosts", response.data));
 
-                      case 2:
-                        _context2.next = 4;
+                      case 3:
+                        _context2.next = 5;
                         return regeneratorRuntime.awrap(commit("setCountPosts", 1));
 
-                      case 4:
-                        _context2.next = 6;
+                      case 5:
+                        _context2.next = 7;
                         return regeneratorRuntime.awrap(commit("setIsNotRepeatAddPost", true));
 
-                      case 6:
+                      case 7:
                         //отправляем уведомление адресату без перезагрузки страницы
                         _socketio["default"].sendNotice(newPost.id, function (cb) {
                           console.log(cb);
@@ -259,7 +283,7 @@ var postsMyPageStore = {
                         // });
 
 
-                      case 7:
+                      case 8:
                       case "end":
                         return _context2.stop();
                     }

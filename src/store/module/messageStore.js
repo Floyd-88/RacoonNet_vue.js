@@ -147,13 +147,14 @@ export const messageStore = {
                         //отпраляем сообщение на сервер для передачи его адресату через сокет
                         let newMessage = res.data[0];
                         newMessage.destinationID = body.addresseeID;
-                        SocketioService.sendMessage(newMessage, cb => {
-                            console.log(cb);
-                        });
+
+                        if (newMessage.photos === "0") {
+                            SocketioService.sendMessage(newMessage, cb => {
+                                console.log(cb);
+                            });
+                        }
+
                         commit("setArrayMessages", [...state.arrayMessages, newMessage]);
-                        // state.arrayMessages.push(resp.data)
-
-
                     });
 
             } catch (err) {
@@ -228,6 +229,8 @@ export const messageStore = {
                                     }
                                 });
                                 resolve(resp);
+                            } else {
+                                commit("setIsNotMessages", true);
                             }
                         })
                 } catch (err) {

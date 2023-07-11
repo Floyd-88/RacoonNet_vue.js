@@ -9,14 +9,20 @@
           </template>
           <template v-else>
             <div class="wrapper_full_size_img">
-                    <img class="full_size_img" :src="pathAva"
-                    :alt="this.getUser.ava"/>
+                    <!-- <img class="full_size_img" :src="require(`../assets/${this.getUser.ava}`)"
+                    :alt="this.getUser.ava"/> -->
+                    <div class="full_size_img" >
+                      <UIAva :ava="this.getUser.ava"/>
+                    </div>
+
             </div>
                         
             <div class="wrapper_block_info_photo">
                 <div class="wrapper_block_info_remove_photo">
                     <button class="remove_photo" @click="showFullAvaPhoto({bool: true, load: 'load'})">Поменять главное фото</button>
-                    <button class="remove_photo" @click="setModulePhotoRemove(true)">Удалить</button>
+                    <button class="remove_photo" 
+                    v-show="getUser.ava !== 'ava/ava_1.jpg'"
+                     @click="setModulePhotoRemove(true)">Удалить</button>
                 </div>
             </div>
           </template>
@@ -78,13 +84,13 @@ export default {
             getEditAva: "showFullPhotoStore/getEditAva"
         }),
 
-        pathAva() {
-          try{
-            return require(`../assets/photo/${this.getUser.ava}`);
-          } catch {
-            return require(`../assets/ava/ava_1.jpg`);
-          }
-    },
+    //     pathAva() {
+    //       try{
+    //         return require(`../assets/photo/${this.getUser.ava}`);
+    //       } catch {
+    //         return require(`../assets/ava/ava_1.jpg`);
+    //       }
+    // },
 }
 }
 </script>
@@ -128,10 +134,11 @@ export default {
 }
 
 .full_size_img {
-    width: auto;
+    width: 60%;
     height: auto;
     border-radius: 100%;
     object-fit: contain;
+    cursor: auto;
 }
 
 .wrapper_block_info_photo {
@@ -184,7 +191,7 @@ justify-content: space-between;
 /* .wrapper_save_editPost_btn {} */
 
 .save_editPost_btn {
-  width: 70px;
+  width: 80px;
   margin-left: 5px;
   margin-right: 5px;
 }
