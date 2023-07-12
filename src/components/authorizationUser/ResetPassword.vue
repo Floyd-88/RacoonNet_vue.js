@@ -118,9 +118,8 @@ export default {
                 };
 
                 this.UPDATE_PASSWORD_RESTORE(pass)
-                    .then((resp) => {
-                        
-                        console.log(resp.data)
+                    .then(() => {
+                        this.$router.push('/')
                     })
                     .catch((err) => {
                         if (err.err) {

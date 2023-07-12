@@ -1,9 +1,10 @@
 "use strict";
 
-var express = require('express'); //подклучаем библиотеку Express
+var express = require('express'); //подключаем библиотеку Express
 
 
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt'); //хеширование паролей
+
 
 var bodyParser = require('body-parser');
 
@@ -151,111 +152,123 @@ router.post('/register', registerValidate, function (req, res) {
         html: "\n            <h2>\u041F\u043E\u0437\u0434\u0440\u0430\u0432\u043B\u044F\u0435\u043C, \u0412\u044B \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0437\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u043E\u0432\u0430\u043B\u0438\u0441\u044C \u0432 \u0441\u043E\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0439 \u0441\u0435\u0442\u0438 RaccoonNet!</h2>  \n            <i>\u0434\u0430\u043D\u043D\u044B\u0435 \u0432\u0430\u0448\u0435\u0439 \u0443\u0447\u0435\u0442\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438:</i>\n            <ul>\n                <li>login: ".concat(req.body.email, "</li>\n                <li>password: ").concat(req.body.password, "</li>\n            </ul>\n            <p>\u0414\u0430\u043D\u043D\u043E\u0435 \u043F\u0438\u0441\u044C\u043C\u043E \u043D\u0435 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043E\u0442\u0432\u0435\u0442\u0430.<p>")
       };
       mailer(message, function (err) {
-        if (err) return res.status(500).send("Указанный e-mail не действует"); //сохранение в БД информацию о пользователе
+        if (err) return res.status(500).send("Указанный e-mail не действует"); //хешируем пароль
 
-        authorization.insert([req.body.name, req.body.surname, req.body.email, bcrypt.hashSync(req.body.password, 8), req.body.year, req.body.month, req.body.day, req.body.selectedGender, req.body.country, req.body.city], function (err) {
-          if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err); //после регистрации происходит автоматическая авторизация пользователя
+        bcrypt.hash(req.body.password, 13, function (err, hash) {
+          if (err) return res.status(500).send("При хешировании пароля произошла ошибка"); //сохранение в БД информацию о пользователе
 
-          authorization.selectByEmail(req.body.email, function (err, user) {
-            if (err) return res.status(500).send("Ошибка на сервере." + " " + err); //создаем токен для защиты своих данных
+          authorization.insert([req.body.name, req.body.surname, req.body.email, hash, req.body.year, req.body.month, req.body.day, req.body.selectedGender, req.body.country, req.body.city], function (err) {
+            if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err); //после регистрации происходит автоматическая авторизация пользователя
 
-            var token = jwt.sign({
-              name: user.name,
-              id: user.userID
-            }, tokenKey.secret, {
-              expiresIn: 60 * 60
-            });
-            var refreshToken = jwt.sign({
-              name: user.name,
-              id: user.userID
-            }, tokenKey.refreshTokenSecret);
-            tokenKey.refreshTokens.push(refreshToken);
-            res.status(200).send({
-              auth: true,
-              token: token,
-              refreshToken: refreshToken,
-              user: {
-                userID: user.userID,
-                is_admin: user.is_admin
-              }
+            authorization.selectByEmail(req.body.email, function (err, user) {
+              if (err) return res.status(500).send("Ошибка на сервере." + " " + err); //создаем токен для защиты своих данных
+
+              var token = jwt.sign({
+                name: user.name,
+                id: user.userID
+              }, tokenKey.secret, {
+                expiresIn: 60 * 60
+              });
+              var refreshToken = jwt.sign({
+                name: user.name,
+                id: user.userID
+              }, tokenKey.refreshTokenSecret);
+              tokenKey.refreshTokens.push(refreshToken);
+              res.status(200).send({
+                auth: true,
+                token: token,
+                refreshToken: refreshToken,
+                user: {
+                  userID: user.userID,
+                  is_admin: user.is_admin
+                }
+              });
             });
           });
         });
       });
     }
   });
-}); //РЕГЕСТРИРУЕМ ПОЛЬЗОВАТЕЛЯ С ПРАВАМИ АДМИНИСТРАТОРА
-// router.post('/register-admin', registerValidate, function(req, res) {
-//     //валидация полей
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//         return res.status(422).json({
-//             errors: errors.array()
-//         });
-//     }
-//     if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city || !req.body.is_admin) {
-//         return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля)")
-//     };
-//     authorization.insertAdmin([
-//         req.body.name,
-//         req.body.surname,
-//         req.body.email,
-//         bcrypt.hashSync(req.body.password, 8),
-//         req.body.year,
-//         req.body.month,
-//         req.body.day,
-//         req.body.selectedGender,
-//         req.body.country,
-//         req.body.city,
-//         req.body.is_admin
-//     ], (err) => {
-//         if (err !== null) {
-//             if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
-//         }
-//         if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err)
-//         //отправляем сообщение с логином и паролем на почту юзера 
-//         const message = {
-//             to: req.body.email,
-//             subject: 'Congratulations! You are successfully registred on our site',
-//             html: `
-//                 <h2>Поздравляем, Вы успешно зарегистрировались в социальной сети RaccoonNet!</h2>  
-//                 <i>данные вашей учетной записи:</i>
-//                 <ul>
-//                     <li>login: ${req.body.email}</li>
-//                     <li>password: ${req.body.password}</li>
-//                 </ul>
-//                 <p>Данное письмо не требует ответа.<p>`
-//         }
-//         mailer(message);
-//         //после регистрации происходит автоматическая авторизация пользователя
-//         authorization.selectByEmail(req.body.email, (err, user) => {
-//             if (err) return res.status(500).send("Ошибка на сервере." + " " + err)
-//             //создаем токен для защиты своих данных
-//             let token = jwt.sign({
-//                     name: user.name,
-//                     id: user.userID,
-//                 },
-//                 tokenKey.secret, {
-//                     expiresIn: 60 * 60
-//                 },
-//             );
-//             const refreshToken = jwt.sign({
-//                 name: user.name,
-//                 id: user.userID,
-//             }, tokenKey.refreshTokenSecret);
-//             tokenKey.refreshTokens.push(refreshToken);
-//             res.status(200).send({
-//                 auth: true,
-//                 token: token,
-//                 refreshToken: refreshToken,
-//                 user: {
-//                     userID: user.userID,
-//                     is_admin: user.is_admin
-//                 }
-//             });
-//         });
-//     });
-// });
+}); // РЕГЕСТРИРУЕМ ПОЛЬЗОВАТЕЛЯ С ПРАВАМИ АДМИНИСТРАТОРА
+
+/**router.post('/register-admin', registerValidate, function(req, res) {
+    //валидация полей
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+    if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city || !req.body.is_admin) {
+        return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля)")
+    };
+
+    authorization.insertAdmin([
+        req.body.name,
+        req.body.surname,
+        req.body.email,
+        bcrypt.hashSync(req.body.password, 8),
+        req.body.year,
+        req.body.month,
+        req.body.day,
+        req.body.selectedGender,
+        req.body.country,
+        req.body.city,
+        req.body.is_admin
+    ], (err) => {
+        if (err !== null) {
+            if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+        }
+        if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err)
+
+        //отправляем сообщение с логином и паролем на почту юзера 
+        const message = {
+            to: req.body.email,
+            subject: 'Congratulations! You are successfully registred on our site',
+            html: `
+                <h2>Поздравляем, Вы успешно зарегистрировались в социальной сети RaccoonNet!</h2>  
+                <i>данные вашей учетной записи:</i>
+                <ul>
+                    <li>login: ${req.body.email}</li>
+                    <li>password: ${req.body.password}</li>
+                </ul>
+                <p>Данное письмо не требует ответа.<p>`
+        }
+        mailer(message);
+
+        //после регистрации происходит автоматическая авторизация пользователя
+        authorization.selectByEmail(req.body.email, (err, user) => {
+            if (err) return res.status(500).send("Ошибка на сервере." + " " + err)
+
+            //создаем токен для защиты своих данных
+            let token = jwt.sign({
+                    name: user.name,
+                    id: user.userID,
+                },
+                tokenKey.secret, {
+                    expiresIn: 60 * 60
+                },
+            );
+
+            const refreshToken = jwt.sign({
+                name: user.name,
+                id: user.userID,
+            }, tokenKey.refreshTokenSecret);
+
+            tokenKey.refreshTokens.push(refreshToken);
+
+            res.status(200).send({
+                auth: true,
+                token: token,
+                refreshToken: refreshToken,
+                user: {
+                    userID: user.userID,
+                    is_admin: user.is_admin
+                }
+            });
+        });
+    });
+});**/
 //АВТОРИЗУЕМ ПОЛЬЗОВАТЕЛЯ ПРИ ВВОДЕ ЛОГИНА И ПАРОЛЯ
 
 router.post('/login', loginValidate, function (req, res) {
@@ -275,34 +288,36 @@ router.post('/login', loginValidate, function (req, res) {
       err: 'Такого пользователя не существует'
     }); //проверка пароля
 
-    var passwordIsValid = bcrypt.compareSync(req.body.password, user.user_pass);
-    if (!passwordIsValid) return res.status(401).send({
-      auth: false,
-      token: null,
-      refreshToken: null,
-      err: 'Вы указали не правильный пароль'
-    }); //создаем токен для защиты своих данных
+    bcrypt.compare(req.body.password, user.user_pass, function (err, resultPassword) {
+      if (err) return res.status(500).send('При проверка пароля возникла ошибка' + ' ' + err);
+      if (!resultPassword) return res.status(401).send({
+        auth: false,
+        token: null,
+        refreshToken: null,
+        err: 'Вы указали не правильный пароль'
+      }); //создаем токен для защиты своих данных
 
-    var token = jwt.sign({
-      name: user.name,
-      id: user.userID
-    }, tokenKey.secret, {
-      expiresIn: 60 * 5 //срок действия токена
+      var token = jwt.sign({
+        name: user.name,
+        id: user.userID
+      }, tokenKey.secret, {
+        expiresIn: 60 * 5 //срок действия токена
 
-    });
-    var refreshToken = jwt.sign({
-      name: user.name,
-      id: user.userID
-    }, tokenKey.refreshTokenSecret);
-    tokenKey.refreshTokens.push(refreshToken);
-    res.status(200).send({
-      auth: true,
-      token: token,
-      refreshToken: refreshToken,
-      user: {
-        userID: user.userID,
-        is_admin: user.is_admin
-      }
+      });
+      var refreshToken = jwt.sign({
+        name: user.name,
+        id: user.userID
+      }, tokenKey.refreshTokenSecret);
+      tokenKey.refreshTokens.push(refreshToken);
+      res.status(200).send({
+        auth: true,
+        token: token,
+        refreshToken: refreshToken,
+        user: {
+          userID: user.userID,
+          is_admin: user.is_admin
+        }
+      });
     });
   });
 }); //УДАЛЕНИЕ РЕФРЭШ-ТОКЕНА ПРИ ВЫХОДЕ ИЗ ПРОФИЛЯ
@@ -484,25 +499,31 @@ router.put('/password', authenticateJWT, passwordValidate, function (req, res) {
     if (!req.body.old_password) return res.status(401).send("Поле со старым паролем не заполнено");
     authorization.getPassword(tokenID, function (err, password) {
       if (err) return res.status(500).send("Ошибка на сервере" + " " + err);
-      var passwordIsValid = bcrypt.compareSync(req.body.old_password, password.user_pass);
-      if (!passwordIsValid) return res.status(401).send({
-        err: 'Пароль не действителен'
-      });
-      if (!req.body.new_password) return res.status(401).send("Поле с новым паролем не заполнено"); //обновление старого пароля
+      bcrypt.compare(req.body.old_password, password.user_pass, function (err, resultPassword) {
+        if (err) return res.status(500).send("При проверке пароля произошла ошибка" + " " + err);
+        console.log(resultPassword);
+        if (!resultPassword) return res.status(401).send({
+          err: 'Пароль не действителен'
+        });
+        if (!req.body.new_password) return res.status(401).send("Поле с новым паролем не заполнено");
+        bcrypt.hash(req.body.new_password, 13, function (err, hash) {
+          if (err) return res.status(500).send('Ошибка при проверке пароля' + " " + err); //обновление старого пароля
 
-      authorization.updateUserPassword([bcrypt.hashSync(req.body.new_password, 8), tokenID], function (err) {
-        if (err) return res.status(500).send("При изменении пароля возникли проблемы" + " " + err); //получение почты пользователя
+          authorization.updateUserPassword([hash, tokenID], function (err) {
+            if (err) return res.status(500).send("При изменении пароля возникли проблемы" + " " + err); //получение почты пользователя
 
-        authorization.loadUserEmail(tokenID, function (err, user) {
-          if (err) return res.status(500).send('Ошибка на сервере.' + " " + err); // отправляем сообщение на новую почту если юзер поменял пароль 
+            authorization.loadUserEmail(tokenID, function (err, user) {
+              if (err) return res.status(500).send('Ошибка на сервере.' + " " + err); // отправляем сообщение на новую почту если юзер поменял пароль 
 
-          var message = {
-            to: user.email,
-            subject: 'You have changed your password',
-            html: "\n                            <h2>\u0412\u044B \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C \u0441\u0432\u043E\u0435\u0439 \u0443\u0447\u0435\u0442\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 raccoonnet.ru!</h2>  \n                            <i>\u0415\u0441\u043B\u0438 \u0432\u044B \u044D\u0442\u043E\u0433\u043E \u043D\u0435 \u0434\u0435\u043B\u0430\u043B\u0438, \u043E\u0431\u0440\u0430\u0442\u0438\u0442\u0435\u0441\u044C \u0432 \u0441\u043B\u0443\u0436\u0431\u0443 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438</i>\n                            <p>\u0414\u0430\u043D\u043D\u043E\u0435 \u043F\u0438\u0441\u044C\u043C\u043E \u043D\u0435 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043E\u0442\u0432\u0435\u0442\u0430.<p>"
-          };
-          mailer(message);
-          res.status(200).send("Пароль успешно обновлен");
+              var message = {
+                to: user.email,
+                subject: 'You have changed your password',
+                html: "\n                            <h2>\u0412\u044B \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C \u0441\u0432\u043E\u0435\u0439 \u0443\u0447\u0435\u0442\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 raccoonnet.ru!</h2>  \n                            <i>\u0415\u0441\u043B\u0438 \u0432\u044B \u044D\u0442\u043E\u0433\u043E \u043D\u0435 \u0434\u0435\u043B\u0430\u043B\u0438, \u043E\u0431\u0440\u0430\u0442\u0438\u0442\u0435\u0441\u044C \u0432 \u0441\u043B\u0443\u0436\u0431\u0443 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438</i>\n                            <p>\u0414\u0430\u043D\u043D\u043E\u0435 \u043F\u0438\u0441\u044C\u043C\u043E \u043D\u0435 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043E\u0442\u0432\u0435\u0442\u0430.<p>"
+              };
+              mailer(message);
+              res.status(200).send("Пароль успешно обновлен");
+            });
+          });
         });
       });
     });
@@ -528,47 +549,49 @@ router["delete"]('/delete_user', authenticateJWT, passwordDelValidate, function 
 
     authorization.getPassword(tokenID, function (err, password) {
       if (err) return res.status(500).send("Ошибка на сервере" + " " + err);
-      var passwordIsValid = bcrypt.compareSync(req.body.password, password.user_pass);
-      if (!passwordIsValid) return res.status(401).send({
-        err: 'Пароль не действителен'
-      }); //удаление всех фотографий пользователя
+      bcrypt.compare(req.body.password, password.user_pass, function (err, resultPassword) {
+        if (err) return res.status(500).send('При проверка пароля возникла ошибка' + ' ' + err);
+        if (!resultPassword) return res.status(401).send({
+          err: 'Пароль не действителен'
+        }); //удаление всех фотографий пользователя
 
-      req.body.allPhoto.forEach(function (photo) {
-        if (photo.photo_name !== 'ava/ava_1.jpg' && photo.photo_name !== 'ava_1.jpg') {
-          fs.unlink("../src/assets/".concat(photo.photo_name), function (err) {
+        req.body.allPhoto.forEach(function (photo) {
+          if (photo.photo_name !== 'ava/ava_1.jpg' && photo.photo_name !== 'ava_1.jpg') {
+            fs.unlink("../src/assets/".concat(photo.photo_name), function (err) {
+              if (err) console.log(err);
+            });
+          }
+        }); //удаление аватарки из папки на сервере
+
+        if (req.body.nameAva !== 'ava/ava_1.jpg' && req.body.nameAva !== 'ava_1.jpg') {
+          fs.unlink("../src/assets/".concat(req.body.nameAva), function (err) {
             if (err) console.log(err);
           });
-        }
-      }); //удаление аватарки из папки на сервере
-
-      if (req.body.nameAva !== 'ava/ava_1.jpg' && req.body.nameAva !== 'ava_1.jpg') {
-        fs.unlink("../src/assets/".concat(req.body.nameAva), function (err) {
-          if (err) console.log(err);
-        });
-      } // удаление пользователя из друзей у других пользователей
+        } // удаление пользователя из друзей у других пользователей
 
 
-      friends.delete_user_friends_DB([tokenID, tokenID], function (err) {
-        if (err) return res.status(500).send("При удалении пользователя из друзей, произошла ошибка" + " " + err); //удаление фотографий пользователя из БД
+        friends.delete_user_friends_DB([tokenID, tokenID], function (err) {
+          if (err) return res.status(500).send("При удалении пользователя из друзей, произошла ошибка" + " " + err); //удаление фотографий пользователя из БД
 
-        photos.remove_all_photos([tokenID], function (err) {
-          if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err); //удаление постов пользователя на его странице
+          photos.remove_all_photos([tokenID], function (err) {
+            if (err) return res.status(500).send('Ошибка на сервере. Фотография не удалилась' + " " + err); //удаление постов пользователя на его странице
 
-          posts.remove_all_posts_DB(tokenID, function (err) {
-            if (err) return res.status(500).send('Error on the server' + " " + err);
-          }); //обновляем флаги удаления сообщений у пользователей
+            posts.remove_all_posts_DB(tokenID, function (err) {
+              if (err) return res.status(500).send('Error on the server' + " " + err);
+            }); //обновляем флаги удаления сообщений у пользователей
 
-          messages.update_all_messages_flag_delete([tokenID, tokenID], function (err) {
-            if (err) return res.status(500).send("Сообщениея в диалоге небыли удалены" + " " + err); //обновляем флаги удаления диалога у пользователя
+            messages.update_all_messages_flag_delete([tokenID, tokenID], function (err) {
+              if (err) return res.status(500).send("Сообщениея в диалоге небыли удалены" + " " + err); //обновляем флаги удаления диалога у пользователя
 
-            messages.update_all_conversation_flag_delete([tokenID, tokenID], function (err) {
-              if (err) return res.status(500).send("Диалог небыл удален" + " " + err); //удаление данных пользователя
+              messages.update_all_conversation_flag_delete([tokenID, tokenID], function (err) {
+                if (err) return res.status(500).send("Диалог небыл удален" + " " + err); //удаление данных пользователя
 
-              authorization.deleteUserDB([tokenID], function (err) {
-                if (err) return res.status(500).send("При удалении пользователя возникли проблемы" + " " + err);
-                notice.delete_all_notice_DB([tokenID], function (err) {
-                  if (err) return res.status(500).send("При удалении всех уведомлений возникли проблемы" + " " + err);
-                  res.status(200).send("Пользователь успешно удален");
+                authorization.deleteUserDB([tokenID], function (err) {
+                  if (err) return res.status(500).send("При удалении пользователя возникли проблемы" + " " + err);
+                  notice.delete_all_notice_DB([tokenID], function (err) {
+                    if (err) return res.status(500).send("При удалении всех уведомлений возникли проблемы" + " " + err);
+                    res.status(200).send("Пользователь успешно удален");
+                  });
                 });
               });
             });
@@ -1904,21 +1927,24 @@ router.put('/update_password_restore', passwordValidate, function (req, res) {
         });
       }
 
-      if (!req.body.new_password) return res.status(500).send("Поле с новым паролем не заполнено"); //обновление старого пароля
+      if (!req.body.new_password) return res.status(500).send("Поле с новым паролем не заполнено");
+      bcrypt.hash(req.body.new_password, 13, function (err, hash) {
+        if (err) return res.status(500).send('При проверка пароля возникла ошибка' + ' ' + err); //обновление старого пароля
 
-      authorization.updateUserPassword([bcrypt.hashSync(req.body.new_password, 8), user.userID], function (err) {
-        if (err) return res.status(500).send("При изменении пароля возникли проблемы" + " " + err); //получение почты пользователя
+        authorization.updateUserPassword([hash, user.userID], function (err) {
+          if (err) return res.status(500).send("При изменении пароля возникли проблемы" + " " + err); //получение почты пользователя
 
-        authorization.loadUserEmail(user.userID, function (err, user) {
-          if (err) return res.status(500).send('Ошибка на сервере.' + " " + err); // отправляем сообщение на новую почту если юзер поменял пароль 
+          authorization.loadUserEmail(user.userID, function (err, user) {
+            if (err) return res.status(500).send('Ошибка на сервере.' + " " + err); // отправляем сообщение на новую почту если юзер поменял пароль 
 
-          var message = {
-            to: user.email,
-            subject: 'You have changed your password',
-            html: "\n                                <h2>\u0412\u044B \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C \u0441\u0432\u043E\u0435\u0439 \u0443\u0447\u0435\u0442\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 raccoonnet.ru!</h2>  \n                                <i>\u0415\u0441\u043B\u0438 \u0432\u044B \u044D\u0442\u043E\u0433\u043E \u043D\u0435 \u0434\u0435\u043B\u0430\u043B\u0438, \u043E\u0431\u0440\u0430\u0442\u0438\u0442\u0435\u0441\u044C \u0432 \u0441\u043B\u0443\u0436\u0431\u0443 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438</i>\n                                <p>\u0414\u0430\u043D\u043D\u043E\u0435 \u043F\u0438\u0441\u044C\u043C\u043E \u043D\u0435 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043E\u0442\u0432\u0435\u0442\u0430.<p>"
-          };
-          mailer(message);
-          res.status(200).send("Пароль успешно обновлен");
+            var message = {
+              to: user.email,
+              subject: 'You have changed your password',
+              html: "\n                                <h2>\u0412\u044B \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C \u0441\u0432\u043E\u0435\u0439 \u0443\u0447\u0435\u0442\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 raccoonnet.ru!</h2>  \n                                <i>\u0415\u0441\u043B\u0438 \u0432\u044B \u044D\u0442\u043E\u0433\u043E \u043D\u0435 \u0434\u0435\u043B\u0430\u043B\u0438, \u043E\u0431\u0440\u0430\u0442\u0438\u0442\u0435\u0441\u044C \u0432 \u0441\u043B\u0443\u0436\u0431\u0443 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438</i>\n                                <p>\u0414\u0430\u043D\u043D\u043E\u0435 \u043F\u0438\u0441\u044C\u043C\u043E \u043D\u0435 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043E\u0442\u0432\u0435\u0442\u0430.<p>"
+            };
+            mailer(message);
+            res.status(200).send("Пароль успешно обновлен");
+          });
         });
       });
     });

@@ -262,6 +262,7 @@ export default {
 .save_password {
   font-size: 18px;
   margin: 10px;
+  font-family: Russo One, fantasy, sans-serif;
 }
 
 .btn_save_password {

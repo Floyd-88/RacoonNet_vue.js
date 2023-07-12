@@ -94,7 +94,6 @@ export const updatePasswordStore = {
                     })
                     .then((resp) => {
                         resolve(resp);
-                        window.location.href = "/";
                     })
                     .catch((err) => {
                         reject(err.response.data)
