@@ -64,8 +64,8 @@ export default {
     runLogout() {
       this.logout()
         .then(() => {
-          window.location.href = "/";
-          // this.$router.push('/')
+          // window.location.href = "/";
+          this.$router.push('/')
         });
     }
   },

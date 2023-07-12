@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); //подклучаем библиотеку Express
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const fs = require('fs')
@@ -198,84 +198,84 @@ router.post('/register', registerValidate, function(req, res) {
 });
 
 //РЕГЕСТРИРУЕМ ПОЛЬЗОВАТЕЛЯ С ПРАВАМИ АДМИНИСТРАТОРА
-router.post('/register-admin', registerValidate, function(req, res) {
-    //валидация полей
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({
-            errors: errors.array()
-        });
-    }
-    if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city || !req.body.is_admin) {
-        return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля)")
-    };
+// router.post('/register-admin', registerValidate, function(req, res) {
+//     //валидация полей
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//         return res.status(422).json({
+//             errors: errors.array()
+//         });
+//     }
+//     if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.year || !req.body.month || !req.body.day || !req.body.selectedGender || !req.body.country || !req.body.city || !req.body.is_admin) {
+//         return res.status(500).send("При регистрации пользователя возникли проблемы(заполните все требуемые поля)")
+//     };
 
-    authorization.insertAdmin([
-        req.body.name,
-        req.body.surname,
-        req.body.email,
-        bcrypt.hashSync(req.body.password, 8),
-        req.body.year,
-        req.body.month,
-        req.body.day,
-        req.body.selectedGender,
-        req.body.country,
-        req.body.city,
-        req.body.is_admin
-    ], (err) => {
-        if (err !== null) {
-            if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
-        }
-        if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err)
+//     authorization.insertAdmin([
+//         req.body.name,
+//         req.body.surname,
+//         req.body.email,
+//         bcrypt.hashSync(req.body.password, 8),
+//         req.body.year,
+//         req.body.month,
+//         req.body.day,
+//         req.body.selectedGender,
+//         req.body.country,
+//         req.body.city,
+//         req.body.is_admin
+//     ], (err) => {
+//         if (err !== null) {
+//             if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+//         }
+//         if (err) return res.status(500).send("При регистрации пользователя возникли проблемы." + " " + err)
 
-        //отправляем сообщение с логином и паролем на почту юзера 
-        const message = {
-            to: req.body.email,
-            subject: 'Congratulations! You are successfully registred on our site',
-            html: `
-                <h2>Поздравляем, Вы успешно зарегистрировались в социальной сети RaccoonNet!</h2>  
-                <i>данные вашей учетной записи:</i>
-                <ul>
-                    <li>login: ${req.body.email}</li>
-                    <li>password: ${req.body.password}</li>
-                </ul>
-                <p>Данное письмо не требует ответа.<p>`
-        }
-        mailer(message);
+//         //отправляем сообщение с логином и паролем на почту юзера 
+//         const message = {
+//             to: req.body.email,
+//             subject: 'Congratulations! You are successfully registred on our site',
+//             html: `
+//                 <h2>Поздравляем, Вы успешно зарегистрировались в социальной сети RaccoonNet!</h2>  
+//                 <i>данные вашей учетной записи:</i>
+//                 <ul>
+//                     <li>login: ${req.body.email}</li>
+//                     <li>password: ${req.body.password}</li>
+//                 </ul>
+//                 <p>Данное письмо не требует ответа.<p>`
+//         }
+//         mailer(message);
 
-        //после регистрации происходит автоматическая авторизация пользователя
-        authorization.selectByEmail(req.body.email, (err, user) => {
-            if (err) return res.status(500).send("Ошибка на сервере." + " " + err)
+//         //после регистрации происходит автоматическая авторизация пользователя
+//         authorization.selectByEmail(req.body.email, (err, user) => {
+//             if (err) return res.status(500).send("Ошибка на сервере." + " " + err)
 
-            //создаем токен для защиты своих данных
-            let token = jwt.sign({
-                    name: user.name,
-                    id: user.userID,
-                },
-                tokenKey.secret, {
-                    expiresIn: 60 * 5
-                },
-            );
+//             //создаем токен для защиты своих данных
+//             let token = jwt.sign({
+//                     name: user.name,
+//                     id: user.userID,
+//                 },
+//                 tokenKey.secret, {
+//                     expiresIn: 60 * 60
+//                 },
+//             );
 
-            const refreshToken = jwt.sign({
-                name: user.name,
-                id: user.userID,
-            }, tokenKey.refreshTokenSecret);
+//             const refreshToken = jwt.sign({
+//                 name: user.name,
+//                 id: user.userID,
+//             }, tokenKey.refreshTokenSecret);
 
-            tokenKey.refreshTokens.push(refreshToken);
+//             tokenKey.refreshTokens.push(refreshToken);
 
-            res.status(200).send({
-                auth: true,
-                token: token,
-                refreshToken: refreshToken,
-                user: {
-                    userID: user.userID,
-                    is_admin: user.is_admin
-                }
-            });
-        });
-    });
-});
+//             res.status(200).send({
+//                 auth: true,
+//                 token: token,
+//                 refreshToken: refreshToken,
+//                 user: {
+//                     userID: user.userID,
+//                     is_admin: user.is_admin
+//                 }
+//             });
+//         });
+//     });
+// });
 
 //АВТОРИЗУЕМ ПОЛЬЗОВАТЕЛЯ ПРИ ВВОДЕ ЛОГИНА И ПАРОЛЯ
 router.post('/login', loginValidate, function(req, res) {
@@ -332,7 +332,7 @@ router.post('/login', loginValidate, function(req, res) {
     });
 })
 
-//УДАЛЕНИЕ РЕФРЭШ-ТОКЕНА ПРИ ПРИ ВЫХОДЕ ИЗ ПРОФИЛЯ
+//УДАЛЕНИЕ РЕФРЭШ-ТОКЕНА ПРИ ВЫХОДЕ ИЗ ПРОФИЛЯ
 router.post('/del_refresh_token', (req, res) => {
     const refresh = req.body.refreshToken;
 
@@ -358,12 +358,13 @@ router.post('/refresh', (req, res) => {
                 console.log(err)
                 return res.status(400).send("Неверный refresh-token");
             }
+
             let token = jwt.sign({
                     name: user.name,
                     id: user.id
                 },
                 tokenKey.secret, {
-                    expiresIn: 60 * 60
+                    expiresIn: 60 * 5
                 },
             );
             res.json({
@@ -1858,7 +1859,6 @@ router.delete('/user_messages', authenticateJWT, function(req, res) {
                             }
 
                             if (req.body.photos === "1") {
-                                console.log(req.body.photos)
                                 messages.message_photos_DB(req.body.deleteID, (err, photosArray) => {
                                     if (err) {
                                         'При получении фотографий из сообщения произошла ошибка' + " " + err

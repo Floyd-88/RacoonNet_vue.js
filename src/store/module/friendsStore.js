@@ -414,6 +414,7 @@ export const friendsStore = {
                         }
                     })
             } catch (err) {
+                await commit("setIsUIloadMoreFriends", true);
                 if (err.code === "ERR_CANCELED") {
                     console.log("Загрузка была отменена")
                 } else {

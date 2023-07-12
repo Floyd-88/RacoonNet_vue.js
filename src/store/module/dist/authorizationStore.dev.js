@@ -132,17 +132,16 @@ var authorizationStore = {
     logout: function logout(_ref3) {
       var commit = _ref3.commit;
       return new Promise(function (resolve) {
-        (0, _axios["default"])({
-          url: "http://localhost:8000/del_refresh_token",
-          data: {
-            refreshToken: localStorage.getItem('refreshToken')
-          },
-          method: "POST"
-        }).then(function (resp) {
-          console.log(resp);
-        })["catch"](function (err) {
-          console.log(err);
-        });
+        if (localStorage.getItem('refreshToken')) {
+          (0, _axios["default"])({
+            url: "http://localhost:8000/del_refresh_token",
+            data: {
+              refreshToken: localStorage.getItem('refreshToken')
+            },
+            method: "POST"
+          });
+        }
+
         commit('logout');
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
@@ -203,34 +202,50 @@ var authorizationStore = {
     },
     //обновление токена
     UPDATE_TOKEN: function UPDATE_TOKEN(_ref5) {
-      var commit = _ref5.commit;
+      var _this = this;
+
+      var commit = _ref5.commit,
+          dispatch = _ref5.dispatch;
       commit("auth_request", "loading");
-      return new Promise(function (resolve) {
-        (0, _axios["default"])({
-          url: "http://localhost:8000/refresh",
-          data: {
-            refreshToken: localStorage.getItem('refreshToken')
-          },
-          method: "POST"
-        }).then(function (response) {
-          var token = response.data.token;
+      return new Promise(function (resolve, reject) {
+        if (localStorage.getItem('refreshToken')) {
+          (0, _axios["default"])({
+            url: "http://localhost:8000/refresh",
+            data: {
+              refreshToken: localStorage.getItem('refreshToken')
+            },
+            method: "POST"
+          }).then(function (response) {
+            var token = response.data.token;
 
-          if (token !== null) {
-            localStorage.setItem('token', token);
-            resolve(response);
-          }
+            if (token !== null) {
+              localStorage.setItem('token', token);
+              commit("auth_request", "success");
+              resolve(response);
+            } else {
+              dispatch("logout");
 
-          commit("auth_request", "success");
-        })["catch"](function (err) {
-          if (err) {
-            commit('logout');
-            localStorage.removeItem('token');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
-            delete _axios["default"].defaults.headers.common['Authorization'];
-            return window.location.href = '/';
-          }
-        });
+              _this.$router.push('/');
+            }
+          })["catch"](function (err) {
+            if (err) {
+              console.log(err);
+
+              if (err.code !== "ERR_CANCELED") {
+                dispatch("logout"); // commit('logout');
+                // localStorage.removeItem('token');
+                // localStorage.removeItem('refreshToken');
+                // localStorage.removeItem('user');
+                // delete axios.defaults.headers.common['Authorization'];
+                // return window.location.href = '/'
+              }
+
+              reject(err);
+            }
+          });
+        } else {
+          dispatch("logout");
+        }
       });
     }
   },

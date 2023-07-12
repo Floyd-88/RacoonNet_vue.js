@@ -43,7 +43,6 @@ export default {
 
         if (this.getArrayDialogs.length !== 0) {
           this.LOAD_DIALOGS()
-            .then(() => {})
         } 
       }
     };

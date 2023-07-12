@@ -58,10 +58,16 @@ export default {
                                 error.config.headers.Authorization = res.data.token;
                             }
                         })
-                        .catch(() => {
-                            return window.location.href = "/";
+                        .catch((err) => {
+                            console.log(err)
+                            if (err.code !== "ERR_CANCELED") {
+                                this.$router.push('/')
+                                return
+                            }
                         });
+                    if(localStorage.getItem("token")) {
                     return axios.request(error.config);
+                    }
                 }
             }
             if (error.code === "ERR_CANCELED") {
@@ -251,7 +257,7 @@ export default {
                         // this.loadPostServer(this.$route.params.id);
                     })
                     .catch((err) => {
-                        if (err.response.data === "Такого пользователя не существует") {
+                        if (err.response?.data === "Такого пользователя не существует") {
                             this.$router.push("notFound");
                         }
                     });

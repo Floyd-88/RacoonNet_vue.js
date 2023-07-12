@@ -179,7 +179,7 @@ export default {
     emits: ["getUserInfo"],
     data() {
         return {
-            userTokenID: JSON.parse(localStorage.getItem("user")).userID,
+            userTokenID: JSON.parse(localStorage.getItem("user"))?.userID,
         };
     },
     beforeUnmount() {

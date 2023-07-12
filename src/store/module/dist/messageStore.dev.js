@@ -254,6 +254,8 @@ var messageStore = {
 
                   resolve(resp);
                 })["catch"](function (err) {
+                  console.log('загрузка диалогов');
+                  commit("setIsUIloadMoreDialogs", false);
                   reject(err);
                 });
               }));

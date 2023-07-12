@@ -81,7 +81,7 @@ export default {
     data() {
         return {
             btnFone: "allFriends",
-            userTokenID: JSON.parse(localStorage.getItem("user")).userID,
+            userTokenID: JSON.parse(localStorage.getItem("user"))?.userID,
         };
     },
     //   beforeMount() {
@@ -124,7 +124,7 @@ export default {
         observer.observe(this.$refs.observer);
 
         if(!this.getUser.userID) {
-          this.loadUser({ id: JSON.parse(localStorage.getItem('user')).userID })
+          this.loadUser({ id: JSON.parse(localStorage.getItem('user'))?.userID })
         }
     },
     beforeUnmount() {

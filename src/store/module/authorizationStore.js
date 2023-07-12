@@ -118,16 +118,14 @@ export const authorizationStore = {
             commit
         }) {
             return new Promise((resolve) => {
-                axios({
+                if (localStorage.getItem('refreshToken')) {
+                    axios({
                         url: "http://localhost:8000/del_refresh_token",
                         data: { refreshToken: localStorage.getItem('refreshToken') },
                         method: "POST"
-                    }).then(resp => {
-                        console.log(resp)
                     })
-                    .catch((err) => {
-                        console.log(err)
-                    })
+                }
+
                 commit('logout');
                 localStorage.removeItem('token');
                 localStorage.removeItem('refreshToken');
@@ -198,33 +196,46 @@ export const authorizationStore = {
         },
 
         //обновление токена
-        UPDATE_TOKEN({ commit }) {
+        UPDATE_TOKEN({ commit, dispatch }) {
             commit("auth_request", "loading")
-            return new Promise((resolve) => {
-                axios({
-                        url: "http://localhost:8000/refresh",
-                        data: { refreshToken: localStorage.getItem('refreshToken') },
-                        method: "POST"
-                    })
-                    .then(response => {
-                        const token = response.data.token;
+            return new Promise((resolve, reject) => {
+                if (localStorage.getItem('refreshToken')) {
+                    axios({
+                            url: "http://localhost:8000/refresh",
+                            data: { refreshToken: localStorage.getItem('refreshToken') },
+                            method: "POST"
+                        })
+                        .then(response => {
+                            const token = response.data.token;
 
-                        if (token !== null) {
-                            localStorage.setItem('token', token);
-                            resolve(response)
-                        }
-                        commit("auth_request", "success")
-                    })
-                    .catch((err) => {
-                        if (err) {
-                            commit('logout');
-                            localStorage.removeItem('token');
-                            localStorage.removeItem('refreshToken');
-                            localStorage.removeItem('user');
-                            delete axios.defaults.headers.common['Authorization'];
-                            return window.location.href = '/'
-                        }
-                    })
+                            if (token !== null) {
+                                localStorage.setItem('token', token);
+                                commit("auth_request", "success")
+                                resolve(response)
+                            } else {
+                                dispatch("logout");
+                                this.$router.push('/');
+                            }
+                        })
+                        .catch((err) => {
+                            if (err) {
+                                console.log(err)
+                                if (err.code !== "ERR_CANCELED") {
+                                    dispatch("logout")
+                                        // commit('logout');
+                                        // localStorage.removeItem('token');
+                                        // localStorage.removeItem('refreshToken');
+                                        // localStorage.removeItem('user');
+                                        // delete axios.defaults.headers.common['Authorization'];
+                                        // return window.location.href = '/'
+                                }
+                                reject(err);
+                            }
+                        })
+                } else {
+                    dispatch("logout");
+                }
+
             })
         },
 

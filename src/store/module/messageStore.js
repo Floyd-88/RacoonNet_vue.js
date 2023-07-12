@@ -191,6 +191,8 @@ export const messageStore = {
                         resolve(resp);
                     })
                     .catch((err) => {
+                        console.log('загрузка диалогов')
+                        commit("setIsUIloadMoreDialogs", false);
                         reject(err);
                     })
             })

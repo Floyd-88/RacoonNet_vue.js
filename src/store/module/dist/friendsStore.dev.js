@@ -573,20 +573,23 @@ var friendsStore = {
               }));
 
             case 8:
-              _context6.next = 13;
+              _context6.next = 15;
               break;
 
             case 10:
               _context6.prev = 10;
               _context6.t0 = _context6["catch"](5);
+              _context6.next = 14;
+              return regeneratorRuntime.awrap(commit("setIsUIloadMoreFriends", true));
 
+            case 14:
               if (_context6.t0.code === "ERR_CANCELED") {
                 console.log("Загрузка была отменена");
               } else {
                 console.log(_context6.t0);
               }
 
-            case 13:
+            case 15:
             case "end":
               return _context6.stop();
           }
