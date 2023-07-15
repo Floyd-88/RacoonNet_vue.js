@@ -71,9 +71,9 @@ export default {
 
     methods: {
         ...mapMutations({
-            setCommentPost: "commentsPost/setCommentPost",
-            setUnderCommentPost: "commentsPost/setUnderCommentPost",
-            setCommentsArray: "commentsPost/setCommentsArray",
+            // setCommentPost: "commentsPost/setCommentPost",
+            // setUnderCommentPost: "commentsPost/setUnderCommentPost",
+            // setCommentsArray: "commentsPost/setCommentsArray",
             setIsFocusComment: "commentsPhoto/setIsFocusComment"
         }),
         ...mapActions({ 

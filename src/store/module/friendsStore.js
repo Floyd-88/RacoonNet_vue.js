@@ -230,9 +230,7 @@ export const friendsStore = {
 
                         if (res.data.status === "Заявка отправлена") {
                             //отправляем уведомление адресату без перезагрузки страницы
-                            SocketioService.sendNotice(id, cb => {
-                                console.log(cb);
-                            });
+                            SocketioService.sendNotice(id);
                         } else if (res.data.status === "Добавить в друзья") {
                             let addresseeID = {
                                     text_notice: "Пользователь удален из ваших друзей",
@@ -240,9 +238,7 @@ export const friendsStore = {
                                     userID: res.data.userID
                                 }
                                 //отправляем уведомление адресату без перезагрузки страницы
-                            SocketioService.sendNotice(addresseeID, cb => {
-                                console.log(cb);
-                            });
+                            SocketioService.sendNotice(addresseeID);
                         }
                     })
             } catch (err) {
@@ -276,9 +272,7 @@ export const friendsStore = {
                         }
 
                         //отправляем уведомление адресату без перезагрузки страницы
-                        SocketioService.sendNotice(value.userID, cb => {
-                            console.log(cb);
-                        });
+                        SocketioService.sendNotice(value.userID);
                         dispatch("noticeStore/GET_NEW_NOTICE", null, { root: true });
                     })
             } catch (err) {
@@ -471,9 +465,7 @@ export const friendsStore = {
                                 userID: params.query
                             }
                             //отправляем уведомление адресату без перезагрузки страницы
-                        SocketioService.sendNotice(addresseeID, cb => {
-                            console.log(cb);
-                        });
+                        SocketioService.sendNotice(addresseeID);
                         resolve();
                     })
                     .catch((err) => {

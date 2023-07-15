@@ -138,13 +138,6 @@ export default {
         this.v$.messageUser.$touch()
       }
     },
-    // pathAva() {
-    //   try {
-    //     return require(`../../assets/photo/${this.user.ava}`);
-    //   } catch {
-    //     return require(`../../assets/ava/ava_1.jpg`);
-    //   }
-    // },
   }
 }
 </script>

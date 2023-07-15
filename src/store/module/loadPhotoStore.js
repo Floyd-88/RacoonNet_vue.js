@@ -193,17 +193,6 @@ export const loadPhotoStore = {
                         // })
                         commit("setProgressLoadPhoto", 0);
                         resolve(res)
-
-                        // commit("setIsModalLoadPhoto", false);
-                        // commit("showFullPhotoStore/setIsModalFullSize", false, {
-                        //     root: true
-                        // });
-                        // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-                        //     root: true
-                        // });
-                        // router.push(`/id${getters.getUser.userID}/info`)
-                        // this.$router.push('/')
-                        // window.location.href = `/id${getters.getUser.userID}`;
                     })
                     .catch((err) => {
                         reject(err)
@@ -276,7 +265,6 @@ export const loadPhotoStore = {
                         resolve(resp.data);
                     })
                     .catch((err) => {
-                        console.log(err)
                         if (axios.isCancel(err)) {
 
                             //удаление пустого поста при отмене загрузки фотогрфий
@@ -294,7 +282,6 @@ export const loadPhotoStore = {
                                     root: true
                                 });
                             }
-                            console.info("Загрузка фотографий была прервана");
                             return
                         }
                         commit("setIsLoadPhotoPost", false);
@@ -487,9 +474,7 @@ export const loadPhotoStore = {
 
                         //отправляем уведомление адресату без перезагрузки страницы
                         if (response.data.flag) {
-                            SocketioService.sendNotice(response.data.likes.userID, cb => {
-                                console.log(cb);
-                            });
+                            SocketioService.sendNotice(response.data.likes.userID);
                         }
                     });
             } catch (err) {

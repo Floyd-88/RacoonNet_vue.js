@@ -258,6 +258,8 @@ export default {
       setUserRegisterMonth: "registrationStore/setUserRegisterMonth",
       setUserRegisterDay: "registrationStore/setUserRegisterDay",
       setUserRegisterGender: "registrationStore/setUserRegisterGender",
+
+      setUserRegister: "registrationStore/setUserRegister"
     }),
 
     //регистрация пользователя
@@ -279,10 +281,11 @@ export default {
 
         this.register(user)
           .then((resp) => {
-            this.setModulRegister(false)
-            // window.location.href = '/';
-            this.$router.push(`/id${resp.data.user.userID}`)
-            // this.$router.push('mypage');
+            if(resp) {
+              this.setModulRegister(false);
+              this.$router.push(`/id${resp.data.user.userID}`);
+              this.setUserRegister();
+            }
           })
           .catch((err) => {
             if (err.response) {
@@ -290,7 +293,6 @@ export default {
               if (err.response.data === "Пользователь с такой почтой уже зарегистрирован") {
                 this.errorEmail = "Пользователь с такой почтой уже зарегистрирован";
               } else if (err.response.data === "Указанный e-mail не действует") {
-                console.log(err.response.data)
                 this.errorEmail = "Указанный e-mail не действует";
               }
             }

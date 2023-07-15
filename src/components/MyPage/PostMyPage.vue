@@ -74,7 +74,7 @@
     <!-- фотографии к посту -->
     <div class="wrapper_block_photo_post">
       <div class="wrapper_block_photo_post_first">
-        <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(0, 1)" :key="index">
+        <template v-for="(photo, index) in photosArray.filter(i => i.id === post.id).slice(0, 1)" :key="index">
           <div class="wrapper_photo_post size_photo_1" 
             v-if="post.id === photo.id"
             @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
@@ -84,9 +84,9 @@
         </template>
       </div>
 
-      <div class="wrapper_block_photo_post_another" v-if="getPhotosPostsArray.filter(i => i.id === post.id).slice(1).length
+      <div class="wrapper_block_photo_post_another" v-if="photosArray.filter(i => i.id === post.id).slice(1).length
         > 0">
-        <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(1)" :key="index">
+        <template v-for="(photo, index) in photosArray.filter(i => i.id === post.id).slice(1)" :key="index">
           <div class="wrapper_photo_post photo_another" v-if="post.id === photo.id"
           @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index + 1, id: photo.id, postID: post.id })">
             <!-- <img class="photo_post" :src="require(`../../assets/${photo.photo_name}`)" :alt="'photo' + photo.id"> -->
@@ -154,16 +154,11 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
     name: "PostMyPage",
-    data() {
-        return {
-        // isLoaded: false,
-        // noImageSrc: "require(`../../assets/ava/ava_1.jpg`)",
-        };
-    },
+
     methods: {
-        imageLoadError() {
-            console.log("Image failed to load");
-        },
+        // imageLoadError() {
+        //     console.log("Image failed to load");
+        // },
         ...mapMutations({
             setBeforePostText: "postsMyPageStore/setBeforePostText",
             setModulePost: "postsMyPageStore/setModulePost",
@@ -172,7 +167,7 @@ export default {
         ...mapActions({
             editPost: "postsMyPageStore/editPost",
             removePost: "postsMyPageStore/removePost",
-            fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
+            // fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
             FULL_SIZE_PHOTO_POST: "showFullPhotoStore/FULL_SIZE_PHOTO_POST"
             // LOAD_POST_PHOTOS: "postsMyPageStore/LOAD_POST_PHOTOS"
         }),
@@ -222,7 +217,7 @@ export default {
             getBeforePostText: "postsMyPageStore/getBeforePostText",
             getModulePost: "postsMyPageStore/getModulePost",
             getUser: "authorizationStore/getUser",
-            getCommentsArray: "commentsPost/getCommentsArray",
+            // getCommentsArray: "commentsPost/getCommentsArray",
             getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray"
         }),
         beforeModelPostText: {
@@ -239,18 +234,12 @@ export default {
             let notDoublePost = this.getPost.filter((v, i, a) => a.findIndex(v2 => (v2.id === v.id)) === i);
             return notDoublePost;
         },
-        //  loadAva() {
-        //   notDoublePost.map(post => {
-        //   })
-        //   try {
-        //     return require(`../../assets/photo/${ava}`);
-        //   }
-        //   catch {
-        //     return require(`../../assets/ava/ava_1.jpg`);
-        //   }
-        // },
+
+        photosArray() {
+          let notDoublePhoto = this.getPhotosPostsArray.filter((v, i, a) => a.findIndex(v2 => (v2.photo_name === v.photo_name)) === i);
+          return notDoublePhoto;
+        }
     },
-    // components: { UIAva }
 }
 </script>
 

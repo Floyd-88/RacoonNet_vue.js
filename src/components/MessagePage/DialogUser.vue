@@ -215,10 +215,6 @@ export default {
         },
     },
 
-    created() {
-        console.log('created')
-    },
-
     mounted() {
         this.setCountMessagesNull();
         this.setArrayMessages([]);
@@ -294,7 +290,6 @@ export default {
     // ------------------------------------------------------
 
     async unmounted() {
-        console.log('unmounted')
         if (this.messageArray.length > 0) {
             this.setCountDialogsNull();
             this.setArrayDialogs([]);
@@ -305,7 +300,6 @@ export default {
     },
 
     async beforeUnmount() {
-        console.log('beforeUnmount')
         this.UPDATE_FLAGS_UNREAD_MESSAGE(this.conv_id);
         this.setPhotosMessagesArray([]);
         this.conv_id = "";
@@ -321,12 +315,11 @@ export default {
             UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE",
             FULL_SIZE_PHOTO_MESSAGE: "showFullPhotoStore/FULL_SIZE_PHOTO_MESSAGE",
             closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
-            NULL_UNREAD_MESSAGE: "messageStore/NULL_UNREAD_MESSAGE"
-
-
+            // NULL_UNREAD_MESSAGE: "messageStore/NULL_UNREAD_MESSAGE"
         }),
+        
         ...mapMutations({
-            setModalWriteMessage: "messageStore/setModalWriteMessage",
+            // setModalWriteMessage: "messageStore/setModalWriteMessage",
             setMessageUser: "messageStore/setMessageUser",
             setArrayMessagesUnread: "messageStore/setArrayMessagesUnread",
             setCountMessagesNull: "messageStore/setCountMessagesNull",
@@ -372,8 +365,8 @@ export default {
                     console.log(err);
                 }
             }
-
         },
+        
         //прокрутка сообщений вверх
         scrollToElementUP(top) {
             try {

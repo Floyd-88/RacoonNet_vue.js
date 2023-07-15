@@ -223,16 +223,7 @@ var loadPhotoStore = {
           // })
 
           commit("setProgressLoadPhoto", 0);
-          resolve(res); // commit("setIsModalLoadPhoto", false);
-          // commit("showFullPhotoStore/setIsModalFullSize", false, {
-          //     root: true
-          // });
-          // commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
-          //     root: true
-          // });
-          // router.push(`/id${getters.getUser.userID}/info`)
-          // this.$router.push('/')
-          // window.location.href = `/id${getters.getUser.userID}`;
+          resolve(res);
         })["catch"](function (err) {
           reject(err);
         });
@@ -314,8 +305,6 @@ var loadPhotoStore = {
                   commit("setIsLoadPhotoMessage", false);
                   resolve(resp.data);
                 })["catch"](function (err) {
-                  console.log(err);
-
                   if (_axios["default"].isCancel(err)) {
                     //удаление пустого поста при отмене загрузки фотогрфий
                     if (state.isLoadPhotoPost) {
@@ -333,7 +322,6 @@ var loadPhotoStore = {
                       });
                     }
 
-                    console.info("Загрузка фотографий была прервана");
                     return;
                   }
 
@@ -612,9 +600,7 @@ var loadPhotoStore = {
                 commit("setLikesPhoto", response.data); //отправляем уведомление адресату без перезагрузки страницы
 
                 if (response.data.flag) {
-                  _socketio["default"].sendNotice(response.data.likes.userID, function (cb) {
-                    console.log(cb);
-                  });
+                  _socketio["default"].sendNotice(response.data.likes.userID);
                 }
               }));
 

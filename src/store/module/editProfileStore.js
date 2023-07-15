@@ -15,7 +15,6 @@ export const editProfileStore = {
     },
 
     mutations: {
-
         setModulEditProfile(state, bool) {
             state.modulEditProfile = bool;
             document.body.style.overflow = "hidden"
@@ -96,13 +95,14 @@ export const editProfileStore = {
                         const user = resp.data.user;
                         if (user !== null) {
                             localStorage.setItem('user', JSON.stringify(user));
+
                             commit("setModulEditProfile", false)
-                            window.location.href = '/';
+                            resolve(resp)
                         }
                     })
                     .catch(err => {
                         // commit('auth_error', err);
-                        reject(err.response.data);
+                        reject(err);
                     })
             })
         },

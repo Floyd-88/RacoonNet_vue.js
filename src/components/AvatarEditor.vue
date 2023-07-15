@@ -90,15 +90,6 @@ export default {
     computed: {
 
         ...mapGetters({getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto"}),
-     
-    //     pathAva() {
-    //   try {
-    //     console.log(this.photo_name)
-    //     return require(`../assets/${this.photo_name}`);
-    //   } catch {
-    //     return "";
-    //   }
-    // },
 
         computedScaleNumber: {
             get() {

@@ -66,17 +66,8 @@
 import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   name: "GalleryPage",
-  data() {
-    return {
-      // checkedCat: [],
-      // isShowCat: false,
-    };
-  },
-
 
   async mounted() {
-    console.log('consol')
-
     if (this.getCheckedCat.length === 0) {
       this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
       this.loadUser({ id: JSON.parse(localStorage.getItem('user')).userID })
@@ -108,10 +99,10 @@ export default {
 
   methods: {
     ...mapMutations({
-      setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
-      setCountPhoto: "loadPhotoStore/setCountPhoto",
+      // setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
+      // setCountPhoto: "loadPhotoStore/setCountPhoto",
       setLimitAllPhoto: "loadPhotoStore/setLimitAllPhoto",
-      setArrayFilterPhotos: "galleryStore/setArrayFilterPhotos"
+      // setArrayFilterPhotos: "galleryStore/setArrayFilterPhotos"
 
     }),
 

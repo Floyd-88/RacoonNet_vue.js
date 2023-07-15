@@ -7,27 +7,8 @@
 </template>
   
 <script>
-// import { mapGetters } from 'vuex';
-
-
 export default {
     name: "UIUsersLikes",
-
-    // methods: {
-    //     loadAva(ava) {
-    //         try {
-    //             return require(`../../assets/photo/${ava}`)
-    //         } catch {
-    //             return require(`../../assets/ava/ava_1.jpg`);
-    //         }
-    //     }
-    // },
-
-    // computed: {
-    //     ...mapGetters({
-    //         getUsersLikesPost: "commentsPost/getUsersLikesPost",
-    //     })
-    // }
 }
 </script>
   

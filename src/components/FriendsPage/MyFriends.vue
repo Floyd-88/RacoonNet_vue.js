@@ -192,7 +192,7 @@ export default {
         ...mapMutations({
             setTitleFriend: "friendsStore/setTitleFriend",
             setModalWriteMessage: "messageStore/setModalWriteMessage",
-            setIsFriendShow: "friendsStore/setIsFriendShow",
+            // setIsFriendShow: "friendsStore/setIsFriendShow",
             setSearchFriend: "friendsStore/setSearchFriend",
             setSearchUsersFriends: "friendsStore/setSearchUsersFriends",
             setCountFriendsNull: "friendsStore/setCountFriendsNull",
@@ -255,7 +255,7 @@ export default {
             getUsersMyFriendsFilter: "friendsStore/getUsersMyFriendsFilter",
             getTitleFriend: "friendsStore/getTitleFriend",
             getSearchUsersFriends: "friendsStore/getSearchUsersFriends",
-            getTextBtnFfriend: "friendsStore/getTextBtnFfriend",
+            // getTextBtnFfriend: "friendsStore/getTextBtnFfriend",
             getUser: "authorizationStore/getUser",
             getIsNotFriends: "friendsStore/getIsNotFriends",
         }),

@@ -28,9 +28,7 @@ import CloseModal from './UI/CloseModal.vue';
 export default {
     name: "AllPhotos",
     components: { CloseModal },
-    data() {
-        return {};
-    },
+
     mounted() {
         // обсервер срабатывает каждый раз когда докручиваем страницу донизу
         const options = {
@@ -49,27 +47,18 @@ export default {
     methods: {
         ...mapMutations({
             setIsModalAllPhotos: "loadPhotoStore/setIsModalAllPhotos",
-            setCountPhoto: "loadPhotoStore/setCountPhoto",
+            // setCountPhoto: "loadPhotoStore/setCountPhoto",
             setLimitAllPhoto: "loadPhotoStore/setLimitAllPhoto",
         }),
         ...mapActions({
-            loadAllPhotos: "loadPhotoStore/loadAllPhotos",
+            // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
             fullSizePhoto: "showFullPhotoStore/fullSizePhoto"
         }),
-
-    //     myPhotos(photo) {
-    //   try {
-    //     return require(`../assets/photo/${photo}`);
-    //   } catch(err) {
-    //     return require(`../assets/ava/ava_1.jpg`);
-    //   }
-    // },
-
     },
     computed: {
         ...mapGetters({
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
-            getUser: "authorizationStore/getUser",
+            // getUser: "authorizationStore/getUser",
             getLimitAllPhoto: "loadPhotoStore/getLimitAllPhoto"
         }),
     },

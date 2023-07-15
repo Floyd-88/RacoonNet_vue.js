@@ -139,19 +139,14 @@ export const postsMyPageStore = {
                             userID: id
                         }
                     }).then((response) => {
-                        console.log('1')
-
                         if (response.data.length > 0) {
-                            console.log('2')
                             response.data = response.data.filter(post => post.delete_post !== 1)
 
                             if (response.data.length === 0) {
-                                console.log('3')
                                 commit("setCountPosts", 20);
                                 dispatch('loadPostServer', id);
                                 resolve(response)
                             } else {
-                                console.log('4')
                                 commit("setPosts", [...state.posts, ...response.data]);
                                 commit("setCountPosts", 20);
 
@@ -163,7 +158,6 @@ export const postsMyPageStore = {
                                 resolve(response.data)
                             }
                         } else {
-                            console.log('5')
                             resolve(response.data)
                         }
                         // console.log(response)
@@ -202,16 +196,12 @@ export const postsMyPageStore = {
                     // newPost.surname = response.data.user.surname;
                     // newPost.ava = response.data.user.ava
 
-                    console.log(response.data)
-
                     await commit("setAddPosts", response.data);
                     await commit("setCountPosts", 1);
                     await commit("setIsNotRepeatAddPost", true);
 
                     //отправляем уведомление адресату без перезагрузки страницы
-                    SocketioService.sendNotice(newPost.id, cb => {
-                        console.log(cb);
-                    });
+                    SocketioService.sendNotice(newPost.id);
 
                     //отправляем уведомление всем кто находится в комнате(MyPage)
                     // SocketioService.sendInfoNewPost("add post", cb => {
@@ -244,9 +234,7 @@ export const postsMyPageStore = {
                     postID: post.id,
                     authorPost: post.authorPost
                 })
-                .then(function(response) {
-                    console.log(response)
-                })
+                .then(function() {})
                 .catch(function(error) {
                     console.log("Ошибка при редактировании поста: " + error)
                 })
@@ -270,8 +258,7 @@ export const postsMyPageStore = {
             await axios.delete('http://localhost:8000/dataBase_delete', {
                     data: paramsBody
                 })
-                .then(function(response) {
-                    console.log(response);
+                .then(function() {
                     commit("setCountPostDel");
 
                     //отправляем уведомление всем кто находится в комнате(MyPage)
@@ -351,9 +338,7 @@ export const postsMyPageStore = {
 
                         //отправляем уведомление адресату без перезагрузки страницы
                         if (response.data.flag) {
-                            SocketioService.sendNotice(response.data.likes.authorPost, cb => {
-                                console.log(cb);
-                            });
+                            SocketioService.sendNotice(response.data.likes.authorPost);
                         }
 
                     });

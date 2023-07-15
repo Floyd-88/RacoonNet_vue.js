@@ -28,12 +28,12 @@ export const authorizationStore = {
         auth_request(state, status) {
             state.status = status;
         },
-        auth_success(state, {
-            token
-        }) {
+
+        auth_success(state, token) {
             state.status = 'success';
             state.token = token;
         },
+
         auth_error(state) {
             state.status = 'error';
         },
@@ -51,6 +51,17 @@ export const authorizationStore = {
 
         setUser(state, user) {
             state.user = user;
+        },
+
+        setUserEdit(state, user) {
+            state.user.name = user.name;
+            state.user.surname = user.surname;
+            state.user.city = user.city;
+            state.user.country = user.country;
+            state.user.day_user = user.day_user;
+            state.user.month_user = user.month_user;
+            state.user.year_user = user.year_user;
+            state.user.selectedGender = user.selectedGender;
         },
 
         setUserAva(state, ava) {
@@ -72,6 +83,7 @@ export const authorizationStore = {
         setIsShowMenu(state) {
             state.isShowMenu = !state.isShowMenu;
         },
+
         setIsShowMenuClose(state) {
             state.isShowMenu = false;
         },
@@ -100,7 +112,8 @@ export const authorizationStore = {
 
                             localStorage.setItem('user', JSON.stringify(user));
 
-                            window.location.href = `/id${user.userID}`;
+                            commit('auth_success', token);
+                            resolve(resp);
                         }
                     })
                     .catch((err) => {
@@ -219,7 +232,6 @@ export const authorizationStore = {
                         })
                         .catch((err) => {
                             if (err) {
-                                console.log(err)
                                 if (err.code !== "ERR_CANCELED") {
                                     dispatch("logout")
                                         // commit('logout');

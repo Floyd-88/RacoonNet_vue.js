@@ -187,21 +187,16 @@ var postsMyPageStore = {
                     userID: id
                   }
                 }).then(function (response) {
-                  console.log('1');
-
                   if (response.data.length > 0) {
-                    console.log('2');
                     response.data = response.data.filter(function (post) {
                       return post.delete_post !== 1;
                     });
 
                     if (response.data.length === 0) {
-                      console.log('3');
                       commit("setCountPosts", 20);
                       dispatch('loadPostServer', id);
                       resolve(response);
                     } else {
-                      console.log('4');
                       commit("setPosts", [].concat(_toConsumableArray(state.posts), _toConsumableArray(response.data)));
                       commit("setCountPosts", 20);
                       response.data.forEach(function (post) {
@@ -215,7 +210,6 @@ var postsMyPageStore = {
                       resolve(response.data);
                     }
                   } else {
-                    console.log('5');
                     resolve(response.data);
                   } // console.log(response)
                   // resolve(response)
@@ -257,33 +251,26 @@ var postsMyPageStore = {
                   while (1) {
                     switch (_context2.prev = _context2.next) {
                       case 0:
-                        // newPost.id = response.data.user.postID;
-                        // newPost.name = response.data.user.name;
-                        // newPost.surname = response.data.user.surname;
-                        // newPost.ava = response.data.user.ava
-                        console.log(response.data);
-                        _context2.next = 3;
+                        _context2.next = 2;
                         return regeneratorRuntime.awrap(commit("setAddPosts", response.data));
 
-                      case 3:
-                        _context2.next = 5;
+                      case 2:
+                        _context2.next = 4;
                         return regeneratorRuntime.awrap(commit("setCountPosts", 1));
 
-                      case 5:
-                        _context2.next = 7;
+                      case 4:
+                        _context2.next = 6;
                         return regeneratorRuntime.awrap(commit("setIsNotRepeatAddPost", true));
 
-                      case 7:
+                      case 6:
                         //отправляем уведомление адресату без перезагрузки страницы
-                        _socketio["default"].sendNotice(newPost.id, function (cb) {
-                          console.log(cb);
-                        }); //отправляем уведомление всем кто находится в комнате(MyPage)
+                        _socketio["default"].sendNotice(newPost.id); //отправляем уведомление всем кто находится в комнате(MyPage)
                         // SocketioService.sendInfoNewPost("add post", cb => {
                         //     console.log(cb);
                         // });
 
 
-                      case 8:
+                      case 7:
                       case "end":
                         return _context2.stop();
                     }
@@ -328,9 +315,7 @@ var postsMyPageStore = {
                 date: "Изменено: " + date,
                 postID: post.id,
                 authorPost: post.authorPost
-              }).then(function (response) {
-                console.log(response);
-              })["catch"](function (error) {
+              }).then(function () {})["catch"](function (error) {
                 console.log("Ошибка при редактировании поста: " + error);
               }));
 
@@ -364,8 +349,7 @@ var postsMyPageStore = {
               _context5.next = 7;
               return regeneratorRuntime.awrap(_axios["default"]["delete"]('http://localhost:8000/dataBase_delete', {
                 data: paramsBody
-              }).then(function (response) {
-                console.log(response);
+              }).then(function () {
                 commit("setCountPostDel"); //отправляем уведомление всем кто находится в комнате(MyPage)
                 // SocketioService.sendInfoNewPost("delete post", cb => {
                 //     console.log(cb);
@@ -462,9 +446,7 @@ var postsMyPageStore = {
                 commit("setLikesPost", response.data); //отправляем уведомление адресату без перезагрузки страницы
 
                 if (response.data.flag) {
-                  _socketio["default"].sendNotice(response.data.likes.authorPost, function (cb) {
-                    console.log(cb);
-                  });
+                  _socketio["default"].sendNotice(response.data.likes.authorPost);
                 }
               }));
 

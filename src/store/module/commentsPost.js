@@ -95,9 +95,7 @@ export const commentsPost = {
                     // commit("setCommentPost", "")
 
                     //отправляем уведомление адресату без перезагрузки страницы
-                    SocketioService.sendNotice(response.data.authorPost, cb => {
-                        console.log(cb);
-                    });
+                    SocketioService.sendNotice(response.data.authorPost);
                 })
                 .catch(function(error) {
                     console.log("Ошибка при написании комментария: " + error);
@@ -129,9 +127,7 @@ export const commentsPost = {
                     // commit("setCommentPost", "")
 
                     //отправляем уведомление адресату без перезагрузки страницы
-                    SocketioService.sendNotice(newCommentsComment.author_comment_comment || response.data.author_comment_id, cb => {
-                        console.log(cb);
-                    });
+                    SocketioService.sendNotice(newCommentsComment.author_comment_comment || response.data.author_comment_id);
                 })
                 .catch(function(error) {
                     console.log("Ошибка при написании комментария: " + error);
@@ -249,9 +245,7 @@ export const commentsPost = {
                 commit("setRemoveCommentsComment", paramsComment.commentID)
                 await axios.delete('http://localhost:8000/load_comments_comment.js', {
                     data: paramsComment
-                }).then((response) => {
-                    console.log(response.data);
-                })
+                }).then(() => {})
             } catch (err) {
                 console.log(err)
             }
@@ -266,9 +260,7 @@ export const commentsPost = {
                 commit("setRemoveCommentsPost", paramsComment.commentID)
                 await axios.delete('http://localhost:8000/load_comments_post.js', {
                     data: paramsComment
-                }).then((response) => {
-                    console.log(response.data);
-                })
+                }).then(() => {})
             } catch (err) {
                 console.log(err)
             }

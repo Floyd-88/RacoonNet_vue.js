@@ -24,7 +24,6 @@ export default {
       isUIloadMoreContent: false, //отображать индикотор загрузки новых постов
       isNotNews: false, //надпись что посты отсутсвуют
       loadNews: true //разрешать загрузку постов
-
     }
   },
 

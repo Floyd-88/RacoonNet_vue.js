@@ -188,9 +188,7 @@ var messageStore = {
                 newMessage.destinationID = body.addresseeID;
 
                 if (newMessage.photos === "0") {
-                  _socketio["default"].sendMessage(newMessage, function (cb) {
-                    console.log(cb);
-                  });
+                  _socketio["default"].sendMessage(newMessage);
                 }
 
                 commit("setArrayMessages", [].concat(_toConsumableArray(state.arrayMessages), [newMessage]));
@@ -254,7 +252,6 @@ var messageStore = {
 
                   resolve(resp);
                 })["catch"](function (err) {
-                  console.log('загрузка диалогов');
                   commit("setIsUIloadMoreDialogs", false);
                   reject(err);
                 });

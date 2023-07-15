@@ -58,7 +58,7 @@
           </div>
         </div>
         <div class="error-msg" v-if="getDouble_email">
-          Пользователь с такой почтой уже зарегистрирован
+          {{ errorEmail }}
         </div>
         <input class="form_register_input"
                id="email"
@@ -246,12 +246,14 @@ export default {
   name: "editProfile",
   components: {CloseModal},
 
-  setup() {
-    return {v$: useVuelidate()}
+  data() {
+    return {
+      errorEmail: "",
+    }
   },
 
-  data() {
-    return {}
+  setup() {
+    return {v$: useVuelidate()}
   },
 
   validations: {
@@ -310,6 +312,8 @@ export default {
 
       setModuleDelete: "removeUserStore/setModuleDelete",
 
+      setUserEdit: "authorizationStore/setUserEdit",
+
       // setModulEditProfile: "editProfileStore/setModulEditProfile",
     }),
 
@@ -327,12 +331,22 @@ export default {
         city: this.getEditingUser.city.charAt(0).toUpperCase() + this.city.slice(1),
       }
       this.updateProfile(user)
-          .then(() => {})
-          .catch((err) => {
-            if (err === "Пользователь с такой почтой уже зарегистрирован") {
-              this.setDouble_email(true);
+          .then((resp) => {
+            this.setEmail("")
+            if(resp) {
+              this.setUserEdit(resp.data.user);
             }
+          })
+          .catch((err) => {
+            if(err.response) {
+              this.setDouble_email(true);
+              if (err.response.data === "Пользователь с такой почтой уже зарегистрирован") {
+                this.errorEmail = "Пользователь с такой почтой уже зарегистрирован";
+              } else if (err.response.data === "Указанный e-mail не действует") {
+                this.errorEmail = "E-mail не действует или почтовый сервер блокирует отправку. Повторите попытку позже";
+              }
             console.log('Регистрация завершилась с ошибкой:' + JSON.stringify(err));
+            }
           })
     },
 

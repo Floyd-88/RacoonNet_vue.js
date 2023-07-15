@@ -62,9 +62,7 @@ export default {
     data() {
         return {};
     },
-    mounted() {
-        console.log("ddd");
-    },
+
     methods: {
         ...mapMutations({
             setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
@@ -75,14 +73,8 @@ export default {
             fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
             closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
         }),
-        // myPhotos(photo) {
-        //   try {
-        //     return require(`../../assets/photo/${photo}`);
-        //   } catch(err) {
-        //     return require(`../../assets/ava/ava_1.jpg`);
-        //   }
-        // },
     },
+    
     computed: {
         ...mapGetters({
             getUser: "authorizationStore/getUser",

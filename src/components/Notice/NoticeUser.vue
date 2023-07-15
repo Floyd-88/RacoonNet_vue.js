@@ -74,7 +74,7 @@ export default {
     methods: {
         ...mapMutations({
             setIsShowModalWindowNotice: "noticeStore/setIsShowModalWindowNotice",
-            setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
+            // setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
             setIsShowModalWindowOneNotice: "noticeStore/setIsShowModalWindowOneNotice",
             setSelectNotice: "noticeStore/setSelectNotice",
         }),
@@ -82,13 +82,7 @@ export default {
             NOTICE_ARRAY_DELETE: "noticeStore/NOTICE_ARRAY_DELETE",
             GET_PHOTOS_POST_NOTICE: "noticeStore/GET_PHOTOS_POST_NOTICE"
         }),
-        // loadAva(ava) {
-        //     try {
-        //         return require(`../assets/photo/${ava}`)
-        //     } catch {
-        //         return require(`../assets/ava/ava_1.jpg`);
-        //     }
-        // },
+ 
         showModalWindowOneNotice(notice) {
             if (notice.text_notice !== "пригласил Вас в друзья" && notice.text_notice !== "принял Вашу заявку в друзья") {
                 this.setIsShowModalWindowOneNotice(true);
@@ -107,7 +101,7 @@ export default {
     computed: {
         ...mapGetters({
             getNoticeArray: "noticeStore/getNoticeArray",
-            noticeTextArray: "noticeStore/noticeTextArray",
+            // noticeTextArray: "noticeStore/noticeTextArray",
             getIsShowModalWindowOneNotice: "noticeStore/getIsShowModalWindowOneNotice"
         })
     },

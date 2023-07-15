@@ -1,21 +1,13 @@
 <template>
   <NavigationNet v-if="isLoggedIn" />
-
   <div class="wrapper_main">
     <div class="main">
-
       <router-view></router-view>
-      <!-- <AllUsersMessages/> -->
-
     </div>
   </div>
-
-
-
 </template>
 
 <script>
-// import AllUsersMessages from "@/components/MessagePage/AllUsersMessages.vue";
 import { mapGetters } from "vuex";
 
 export default {
@@ -26,7 +18,6 @@ export default {
             isLoggedIn: "authorizationStore/isLoggedIn",
         }),
     },
-    // components: { AllUsersMessages }
 }
 </script>
 

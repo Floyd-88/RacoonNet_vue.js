@@ -1,17 +1,15 @@
 const express = require('express'); //подключаем библиотеку Express
 const bcrypt = require('bcrypt'); //хеширование паролей
-const bodyParser = require('body-parser');
-const fs = require('fs')
+const bodyParser = require('body-parser'); //промежуточное ПО позволяющая получать данные в POST запросах в req.body
+const fs = require('fs') //получение доступа к файловой системе
 const fileUpload = require('express-fileupload');
-const sharp = require('sharp');
-const {
-    validationResult
-} = require('express-validator');
+const sharp = require('sharp'); //обрабатывает изображения
+const { validationResult } = require('express-validator'); //валидирует данные полученные в запросах
 
-//отправка сообщений на почту
-const mailer = require('./nodemailer');
 
-const randtoken = require('rand-token');
+const mailer = require('./nodemailer'); //отправка сообщений на почту
+
+const randtoken = require('rand-token'); //создает рандомный токен
 
 //используем токен JWT
 const jwt = require('jsonwebtoken');
@@ -21,6 +19,7 @@ const authenticateJWT = require('./authenticateJWT');
 //проверка фотографий в папке
 const checkPhotos = require('./checkPhotos');
 
+// ------------------------------------------------------------------------
 //подключаем экземпляры классов
 const AuthorizationUserDB = require('./DB/AuthorizationUserDB');
 const authorization = new AuthorizationUserDB();
@@ -48,7 +47,7 @@ const feedBack = new FeedBackDB();
 
 const NoticeDB = require('./DB/NoticeDB');
 const notice = new NoticeDB();
-
+// -------------------------------------------------------------------------------
 
 //подключаем массивы с валидацией
 const loginValidate = require('./validate/loginValidate')
@@ -61,19 +60,15 @@ const messageValidate = require('./validate/messageValidate');
 const feedBackUser = require('./validate/feedBackUser');
 const searchNewFriendsValidate = require('./validate/searchNewFriendsValidate');
 
-const {
-    resolve
-} = require('path');
+// const { resolve } = require('path');
 
 
-const app = express();
-const http = require('http').createServer(app);
+const app = express(); //создаем объект который представлет приложение
+const http = require('http').createServer(app); //создаем http-сервер
 
-const router = express.Router();
-router.use(bodyParser.urlencoded({
-    extended: false
-}));
-router.use(bodyParser.json());
+const router = express.Router(); //определяем Router для объединения дочерних подмаршрутов
+router.use(bodyParser.urlencoded({ extended: false })); //анализирует в виде закодированных в URL данных в формате application/x-www-form-urlencoded (false - без вложенных объекто)
+router.use(bodyParser.json()); //анализирует текст как JSON
 
 
 //прослушивание событий
@@ -314,7 +309,7 @@ router.post('/login', loginValidate, function(req, res) {
                     id: user.userID,
                 },
                 tokenKey.secret, {
-                    expiresIn: 60 * 5 //срок действия токена
+                    expiresIn: 60 * 60 //срок действия токена
                 },
             );
 
@@ -372,7 +367,7 @@ router.post('/refresh', (req, res) => {
                     id: user.id
                 },
                 tokenKey.secret, {
-                    expiresIn: 60 * 5
+                    expiresIn: 60 * 60
                 },
             );
             res.json({
@@ -462,47 +457,84 @@ router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, re
                 errors: errors.array()
             });
         }
-        //обновление информации о пользователе
-        authorization.updateUser([
-            req.body.name,
-            req.body.surname,
-            req.body.email,
-            req.body.year,
-            req.body.month,
-            req.body.day,
-            req.body.selectedGender,
-            req.body.country,
-            req.body.city,
-            req.body.id
-        ], (err) => {
-            //проверка по email о дублировании пользователя
-            if (err !== null) {
-                if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
-            }
-            if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы" + " " + err);
-
+        console.log(req.body.email)
             //отправляем сообщение с логином на новую почту если юзер ее поменял 
-            if (req.body.email) {
-                const message = {
-                    to: req.body.email,
-                    subject: 'You have changed your mail',
-                    html: `
-                        <h2>Вы изменили адрес своей электронной почты!</h2>  
-                        <i>данные вашей учетной записи были изменены:</i>
-                        <ul>
-                            <li>login: ${req.body.email}</li>
-                        </ul>
-                        <p>Данное письмо не требует ответа.<p>`
-                }
-                mailer(message);
+        if (req.body.email) {
+            const message = {
+                to: req.body.email,
+                subject: 'You have changed your mail',
+                html: `
+                    <h2>Вы изменили адрес своей электронной почты!</h2>  
+                    <i>данные вашей учетной записи были изменены:</i>
+                    <ul>
+                        <li>login: ${req.body.email}</li>
+                    </ul>
+                    <p>Данное письмо не требует ответа.<p>`
             }
+            mailer(message, (err) => {
+                console.log(err)
+                if (err) return res.status(500).send("Указанный e-mail не действует");
 
-            //обновление имени и фамилии пользователя в постах при редактировании профиля
-            // posts.updateTitlePosts([req.body.name, req.body.surname, req.body.id], (err) => {
-            //     if (err) return res.status(500).send("Ошибка при обновдении title в постах.");
+                //обновление информации о пользователе
+                authorization.updateUser([
+                    req.body.name,
+                    req.body.surname,
+                    req.body.email,
+                    req.body.year,
+                    req.body.month,
+                    req.body.day,
+                    req.body.selectedGender,
+                    req.body.country,
+                    req.body.city,
+                    req.body.id
+                ], (err) => {
+                    //проверка по email о дублировании пользователя
+                    if (err !== null) {
+                        if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+                    }
+                    if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы" + " " + err);
 
-            //получение данных о пользователе после обновления
-            authorization.loadUser(tokenID, (err, user) => {
+                    //получение данных о пользователе после обновления
+                    authorization.loadUser(tokenID, (err, user) => {
+                        if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
+                        res.status(200).send({
+                            user: {
+                                userID: user.userID,
+                                name: user.name,
+                                surname: user.surname,
+                                year_user: user.year_user,
+                                month_user: user.month_user,
+                                day_user: user.day_user,
+                                selectedGender: user.selectedGender,
+                                country: user.country,
+                                city: user.city,
+                            }
+                        });
+                    })
+                });
+            })
+        } else {
+            //обновление информации о пользователе
+            authorization.updateUser([
+                req.body.name,
+                req.body.surname,
+                req.body.email,
+                req.body.year,
+                req.body.month,
+                req.body.day,
+                req.body.selectedGender,
+                req.body.country,
+                req.body.city,
+                req.body.id
+            ], (err) => {
+                //проверка по email о дублировании пользователя
+                if (err !== null) {
+                    if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+                }
+                if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы" + " " + err);
+
+                //получение данных о пользователе после обновления
+                authorization.loadUser(tokenID, (err, user) => {
                     if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
                     res.status(200).send({
                         user: {
@@ -518,8 +550,8 @@ router.put('/editProfile', authenticateJWT, updateUserValidate, function(req, re
                         }
                     });
                 })
-                // });
-        });
+            });
+        }
     }
 })
 
@@ -793,15 +825,6 @@ router.post('/dataBase.js', authenticateJWT, postValidate, function(req, res) {
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
-
-            // let path = "../src/assets/photo/";
-
-            // if (fs.existsSync(`${path + post.ava}`)) {
-            //     post.ava = 'photo/' + post.ava;
-            // } else {
-            //     post.ava = 'ava/ava_1.jpg';
-            // }
-
             res.status(200).send(post);
         });
     });
@@ -1086,14 +1109,6 @@ router.post("/load_comments_post.js", authenticateJWT, messageValidate, function
                 })
             }
 
-            // let path = "../src/assets/photo/";
-
-            // if (fs.existsSync(`${path + newComment.ava}`)) {
-            //     newComment.ava = 'photo/' + newComment.ava;
-            // } else {
-            //     newComment.ava = 'ava/ava_1.jpg';
-            // }
-
             res.status(200).send(newComment);
         });
     });
@@ -1138,14 +1153,6 @@ router.post("/load_comments_comment.js", authenticateJWT, messageValidate, funct
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
-
-            // let path = "../src/assets/photo/";
-
-            // if (fs.existsSync(`${path + newComment.ava}`)) {
-            //     newComment.ava = 'photo/' + newComment.ava;
-            // } else {
-            //     newComment.ava = 'ava/ava_1.jpg';
-            // }
 
             res.status(200).send(newComment);
         });
@@ -1300,13 +1307,6 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
                             console.log(info);
                         }
                     });
-                // myFile.mv(`../src/assets/photo/${updateName}`,
-                //     function(err) {
-                //         if (err) {
-                //             return res.status(500).send("Ошибка при загрузке файлов");
-                //         }
-                //     }
-                // );
 
                 //добавляем в массив название фото и id юзера
                 arrayPhotos.push(['photo/' + updateName, tokenID, userID, category, post, dialog]);
@@ -1320,23 +1320,6 @@ router.post('/upload_photo', authenticateJWT, (req, res) => {
             setTimeout(() => {
                 photos.load_last_photos_DB([post, dialog], (err, newPhotos) => {
                     if (err) return res.status(500).send('Неудалось выгрузить фотографии из последнего поста' + " " + err);
-
-                    // let path = "../src/assets/photo/";
-
-                    // //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
-                    // newPhotos.map(element => {
-                    //     try {
-                    //         //синхронный метод проверки файла ??????????????
-                    //         if (fs.existsSync(`${path + element.photo_name}`)) {
-                    //             return element.photo_name;
-                    //         } else {
-                    //             element.photo_name = 'ava/ava_1.jpg';
-                    //             return element.photo_name;
-                    //         }
-                    //     } catch (err) {
-                    //         console.error(err)
-                    //     }
-                    // });
 
                     res.status(200).send(newPhotos);
                 })
@@ -1565,13 +1548,6 @@ router.post("/load_comments_photo.js", authenticateJWT, messageValidate, functio
                     if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
                 })
             }
-            // let path = "../src/assets/photo/";
-
-            // if (fs.existsSync(`${path + newCommentPhoto.ava}`)) {
-            //     newCommentPhoto.ava = 'photo/' + newCommentPhoto.ava;
-            // } else {
-            //     newCommentPhoto.ava = 'ava/ava_1.jpg';
-            // }
 
             res.status(200).send(newCommentPhoto);
         });

@@ -84,9 +84,7 @@ export const noticeStore = {
                 await axios.delete("http://localhost:8000/notice_delete", {
                         data: { noticeID: id }
                     })
-                    .then(function(res) {
-                        console.log(res.data);
-                    })
+                    .then(function() {})
             } catch (err) {
                 console.log(err)
             }

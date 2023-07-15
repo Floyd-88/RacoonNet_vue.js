@@ -124,14 +124,6 @@ export default {
             closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
             LOAD_COMMENTS_PHOTO: "commentsPhoto/LOAD_COMMENTS_PHOTO"
         }),
-
-        myPhotos(photo) {
-            try {
-                return require(`../assets/photo/${photo}`);
-            } catch (err) {
-                return require(`../assets/ava/ava_1.jpg`);
-            }
-        },
     },
     computed: {
         ...mapGetters({
@@ -139,7 +131,7 @@ export default {
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
             getIndexPhoto: "showFullPhotoStore/getIndexPhoto",
             getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
-            getIdPhoto: "loadPhotoStore/getIdPhoto",
+            // getIdPhoto: "loadPhotoStore/getIdPhoto",
             getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
             getPhotosMessagesArray: "messageStore/getPhotosMessagesArray",
             getPostID: "showFullPhotoStore/getPostID",
@@ -175,8 +167,6 @@ export default {
                     }
 
                 } else if (this.getAllPhotosMyPage.length > 0) {
-                    console.log(2)
-
                     this.setCommentsPhotoArray([])
 
                     if (this.getIndexPhoto === -1) {

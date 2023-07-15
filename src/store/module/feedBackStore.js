@@ -42,13 +42,11 @@ export const feedBackStore = {
                     title: getters.getMessageFeedBack.title,
                     description: getters.getMessageFeedBack.description,
                 })
-                .then(function(response) {
+                .then(function() {
                     commit("setIsModalFeedBack", false);
                     commit("setMessageFeedBackSelectedCause", "");
                     commit("setMessageFeedBackTitle", "");
                     commit("setMessageFeedBackDescription", "");
-
-                    console.log(response.data);
                 })
                 .catch(function(error) {
                     console.log(error)

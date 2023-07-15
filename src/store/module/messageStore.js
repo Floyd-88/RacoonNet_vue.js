@@ -149,9 +149,7 @@ export const messageStore = {
                         newMessage.destinationID = body.addresseeID;
 
                         if (newMessage.photos === "0") {
-                            SocketioService.sendMessage(newMessage, cb => {
-                                console.log(cb);
-                            });
+                            SocketioService.sendMessage(newMessage);
                         }
 
                         commit("setArrayMessages", [...state.arrayMessages, newMessage]);
@@ -191,7 +189,6 @@ export const messageStore = {
                         resolve(resp);
                     })
                     .catch((err) => {
-                        console.log('загрузка диалогов')
                         commit("setIsUIloadMoreDialogs", false);
                         reject(err);
                     })

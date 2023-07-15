@@ -116,9 +116,8 @@ export default {
     },
 
     watch: {
-        getSelectedLoadThemaPhoto(value) {
+        getSelectedLoadThemaPhoto() {
             this.setIsModalLoadPhoto(true)
-            console.log(value)
         }
     },
 

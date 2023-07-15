@@ -57,10 +57,10 @@ export default {
 
   methods: {
     ...mapActions({
-      loadUser: "authorizationStore/loadUser",
+      // loadUser: "authorizationStore/loadUser",
       GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
       LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
-      UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE",
+      // UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE",
       GET_PHOTO_NOT_FILTER: "galleryStore/GET_PHOTO_NOT_FILTER",
       logout: "authorizationStore/logout",
     }),
@@ -169,8 +169,8 @@ export default {
     this.blockBtnNavigation = false;
     await this.logout()
         .then(() => {
-          window.location.href = "/";
-          // this.$router.push('/')
+          // window.location.href = "/";
+          this.$router.push('/')
         });
     this.blockBtnNavigation = true;
     }
@@ -183,10 +183,10 @@ export default {
       getArrayDialogs: "messageStore/getArrayDialogs",
       getUsersFriendsMe: "friendsStore/getUsersFriendsMe",
       getUser: "authorizationStore/getUser",
-      getIsFriendShow: "friendsStore/getIsFriendShow",
-      getTitleFriend: "friendsStore/getTitleFriend",
+      // getIsFriendShow: "friendsStore/getIsFriendShow",
+      // getTitleFriend: "friendsStore/getTitleFriend",
       getCountFriends: "friendsStore/getCountFriends",
-      getArrayMessages: "messageStore/getArrayMessages",
+      // getArrayMessages: "messageStore/getArrayMessages",
       getIsShowMenu: "authorizationStore/getIsShowMenu"
     }),
 

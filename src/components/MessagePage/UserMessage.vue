@@ -100,14 +100,6 @@ export default {
             })
         },
 
-        // loadAva(ava) {
-        //     try {
-        //         return require(`../../assets/photo/${ava}`)
-        //     } catch {
-        //         return require(`../../assets/ava/ava_1.jpg`);
-        //     }
-        // },
-
         showBtnDelete(dialog) {
             dialog.isShowBtnDelete = true;
         },

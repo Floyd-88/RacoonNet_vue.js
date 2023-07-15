@@ -6,21 +6,26 @@ var express = require('express'); //подключаем библиотеку Ex
 var bcrypt = require('bcrypt'); //хеширование паролей
 
 
-var bodyParser = require('body-parser');
+var bodyParser = require('body-parser'); //промежуточное ПО позволяющая получать данные в POST запросах в req.body
 
-var fs = require('fs');
+
+var fs = require('fs'); //получение доступа к файловой системе
+
 
 var fileUpload = require('express-fileupload');
 
-var sharp = require('sharp');
+var sharp = require('sharp'); //обрабатывает изображения
+
 
 var _require = require('express-validator'),
-    validationResult = _require.validationResult; //отправка сообщений на почту
+    validationResult = _require.validationResult; //валидирует данные полученные в запросах
 
 
-var mailer = require('./nodemailer');
+var mailer = require('./nodemailer'); //отправка сообщений на почту
 
-var randtoken = require('rand-token'); //используем токен JWT
+
+var randtoken = require('rand-token'); //создает рандомный токен
+//используем токен JWT
 
 
 var jwt = require('jsonwebtoken');
@@ -30,7 +35,8 @@ var tokenKey = require('./tokenKey');
 var authenticateJWT = require('./authenticateJWT'); //проверка фотографий в папке
 
 
-var checkPhotos = require('./checkPhotos'); //подключаем экземпляры классов
+var checkPhotos = require('./checkPhotos'); // ------------------------------------------------------------------------
+//подключаем экземпляры классов
 
 
 var AuthorizationUserDB = require('./DB/AuthorizationUserDB');
@@ -67,7 +73,8 @@ var feedBack = new FeedBackDB();
 
 var NoticeDB = require('./DB/NoticeDB');
 
-var notice = new NoticeDB(); //подключаем массивы с валидацией
+var notice = new NoticeDB(); // -------------------------------------------------------------------------------
+//подключаем массивы с валидацией
 
 var loginValidate = require('./validate/loginValidate');
 
@@ -85,20 +92,22 @@ var messageValidate = require('./validate/messageValidate');
 
 var feedBackUser = require('./validate/feedBackUser');
 
-var searchNewFriendsValidate = require('./validate/searchNewFriendsValidate');
+var searchNewFriendsValidate = require('./validate/searchNewFriendsValidate'); // const { resolve } = require('path');
 
-var _require2 = require('path'),
-    resolve = _require2.resolve;
 
-var app = express();
+var app = express(); //создаем объект который представлет приложение
 
-var http = require('http').createServer(app);
+var http = require('http').createServer(app); //создаем http-сервер
 
-var router = express.Router();
+
+var router = express.Router(); //определяем Router для объединения дочерних подмаршрутов
+
 router.use(bodyParser.urlencoded({
   extended: false
-}));
-router.use(bodyParser.json()); //прослушивание событий
+})); //анализирует в виде закодированных в URL данных в формате application/x-www-form-urlencoded (false - без вложенных объекто)
+
+router.use(bodyParser.json()); //анализирует текст как JSON
+//прослушивание событий
 
 var io = require('socket.io')(http, {
   cors: {
@@ -301,7 +310,7 @@ router.post('/login', loginValidate, function (req, res) {
         name: user.name,
         id: user.userID
       }, tokenKey.secret, {
-        expiresIn: 60 * 5 //срок действия токена
+        expiresIn: 60 * 60 //срок действия токена
 
       });
       var refreshToken = jwt.sign({
@@ -351,7 +360,7 @@ router.post('/refresh', function (req, res) {
         name: user.name,
         id: user.id
       }, tokenKey.secret, {
-        expiresIn: 60 * 5
+        expiresIn: 60 * 60
       });
       res.json({
         token: token
@@ -435,47 +444,74 @@ router.put('/editProfile', authenticateJWT, updateUserValidate, function (req, r
       return res.status(422).json({
         errors: errors.array()
       });
-    } //обновление информации о пользователе
+    }
 
+    console.log(req.body.email); //отправляем сообщение с логином на новую почту если юзер ее поменял 
 
-    authorization.updateUser([req.body.name, req.body.surname, req.body.email, req.body.year, req.body.month, req.body.day, req.body.selectedGender, req.body.country, req.body.city, req.body.id], function (err) {
-      //проверка по email о дублировании пользователя
-      if (err !== null) {
-        if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
-      }
+    if (req.body.email) {
+      var message = {
+        to: req.body.email,
+        subject: 'You have changed your mail',
+        html: "\n                    <h2>\u0412\u044B \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438 \u0430\u0434\u0440\u0435\u0441 \u0441\u0432\u043E\u0435\u0439 \u044D\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u043D\u043E\u0439 \u043F\u043E\u0447\u0442\u044B!</h2>  \n                    <i>\u0434\u0430\u043D\u043D\u044B\u0435 \u0432\u0430\u0448\u0435\u0439 \u0443\u0447\u0435\u0442\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438 \u0431\u044B\u043B\u0438 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u044B:</i>\n                    <ul>\n                        <li>login: ".concat(req.body.email, "</li>\n                    </ul>\n                    <p>\u0414\u0430\u043D\u043D\u043E\u0435 \u043F\u0438\u0441\u044C\u043C\u043E \u043D\u0435 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043E\u0442\u0432\u0435\u0442\u0430.<p>")
+      };
+      mailer(message, function (err) {
+        console.log(err);
+        if (err) return res.status(500).send("Указанный e-mail не действует"); //обновление информации о пользователе
 
-      if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы" + " " + err); //отправляем сообщение с логином на новую почту если юзер ее поменял 
-
-      if (req.body.email) {
-        var message = {
-          to: req.body.email,
-          subject: 'You have changed your mail',
-          html: "\n                        <h2>\u0412\u044B \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438 \u0430\u0434\u0440\u0435\u0441 \u0441\u0432\u043E\u0435\u0439 \u044D\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u043D\u043E\u0439 \u043F\u043E\u0447\u0442\u044B!</h2>  \n                        <i>\u0434\u0430\u043D\u043D\u044B\u0435 \u0432\u0430\u0448\u0435\u0439 \u0443\u0447\u0435\u0442\u043D\u043E\u0439 \u0437\u0430\u043F\u0438\u0441\u0438 \u0431\u044B\u043B\u0438 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u044B:</i>\n                        <ul>\n                            <li>login: ".concat(req.body.email, "</li>\n                        </ul>\n                        <p>\u0414\u0430\u043D\u043D\u043E\u0435 \u043F\u0438\u0441\u044C\u043C\u043E \u043D\u0435 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043E\u0442\u0432\u0435\u0442\u0430.<p>")
-        };
-        mailer(message);
-      } //обновление имени и фамилии пользователя в постах при редактировании профиля
-      // posts.updateTitlePosts([req.body.name, req.body.surname, req.body.id], (err) => {
-      //     if (err) return res.status(500).send("Ошибка при обновдении title в постах.");
-      //получение данных о пользователе после обновления
-
-
-      authorization.loadUser(tokenID, function (err, user) {
-        if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
-        res.status(200).send({
-          user: {
-            userID: user.userID,
-            name: user.name,
-            surname: user.surname,
-            year_user: user.year_user,
-            month_user: user.month_user,
-            day_user: user.day_user,
-            selectedGender: user.selectedGender,
-            country: user.country,
-            city: user.city
+        authorization.updateUser([req.body.name, req.body.surname, req.body.email, req.body.year, req.body.month, req.body.day, req.body.selectedGender, req.body.country, req.body.city, req.body.id], function (err) {
+          //проверка по email о дублировании пользователя
+          if (err !== null) {
+            if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
           }
+
+          if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы" + " " + err); //получение данных о пользователе после обновления
+
+          authorization.loadUser(tokenID, function (err, user) {
+            if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
+            res.status(200).send({
+              user: {
+                userID: user.userID,
+                name: user.name,
+                surname: user.surname,
+                year_user: user.year_user,
+                month_user: user.month_user,
+                day_user: user.day_user,
+                selectedGender: user.selectedGender,
+                country: user.country,
+                city: user.city
+              }
+            });
+          });
         });
-      }); // });
-    });
+      });
+    } else {
+      //обновление информации о пользователе
+      authorization.updateUser([req.body.name, req.body.surname, req.body.email, req.body.year, req.body.month, req.body.day, req.body.selectedGender, req.body.country, req.body.city, req.body.id], function (err) {
+        //проверка по email о дублировании пользователя
+        if (err !== null) {
+          if (err.errno == 1062) return res.status(500).send("Пользователь с такой почтой уже зарегистрирован");
+        }
+
+        if (err) return res.status(500).send("При изменении данных пользователя возникли проблемы" + " " + err); //получение данных о пользователе после обновления
+
+        authorization.loadUser(tokenID, function (err, user) {
+          if (err) return res.status(500).send("Ошибка на сервере." + " " + err);
+          res.status(200).send({
+            user: {
+              userID: user.userID,
+              name: user.name,
+              surname: user.surname,
+              year_user: user.year_user,
+              month_user: user.month_user,
+              day_user: user.day_user,
+              selectedGender: user.selectedGender,
+              country: user.country,
+              city: user.city
+            }
+          });
+        });
+      });
+    }
   }
 }); //ИЗМЕНЕНИЕ ПАРОЛЯ
 
@@ -685,13 +721,7 @@ router.post('/dataBase.js', authenticateJWT, postValidate, function (req, res) {
         notice.add_notice_DB([userID, post.authorPost, null, "написал что то на Вашей стене", post.id, 0, 0, 0, 0, 0, post.date], function (err) {
           if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
         });
-      } // let path = "../src/assets/photo/";
-      // if (fs.existsSync(`${path + post.ava}`)) {
-      //     post.ava = 'photo/' + post.ava;
-      // } else {
-      //     post.ava = 'ava/ava_1.jpg';
-      // }
-
+      }
 
       res.status(200).send(post);
     });
@@ -932,13 +962,7 @@ router.post("/load_comments_post.js", authenticateJWT, messageValidate, function
         notice.add_notice_DB([newComment.authorPost, tokenID, null, "добавил комментарий к Вашей записи", newComment.post_id, 0, newComment.id, 0, 0, 0, newComment.date], function (err) {
           if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
         });
-      } // let path = "../src/assets/photo/";
-      // if (fs.existsSync(`${path + newComment.ava}`)) {
-      //     newComment.ava = 'photo/' + newComment.ava;
-      // } else {
-      //     newComment.ava = 'ava/ava_1.jpg';
-      // }
-
+      }
 
       res.status(200).send(newComment);
     });
@@ -972,13 +996,7 @@ router.post("/load_comments_comment.js", authenticateJWT, messageValidate, funct
         notice.add_notice_DB([null, tokenID, req.body.author_comment_comment, "ответил на Ваш комментарий", req.body.postID, 0, newComment.comment_id, newComment.id, 0, 0, newComment.date], function (err) {
           if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
         });
-      } // let path = "../src/assets/photo/";
-      // if (fs.existsSync(`${path + newComment.ava}`)) {
-      //     newComment.ava = 'photo/' + newComment.ava;
-      // } else {
-      //     newComment.ava = 'ava/ava_1.jpg';
-      // }
-
+      }
 
       res.status(200).send(newComment);
     });
@@ -1113,14 +1131,7 @@ router.post('/upload_photo', authenticateJWT, function (req, res) {
           } else {
             console.log(info);
           }
-        }); // myFile.mv(`../src/assets/photo/${updateName}`,
-        //     function(err) {
-        //         if (err) {
-        //             return res.status(500).send("Ошибка при загрузке файлов");
-        //         }
-        //     }
-        // );
-        //добавляем в массив название фото и id юзера
+        }); //добавляем в массив название фото и id юзера
 
         arrayPhotos.push(['photo/' + updateName, tokenID, userID, category, post, dialog]);
       }
@@ -1131,22 +1142,7 @@ router.post('/upload_photo', authenticateJWT, function (req, res) {
       if (err) return res.status(500).send('Error on the server' + " " + err);
       setTimeout(function () {
         photos.load_last_photos_DB([post, dialog], function (err, newPhotos) {
-          if (err) return res.status(500).send('Неудалось выгрузить фотографии из последнего поста' + " " + err); // let path = "../src/assets/photo/";
-          // //проверка на наличие фотографии в папке, если фото есть - отправляем ответ клиенту
-          // newPhotos.map(element => {
-          //     try {
-          //         //синхронный метод проверки файла ??????????????
-          //         if (fs.existsSync(`${path + element.photo_name}`)) {
-          //             return element.photo_name;
-          //         } else {
-          //             element.photo_name = 'ava/ava_1.jpg';
-          //             return element.photo_name;
-          //         }
-          //     } catch (err) {
-          //         console.error(err)
-          //     }
-          // });
-
+          if (err) return res.status(500).send('Неудалось выгрузить фотографии из последнего поста' + " " + err);
           res.status(200).send(newPhotos);
         });
       }, 2500);
@@ -1330,13 +1326,7 @@ router.post("/load_comments_photo.js", authenticateJWT, messageValidate, functio
         notice.add_notice_DB([newCommentPhoto.userID, tokenID, null, "добавил комментарий к Вашей фотографии", 0, newCommentPhoto.photo_id, 0, 0, newCommentPhoto.id, 0, newCommentPhoto.date], function (err) {
           if (err) return res.status(500).send('При добавлении уведомления о новом посте произошла ошибка' + " " + err);
         });
-      } // let path = "../src/assets/photo/";
-      // if (fs.existsSync(`${path + newCommentPhoto.ava}`)) {
-      //     newCommentPhoto.ava = 'photo/' + newCommentPhoto.ava;
-      // } else {
-      //     newCommentPhoto.ava = 'ava/ava_1.jpg';
-      // }
-
+      }
 
       res.status(200).send(newCommentPhoto);
     });

@@ -131,9 +131,7 @@ var commentsPost = {
                 // commit("setCommentPost", "")
                 //отправляем уведомление адресату без перезагрузки страницы
 
-                _socketio["default"].sendNotice(response.data.authorPost, function (cb) {
-                  console.log(cb);
-                });
+                _socketio["default"].sendNotice(response.data.authorPost);
               })["catch"](function (error) {
                 console.log("Ошибка при написании комментария: " + error);
               }));
@@ -175,9 +173,7 @@ var commentsPost = {
                 // commit("setCommentPost", "")
                 //отправляем уведомление адресату без перезагрузки страницы
 
-                _socketio["default"].sendNotice(newCommentsComment.author_comment_comment || response.data.author_comment_id, function (cb) {
-                  console.log(cb);
-                });
+                _socketio["default"].sendNotice(newCommentsComment.author_comment_comment || response.data.author_comment_id);
               })["catch"](function (error) {
                 console.log("Ошибка при написании комментария: " + error);
               }));
@@ -363,9 +359,7 @@ var commentsPost = {
               _context7.next = 5;
               return regeneratorRuntime.awrap(_axios["default"]["delete"]('http://localhost:8000/load_comments_comment.js', {
                 data: paramsComment
-              }).then(function (response) {
-                console.log(response.data);
-              }));
+              }).then(function () {}));
 
             case 5:
               _context7.next = 10;
@@ -396,9 +390,7 @@ var commentsPost = {
               _context8.next = 5;
               return regeneratorRuntime.awrap(_axios["default"]["delete"]('http://localhost:8000/load_comments_post.js', {
                 data: paramsComment
-              }).then(function (response) {
-                console.log(response.data);
-              }));
+              }).then(function () {}));
 
             case 5:
               _context8.next = 10;

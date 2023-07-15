@@ -35,7 +35,6 @@ export const removeUserStore = {
                 user.allPhoto = [...getters.allPhoto, ...getters.postPhoto];
                 user.nameAva = getters.getUser.ava
 
-                console.log(user.allPhoto)
                 axios({
                         url: url,
                         data: user,

@@ -72,7 +72,7 @@ export default {
   computed: {
     ...mapGetters({
       isLoggedIn: "authorizationStore/isLoggedIn",
-      getUser: "authorizationStore/getUser",
+      // getUser: "authorizationStore/getUser",
       getIsShowModalWindowNotice: "noticeStore/getIsShowModalWindowNotice",
       getNoticeArray: "noticeStore/getNoticeArray"
     }),

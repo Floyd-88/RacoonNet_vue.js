@@ -59,8 +59,7 @@ var authorizationStore = {
     auth_request: function auth_request(state, status) {
       state.status = status;
     },
-    auth_success: function auth_success(state, _ref) {
-      var token = _ref.token;
+    auth_success: function auth_success(state, token) {
       state.status = 'success';
       state.token = token;
     },
@@ -78,6 +77,16 @@ var authorizationStore = {
     },
     setUser: function setUser(state, user) {
       state.user = user;
+    },
+    setUserEdit: function setUserEdit(state, user) {
+      state.user.name = user.name;
+      state.user.surname = user.surname;
+      state.user.city = user.city;
+      state.user.country = user.country;
+      state.user.day_user = user.day_user;
+      state.user.month_user = user.month_user;
+      state.user.year_user = user.year_user;
+      state.user.selectedGender = user.selectedGender;
     },
     setUserAva: function setUserAva(state, ava) {
       state.user.ava = ava;
@@ -100,8 +109,8 @@ var authorizationStore = {
   },
   actions: {
     //авторизация зарегистрированого юзера
-    login: function login(_ref2, user) {
-      var commit = _ref2.commit;
+    login: function login(_ref, user) {
+      var commit = _ref.commit;
       return new Promise(function (resolve, reject) {
         commit('auth_request', 'loading');
         (0, _axios["default"])({
@@ -117,7 +126,8 @@ var authorizationStore = {
             localStorage.setItem('token', token);
             localStorage.setItem('refreshToken', refreshToken);
             localStorage.setItem('user', JSON.stringify(user));
-            window.location.href = "/id".concat(user.userID);
+            commit('auth_success', token);
+            resolve(resp);
           }
         })["catch"](function (err) {
           commit('auth_error');
@@ -129,8 +139,8 @@ var authorizationStore = {
       });
     },
     //выход из профиля
-    logout: function logout(_ref3) {
-      var commit = _ref3.commit;
+    logout: function logout(_ref2) {
+      var commit = _ref2.commit;
       return new Promise(function (resolve) {
         if (localStorage.getItem('refreshToken')) {
           (0, _axios["default"])({
@@ -151,8 +161,8 @@ var authorizationStore = {
       });
     },
     //получение данных по пользователю
-    loadUser: function loadUser(_ref4, id) {
-      var commit = _ref4.commit;
+    loadUser: function loadUser(_ref3, id) {
+      var commit = _ref3.commit;
       return new Promise(function (resolve, reject) {
         commit("auth_request", "loading");
         (0, _axios["default"])({
@@ -201,11 +211,11 @@ var authorizationStore = {
       });
     },
     //обновление токена
-    UPDATE_TOKEN: function UPDATE_TOKEN(_ref5) {
+    UPDATE_TOKEN: function UPDATE_TOKEN(_ref4) {
       var _this = this;
 
-      var commit = _ref5.commit,
-          dispatch = _ref5.dispatch;
+      var commit = _ref4.commit,
+          dispatch = _ref4.dispatch;
       commit("auth_request", "loading");
       return new Promise(function (resolve, reject) {
         if (localStorage.getItem('refreshToken')) {
@@ -229,8 +239,6 @@ var authorizationStore = {
             }
           })["catch"](function (err) {
             if (err) {
-              console.log(err);
-
               if (err.code !== "ERR_CANCELED") {
                 dispatch("logout"); // commit('logout');
                 // localStorage.removeItem('token');

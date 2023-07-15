@@ -59,7 +59,6 @@ export default {
                             }
                         })
                         .catch((err) => {
-                            console.log(err)
                             if (err.code !== "ERR_CANCELED") {
                                 this.$router.push('/')
                                 return
@@ -106,14 +105,12 @@ export default {
         
         //вызываем метод для отправки сообщения всем участникам комнаты
         SocketioService.setupSocketConnection();
-        console.log("connected");
 
         //получаем сообщение
         SocketioService.subscribeToMessages((err, data) => {
 
             if (+this.$route.params.id === +data.sender) {
                 this.setArrayMessages([...this.getArrayMessages, data]);
-                console.log(this.getArrayMessages)
             }
             
             this.UPDATE_DIALOGS_SOCKETS(data);
@@ -133,9 +130,7 @@ export default {
         // получаем фотографии из сообщения
         SocketioService.subscribeToMessagesPhotos((err, data) => {
             if (+this.$route.params.id === +data.arrayPhotos[0].userID) {
-                console.log(data)
             this.setPhotosMessagesArray([...data.arrayPhotos, ...this.getPhotosMessagesArray]);
-            console.log(this.getPhotosMessagesArray)
             }
             if (err) {
                 console.log(err);
@@ -178,7 +173,6 @@ export default {
     },
     beforeUnmount() {
         SocketioService.disconnect();
-        console.log("disconnected");
     },
     methods: {
         ...mapMutations({

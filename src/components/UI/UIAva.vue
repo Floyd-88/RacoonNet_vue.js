@@ -17,14 +17,9 @@ export default {
     }
   },
 
-  mounted() {
-    console.log('ava')
-  },
-
   computed: {
      loadAva() {
           try {
-            console.log('computed')
             return require(`../../assets/${this.ava}`);
           }
           catch(err) {

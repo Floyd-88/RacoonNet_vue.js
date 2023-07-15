@@ -7,7 +7,7 @@
                 @click="countLikes(post)" @mouseover="getUserLike(post)">
 
             <!-- подкрашивать сердце если пост лайкнут -->
-            <img class="likes" src="../../assets/icons/like_full.png" alt="like" v-if="post.like_post == 1"
+            <img class="likes" src="../../assets/icons/like_full.png" alt="like" v-if="post.like_post > 0"
                 @click="countLikes(post)" @mouseover="getUserLike(post)">
 
             <!-- при наведении всплывающее окно с теми кто лайкнул -->
@@ -92,20 +92,19 @@ export default {
         return {
             countComments: 3,
             isNameUserLike: false,
-            // activeLikesUsers: false
         };
     },
 
     methods: {
         ...mapMutations({
-            setIsShowWriteComment: "commentsPost/setIsShowWriteComment",
+            // setIsShowWriteComment: "commentsPost/setIsShowWriteComment",
             setUsersLikesPost: "commentsPost/setUsersLikesPost",
             setShowModalBlockUsersLikesPost: "commentsPost/setShowModalBlockUsersLikesPost"
         }),
         ...mapActions({
-            LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST",
+            // LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST",
             SAVE_LIKE_COUNT_POST: "postsMyPageStore/SAVE_LIKE_COUNT_POST",
-            LOAD_AUTHOR_LIKES: "postsMyPageStore/LOAD_AUTHOR_LIKES",
+            // LOAD_AUTHOR_LIKES: "postsMyPageStore/LOAD_AUTHOR_LIKES",
             GET_USER_LIKES_POST: "commentsPost/GET_USER_LIKES_POST"
         }),
 
@@ -117,10 +116,6 @@ export default {
                 window.scrollTo({ top, behavior: 'smooth' })
             }
 
-        },
-
-        comment(value) {
-            console.log(value)
         },
 
         async countLikes(post) {
@@ -152,14 +147,6 @@ export default {
                 this.setUsersLikesPost([]);
             }
         },
-
-        // loadAva(ava) {
-        //     try {
-        //         return require(`../../assets/photo/${ava}`)
-        //     } catch {
-        //         return require(`../../assets/ava/ava_1.jpg`);
-        //     }
-        // },
 
         closeModalWindowLikesUser() {
             this.setShowModalBlockUsersLikesPost(false)

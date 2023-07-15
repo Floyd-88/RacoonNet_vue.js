@@ -70,6 +70,7 @@ export default {
 
       setPassword: "removeUserStore/setPassword",
 
+      setModulEditProfile: "editProfileStore/setModulEditProfile",
     }),
     ...mapActions({ removeUser: "removeUserStore/removeUser" }),
 
@@ -80,7 +81,10 @@ export default {
       }
         this.removeUser(user)
           .then(() => {
-            window.location.href = '/';
+          this.setModulEditProfile(false)
+          this.setModuleDelete(false)
+          this.$router.push('/')
+          this.setPassword("");
           })
           .catch((err) => {
             if (err.err) {

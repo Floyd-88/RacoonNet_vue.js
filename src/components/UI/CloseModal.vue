@@ -3,14 +3,8 @@
 </template>
 
 <script>
-// import {mapActions} from "vuex";
-
 export default {
   name: "closeModal",
-
-  methods: {
-    // ...mapActions({ closeModule: "modalStore/closeModule"})
-  }
 }
 </script>
 

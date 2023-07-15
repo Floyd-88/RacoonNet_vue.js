@@ -178,14 +178,6 @@ export default {
             }
         },
 
-        loadAvaUserLikePhoto(ava) {
-            try {
-                return require(`../../assets/photo/${ava}`)
-            } catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
-
         closeModalWindowLikesUserPhoto() {
             this.setShowModalBlockUsersLikesPhoto(false)
             this.setUsersLikesPhoto([]);
@@ -201,14 +193,6 @@ export default {
             getUsersLikesPhoto: "commentsPhoto/getUsersLikesPhoto",
             getShowModalBlockUsersLikesPhoto: "commentsPhoto/getShowModalBlockUsersLikesPhoto"
         }),
-
-        loadAva() {
-            try {
-                return require(`../../assets/photo/${this.currentImg.ava}`)
-            } catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
     },
 
     watch: {

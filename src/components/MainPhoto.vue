@@ -67,9 +67,9 @@ export default {
 
     methods: {
         ...mapMutations({
-            setIndexPhoto: "showFullPhotoStore/setIndexPhoto",
+            // setIndexPhoto: "showFullPhotoStore/setIndexPhoto",
             setModulePhotoRemove: "loadPhotoStore/setModulePhotoRemove",
-            setPhotoId: "loadPhotoStore/setPhotoId"
+            // setPhotoId: "loadPhotoStore/setPhotoId"
         }),
         ...mapActions({
             removeAvaPhoto: "loadPhotoStore/removeAvaPhoto",
@@ -78,19 +78,11 @@ export default {
     },
     computed: {
         ...mapGetters({
-            getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
+            // getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
             getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
             getUser: "authorizationStore/getUser",
             getEditAva: "showFullPhotoStore/getEditAva"
         }),
-
-    //     pathAva() {
-    //       try{
-    //         return require(`../assets/photo/${this.getUser.ava}`);
-    //       } catch {
-    //         return require(`../assets/ava/ava_1.jpg`);
-    //       }
-    // },
 }
 }
 </script>

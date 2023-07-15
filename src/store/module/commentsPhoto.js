@@ -68,12 +68,8 @@ export const commentsPhoto = {
                     // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
                     // commit("setCommentPost", "")
 
-                    console.log(response.data)
-                    console.log(newCommentsPhoto)
-                        //отправляем уведомление адресату без перезагрузки страницы
-                    SocketioService.sendNotice(response.data.userID, cb => {
-                        console.log(cb);
-                    });
+                    //отправляем уведомление адресату без перезагрузки страницы
+                    SocketioService.sendNotice(response.data.userID);
                 })
                 .catch(function(error) {
                     console.log("Ошибка при написании комментария: " + error);
@@ -112,9 +108,7 @@ export const commentsPhoto = {
                 commit("setRemoveCommentsPhoto", paramsComment.commentID)
                 await axios.delete('http://localhost:8000/load_comments_photo.js', {
                     data: paramsComment
-                }).then((response) => {
-                    console.log(response.data);
-                })
+                }).then(() => {})
             } catch (err) {
                 console.log(err)
             }

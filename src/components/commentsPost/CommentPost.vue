@@ -125,13 +125,13 @@ export default {
             comment.isShowWriteUnderComment = false;
         },
 
-        pathAva(ava) {
-            try {
-                return require(`../../assets/photo/${ava}`);
-            } catch {
-                return require(`../../assets/ava/ava_1.jpg`);
-            }
-        },
+        // pathAva(ava) {
+        //     try {
+        //         return require(`../../assets/photo/${ava}`);
+        //     } catch {
+        //         return require(`../../assets/ava/ava_1.jpg`);
+        //     }
+        // },
 
         //в случае закодированных специсимволов в тексте- переводим их обратно в читаемый вид
         messageText(value) {
@@ -147,7 +147,7 @@ export default {
     computed: {
         ...mapGetters({
             getUser: "authorizationStore/getUser",
-            getCommentsCommentArray: "commentsPost/getCommentsCommentArray"
+            // getCommentsCommentArray: "commentsPost/getCommentsCommentArray"
             // getCommentsArray: "commentsPost/getCommentsArray",
             // getCommentPost: "commentsPost/getCommentPost"
         }),

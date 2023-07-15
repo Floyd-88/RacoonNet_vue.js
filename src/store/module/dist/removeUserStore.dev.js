@@ -59,7 +59,6 @@ var removeUserStore = {
         user.id = getters.getUser.userID;
         user.allPhoto = [].concat(_toConsumableArray(getters.allPhoto), _toConsumableArray(getters.postPhoto));
         user.nameAva = getters.getUser.ava;
-        console.log(user.allPhoto);
         (0, _axios["default"])({
           url: url,
           data: user,

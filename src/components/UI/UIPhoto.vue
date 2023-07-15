@@ -21,14 +21,9 @@ export default {
     }
   },
 
-  mounted() {
-    console.log('photo')
-  },
-
   computed: {
     loadPhoto() {
           try {
-            console.log('computed_photo')
             return require(`../../assets/${this.photo.photo_name}`);
           }
           catch(err) {
@@ -40,7 +35,6 @@ export default {
 </script>
 
 <style scoped>
-
 .myPhoto {
   width: inherit;
   height: inherit;

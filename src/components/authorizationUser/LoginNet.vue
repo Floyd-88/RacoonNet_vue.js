@@ -62,7 +62,7 @@
           </div>
         </div>
         <input class="form_login_input" id="email" type="text" placeholder="Введите электронный адрес"
-          v-model="v$.email.$model" :class="{ invalid: (v$.email.$error) }">
+          v-model="v$.email.$model" :class="{ invalid: (v$.email.$error) }" @input="setMessageEmailPassword('')">
       </div>
 
       <div class="wrapper_error_login" v-if="getErrorLogin">
@@ -73,22 +73,18 @@
       </div>
 
       <div class="wrapper_form_login_btn">
-        <button class="form_register_btn"
-        :disabled="v$.$invalid"
-          >
+        <button class="form_register_btn" :disabled="v$.$invalid">
           Восстановить пароль
         </button>
       </div>
 
       <div class="wrapper_form_not_password">
-        <button class="form_not_password" 
-          @click.prevent="enterLogin()">
+        <button class="form_not_password" @click.prevent="enterLogin()">
           Ввести логин и пароль
         </button>
       </div>
     </form>
   </div>
-  
 </template>
 
 <script>
@@ -119,7 +115,7 @@ export default {
   },
 
   methods: {
-    ...mapActions({ 
+    ...mapActions({
       login: "authorizationStore/login",
       RESSTORE_PASSWORD_USER: "authorizationStore/RESSTORE_PASSWORD_USER"
     }),
@@ -138,17 +134,20 @@ export default {
 
         this.login({ email, password })
           .then((resp) => {
-            if (resp.data.user.is_admin === 1) {
-              this.$router.push('admin')
-            } else {
-              // window.location.href = `/${resp.data.user.userID}`;
-              this.$router.push(`/id${resp.data.user.userID}`)
+            if (resp) {
+              if (resp.data.user.is_admin === 1) {
+                this.$router.push('admin')
+              } else {
+                this.$router.push(`/id${resp.data.user.userID}`)
+              }
             }
           })
           .catch((err) => {
-            let messageErr = err.response.data.err;
-            this.setErrorLogin(JSON.stringify(messageErr).slice(1, -1))
-            console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(messageErr))
+            if (err.response) {
+              let messageErr = err.response.data.err;
+              this.setErrorLogin(JSON.stringify(messageErr).slice(1, -1))
+              console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(messageErr))
+            }
           }
           )
       }
@@ -156,7 +155,7 @@ export default {
 
     forgetPassword() {
       this.email = "";
-      this.password ="1";
+      this.password = "1";
       this.v$.$reset();
       this.setErrorLogin("");
       this.setMessageEmailPassword("");
@@ -165,7 +164,7 @@ export default {
 
     enterLogin() {
       this.email = "";
-      this.password ="";
+      this.password = "";
       this.v$.$reset();
       this.setErrorLogin("");
       this.setMessageEmailPassword("");
@@ -174,16 +173,16 @@ export default {
 
     restorePassword() {
       let email = this.email;
-      this.RESSTORE_PASSWORD_USER({email})
-      .then((resp) => {
-        this.setMessageEmailPassword(resp.data);
-          })
-          .catch((err) => {
-            let messageErr = err.response.data.err;
-            this.setErrorLogin(JSON.stringify(messageErr).slice(1, -1));
-            console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(messageErr));
-          }
-          )
+      this.RESSTORE_PASSWORD_USER({ email })
+        .then((resp) => {
+          this.setMessageEmailPassword(resp.data);
+        })
+        .catch((err) => {
+          let messageErr = err.response.data.err;
+          this.setErrorLogin(JSON.stringify(messageErr).slice(1, -1));
+          console.log("Авторизация завершилась с ошибкой: " + JSON.stringify(messageErr));
+        }
+        )
     }
   },
 
@@ -276,10 +275,6 @@ export default {
   border: 1px solid red;
 }
 
-/* .wrapper_error_login {
-
-} */
-
 .error_login {
   color: red;
 }
@@ -296,18 +291,15 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
+  .form_login_input {
+    min-width: 295px;
+  }
 
-.form_login_input {
-  min-width: 295px;
-}
-
-
-.form_login {
-  display: flex;
+  .form_login {
+    display: flex;
     flex-direction: column;
     align-items: center;
-}
+  }
 }
 </style>

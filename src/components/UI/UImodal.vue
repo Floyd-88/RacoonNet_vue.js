@@ -7,18 +7,8 @@
 </template>
 
 <script>
-// import {mapGetters} from "vuex";
-
 export default {
   name: "UImodal",
-
-  methods: {
-  },
-
-  computed: {
-    // ...mapGetters({getModal: "modalStore/getModal"}),
-  }
-
 }
 </script>
 

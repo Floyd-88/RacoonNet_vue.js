@@ -91,14 +91,6 @@ export default {
     };
   },
 
-  // created() {
-  //   this.CHECK_REQUEST_FRIEND(this.$route.params.id);
-  // },
-
-  mounted() {
-    console.log('golf')
-  },
-
   methods: {
     ...mapMutations({
       setModulEditProfile: "editProfileStore/setModulEditProfile",
@@ -110,7 +102,7 @@ export default {
     ...mapActions({
       showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto",
       ADD_FRIEND: "friendsStore/ADD_FRIEND",
-      CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND"
+      // CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND"
       // age: "authorizationStore/age",
 
     }),
@@ -148,17 +140,9 @@ export default {
       getToken: "authorizationStore/getToken",
       getTextBtnFfriend: "friendsStore/getTextBtnFfriend",
       getIsFriend: "friendsStore/getIsFriend",
-      getStatus: "authorizationStore/getStatus",
+      // getStatus: "authorizationStore/getStatus",
       getIsBtnsBlock: "friendsStore/getIsBtnsBlock"
     }),
-
-    // pathAva() {
-    //   try {
-    //     return require(`../../assets/photo/${this.getUser.ava}`);
-    //   } catch {
-    //     return require(`../../assets/ava/ava_1.jpg`);
-    //   }
-    // },
 
     //вычисляет возраст пользователя
     age() {

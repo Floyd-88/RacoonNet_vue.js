@@ -106,13 +106,9 @@ var commentsPhoto = {
                 // commit("setCountPosts", 1);
                 // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
                 // commit("setCommentPost", "")
+                //отправляем уведомление адресату без перезагрузки страницы
 
-                console.log(response.data);
-                console.log(newCommentsPhoto); //отправляем уведомление адресату без перезагрузки страницы
-
-                _socketio["default"].sendNotice(response.data.userID, function (cb) {
-                  console.log(cb);
-                });
+                _socketio["default"].sendNotice(response.data.userID);
               })["catch"](function (error) {
                 console.log("Ошибка при написании комментария: " + error);
               }));
@@ -178,9 +174,7 @@ var commentsPhoto = {
               _context3.next = 5;
               return regeneratorRuntime.awrap(_axios["default"]["delete"]('http://localhost:8000/load_comments_photo.js', {
                 data: paramsComment
-              }).then(function (response) {
-                console.log(response.data);
-              }));
+              }).then(function () {}));
 
             case 5:
               _context3.next = 10;

@@ -80,7 +80,7 @@ export default {
 
     methods: {
         ...mapMutations({
-            setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
+            // setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
             setArrayLoadImage: "loadPhotoStore/setArrayLoadImage",
             setMessageLoadPhoto: "loadPhotoStore/setMessageLoadPhoto",
             setUrlsImages: "loadPhotoStore/setUrlsImages",
@@ -93,7 +93,7 @@ export default {
             removePreviewImage: "loadPhotoStore/removePreviewImage",
             addPhotoServer: "loadPhotoStore/addPhotoServer",
             cancelLoadPhoto: "loadPhotoStore/cancelLoadPhoto",
-            LOAD_MESSAGES_PHOTOS: "messageStore/LOAD_MESSAGES_PHOTOS"
+            // LOAD_MESSAGES_PHOTOS: "messageStore/LOAD_MESSAGES_PHOTOS"
 
         }),
 
@@ -156,14 +156,10 @@ export default {
             this.notShowBtnAddPhotos = false;
             this.addPhotoServer({ event: event, addresseeID: this.addresseeID })
                 .then((resp) => {
-                    console.log(resp)
-                    console.log(this.addresseeID)
-
                     if (resp[0]['userID'] === +JSON.parse(localStorage.getItem("user")).userID) {
                         if (resp[0]['messageID'] === 0 || resp[0]['messageID'] === undefined) {
                             this.setPhotosPostsArray([...resp, ...this.getPhotosPostsArray]);
                         } else {
-                            console.log(resp)
                             this.setPhotosMessagesArray([...resp, ...this.getPhotosMessagesArray]);
 
                             //отпраляем сообщение и фотографии в сообщении на сервер для передачи их адресату через сокет
@@ -171,13 +167,9 @@ export default {
                             newMessagePhotos.destinationID = this.addresseeID;
                             newMessagePhotos.arrayPhotos = resp;
 
-                                SocketioService.sendMessage(this.getArrayMessages[this.getArrayMessages.length - 1], cb => {
-                                    console.log(cb);
-                                });
+                                SocketioService.sendMessage(this.getArrayMessages[this.getArrayMessages.length - 1]);
 
-                                SocketioService.sendMessagePhotos(newMessagePhotos, cb => {
-                                    console.log(cb);
-                                });
+                                SocketioService.sendMessagePhotos(newMessagePhotos);
                         }
                     }
                     this.notShowBtnAddPhotos = true;
@@ -201,7 +193,7 @@ export default {
             getArrayLoadImage: "loadPhotoStore/getArrayLoadImage",
             getUrlsImages: "loadPhotoStore/getUrlsImages",
             getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto",
-            getUser: "authorizationStore/getUser",
+            // getUser: "authorizationStore/getUser",
             getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
             getPhotosMessagesArray: "messageStore/getPhotosMessagesArray",
             getArrayMessages: "messageStore/getArrayMessages"

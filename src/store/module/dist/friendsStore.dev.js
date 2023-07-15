@@ -296,9 +296,7 @@ var friendsStore = {
 
                 if (res.data.status === "Заявка отправлена") {
                   //отправляем уведомление адресату без перезагрузки страницы
-                  _socketio["default"].sendNotice(id, function (cb) {
-                    console.log(cb);
-                  });
+                  _socketio["default"].sendNotice(id);
                 } else if (res.data.status === "Добавить в друзья") {
                   var addresseeID = {
                     text_notice: "Пользователь удален из ваших друзей",
@@ -306,9 +304,7 @@ var friendsStore = {
                     userID: res.data.userID
                   }; //отправляем уведомление адресату без перезагрузки страницы
 
-                  _socketio["default"].sendNotice(addresseeID, function (cb) {
-                    console.log(cb);
-                  });
+                  _socketio["default"].sendNotice(addresseeID);
                 }
               }));
 
@@ -361,9 +357,7 @@ var friendsStore = {
                 } //отправляем уведомление адресату без перезагрузки страницы
 
 
-                _socketio["default"].sendNotice(value.userID, function (cb) {
-                  console.log(cb);
-                });
+                _socketio["default"].sendNotice(value.userID);
 
                 dispatch("noticeStore/GET_NEW_NOTICE", null, {
                   root: true
@@ -655,9 +649,7 @@ var friendsStore = {
                     userID: params.query
                   }; //отправляем уведомление адресату без перезагрузки страницы
 
-                  _socketio["default"].sendNotice(addresseeID, function (cb) {
-                    console.log(cb);
-                  });
+                  _socketio["default"].sendNotice(addresseeID);
 
                   resolve();
                 })["catch"](function (err) {

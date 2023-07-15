@@ -35,20 +35,6 @@ export default {
         }
     },
 
-    mounted() {
-        console.log('mon')
-    },
-
-    computed: {
-        // loadAva() {
-        //     try {
-        //         return require(`../../assets/photo/${this.user.userID}`)
-        //     } catch {
-        //         return require(`../../assets/ava/ava_1.jpg`);
-        //     }
-        // }
-    }
-
 }
 </script>
 

@@ -109,15 +109,6 @@ export default {
             comment.isBtnsAnswUnder = false;
             this.$emit('showWriteUnderComments', {id: comment.id, author_comment: comment.author_comment, comment_comment_text: comment.comment_comment_text, comment_comment_name: comment.name});
         },
-
-        // pathAva(ava) {
-        //     try {
-        //         return require(`../../assets/photo/${ava}`);
-        //     } catch {
-        //         return require(`../../assets/ava/ava_1.jpg`);
-        //     }
-        // },
-
         messageText(comment) {
             let doc = new DOMParser().parseFromString(comment.comment_comment_text, "text/html");
             if(comment.comment_comment_text.slice(0, comment.nameAddressee.length) === comment.nameAddressee) {

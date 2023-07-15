@@ -57,6 +57,21 @@ export const registrationStore = {
             state.double_password = state.userRegister.password !== state.userRegister.password_confirmation;
         },
 
+        setUserRegister(state) {
+            state.userRegister.name = "";
+            state.userRegister.surname = "";
+            state.userRegister.email = "";
+            state.userRegister.password = "",
+                state.userRegister.password_confirmation = "";
+            state.userRegister.country = "";
+            state.userRegister.city = "";
+            state.userRegister.is_admin = null;
+            state.userRegister.selectedDay = "";
+            state.userRegister.selectedMonth = "";
+            state.userRegister.selectedYear = "";
+            state.userRegister.selectedGender = "";
+        },
+
 
         //двухсторонне связывание
         setUserRegisterName(state, name) {
@@ -124,29 +139,10 @@ export const registrationStore = {
                             localStorage.setItem('refreshToken', refreshToken);
                             localStorage.setItem('user', JSON.stringify(user));
 
-                            window.location.href = `/id${user.userID}`;
-
-
-                            //записываем токен во все заголовки отправляемые на сервер
-                            // axios.defaults.headers.common['Authorization'] = token;
-
-                            // commit('authorizationStore/auth_success', {
-                            //     // user,
-                            //     token
-                            // }, {
-                            //     root: true
-                            // });
-
-                            //вызываем метод для отправки сообщения всем участникам комнаты
-                            // SocketioService.setupSocketConnection();
-                            // SocketioService.subscribeToMessages((err, data) => {
-                            //     if (err) return console.log(err)
-                            //     console.log(data);
-                            //     this.messages = data;
-                            // });
-
-                            // commit('editProfileStore/setEditingUser', user, { root: true });
-                            // resolve(resp);
+                            commit('authorizationStore/auth_success', token, {
+                                root: true
+                            });
+                            resolve(resp);
                         }
                     })
                     .catch(err => {

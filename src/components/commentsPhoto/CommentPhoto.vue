@@ -79,14 +79,6 @@ export default {
             comment.isBtnDelete = !comment.isBtnDelete;
         },
 
-        // pathAva(ava) {
-        //     try {
-        //         return require(`../../assets/photo/${ava}`);
-        //     } catch {
-        //         return require(`../../assets/ava/ava_1.jpg`);
-        //     }
-        // },
-
         //в случае закодированных специсимволов в тектсе- переводим их обратно в читаемый вид
         messageText(value) {
             let doc = new DOMParser().parseFromString(value, "text/html");

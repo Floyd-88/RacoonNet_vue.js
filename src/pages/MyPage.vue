@@ -55,23 +55,10 @@
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import EditProfile from "@/components/MyPage/EditProfile";
 import MyPageContent from "@/components/MyPage/MyPageContent.vue";
-// import SocketioService from "../services/socketio.service"
 
 export default {
   name: "MyPage",
   components: { EditProfile, MyPageContent },
-
-  created() {
-    //вызываем метод для отправки сообщения всем участникам комнаты
-    // SocketioService.setupSocketConnection();
-    // console.log("connected")
-
-    // SocketioService.subscribeToMessages((err, data) => {
-    //     if (err) return console.log(err)
-    //     this.setArrayMessages([...this.getArrayMessages, data])
-    //     // console.log(this.getArrayMessages)
-    // });
-  },
 
   mounted() {
     this.loadAllPhotos(this.$route.params.id);
@@ -81,14 +68,6 @@ export default {
     // this.loadPostServer(this.$route.params.id);
     // this.LOAD_DIALOGS();
   },
-
-  // beforeUnmount() {
-  // SocketioService.disconnect();
-  // SocketioService.exitRoom(this.getUser.userID, cb => {
-  //   console.log(cb);
-  // });
-  // console.log('покинул страницу');
-  // },
 
   methods: {
     ...mapActions({

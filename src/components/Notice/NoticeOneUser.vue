@@ -515,13 +515,13 @@ export default {
 
     methods: {
         ...mapMutations({
-            setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
+            // setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
             setIsShowModalWindowOneNotice: "noticeStore/setIsShowModalWindowOneNotice",
             setPhotosPostNotice: "noticeStore/setPhotosPostNotice"
         }),
 
         ...mapActions({
-            NOTICE_ARRAY_DELETE: "noticeStore/NOTICE_ARRAY_DELETE",
+            // NOTICE_ARRAY_DELETE: "noticeStore/NOTICE_ARRAY_DELETE",
             REMOVE_COUNT_NOTICE_LIST: "noticeStore/REMOVE_COUNT_NOTICE_LIST"
         }),
 
@@ -557,27 +557,11 @@ export default {
     computed: {
         ...mapGetters({
             getNoticeArray: "noticeStore/getNoticeArray",
-            noticeTextArray: "noticeStore/noticeTextArray",
-            getIsShowModalWindowOneNotice: "noticeStore/getIsShowModalWindowOneNotice",
+            // noticeTextArray: "noticeStore/noticeTextArray",
+            // getIsShowModalWindowOneNotice: "noticeStore/getIsShowModalWindowOneNotice",
             getSelectNotice: "noticeStore/getSelectNotice",
             getPhotosPostNotice: "noticeStore/getPhotosPostNotice"
         }),
-
-        // loadAva() {
-        //     try {
-        //         return require(`../../assets/${this.getSelectNotice.ava_addressee}`)
-        //     } catch {
-        //         return require(`../../assets/ava/ava_1.jpg`);
-        //     }
-        // },
-        // myPhotos() {
-        //     try {
-        //         return require(`../../assets/photo/${this.getSelectNotice.photo_name}`);
-        //     } catch (err) {
-        //         console.log(err)
-        //         return require(`../../assets/ava/ava_1.jpg`);
-        //     }
-        // },
     }
 }
 </script>

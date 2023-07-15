@@ -121,9 +121,7 @@ var noticeStore = {
                 data: {
                   noticeID: id
                 }
-              }).then(function (res) {
-                console.log(res.data);
-              }));
+              }).then(function () {}));
 
             case 5:
               _context2.next = 10;

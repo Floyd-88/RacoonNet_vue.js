@@ -115,40 +115,15 @@ export default {
     }
   },
 
-  data() {
-    return {}
-  },
-  
-mounted() {
-  console.log('ggg')
-},
-
   methods: {
     ...mapMutations({
       // setModulePost: "postsMyPageStore/setModulePost",
     }),
     ...mapActions({
-      LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS",
+      // LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS",
       FULL_SIZE_PHOTO_POST: "showFullPhotoStore/FULL_SIZE_PHOTO_POST",
       closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
     }),
-
-    // loadAva(ava) {
-    //   try {
-    //     return require(`../../assets/photo/${ava}`)
-    //   } catch {
-    //     return require(`../../assets/ava/ava_1.jpg`);
-    //   }
-    // },
-
-    // myPhotos(photo) {
-    //   try {
-    //     return require(`../../assets/photo/${photo.photo_name}`)
-    //   } catch (err) {
-    //     // console.log(err)
-    //     return require(`../../assets/ava/ava_1.jpg`);
-    //   }
-    // },
 
     postText(value) {
       let doc = new DOMParser().parseFromString(value, "text/html");

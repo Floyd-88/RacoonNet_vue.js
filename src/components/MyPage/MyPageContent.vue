@@ -61,11 +61,6 @@ export default {
         }
     },
 
-    created() {
-        // this.setPosts([]);
-        // this.setCountPostsNull();
-    },
-
     methods: {
         ...mapActions({
             loadPostServer: "postsMyPageStore/loadPostServer",
@@ -74,11 +69,11 @@ export default {
             LOAD_COMMENTS_COMMENT: "commentsPost/LOAD_COMMENTS_COMMENT"
         }),
         ...mapMutations({
-            setPosts: "postsMyPageStore/setPosts",
-            setCountPostsNull: "postsMyPageStore/setCountPostsNull",
-            setCommentsArray: "commentsPost/setCommentsArray",
-            setCommentsCommentArray: "commentsPost/setCommentsCommentArray",
-            setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray",
+            // setPosts: "postsMyPageStore/setPosts",
+            // setCountPostsNull: "postsMyPageStore/setCountPostsNull",
+            // setCommentsArray: "commentsPost/setCommentsArray",
+            // setCommentsCommentArray: "commentsPost/setCommentsCommentArray",
+            // setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray",
             setUsersMyFriends: "friendsStore/setUsersMyFriends",
             setCountFriendsNull: "friendsStore/setCountFriendsNull",
             setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter"
@@ -111,7 +106,6 @@ export default {
         },
     },
     mounted() {
-        console.log('moun')
         const options = {
             rootMargin: "0px",
             threshold: 1
@@ -157,12 +151,6 @@ export default {
         };
         const observer = new IntersectionObserver(callback, options);
         observer.observe(this.$refs.observer);
-    },
-
-    unmounted() {
-        // this.setCommentsArray([]);
-        // this.setCommentsCommentArray([]);
-        // this.setPhotosPostsArray([]);
     },
 
     components: { MyFriendsBlock, UIloadMoreContent }

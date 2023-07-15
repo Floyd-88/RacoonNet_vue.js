@@ -20,16 +20,6 @@ export default {
     name: "UInewMessage",
     components: { CloseModal },
 
-
-    //     beforeRouteEnter(to, from, next) {
-    //     next(vm => {
-    //       if (from.name == 'messagepage') {
-    //         console.log(111)
-    //         vm.$refs.newMessage.style.display = "none"
-    //       }
-    //     })
-    //   },
-
     methods: {
         ...mapMutations({
             setIsNewMessageNotify: "messageStore/setIsNewMessageNotify",
@@ -83,7 +73,6 @@ export default {
         }),
 
         newMessage() {
-            console.log(this.getArrayDialogs)
             return this.getArrayDialogs.some(dialog => dialog.unread)
         }
     },

@@ -84,9 +84,6 @@ export default {
             userTokenID: JSON.parse(localStorage.getItem("user"))?.userID,
         };
     },
-    //   beforeMount() {
-    //     this.GET_USER_MY_FRIENDS(this.$route.query.id);
-    // },
     mounted() {
         if (this.getCountFriends === 0) {
             this.GET_USER_MY_FRIENDS(this.$route.query.id);
@@ -158,7 +155,6 @@ export default {
 
         getUserInfo(user) {
             this.user = user;
-            // console.log(user)
         },
 
         getAllFriends() {

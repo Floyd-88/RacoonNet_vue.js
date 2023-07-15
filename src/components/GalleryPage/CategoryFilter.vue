@@ -153,10 +153,6 @@ export default {
             GET_PHOTO_FILTER_THEMA: "galleryStore/GET_PHOTO_FILTER_THEMA",
             GET_PHOTO_NOT_FILTER: "galleryStore/GET_PHOTO_NOT_FILTER"
         })
-
-        // getPhotoFilterThema() {
-
-        // }
     },
 
     computed: {

@@ -22,7 +22,7 @@ export default {
 
     computed: {
         ...mapGetters({
-            getUsersMyFriends: "friendsStore/getUsersMyFriends",
+            // getUsersMyFriends: "friendsStore/getUsersMyFriends",
             getNameFriendUser: "friendsStore/getNameFriendUser"
         }),
 
