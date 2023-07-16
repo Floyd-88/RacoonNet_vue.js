@@ -11,28 +11,21 @@
                     Вы превысили допустимое количество символов
                 </div>
             </div>
-            <textarea 
-            placeholder="Оставить комментарий..." 
-            @focus="setIsFocusComment(true)"  
-            v-model.trim="v$.commentPhoto.$model"
-            @blur="notFocusCommentPhoto()"
-            :class="{ invalid: (v$.commentPhoto.$error) }"></textarea>
+            <textarea placeholder="Оставить комментарий..." @focus="setIsFocusComment(true)"
+                v-model.trim="v$.commentPhoto.$model" @blur="notFocusCommentPhoto()"
+                :class="{ invalid: (v$.commentPhoto.$error) }"></textarea>
         </div>
 
-        
-        
         <div class="write_comments_btn" @click.stop>
-            <UIbtn
-            :disabled="v$.commentPhoto.$invalid"
-            @click="clickWriteCommentPhoto()">
-            Отправить</UIbtn>
+            <UIbtn :disabled="v$.commentPhoto.$invalid" @click="clickWriteCommentPhoto()">
+                Отправить</UIbtn>
 
         </div>
-</div>
+    </div>
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import UIbtn from '../UI/UIbtn.vue';
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, maxLength } from "@vuelidate/validators";
@@ -42,7 +35,6 @@ export default {
     components: { UIbtn },
 
     props: {
-    
         currentImg: {
             type: Object,
             default: () => {
@@ -71,12 +63,9 @@ export default {
 
     methods: {
         ...mapMutations({
-            // setCommentPost: "commentsPost/setCommentPost",
-            // setUnderCommentPost: "commentsPost/setUnderCommentPost",
-            // setCommentsArray: "commentsPost/setCommentsArray",
             setIsFocusComment: "commentsPhoto/setIsFocusComment"
         }),
-        ...mapActions({ 
+        ...mapActions({
             SAVE_COMMENTS_PHOTO: "commentsPhoto/SAVE_COMMENTS_PHOTO",
         }),
 
@@ -86,32 +75,19 @@ export default {
         },
 
         async clickWriteCommentPhoto() {
-           await this.SAVE_COMMENTS_PHOTO({ photoID: this.currentImg?.photoID || this.currentImg.id, textMessage: this.commentPhoto, userPage: this.$route.params.id || this.getUser.userID || this.currentImg.userID});
-           this.$emit("scrollToMe");
+            await this.SAVE_COMMENTS_PHOTO({ photoID: this.currentImg?.photoID || this.currentImg.id, textMessage: this.commentPhoto, userPage: this.$route.params.id || this.getUser.userID || this.currentImg.userID });
+            this.$emit("scrollToMe");
             this.commentPhoto = "";
             this.v$.commentPhoto.$reset();
         },
-
-
-        // commentPhoto(value) {
-        //         this.commentPhoto = value;
-        //         this.v$.commentPhoto.$touch();
-        //     }
     },
 
     computed: {
         ...mapGetters({
             getUser: "authorizationStore/getUser",
-            // getCommentPost: "commentsPost/getCommentPost",
-            // getUnderCommentPost: "commentsPost/getUnderCommentPost"
-        }),
-        ...mapState({
-            // commentPost: (state) => state.commentsPost.commentPost,
-            // underCommentPost: (state) => state.commentsPost.underCommentPost
         }),
     }
 }
-
 </script>
 
 <style scoped>
@@ -132,7 +108,6 @@ export default {
     width: 100%;
     height: 45px;
     border-radius: 5px;
-    /* border: 1px solid; */
     padding: 3px;
     resize: none;
 }
@@ -142,7 +117,6 @@ export default {
     box-shadow: 0 0 3px #0197d6;
     outline-offset: 0px;
     outline: none;
-
 }
 
 .write_comments_btn {
@@ -161,7 +135,7 @@ export default {
 
 .error-msg-limit {
     color: red;
-    font-size: 13px; 
+    font-size: 13px;
 }
 
 .invalid {
@@ -169,12 +143,11 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
-.write_comments {
-    margin-top: 5px;
-}
+    .write_comments {
+        margin-top: 5px;
+    }
 }
 </style>
 

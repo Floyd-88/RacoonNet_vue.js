@@ -75,7 +75,7 @@
       <p class="save_password">Ваш был пароль изменен!</p>
     </div>
     <div>
-      <UIbtn class="btn_save_password" @click.prevent = "setCloseChangePassword">OK</UIbtn>
+      <UIbtn class="btn_save_password" @click.prevent="setCloseChangePassword">OK</UIbtn>
     </div>
   </div>
 </template>
@@ -123,7 +123,7 @@ export default {
         };
         this.updatePasword(user)
           .then(() => {
-            this.setModalSave(false);          
+            this.setModalSave(false);
           })
           .catch((err) => {
             if (err.err) {
@@ -219,13 +219,9 @@ export default {
   width: 200px;
 }
 
-/* .form_register_input {} */
-
 .form_register_input {
-  /*margin: 5px;*/
   height: 30px;
   width: 100%;
-  /*padding-left: 3px;*/
 }
 
 .error-msg {
@@ -270,6 +266,4 @@ export default {
   height: 35px;
   margin-top: 10px;
 }
-
-
 </style>

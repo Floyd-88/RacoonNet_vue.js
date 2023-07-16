@@ -9,7 +9,6 @@ var _axios = _interopRequireDefault(require("axios"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-// import SocketioService from "../../services/socketio.service";
 var authorizationStore = {
   state: function state() {
     return {
@@ -180,18 +179,10 @@ var authorizationStore = {
             commit("postsMyPageStore/setPostText", "", {
               root: true
             });
-            commit("auth_request", "success"); // window.location.href = `/id${user.userID}`;
-            //при открытии профиля сохраняем информацию об id в комнате
-            // SocketioService.sendUserID(id.id, cb => {
-            //     console.log(cb);
-            // });
-
+            commit("auth_request", "success");
             resolve(resp);
           }
         })["catch"](function (err) {
-          // commit('auth_error');
-          // localStorage.removeItem('token');
-          // localStorage.removeItem('user');
           reject(err);
         });
       });
@@ -240,12 +231,7 @@ var authorizationStore = {
           })["catch"](function (err) {
             if (err) {
               if (err.code !== "ERR_CANCELED") {
-                dispatch("logout"); // commit('logout');
-                // localStorage.removeItem('token');
-                // localStorage.removeItem('refreshToken');
-                // localStorage.removeItem('user');
-                // delete axios.defaults.headers.common['Authorization'];
-                // return window.location.href = '/'
+                dispatch("logout");
               }
 
               reject(err);

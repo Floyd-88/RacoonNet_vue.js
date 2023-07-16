@@ -13,7 +13,6 @@ export const commentsPhoto = {
     }),
 
     getters: {
-        // getIsShowWriteComment: state => state.isShowWriteComment,
         getCommentPhoto: state => state.commentPost,
         getCommentsPhotoArray: state => state.commentsPhotoArray,
         getIsFocusComment: state => state.isFocusComment,
@@ -22,10 +21,6 @@ export const commentsPhoto = {
     },
 
     mutations: {
-        // setIsShowWriteComment(state) {
-        //     state.isShowWriteComment = !state.isShowWriteComment;
-        // },
-
         setCommentPhoto(state, text) {
             state.commentPhoto = text
         },
@@ -54,19 +49,20 @@ export const commentsPhoto = {
 
     actions: {
         //сохранение комментария к фотографии в базу данных
-        async SAVE_COMMENTS_PHOTO({ dispatch, commit, state }, newCommentsPhoto) {
+        async SAVE_COMMENTS_PHOTO({
+            dispatch,
+            commit,
+            state
+        }, newCommentsPhoto) {
 
-            let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
+            let date = await dispatch("postsMyPageStore/newDate", null, {
+                root: true
+            });
             newCommentsPhoto.date = await date,
 
                 await axios.post('http://localhost:8000/load_comments_photo.js', newCommentsPhoto)
                 .then(function(response) {
                     commit("setCommentsPhotoArray", [...state.commentsPhotoArray, response.data]);
-
-                    // commit("setAddPosts", response.data);
-                    // commit("setCountPosts", 1);
-                    // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
-                    // commit("setCommentPost", "")
 
                     //отправляем уведомление адресату без перезагрузки страницы
                     SocketioService.sendNotice(response.data.userID);
@@ -82,7 +78,6 @@ export const commentsPhoto = {
             commit
         }, id) {
             try {
-                // console.log(id)
                 await axios.get('http://localhost:8000/load_comments_photo.js', {
                     params: {
                         photoID: id
@@ -102,7 +97,9 @@ export const commentsPhoto = {
         },
 
         //удаление комментария к посту
-        async DELETE_COMMENTS_PHOTO({ commit }, paramsComment) {
+        async DELETE_COMMENTS_PHOTO({
+            commit
+        }, paramsComment) {
             try {
 
                 commit("setRemoveCommentsPhoto", paramsComment.commentID)
@@ -114,7 +111,9 @@ export const commentsPhoto = {
             }
         },
 
-        async GET_USER_LIKES_PHOTO({ commit }, photo) {
+        async GET_USER_LIKES_PHOTO({
+            commit
+        }, photo) {
             try {
                 let photo_id = photo.id;
                 if (photo.photoID) {

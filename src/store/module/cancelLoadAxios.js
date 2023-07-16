@@ -26,19 +26,12 @@ export const cancelLoadAxios = {
             state,
             commit
         }) {
-            // return new Response((resolve, reject) => {
-            //     try {
             state.cancelTokens.forEach((request) => {
                 if (request.cancel) {
                     request.cancel();
                 }
             })
             commit('setCancelTokensClear');
-            // resolve();
-            //     } catch (err) {
-            //         reject(err)
-            //     }
-            // })
         }
     },
 

@@ -20,8 +20,6 @@
                                         <div class="wrapper_block_photo_post_first">
                                             <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
                                                 <div class="wrapper_photo_post size_photo_1">
-                                                    <!-- <img class="photo_post" :src="require(`../assets/${photo.photo_name}`)"
-                                                        :alt="'photo' + photo.id"> -->
                                                     <UIPhoto :photo="photo" />
                                                 </div>
                                             </template>
@@ -31,8 +29,6 @@
                                             v-if="getPhotosPostNotice.slice(1).length > 0">
                                             <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
                                                 <div class="wrapper_photo_post photo_another">
-                                                    <!-- <img class="photo_post" :src="require(`../assets/${photo.photo_name}`)"
-                                                        :alt="'photo' + photo.id"> -->
                                                     <UIPhoto :photo="photo" />
                                                 </div>
                                             </template>
@@ -66,14 +62,13 @@
                                     <div class="wrapper_message_user">
                                         <div class="message_name_user">
                                             <div class="dialog_ava_user"
-                                                @click="$emit('getUserNotice', getSelectNotice.userID_addressee)"
-                                            >
-                                                <!-- <img :src="require(`../assets/${getSelectNotice.ava_addressee}`)" alt="ava"> -->
-                                                <UIAva :ava="getSelectNotice.ava_addressee"/>
+                                                @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
+                                                <UIAva :ava="getSelectNotice.ava_addressee" />
                                             </div>
                                             <p class="message_name"
                                                 @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
-                                                {{ getSelectNotice.name_addressee + " " + getSelectNotice.surname_addressee}}
+                                                {{ getSelectNotice.name_addressee + " " +
+                                                    getSelectNotice.surname_addressee }}
                                             </p>
                                         </div>
                                     </div>
@@ -107,9 +102,7 @@
                                                     <div class="under_comment_name_user">
                                                         <div class="under_comment_ava_user"
                                                             @click="$emit('getUserNotice', getSelectNotice.userID)">
-                                                            <!-- <img :src="require(`../assets/${getSelectNotice.ava}`)" alt="ava"> -->
                                                             <UIAva :ava="getSelectNotice.ava" />
-
                                                         </div>
                                                         <p class="under_comment_name"
                                                             @click="$emit('getUserNotice', getSelectNotice.userID)">{{
@@ -158,7 +151,6 @@
                     <!-- уведомление о коммениатрии к посту -->
                     <template v-else-if="getSelectNotice.comment_post_text">
                         <div class="wrapper_ava_posts" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
-                            <!-- <img class="ava_posts" alt="ava" ref="img" :src="require(`../assets/${getSelectNotice.ava_addressee}`)"> -->
                             <UIAva :ava="getSelectNotice.ava_addressee" />
                         </div>
 
@@ -177,10 +169,7 @@
                                         <div class="wrapper_block_photo_post_first">
                                             <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
                                                 <div class="wrapper_photo_post size_photo_1">
-                                                    <!-- <img class="photo_post" :src="require(`../assets/${photo.photo_name}`)"
-                                                        :alt="'photo' + photo.id"> -->
                                                     <UIPhoto :photo="photo" />
-
                                                 </div>
                                             </template>
                                         </div>
@@ -189,8 +178,6 @@
                                             v-if="getPhotosPostNotice.slice(1).length > 0">
                                             <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
                                                 <div class="wrapper_photo_post photo_another">
-                                                    <!-- <img class="photo_post" :src="require(`../assets/${photo.photo_name}`)"
-                                                        :alt="'photo' + photo.id"> -->
                                                     <UIPhoto :photo="photo" />
 
                                                 </div>
@@ -223,7 +210,6 @@
                                         <div class="message_name_user">
                                             <div class="dialog_ava_user"
                                                 @click="$emit('getUserNotice', getSelectNotice.userID)">
-                                                <!-- <img :src="require(`../assets/${getSelectNotice.ava}`)" alt="ava"> -->
                                                 <UIAva :ava="getSelectNotice.ava" />
                                             </div>
                                             <p class="message_name" @click="$emit('getUserNotice', getSelectNotice.userID)">
@@ -269,7 +255,6 @@
 
                         <template v-if="getSelectNotice.text_notice === 'написал что то на Вашей стене'">
                             <div class="wrapper_ava_posts" @click="$emit('getUserNotice', getSelectNotice.userID)">
-                                <!-- <img class="ava_posts" alt="ava" ref="img" :src="require(`../assets/${getSelectNotice.ava}`)"> -->
                                 <UIAva :ava="getSelectNotice.ava" />
 
                             </div>
@@ -290,8 +275,6 @@
                                     <div class="wrapper_block_photo_post_first">
                                         <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
                                             <div class="wrapper_photo_post size_photo_1">
-                                                <!-- <img class="photo_post" :src="require(`../assets/${photo.photo_name}`)"
-                                                    :alt="'photo' + photo.id"> -->
                                                 <UIPhoto :photo="photo" />
                                             </div>
                                         </template>
@@ -301,8 +284,6 @@
                                         v-if="getPhotosPostNotice.slice(1).length > 0">
                                         <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
                                             <div class="wrapper_photo_post photo_another">
-                                                <!-- <img class="photo_post" :src="require(`../assets/${photo.photo_name}`)"
-                                                    :alt="'photo' + photo.id"> -->
                                                 <UIPhoto :photo="photo" />
                                             </div>
                                         </template>
@@ -332,7 +313,6 @@
                         <template v-else-if="getSelectNotice.text_notice === 'отметил Вашу запись'">
                             <div class="wrapper_ava_posts"
                                 @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
-                                <!-- <img class="ava_posts" alt="ava" ref="img":src="require(`../assets/${getSelectNotice.ava_addressee}`)"> -->
                                 <UIAva :ava="getSelectNotice.ava_addressee" />
                             </div>
                             <div class="wrapper_post_user">
@@ -347,8 +327,6 @@
                                     <div class="wrapper_block_photo_post_first">
                                         <template v-for="(photo) in getPhotosPostNotice.slice(0, 1)" :key="photo.id">
                                             <div class="wrapper_photo_post size_photo_1">
-                                                <!-- <img class="photo_post" :src="require(`../assets/${photo.photo_name}`)"
-                                                    :alt="'photo' + photo.id"> -->
                                                 <UIPhoto :photo="photo" />
                                             </div>
                                         </template>
@@ -358,8 +336,6 @@
                                         v-if="getPhotosPostNotice.slice(1).length > 0">
                                         <template v-for="(photo) in getPhotosPostNotice.slice(1)" :key="photo.id">
                                             <div class="wrapper_photo_post photo_another">
-                                                <!-- <img class="photo_post" :src="require(`../assets/${photo.photo_name}`)"
-                                                    :alt="'photo' + photo.id"> -->
                                                 <UIPhoto :photo="photo" />
                                             </div>
                                         </template>
@@ -391,7 +367,6 @@
                     <!-- уведомление о новом комментарии к фотографии-->
                     <template v-else-if="getSelectNotice.comment_photo_text">
                         <div class="wrapper_ava_posts" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
-                            <!-- <img class="ava_posts" alt="ava" ref="img" :src="require(`../assets/${getSelectNotice.ava_addressee}`)"> -->
                             <UIAva :ava="getSelectNotice.ava_addressee" />
                         </div>
 
@@ -406,8 +381,6 @@
                                 <div class="text_post">
                                     <div class="wrapper_block_photo_post_first wrapper_block_photo_post_first_one_photo">
                                         <div class="wrapper_photo_post size_photo_1" v-if="getSelectNotice.photo_name">
-                                            <!-- <img class="photo_post" :src="require(`../assets/${getSelectNotice.photo_name}`)"
-                                                :alt="'photo' + getSelectNotice.id"> -->
                                             <UIPhoto :photo="getSelectNotice" />
                                         </div>
                                     </div>
@@ -417,7 +390,6 @@
                                         <div class="message_name_user">
                                             <div class="dialog_ava_user"
                                                 @click="$emit('getUserNotice', getSelectNotice.userID)">
-                                                <!-- <img :src="require(`../assets/${getSelectNotice.ava_addressee}`)" alt="ava"> -->
                                                 <UIAva :ava="getSelectNotice.ava" />
                                             </div>
                                             <p class="message_name" @click="$emit('getUserNotice', getSelectNotice.userID)">
@@ -457,12 +429,7 @@
 
                     <!-- уведомление о новом лайке фотографии-->
                     <template v-else-if="getSelectNotice.photo_name">
-                        <div class="wrapper_ava_posts" 
-                            @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
-                            <!-- <img class="ava_posts"
-                                :src="loadAva" 
-                                alt="ava" 
-                                ref="img"> -->
+                        <div class="wrapper_ava_posts" @click="$emit('getUserNotice', getSelectNotice.userID_addressee)">
                             <UIAva :ava="getSelectNotice.ava_addressee" />
 
                         </div>
@@ -478,10 +445,7 @@
                                 <div class="text_post">
                                     <div class="wrapper_block_photo_post_first wrapper_block_photo_post_first_one_photo">
                                         <div class="wrapper_photo_post size_photo_1">
-                                            <!-- <img class="photo_post" 
-                                                :src="myPhotos"
-                                                :alt="'photo' + getSelectNotice.id"> -->
-                                                <UIPhoto :photo="getSelectNotice" />
+                                            <UIPhoto :photo="getSelectNotice" />
                                         </div>
                                     </div>
                                 </div>
@@ -515,17 +479,13 @@ export default {
 
     methods: {
         ...mapMutations({
-            // setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
             setIsShowModalWindowOneNotice: "noticeStore/setIsShowModalWindowOneNotice",
             setPhotosPostNotice: "noticeStore/setPhotosPostNotice"
         }),
 
         ...mapActions({
-            // NOTICE_ARRAY_DELETE: "noticeStore/NOTICE_ARRAY_DELETE",
             REMOVE_COUNT_NOTICE_LIST: "noticeStore/REMOVE_COUNT_NOTICE_LIST"
         }),
-
-
 
         moreTextPost(getSelectNotice) {
             getSelectNotice.isFullText = true;
@@ -557,8 +517,6 @@ export default {
     computed: {
         ...mapGetters({
             getNoticeArray: "noticeStore/getNoticeArray",
-            // noticeTextArray: "noticeStore/noticeTextArray",
-            // getIsShowModalWindowOneNotice: "noticeStore/getIsShowModalWindowOneNotice",
             getSelectNotice: "noticeStore/getSelectNotice",
             getPhotosPostNotice: "noticeStore/getPhotosPostNotice"
         }),

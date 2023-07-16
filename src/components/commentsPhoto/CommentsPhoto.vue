@@ -2,23 +2,22 @@
     <div class="wrapper_block_comments">
         <div class="wrapper_block_comments_flex_column">
             <div class="wrapper_block_comments_title">
-            <div class="wrapper_block_comments_title_name_ava">
-                <div class="wrapper_block_comments_ava">
-                    <!-- <img class="ava_posts" :src="loadAva" alt="ava"> -->
-                    <UIAva :ava="currentImg.ava"/>
+                <div class="wrapper_block_comments_title_name_ava">
+                    <div class="wrapper_block_comments_ava">
+                        <UIAva :ava="currentImg.ava" />
+                    </div>
+                    <div class="wrapper_block_comments_name">
+                        <p class="block_comments_name">{{ currentImg.name + " " + currentImg.surname }}</p>
+                    </div>
                 </div>
-                <div class="wrapper_block_comments_name">
-                    <p class="block_comments_name">{{ currentImg.name + " " + currentImg.surname }}</p>
+
+                <div class="wrapper_block_comments_date">
+                    <p class="block_comments_date">{{ currentImg.date.slice(0, 10) }}</p>
                 </div>
-            </div>
 
-            <div class="wrapper_block_comments_date">
-                <p class="block_comments_date">{{ currentImg.date.slice(0, 10) }}</p>
-            </div>
 
-            
-        </div>
-        <div class="wrapper_block_comments_item" @mouseleave="closeUserLikes(currentImg)">
+            </div>
+            <div class="wrapper_block_comments_item" @mouseleave="closeUserLikes(currentImg)">
                 <div class="wrapper_block_comments_item_like">
                     <p class="count_likes" v-if="currentImg.likes !== 0">{{ currentImg.likes }}</p>
 
@@ -37,11 +36,12 @@
                             @mouseleave.stop="user.isNameUserLike = false"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
                             <!-- <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava"> -->
-                            <UIAva :ava="user.ava" :my_friend_ava="true"/>
+                            <UIAva :ava="user.ava" :my_friend_ava="true" />
 
                         </div>
                         <div class="wrapper_like_user_name" v-if="user.isNameUserLike">
-                            <p class="like_user_name" @mouseleave="closeUserLikes(currentImg)">{{user.name + " " + user.surname}}</p>
+                            <p class="like_user_name" @mouseleave="closeUserLikes(currentImg)">{{ user.name + " " +
+                                user.surname }}</p>
                         </div>
                     </div>
 
@@ -51,7 +51,6 @@
                 </div>
             </div>
         </div>
-        
 
         <!-- комментарии -->
         <div class="wrapper_block_comments_comment" ref="scrollToMe">
@@ -71,8 +70,7 @@
                     <div class="my_friend" v-for="user in getUsersLikesPhoto" :key="user.author_likes_photo">
                         <div class="my_friend_ava_full"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
-                            <!-- <img :src="loadAvaUserLikePhoto(user.ava)" alt="ava"> -->
-                            <UIAva :ava="user.ava"/>
+                            <UIAva :ava="user.ava" />
                         </div>
                         <div class="my_friend_name"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_photo}` } })">
@@ -229,11 +227,6 @@ export default {
     border-radius: 100%;
 }
 
-/* .ava_posts {
-    width: 50px;
-    border-radius: 100%;
-} */
-
 .wrapper_block_comments_name {
     margin-left: 5px;
 }
@@ -245,8 +238,6 @@ export default {
     word-break: break-word;
     white-space: normal;
 }
-
-.wrapper_block_comments_date {}
 
 .block_comments_date {
     font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
@@ -276,8 +267,6 @@ export default {
     cursor: pointer;
 }
 
-.wrapper_block_comments_dislike {}
-
 .wrapper_block_comments_comment {
     display: flex;
     flex-direction: column;
@@ -286,8 +275,6 @@ export default {
     flex-grow: 1;
     overflow: auto;
 }
-
-.block_comments_comment {}
 
 .wrapper_likes_users {
     display: flex;
@@ -307,12 +294,6 @@ export default {
     padding: 2px;
 
 }
-
-/* .my_friend_ava img {
-    height: 100%;
-    border-radius: 100%;
-    cursor: pointer;
-} */
 
 .wrapper_more_users_likes {
     display: flex;
@@ -340,14 +321,12 @@ export default {
     align-items: center;
     justify-content: center;
     z-index: 3;
-    /* opacity: 0.1; */
 }
 
 .modal_show_users_likes_window {
     position: relative;
     width: max-content;
     height: max-content;
-    /* padding-bottom: 10px; */
     border-radius: 5px;
     background: whitesmoke;
     box-shadow: 3px 6px 5px 1px rgb(0 0 0 / 5%);
@@ -370,10 +349,6 @@ export default {
     z-index: 1;
 }
 
-.like_user_name {
-    
-}
-
 .my_friend {
     display: flex;
     flex-direction: column;
@@ -381,7 +356,6 @@ export default {
     padding: 5px;
 }
 
-.my_friend_ava_full {}
 
 .my_friend_ava_full img {
     width: 64px;
@@ -397,7 +371,6 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
     .wrapper_block_comments_flex_column {
@@ -410,10 +383,6 @@ export default {
         width: auto;
         max-height: 36vh;
     }
-
-    /* .ava_posts {
-        width: 40px;
-    } */
 
     .wrapper_block_comments_item {
         flex-direction: row-reverse;
@@ -431,8 +400,9 @@ export default {
     }
 
     .block_comments_name[data-v-99ffbf26] {
-    max-width: 205px;
-    white-space: normal;
-}
+        max-width: 205px;
+        white-space: normal;
+    }
 
-}</style>
+}
+</style>

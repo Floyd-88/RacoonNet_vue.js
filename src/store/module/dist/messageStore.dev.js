@@ -244,11 +244,7 @@ var messageStore = {
                     commit("setCountDialogs", 10);
                   } else {
                     commit("setIsNotDialogs", true);
-                  } // let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
-                  // commit("setCountNewMessage", count)
-                  // commit("setMessageUser", "")
-                  // commit("setModalWriteMessage", false)
-
+                  }
 
                   resolve(resp);
                 })["catch"](function (err) {
@@ -450,7 +446,7 @@ var messageStore = {
               return regeneratorRuntime.awrap(_axios["default"].put("http://localhost:8000/unread_messages", {
                 conv_id: conv_id
               }).then(function () {
-                commit("setArrayDialogsConvID", conv_id); // commit("setCountNewMessage", getters.getCountNewMessage - res.data.count)
+                commit("setArrayDialogsConvID", conv_id);
               }));
 
             case 4:

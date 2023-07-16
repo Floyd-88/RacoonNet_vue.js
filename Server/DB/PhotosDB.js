@@ -6,7 +6,6 @@ class PhotosDB {
         this.connection = mysql.createConnection(config); // подключаем базу данных
         this.createTablePhotos();
         this.createTablePhotosLikes();
-        // this.createTablePhotosPost();
     }
 
     //создаем таблицу БД с фотографиями

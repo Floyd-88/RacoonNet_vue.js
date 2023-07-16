@@ -16,7 +16,6 @@ export const postsMyPageStore = {
         countNews: 0, //с какой новости начинать вести счет
         limitNews: 10, // лимит новостей на странице
         likesPost: "",
-        // isLoadPhotoPost: "" //загрузка фотографий в пост
         photosPostsArray: [], //фотографии к постам
         isNotRepeatAddPost: true //предотвращение потворной отправки поста
 
@@ -32,7 +31,6 @@ export const postsMyPageStore = {
         },
         getNewsPostsFriends: state => state.newsPostsFriends,
         getLikesPost: state => state.likesPost,
-        // getIsLoadPhotoPost: (state) => state.isLoadPhotoPost
         getPhotosPostsArray: (state) => state.photosPostsArray,
 
         getIsNotRepeatAddPost: (state) => state.isNotRepeatAddPost,
@@ -102,10 +100,6 @@ export const postsMyPageStore = {
             state.likesPost = value
         },
 
-        // setIsLoadPhotoPost(state, bool) {
-        //     state.isLoadPhotoPost = bool
-        // }
-
         setPhotosPostsArray(state, value) {
             state.photosPostsArray = value
         },
@@ -152,7 +146,10 @@ export const postsMyPageStore = {
 
                                 response.data.forEach(post => {
                                     if (post.photos === "1") {
-                                        dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: getters.getUser.userID });
+                                        dispatch("LOAD_POST_PHOTOS", {
+                                            postID: post.id,
+                                            userID: getters.getUser.userID
+                                        });
                                     }
                                 });
                                 resolve(response.data)
@@ -160,8 +157,6 @@ export const postsMyPageStore = {
                         } else {
                             resolve(response.data)
                         }
-                        // console.log(response)
-                        // resolve(response)
                     })
                     .catch((err) => {
                         reject(err)
@@ -190,24 +185,12 @@ export const postsMyPageStore = {
             await axios.post('http://localhost:8000/dataBase.js', newPost)
                 .then(async function(response) {
 
-
-                    // newPost.id = response.data.user.postID;
-                    // newPost.name = response.data.user.name;
-                    // newPost.surname = response.data.user.surname;
-                    // newPost.ava = response.data.user.ava
-
                     await commit("setAddPosts", response.data);
                     await commit("setCountPosts", 1);
                     await commit("setIsNotRepeatAddPost", true);
 
                     //отправляем уведомление адресату без перезагрузки страницы
                     SocketioService.sendNotice(newPost.id);
-
-                    //отправляем уведомление всем кто находится в комнате(MyPage)
-                    // SocketioService.sendInfoNewPost("add post", cb => {
-                    //     console.log(cb);
-                    // });
-
                 })
                 .catch(function(error) {
                     commit("setIsNotRepeatAddPost", true);
@@ -260,11 +243,6 @@ export const postsMyPageStore = {
                 })
                 .then(function() {
                     commit("setCountPostDel");
-
-                    //отправляем уведомление всем кто находится в комнате(MyPage)
-                    // SocketioService.sendInfoNewPost("delete post", cb => {
-                    //     console.log(cb);
-                    // });
                 })
                 .catch(function(error) {
                     console.log(error)
@@ -304,16 +282,16 @@ export const postsMyPageStore = {
                             commit("setNewsPostsFriends", [...state.newsPostsFriends, ...response.data])
                             commit("setCountNews", 10)
 
-                            // response.data.forEach(post => {
-                            //     dispatch("commentsPost/LOAD_COMMENTS_POST", post.authorPost, { root: true });
-                            //     dispatch("commentsPost/LOAD_COMMENTS_COMMENT", post.authorPost, { root: true });
-                            // })
-
                             response.data.forEach(post => {
                                 if (post.photos === "1") {
-                                    dispatch("LOAD_POST_PHOTOS", { postID: post.id, userID: post.authorPost });
+                                    dispatch("LOAD_POST_PHOTOS", {
+                                        postID: post.id,
+                                        userID: post.authorPost
+                                    });
                                 }
-                                dispatch("commentsPost/LOAD_COMMENTS_ONE_POST", post.id, { root: true });
+                                dispatch("commentsPost/LOAD_COMMENTS_ONE_POST", post.id, {
+                                    root: true
+                                });
                             });
                         }
                         resolve(response);
@@ -348,7 +326,10 @@ export const postsMyPageStore = {
         },
 
         //загрузка фотографий к постам
-        async LOAD_POST_PHOTOS({ state, commit }, params) {
+        async LOAD_POST_PHOTOS({
+            state,
+            commit
+        }, params) {
             try {
                 await axios.get('http://localhost:8000/post_photos.js', {
                     params

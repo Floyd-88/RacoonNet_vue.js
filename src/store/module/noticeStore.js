@@ -1,8 +1,4 @@
-// import axios from "axios";
-// import SocketioService from "../../services/socketio.service";
-
 import axios from "axios";
-
 
 export const noticeStore = {
 
@@ -58,16 +54,13 @@ export const noticeStore = {
 
     actions: {
         //получение массива с уведомлениями
-        async GET_NEW_NOTICE({ commit }) {
+        async GET_NEW_NOTICE({
+            commit
+        }) {
 
             return new Promise((resolve, reject) => {
                 axios.get("http://localhost:8000/new_notice")
                     .then(function(res) {
-                        // res.data.map(notice => {
-                        //     if (notice.selectedGender === "woman") {
-                        //         notice.text = state.noticeTextArray
-                        //     }
-                        // })
                         commit("setNoticeArray", res.data);
                         resolve();
                     })
@@ -78,11 +71,15 @@ export const noticeStore = {
         },
 
         //удаление уведомления из списка
-        async NOTICE_ARRAY_DELETE({ commit }, id) {
+        async NOTICE_ARRAY_DELETE({
+            commit
+        }, id) {
             commit("setNoticeArrayDelete", id);
             try {
                 await axios.delete("http://localhost:8000/notice_delete", {
-                        data: { noticeID: id }
+                        data: {
+                            noticeID: id
+                        }
                     })
                     .then(function() {})
             } catch (err) {
@@ -92,10 +89,14 @@ export const noticeStore = {
         },
 
         //получение фотографий к посту в уведомлении
-        async GET_PHOTOS_POST_NOTICE({ commit }, post_id) {
+        async GET_PHOTOS_POST_NOTICE({
+            commit
+        }, post_id) {
             try {
                 await axios.get("http://localhost:8000/new_notice_photos", {
-                        params: { post_id }
+                        params: {
+                            post_id
+                        }
                     })
                     .then(function(res) {
                         commit("setPhotosPostNotice", res.data);

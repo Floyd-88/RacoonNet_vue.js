@@ -35,7 +35,6 @@ export default {
 .main {
   margin-left: 180px;
 }
-
 .not_found {
   text-align: center;
   margin-top: 80px;
@@ -46,9 +45,7 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
-
   .main {
     margin-left: 0;
   }

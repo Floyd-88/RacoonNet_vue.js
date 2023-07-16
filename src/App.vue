@@ -1,13 +1,5 @@
 <template>
     <HeaderNet />
-
-    <!-- показывать загрузчик
-  <template v-if="getStatus === 'loading'">
-    <div class="loading_show">
-      <UIloadMoreContent />
-    </div>
-  </template> -->
-
     <div class="wrapper">
         <router-view></router-view>
         <UInewMessage />
@@ -64,8 +56,8 @@ export default {
                                 return
                             }
                         });
-                    if(localStorage.getItem("token")) {
-                    return axios.request(error.config);
+                    if (localStorage.getItem("token")) {
+                        return axios.request(error.config);
                     }
                 }
             }
@@ -75,8 +67,6 @@ export default {
             return Promise.reject(error);
         });
 
-
-        // this.CHECK_CONFIRM_FRIEND();
         if (localStorage.getItem("token")) {
             this.LOAD_DIALOGS()
                 .then(() => () => { })
@@ -101,8 +91,7 @@ export default {
                     }
                 });
         }
-        // this.CHECK_REQUEST_FRIEND(this.$route.params.id);
-        
+
         //вызываем метод для отправки сообщения всем участникам комнаты
         SocketioService.setupSocketConnection();
 
@@ -112,12 +101,12 @@ export default {
             if (+this.$route.params.id === +data.sender) {
                 this.setArrayMessages([...this.getArrayMessages, data]);
             }
-            
+
             this.UPDATE_DIALOGS_SOCKETS(data);
 
             if (this.$route.path === `/message/id${data.sender}`) {
                 this.setIsNewMessageNotify(false);
-                
+
             }
             else {
                 this.setIsNewMessageNotify(true);
@@ -130,36 +119,18 @@ export default {
         // получаем фотографии из сообщения
         SocketioService.subscribeToMessagesPhotos((err, data) => {
             if (+this.$route.params.id === +data.arrayPhotos[0].userID) {
-            this.setPhotosMessagesArray([...data.arrayPhotos, ...this.getPhotosMessagesArray]);
+                this.setPhotosMessagesArray([...data.arrayPhotos, ...this.getPhotosMessagesArray]);
             }
             if (err) {
                 console.log(err);
             }
         });
-        
-
-        //изменяем количество подгружаемых постов при скроллинге
-        // SocketioService.subscribeUsersID((err, status_post) => {
-        //   console.log(status_post)
-        //   if(status_post === 'add post') {
-        //     this.setCountPosts(1);
-        //   } else if(status_post === 'delete post') {
-        //     this.setCountPostDel();
-        //   }
-        //   if(err) {
-        //     console.log(err)
-        //   }
-        // });
 
         //получаем уведомления
         SocketioService.subscribeToNotice((err, data) => {
             if (data.length > 0) {
                 if (data[0].text_notice !== "Пользователь удален из ваших друзей") {
                     this.setNoticeArray([...data]);
-                    //   if(data[0].text_notice === "написал что то на Вашей стене" && this.getCountPosts !== 0) {
-                    //   console.log(data[0])
-                    //   this.setCountPosts(1);
-                    // } 
                 }
                 this.changeTextBTN(data[0]);
             }
@@ -168,9 +139,7 @@ export default {
             }
         });
     },
-    mounted() {
-        // this.LOAD_DIALOGS();
-    },
+  
     beforeUnmount() {
         SocketioService.disconnect();
     },
@@ -182,7 +151,6 @@ export default {
             setCountFriendsNull: "friendsStore/setCountFriendsNull",
             setUsersMyFriends: "friendsStore/setUsersMyFriends",
             setNoticeArray: "noticeStore/setNoticeArray",
-            // setCancelTokens: "cancelLoadAxios/setCancelTokens",
             changeTextBTN: "friendsStore/changeTextBTN",
             setCountPosts: "postsMyPageStore/setCountPosts",
             setCountPostDel: "postsMyPageStore/setCountPostDel",
@@ -205,9 +173,6 @@ export default {
             CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND",
             UPDATE_TOKEN: "authorizationStore/UPDATE_TOKEN",
             GET_NEW_NOTICE: "noticeStore/GET_NEW_NOTICE",
-            // CANCEL_PENDING_REQUESTS: "cancelLoadAxios/CANCEL_PENDING_REQUESTS"
-            // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
-            // loadPostServer: "postsMyPageStore/loadPostServer",
         }),
     },
     computed: {
@@ -244,11 +209,6 @@ export default {
                         if (this.getCountFriends === 0) {
                             this.GET_USER_MY_FRIENDS(id);
                         }
-                        // this.LOAD_DIALOGS();
-                        // this.CHECK_CONFIRM_FRIEND();
-                        // console.log(this.getArrayDialogs.reduce((accum, item) => accum + item.unread, 0));
-                        // this.loadAllPhotos();
-                        // this.loadPostServer(this.$route.params.id);
                     })
                     .catch((err) => {
                         if (err.response?.data === "Такого пользователя не существует") {
@@ -294,9 +254,7 @@ body {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
-
     .wrapper {
         margin: 0 5%;
     }

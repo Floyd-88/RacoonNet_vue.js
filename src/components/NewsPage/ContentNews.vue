@@ -1,15 +1,13 @@
 <template>
-  <div class="post" v-for="post in newsPostsFriendsArray.filter(post => post.delete_post !== 1)" :key="post.id" @mouseover="showBtnPost(post)"
-    @mouseleave="notShowBtnPost(post)">
+  <div class="post" v-for="post in newsPostsFriendsArray.filter(post => post.delete_post !== 1)" :key="post.id"
+    @mouseover="showBtnPost(post)" @mouseleave="notShowBtnPost(post)">
 
     <div class="wrapper_post">
       <div class="wrapper_post_user">
 
         <div class="wrapper_post_name">
-          <div class="wrapper_ava_posts"
-          @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
-            <!-- <img class="ava_posts" alt="ava" ref="img" :src= "require(`../../assets/${post.ava}`)"> -->
-              <UIAva :ava="post.ava"/>
+          <div class="wrapper_ava_posts" @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
+            <UIAva :ava="post.ava" />
           </div>
           <div class="block_post_name">
             <p class="post_name" @click="$router.push({ name: 'mypage', params: { id: `${post.authorPost}` } })">
@@ -29,58 +27,44 @@
 
       </div>
 
-       <!-- текст поста -->
-       <div class="wrapper_text_post" v-if="post.postText.length < 800">
-          <p class="text_post">
-            {{ postText(post.postText)}}
-          </p>
-        </div>
-        <div class="wrapper_text_post" v-else>
-          <p class="text_post" v-if="!post.isFullText">
-            {{ postText(post.postText).slice(0, 800)}}
-          </p>
-          <p class="text_post" v-else>
-            {{ postText(post.postText)}}
-          </p>
-          <p class="more_text_post" 
-            v-if="!post.isFullText" 
-            @click="moreTextPost(post)">
-            Показать еще
-          </p>
-        </div>
+      <!-- текст поста -->
+      <div class="wrapper_text_post" v-if="post.postText.length < 800">
+        <p class="text_post">
+          {{ postText(post.postText) }}
+        </p>
+      </div>
+      <div class="wrapper_text_post" v-else>
+        <p class="text_post" v-if="!post.isFullText">
+          {{ postText(post.postText).slice(0, 800) }}
+        </p>
+        <p class="text_post" v-else>
+          {{ postText(post.postText) }}
+        </p>
+        <p class="more_text_post" v-if="!post.isFullText" @click="moreTextPost(post)">
+          Показать еще
+        </p>
+      </div>
 
       <div class="wrapper_block_photo_post">
         <div class="wrapper_block_photo_post_first">
-          <template 
-            v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(0, 1)" 
-            :key="index">
-          <div class="wrapper_photo_post size_photo_1" 
-            v-if="post.id === photo.id"
-            @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
-              <!-- <img class="photo_post" 
-                :src="require(`../../assets/${photo.photo_name}`)"
-                :alt="'photo' + photo.id"
-                >      -->
-                <UIPhoto :photo="photo"/>
-          </div>
-        </template>
-        </div>
-        
-        <div class="wrapper_block_photo_post_another" v-if="getPhotosPostsArray.filter(i => i.id === post.id).slice(1).length
-           > 0">
-          <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(1)" 
-            :key="index">
-            <div class="wrapper_photo_post photo_another" 
-            v-if="post.id === photo.id"
-            @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index+1, id: photo.id, postID: post.id })">
-              <!-- <img class="photo_post" 
-                :src="require(`../../assets/${photo.photo_name}`)"
-                :alt="'photo' + photo.id"> -->
-                <UIPhoto :photo="photo"/>
+          <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(0, 1)" :key="index">
+            <div class="wrapper_photo_post size_photo_1" v-if="post.id === photo.id"
+              @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index, id: photo.id, postID: post.id })">
+              <UIPhoto :photo="photo" />
             </div>
           </template>
         </div>
-        
+
+        <div class="wrapper_block_photo_post_another" v-if="getPhotosPostsArray.filter(i => i.id === post.id).slice(1).length
+          > 0">
+          <template v-for="(photo, index) in getPhotosPostsArray.filter(i => i.id === post.id).slice(1)" :key="index">
+            <div class="wrapper_photo_post photo_another" v-if="post.id === photo.id"
+              @click="FULL_SIZE_PHOTO_POST({ 'bool': true, 'elem': index + 1, id: photo.id, postID: post.id })">
+              <UIPhoto :photo="photo" />
+            </div>
+          </template>
+        </div>
+
       </div>
     </div>
 
@@ -109,7 +93,7 @@ export default {
   name: "ContentNews",
 
   props: {
-    isNotNews:{
+    isNotNews: {
       type: Boolean,
       default: false
     }
@@ -117,10 +101,8 @@ export default {
 
   methods: {
     ...mapMutations({
-      // setModulePost: "postsMyPageStore/setModulePost",
     }),
     ...mapActions({
-      // LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS",
       FULL_SIZE_PHOTO_POST: "showFullPhotoStore/FULL_SIZE_PHOTO_POST",
       closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
     }),
@@ -148,14 +130,13 @@ export default {
 
   computed: {
     ...mapGetters({
-      // getUser: "authorizationStore/getUser",
       getNewsPostsFriends: "postsMyPageStore/getNewsPostsFriends",
       getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
       getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
     }),
 
     newsPostsFriendsArray() {
-      let notDoubleNews = this.getNewsPostsFriends.filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i);
+      let notDoubleNews = this.getNewsPostsFriends.filter((v, i, a) => a.findIndex(v2 => (v2.id === v.id)) === i);
       return notDoubleNews;
     }
   }
@@ -250,7 +231,7 @@ export default {
   cursor: pointer;
   display: inline-block;
   font-size: 14px;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .btn_post {
@@ -277,26 +258,26 @@ export default {
 
 .wrapper_not_news {
   font-size: 16px;
-    line-height: 26px;
-    position: absolute;
-    top: 50%;
-    margin-top: -100px;
-    text-align: center;
-    opacity: .7;
-    font-family: Russo One, fantasy, sans-serif;
-    color: dimgray;
-    left: 30%;
-    margin-left: -50px;
-    padding: 0 60px;
+  line-height: 26px;
+  position: absolute;
+  top: 50%;
+  margin-top: -100px;
+  text-align: center;
+  opacity: .7;
+  font-family: Russo One, fantasy, sans-serif;
+  color: dimgray;
+  left: 30%;
+  margin-left: -50px;
+  padding: 0 60px;
 }
 
 .wrapper_block_photo_post {
   display: flex;
-    justify-content: center;
-    flex-direction: row;
-    max-height: 450px;
-    width: 75%;
-    padding: 0 8%;
+  justify-content: center;
+  flex-direction: row;
+  max-height: 450px;
+  width: 75%;
+  padding: 0 8%;
 }
 
 .wrapper_block_photo_post_first {
@@ -304,25 +285,25 @@ export default {
   width: 75%;
   /* flex: 1.5; */
   /* background-color: rgb(0 0 0 / 10%); */
-    align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .wrapper_block_photo_post_another {
   display: flex;
-    flex-direction: column;
-    width: 25%;
+  flex-direction: column;
+  width: 25%;
   /* flex: 1; */
-    /* background-color: rgb(0 0 0 / 10%); */
-    margin-left: 10px;
+  /* background-color: rgb(0 0 0 / 10%); */
+  margin-left: 10px;
 }
 
 .wrapper_photo_post {
   height: -webkit-fill-available;
-    /* margin: 10px; */
-    padding-bottom: 10px;
-    /* border-radius: 8px; */
-    overflow: hidden;
+  /* margin: 10px; */
+  padding-bottom: 10px;
+  /* border-radius: 8px; */
+  overflow: hidden;
 }
 
 .photo_post {
@@ -333,6 +314,7 @@ export default {
   border-radius: 8px;
   cursor: pointer;
 }
+
 .size_photo_1 {
   width: 100%;
   height: 100%;
@@ -346,19 +328,19 @@ export default {
   .wrapper_block_photo_post {
     width: 100%;
     padding: 2% 2% 0 2%;
-}
+  }
 
-.wrapper_block_photo_post_another {
+  .wrapper_block_photo_post_another {
     width: 22%;
-}
+  }
 
-.wrapper_not_news {
+  .wrapper_not_news {
     position: static;
     top: 50%;
     margin-top: 0;
     left: 30%;
     margin-left: 0;
     padding: 0;
-}
+  }
 }
 </style>

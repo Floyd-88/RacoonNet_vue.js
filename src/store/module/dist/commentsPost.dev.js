@@ -35,8 +35,6 @@ var commentsPost = {
       usersLikesPost: [],
       //пользователи лайкнувшие пост
       showModalBlockUsersLikesPost: false //показывать блок с пользователями лайкнувшими пост
-      // commentText: "",
-      // underCommentText: "",
 
     };
   },
@@ -61,8 +59,7 @@ var commentsPost = {
     },
     getShowModalBlockUsersLikesPost: function getShowModalBlockUsersLikesPost(state) {
       return state.showModalBlockUsersLikesPost;
-    } // getUnderCommentText: state => state.underCommentText
-
+    }
   },
   mutations: {
     setIsShowWriteComment: function setIsShowWriteComment(state) {
@@ -97,10 +94,7 @@ var commentsPost = {
     },
     setShowModalBlockUsersLikesPost: function setShowModalBlockUsersLikesPost(state, bool) {
       state.showModalBlockUsersLikesPost = bool;
-    } // setUnderCommentText(state, text) {
-    //     state.underCommentText = text;
-    // }
-
+    }
   },
   actions: {
     //сохранение комментария к посту в базу данных
@@ -125,11 +119,7 @@ var commentsPost = {
               newCommentsPost.date = _context.sent;
               _context.next = 9;
               return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/load_comments_post.js', newCommentsPost).then(function (response) {
-                commit("setCommentsArray", [response.data].concat(_toConsumableArray(state.commentsArray))); // commit("setAddPosts", response.data);
-                // commit("setCountPosts", 1);
-                // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
-                // commit("setCommentPost", "")
-                //отправляем уведомление адресату без перезагрузки страницы
+                commit("setCommentsArray", [response.data].concat(_toConsumableArray(state.commentsArray))); //отправляем уведомление адресату без перезагрузки страницы
 
                 _socketio["default"].sendNotice(response.data.authorPost);
               })["catch"](function (error) {
@@ -165,13 +155,8 @@ var commentsPost = {
               newCommentsComment.date = _context2.sent;
               _context2.next = 9;
               return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/load_comments_comment.js', newCommentsComment).then(function (response) {
-                // console.log(response.data);
                 response.data.nameAddressee = newCommentsComment.nameAddressee;
-                commit("setCommentsCommentArray", [response.data].concat(_toConsumableArray(state.commentsCommentArray))); // commit("setAddPosts", response.data);
-                // commit("setCountPosts", 1);
-                // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
-                // commit("setCommentPost", "")
-                //отправляем уведомление адресату без перезагрузки страницы
+                commit("setCommentsCommentArray", [response.data].concat(_toConsumableArray(state.commentsCommentArray))); //отправляем уведомление адресату без перезагрузки страницы
 
                 _socketio["default"].sendNotice(newCommentsComment.author_comment_comment || response.data.author_comment_id);
               })["catch"](function (error) {

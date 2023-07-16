@@ -33,7 +33,6 @@ var _index = _interopRequireDefault(require("@/store/index"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-// import SecureNet from "@/components/SecureNet";
 var routes = [{
   path: "/",
   component: _MainPage["default"],

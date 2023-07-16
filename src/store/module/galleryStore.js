@@ -45,7 +45,11 @@ export const galleryStore = {
     },
 
     actions: {
-        async GET_PHOTO_FILTER_THEMA({ state, commit, rootGetters }) {
+        async GET_PHOTO_FILTER_THEMA({
+            state,
+            commit,
+            rootGetters
+        }) {
             commit("setIsNotCat", false);
 
             let allPhotos = rootGetters["loadPhotoStore/getAllPhotosMyPage"];
@@ -65,7 +69,10 @@ export const galleryStore = {
             }
         },
 
-        async GET_PHOTO_NOT_FILTER({ commit, rootGetters }) {
+        async GET_PHOTO_NOT_FILTER({
+            commit,
+            rootGetters
+        }) {
             commit("setCheckedCat", []);
             commit("setIsShowCat", false);
             commit("loadPhotoStore/setLimitAllPhotoRemove", null, {

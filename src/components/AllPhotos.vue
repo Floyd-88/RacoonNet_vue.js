@@ -1,14 +1,13 @@
 <template>
-    <CloseModal @click="setIsModalAllPhotos(false)"/>
+    <CloseModal @click="setIsModalAllPhotos(false)" />
 
     <h2 class="title_pthoto_name">Все фотографии</h2>
     <div class="wrapper_contents_allPhotos">
         <div class="wrapper_preview_allPhotos">
-            <div class="all_photos" id="preview_myPhoto" 
-            v-for="(photo, index) in getAllPhotosMyPage.slice(0, getLimitAllPhoto)" 
-            :key="index"
-            @click="fullSizePhoto({bool: true, elem: index, id: photo.id})">
-                <UIPhoto :photo="photo"/>
+            <div class="all_photos" id="preview_myPhoto"
+                v-for="(photo, index) in getAllPhotosMyPage.slice(0, getLimitAllPhoto)" :key="index"
+                @click="fullSizePhoto({ bool: true, elem: index, id: photo.id })">
+                <UIPhoto :photo="photo" />
             </div>
 
             <!--при прокрутки страницы до данного элемента - подгружать следующие фотографии -->
@@ -16,9 +15,6 @@
         </div>
 
     </div>
-
-
-
 </template>
 
 <script>
@@ -38,7 +34,6 @@ export default {
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
                 this.setLimitAllPhoto(8);
-                // this.loadAllPhotos(this.$route.params.id);
             }
         };
         const observer = new IntersectionObserver(callback, options);
@@ -47,22 +42,19 @@ export default {
     methods: {
         ...mapMutations({
             setIsModalAllPhotos: "loadPhotoStore/setIsModalAllPhotos",
-            // setCountPhoto: "loadPhotoStore/setCountPhoto",
             setLimitAllPhoto: "loadPhotoStore/setLimitAllPhoto",
         }),
         ...mapActions({
-            // loadAllPhotos: "loadPhotoStore/loadAllPhotos",
             fullSizePhoto: "showFullPhotoStore/fullSizePhoto"
         }),
     },
     computed: {
         ...mapGetters({
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
-            // getUser: "authorizationStore/getUser",
             getLimitAllPhoto: "loadPhotoStore/getLimitAllPhoto"
         }),
     },
-    
+
 }
 
 </script>
@@ -74,6 +66,7 @@ export default {
     font-family: Russo One, fantasy, sans-serif;
     font-size: 20px;
 }
+
 .wrapper_contents_allPhotos {
     width: 740px;
     display: flex;
@@ -121,13 +114,12 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
     .wrapper_contents_allPhotos {
-    width: 360px;
-    padding: 0px;
-}
+        width: 360px;
+        padding: 0px;
+    }
 }
 </style>
 

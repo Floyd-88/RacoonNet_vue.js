@@ -49,8 +49,6 @@ export default {
   data() {
     return {
       userID: (localStorage.getItem("user")) ? JSON.parse(localStorage.getItem("user")).userID : "",
-      // nameUser: (localStorage.getItem("token")) ? atob(localStorage.getItem("token").split(".")[1]) : "",
-
     };
   },
   methods: {
@@ -64,7 +62,6 @@ export default {
     runLogout() {
       this.logout()
         .then(() => {
-          // window.location.href = "/";
           this.$router.push('/')
         });
     }
@@ -72,7 +69,6 @@ export default {
   computed: {
     ...mapGetters({
       isLoggedIn: "authorizationStore/isLoggedIn",
-      // getUser: "authorizationStore/getUser",
       getIsShowModalWindowNotice: "noticeStore/getIsShowModalWindowNotice",
       getNoticeArray: "noticeStore/getNoticeArray"
     }),
@@ -107,7 +103,7 @@ export default {
 }
 
 .header_wrapper_logo_title_notice {
-    display: flex;
+  display: flex;
 }
 
 .header_wrapper_logo {
@@ -214,11 +210,10 @@ export default {
 }
 
 .menu_burger {
-    display: none;
+  display: none;
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
   .header {
     justify-content: center;
@@ -231,11 +226,11 @@ export default {
     align-items: center;
     width: 100%;
     justify-content: space-around;
-}
+  }
 
-.header_wrapper_logo {
+  .header_wrapper_logo {
     display: none;
-}
+  }
 
   .header_logo {
     width: 40px;

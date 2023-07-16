@@ -5,8 +5,7 @@
                 <div class="message_name_user">
                     <div class="dialog_ava_user"
                         @click="$router.push({ name: 'mypage', params: { id: comment.author_comment_id } })">
-                        <!-- <img :src="pathAva(comment.ava)" alt="ava"> -->
-                        <UIAva :ava="comment.ava"/>
+                        <UIAva :ava="comment.ava" />
 
                     </div>
                     <p class="message_name"
@@ -20,17 +19,15 @@
             </div>
             <div class="message_text">
                 <div v-if="comment.comment_post_text.length < 200">
-                    <p class="text_post" @click="showBtnsAnsw(comment)" >
+                    <p class="text_post" @click="showBtnsAnsw(comment)">
                         {{ messageText(comment.comment_post_text) }}
                     </p>
-                </div>                
+                </div>
                 <div v-else>
-                    <p class="text_post" v-if="!comment.isFullText" 
-                        @click="showBtnsAnsw(comment)" >
+                    <p class="text_post" v-if="!comment.isFullText" @click="showBtnsAnsw(comment)">
                         {{ messageText(comment.comment_post_text).slice(0, 200) }}
                     </p>
-                    <p class="text_post" v-else 
-                        @click="showBtnsAnsw(comment)" >
+                    <p class="text_post" v-else @click="showBtnsAnsw(comment)">
                         {{ messageText(comment.comment_post_text) }}
                     </p>
                     <p class="more_text_post" v-if="!comment.isFullText" @click="moreTextComment(comment)">
@@ -56,7 +53,8 @@
 
                 <div :ref="'underComment' + comment.id">
                     <div class="wrapper_under_write_comments" v-show="comment.isShowWriteUnderComment">
-                        <WriteComments :comment="comment" :name="name" :isShowWriteUnderComment="comment.isShowWriteUnderComment"
+                        <WriteComments :comment="comment" :name="name"
+                            :isShowWriteUnderComment="comment.isShowWriteUnderComment"
                             @notShowWriteUnderComments="notShowWriteUnderComments(comment)" />
                     </div>
                 </div>
@@ -87,7 +85,6 @@ export default {
         return {
             isBtnsAnsw: false,
             userID: JSON.parse(localStorage.getItem('user')).userID,
-            // isShowWriteUnderComment: false,
             name: "" //имя пользователя которму мы отвечаем
         };
     },
@@ -125,14 +122,6 @@ export default {
             comment.isShowWriteUnderComment = false;
         },
 
-        // pathAva(ava) {
-        //     try {
-        //         return require(`../../assets/photo/${ava}`);
-        //     } catch {
-        //         return require(`../../assets/ava/ava_1.jpg`);
-        //     }
-        // },
-
         //в случае закодированных специсимволов в тексте- переводим их обратно в читаемый вид
         messageText(value) {
             let doc = new DOMParser().parseFromString(value, "text/html");
@@ -141,26 +130,18 @@ export default {
 
         moreTextComment(comment) {
             comment.isFullText = true;
-    }
+        }
     },
 
     computed: {
         ...mapGetters({
             getUser: "authorizationStore/getUser",
-            // getCommentsCommentArray: "commentsPost/getCommentsCommentArray"
-            // getCommentsArray: "commentsPost/getCommentsArray",
-            // getCommentPost: "commentsPost/getCommentPost"
         }),
-
-        // commentsComment() {
-        //   return this.getCommentsCommentArray.filter(comment => comment.comment_id === this.comment.id)
-        // }
     },
 
 
     components: { UIbtn }
 }
-
 </script>
 
 <style scoped>
@@ -214,30 +195,27 @@ export default {
     cursor: pointer;
 }
 
-
-
-
 .wrapper_text_post {
-  padding-right: 6px;
+    padding-right: 6px;
 }
 
 .text_post {
-  word-break: break-word;
-  font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
-  font-size: 13px;
-  line-height: 18px;
+    word-break: break-word;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
 }
 
 .more_text_post {
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 14px;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .more_text_post:hover {
-  opacity: 0.7;
+    opacity: 0.7;
 }
 
 .wrapper_answer_comment {
@@ -258,28 +236,25 @@ export default {
     opacity: 0.7;
 }
 
-.wrapper_under_write_comments {}
-
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
+    .text_post {
+        font-size: 12px;
+        line-height: 17px;
+    }
 
-    .text_post{
-    font-size: 12px;
-    line-height: 17px;
-}
-.wrapper_message_dialog_user {
-    margin: 10px 10px 10px 40px;
-}
+    .wrapper_message_dialog_user {
+        margin: 10px 10px 10px 40px;
+    }
 
-.message_name {
-	font-size: 13px;
-    max-width: 170px;
-    word-wrap: break-word;
-}
+    .message_name {
+        font-size: 13px;
+        max-width: 170px;
+        word-wrap: break-word;
+    }
 
-.dialog_ava_user img {
-    width: 40px;
-}
+    .dialog_ava_user img {
+        width: 40px;
+    }
 }
 </style>

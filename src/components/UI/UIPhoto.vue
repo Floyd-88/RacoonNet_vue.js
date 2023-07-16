@@ -1,7 +1,5 @@
 <template>
-   <img class="photo_post" :class="{'full_size_img': full_size}" 
-          :src="loadPhoto" 
-          :alt="photo.photo_name" >
+  <img class="photo_post" :class="{ 'full_size_img': full_size }" :src="loadPhoto" :alt="photo.photo_name">
 </template>
 
 <script>
@@ -23,13 +21,13 @@ export default {
 
   computed: {
     loadPhoto() {
-          try {
-            return require(`../../assets/${this.photo.photo_name}`);
-          }
-          catch(err) {
-            return require(`../../assets/ava/ava_1.jpg`);
-          }
-        },
+      try {
+        return require(`../../assets/${this.photo.photo_name}`);
+      }
+      catch (err) {
+        return require(`../../assets/ava/ava_1.jpg`);
+      }
+    },
   }
 }
 </script>
@@ -53,14 +51,9 @@ export default {
 }
 
 .full_size_img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    padding-bottom: 30px;
-}
-
-@media (max-width: 761px) {
-
-
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding-bottom: 30px;
 }
 </style>

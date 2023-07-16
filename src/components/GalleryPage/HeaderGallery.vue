@@ -56,7 +56,7 @@
                         </div>
                     </div>
                 </template>
-                
+
                 <!-- загрузка без темы -->
                 <template v-if="selectedLoadPhoto === 'not_thema'">
                     <div class="btn_load_photo">
@@ -68,7 +68,7 @@
 
             </div>
         </div>
-</div>
+    </div>
 </template>
   
 <script>
@@ -140,8 +140,6 @@ export default {
     padding: 5px 5px 5px 15px;
 }
 
-.header_btn_show {}
-
 .header_btns_load_photo {
     display: flex;
     align-items: center;
@@ -152,8 +150,6 @@ export default {
     align-items: center;
     margin-left: 10px;
 }
-
-.select_cat_photo {}
 
 .select_cat_photo_sel_change {
     width: 190px;
@@ -180,50 +176,44 @@ export default {
     outline: none;
 }
 
-.select_cat_photo_opt {}
-
-.btn_load_photo {}
-
-.show_more_photo_btn {}
-
-
+/* МЕДИА-ЗАПРОСЫ */
 @media (max-width: 761px) {
     .wrapper_header_btns {
-    height: auto;
-    flex-direction: column;
-}
+        height: auto;
+        flex-direction: column;
+    }
 
-.header_btn_show {
-    margin-bottom: 10px;
-}
+    .header_btn_show {
+        margin-bottom: 10px;
+    }
 
-.btn_load_cat_photo {
-    display: flex;
-    align-items: center;
-    margin-left: 0px;
-    margin-top: 10px;
-}
+    .btn_load_cat_photo {
+        display: flex;
+        align-items: center;
+        margin-left: 0px;
+        margin-top: 10px;
+    }
 
-.btn_load_photo {
-    margin-top: 10px;
-}
+    .btn_load_photo {
+        margin-top: 10px;
+    }
 
-.select_cat_photo_sel {
-width: 190px;
-    font-size: 13px;
-}
+    .select_cat_photo_sel {
+        width: 190px;
+        font-size: 13px;
+    }
 
-.show_more_photo_btn {
-    width: 190px;
-}
+    .show_more_photo_btn {
+        width: 190px;
+    }
 
-.header_btns_load_photo{
-    flex-direction: column;
-}
+    .header_btns_load_photo {
+        flex-direction: column;
+    }
 
-.header_btn_filter {
-    width: 190px;
-}
+    .header_btn_filter {
+        width: 190px;
+    }
 }
 </style>
   

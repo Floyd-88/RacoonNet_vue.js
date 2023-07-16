@@ -31,9 +31,7 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
-
     .list_my_friends[data-v-04e84efa] {
         max-width: 355px;
     }

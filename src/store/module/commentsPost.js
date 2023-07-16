@@ -11,9 +11,6 @@ export const commentsPost = {
         commentsCommentArray: [], //массив комментариев к комментариям
         usersLikesPost: [], //пользователи лайкнувшие пост
         showModalBlockUsersLikesPost: false, //показывать блок с пользователями лайкнувшими пост
-
-        // commentText: "",
-        // underCommentText: "",
     }),
 
     getters: {
@@ -24,8 +21,6 @@ export const commentsPost = {
         getCommentsCommentArray: state => state.commentsCommentArray,
         getUsersLikesPost: state => state.usersLikesPost,
         getShowModalBlockUsersLikesPost: state => state.showModalBlockUsersLikesPost,
-
-        // getUnderCommentText: state => state.underCommentText
     },
 
     mutations: {
@@ -66,10 +61,6 @@ export const commentsPost = {
         setShowModalBlockUsersLikesPost(state, bool) {
             state.showModalBlockUsersLikesPost = bool
         },
-
-        // setUnderCommentText(state, text) {
-        //     state.underCommentText = text;
-        // }
     },
 
     actions: {
@@ -88,11 +79,6 @@ export const commentsPost = {
                 await axios.post('http://localhost:8000/load_comments_post.js', newCommentsPost)
                 .then(function(response) {
                     commit("setCommentsArray", [response.data, ...state.commentsArray]);
-
-                    // commit("setAddPosts", response.data);
-                    // commit("setCountPosts", 1);
-                    // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
-                    // commit("setCommentPost", "")
 
                     //отправляем уведомление адресату без перезагрузки страницы
                     SocketioService.sendNotice(response.data.authorPost);
@@ -117,14 +103,8 @@ export const commentsPost = {
 
                 await axios.post('http://localhost:8000/load_comments_comment.js', newCommentsComment)
                 .then(function(response) {
-                    // console.log(response.data);
                     response.data.nameAddressee = newCommentsComment.nameAddressee
                     commit("setCommentsCommentArray", [response.data, ...state.commentsCommentArray]);
-
-                    // commit("setAddPosts", response.data);
-                    // commit("setCountPosts", 1);
-                    // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
-                    // commit("setCommentPost", "")
 
                     //отправляем уведомление адресату без перезагрузки страницы
                     SocketioService.sendNotice(newCommentsComment.author_comment_comment || response.data.author_comment_id);
@@ -288,9 +268,5 @@ export const commentsPost = {
         }
 
     },
-
-
-
-
     namespaced: true,
 }

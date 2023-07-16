@@ -32,18 +32,12 @@ var cancelLoadAxios = {
           switch (_context.prev = _context.next) {
             case 0:
               state = _ref.state, commit = _ref.commit;
-              // return new Response((resolve, reject) => {
-              //     try {
               state.cancelTokens.forEach(function (request) {
                 if (request.cancel) {
                   request.cancel();
                 }
               });
-              commit('setCancelTokensClear'); // resolve();
-              //     } catch (err) {
-              //         reject(err)
-              //     }
-              // })
+              commit('setCancelTokensClear');
 
             case 3:
             case "end":

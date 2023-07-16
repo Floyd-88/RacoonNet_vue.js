@@ -66,7 +66,6 @@ export const updatePasswordStore = {
             return new Promise((resolve, reject) => {
                 let url = "http://localhost:8000/password";
 
-                // user.email = getters.getUserEmail
                 user.id = getters.getUserID
 
                 axios({
@@ -101,7 +100,5 @@ export const updatePasswordStore = {
             })
         }
     },
-
-
     namespaced: true
 }

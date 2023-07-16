@@ -23,14 +23,9 @@
     
 <script>
 import { mapGetters, mapActions } from "vuex";
-// import store from "@/store/index";
 
 export default {
   name: "AllUsersMessages",
-
-  data() {
-    return {}
-  },
 
   mounted() {
     //подгрузка новой партии диалогов при скроле страницы
@@ -43,7 +38,7 @@ export default {
 
         if (this.getArrayDialogs.length !== 0) {
           this.LOAD_DIALOGS()
-        } 
+        }
       }
     };
     const observer = new IntersectionObserver(callback, options);
@@ -66,7 +61,7 @@ export default {
     })
   },
   computed: {
-    ...mapGetters({ 
+    ...mapGetters({
       getArrayDialogs: "messageStore/getArrayDialogs",
       getIsUIloadMoreDialogs: "messageStore/getIsUIloadMoreDialogs",
       getIsNotDialogs: "messageStore/getIsNotDialogs"
@@ -74,7 +69,6 @@ export default {
   }
 }
 </script>
-    
     
 <style scoped>
 .wrapper_all_messages_users {
@@ -91,39 +85,37 @@ export default {
 
 .wrapper_not_messages {
   display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    opacity: .8;
-    font-family: Russo One, fantasy, sans-serif;
-    color: dimgray;
-    position: absolute;
-    top: 50%;
-    margin-top: -100px;
-    left: 45%;
-    margin-left: -100px;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  opacity: .8;
+  font-family: Russo One, fantasy, sans-serif;
+  color: dimgray;
+  position: absolute;
+  top: 50%;
+  margin-top: -100px;
+  left: 45%;
+  margin-left: -100px;
 }
+
 .wrapper_messages_load_more_message {
   margin-top: 10px;
 }
 
-.observer {
-  /* border: 1px solid; */
-}
-
+/* МЕДИА-ЗАПРОСЫ */
 @media (max-width: 761px) {
   .wrapper_main {
     padding: 0px 0px 5px;
-}
+  }
 
-.wrapper_not_messages {
+  .wrapper_not_messages {
     position: static;
     margin-top: 0;
     margin-left: 0;
-}
+  }
 
-.wrapper_not_messages p {
+  .wrapper_not_messages p {
     text-align: center;
-}
+  }
 }
 </style>

@@ -79,7 +79,6 @@ var friendsStore = {
     getTitleFriend: function getTitleFriend(state) {
       return state.titleFriend;
     },
-    // getNotificationAddFriends: (state) => state.notificationAddFriends,
     getUsersFriendsMe: function getUsersFriendsMe(state) {
       return state.usersFriendsMe;
     },
@@ -145,9 +144,6 @@ var friendsStore = {
     setIsFriend: function setIsFriend(state, bool) {
       state.isFriend = bool;
     },
-    // setNotificationAddFriends(state, value) {
-    //     state.notificationAddFriends = value
-    // },
     setTitleFriend: function setTitleFriend(state, value) {
       state.titleFriend = value;
     },

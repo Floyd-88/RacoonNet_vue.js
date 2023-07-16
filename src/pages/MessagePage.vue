@@ -11,16 +11,15 @@
 import { mapGetters } from "vuex";
 
 export default {
-    name: "MessagePage",
-    
-    computed: {
-        ...mapGetters({
-            isLoggedIn: "authorizationStore/isLoggedIn",
-        }),
-    },
+  name: "MessagePage",
+
+  computed: {
+    ...mapGetters({
+      isLoggedIn: "authorizationStore/isLoggedIn",
+    }),
+  },
 }
 </script>
-
 
 <style scoped>
 .wrapper_main {
@@ -32,15 +31,14 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
-.wrapper_main {
-  padding: 120px 0px 5px;
-}
+  .wrapper_main {
+    padding: 120px 0px 5px;
+  }
 
-.main{
-  margin-left: 0px;
-}
+  .main {
+    margin-left: 0px;
+  }
 }
 </style>

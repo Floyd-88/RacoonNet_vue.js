@@ -25,12 +25,11 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
   .wrapper_myFriends {
     margin-bottom: 20px;
     position: static;
-}
+  }
 }
 </style>

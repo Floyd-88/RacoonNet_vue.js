@@ -10,7 +10,6 @@ import FriendsPage from "@/pages/FriendsPage";
 import GalleryPage from "@/pages/GalleryPage";
 import NewsPage from "@/pages/NewsPage";
 import AdminNet from "@/components/authorizationUser/AdminNet";
-// import SecureNet from "@/components/SecureNet";
 import NotFound from "@/components/authorizationUser/NotFound";
 import AllUsersMessages from "@/components/MessagePage/AllUsersMessages";
 import DialogUser from "@/components/MessagePage/DialogUser";
@@ -123,7 +122,9 @@ const router = createRouter({
     history: createWebHistory(),
 
     scrollBehavior() {
-        return { top: 0 }
+        return {
+            top: 0
+        }
     },
 });
 

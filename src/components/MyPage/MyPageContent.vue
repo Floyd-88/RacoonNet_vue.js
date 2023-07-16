@@ -28,10 +28,10 @@
         </div>
         <div class="list_my_friends">
             <div class="my_friend" v-for="friend in getUsersMyFriends.slice(0, 8)" :key="friend.id">
-                
+
                 <!-- блок с аватаркой -->
                 <div class="my_friend_ava" @click="$router.push({ name: 'mypage', params: { id: `${friend.userID}` } })">
-                    <UIAva :ava="friend.ava"/>
+                    <UIAva :ava="friend.ava" />
                 </div>
 
                 <div class="my_friend_name" @click="$router.push({ name: 'mypage', params: { id: `${friend.userID}` } })">
@@ -39,7 +39,7 @@
                 </div>
             </div>
 
-            <div class="wrapper_not_friends" >
+            <div class="wrapper_not_friends">
                 <p class="not_friends" v-if="getIsNotFriends && getUsersMyFriends.length === 0">Ваш список друзей пуст!</p>
             </div>
         </div>
@@ -69,11 +69,6 @@ export default {
             LOAD_COMMENTS_COMMENT: "commentsPost/LOAD_COMMENTS_COMMENT"
         }),
         ...mapMutations({
-            // setPosts: "postsMyPageStore/setPosts",
-            // setCountPostsNull: "postsMyPageStore/setCountPostsNull",
-            // setCommentsArray: "commentsPost/setCommentsArray",
-            // setCommentsCommentArray: "commentsPost/setCommentsCommentArray",
-            // setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray",
             setUsersMyFriends: "friendsStore/setUsersMyFriends",
             setCountFriendsNull: "friendsStore/setCountFriendsNull",
             setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter"
@@ -92,16 +87,12 @@ export default {
             getUsersMyFriends: "friendsStore/getUsersMyFriends",
             getUser: "authorizationStore/getUser",
             getIsNotFriends: "friendsStore/getIsNotFriends",
-        }), 
+        }),
     },
     watch: {
         $route() {
             if (this.$route.params.id) {
                 this.loadAllPhotos(this.$route.params.id);
-                // window.scrollTo(0, 0);
-                // this.setPosts([]);
-                // this.setCountPostsNull();
-                // this.loadPostServer(this.$route.params.id);
             }
         },
     },
@@ -113,37 +104,37 @@ export default {
         const callback = (entries) => {
             if (entries[0].isIntersecting) {
                 this.isUIloadMoreContent = true; //показывать что идет загрузка
-                if(this.loadPost) {
+                if (this.loadPost) {
                     this.loadPost = false;
                     this.loadPostServer(this.$route.params.id)
-                    .then((response) => {
-                        this.isNotPosts = false;
-                        if (response.length === 0) {
-                            this.isNotPosts = true;
-                        }
-                        this.isUIloadMoreContent = false;
-                        this.loadPost = true;
+                        .then((response) => {
+                            this.isNotPosts = false;
+                            if (response.length === 0) {
+                                this.isNotPosts = true;
+                            }
+                            this.isUIloadMoreContent = false;
+                            this.loadPost = true;
 
-                        return response.filter(post => post.commentID !=='0').map(post => post.id);
-                    })
-                    .then((data) => {
+                            return response.filter(post => post.commentID !== '0').map(post => post.id);
+                        })
+                        .then((data) => {
                             this.LOAD_COMMENTS_POST({ userID: this.$route.params.id, postID: data })
-                            .then((response) => {
-                                response.data = response.data.filter(data => data.commentCommentID !== '0')
-                                this.LOAD_COMMENTS_COMMENT({ userID: this.$route.params.id, postID: response.data.map(post => post.id) });
-                            })
-                            .catch((err) => {
-                                if (err.code === "ERR_CANCELED") {
-                                    console.log("Загрузка была отменена")
-                                }
-                            });
-                    })
-                    .catch((err) => {
-                        if (err.code === "ERR_CANCELED") {
-                            console.log("Загрузка была отменена")
-                        }
-                        this.loadPost = true;
-                    });
+                                .then((response) => {
+                                    response.data = response.data.filter(data => data.commentCommentID !== '0')
+                                    this.LOAD_COMMENTS_COMMENT({ userID: this.$route.params.id, postID: response.data.map(post => post.id) });
+                                })
+                                .catch((err) => {
+                                    if (err.code === "ERR_CANCELED") {
+                                        console.log("Загрузка была отменена")
+                                    }
+                                });
+                        })
+                        .catch((err) => {
+                            if (err.code === "ERR_CANCELED") {
+                                console.log("Загрузка была отменена")
+                            }
+                            this.loadPost = true;
+                        });
                 }
             } else {
                 this.isUIloadMoreContent = false; //отключать загрузку
@@ -163,7 +154,6 @@ export default {
     display: flex;
     flex-direction: column;
     flex: 0 0 70%;
-    /*overflow: hidden;*/
 }
 
 .wrapper_posts {
@@ -204,9 +194,7 @@ export default {
     margin: 5px;
 }
 
-
 /* --------------------------- */
-
 .wrapper_my_friends_title {
     display: flex;
     justify-content: center;
@@ -237,21 +225,17 @@ export default {
     width: 64px;
 }
 
-/* .my_friend_ava img {
-    width: 64px;
-    border-radius: 100%;
-} */
-
 .my_friend_name {
     max-width: 70px;
     font-size: 14px;
     font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
     cursor: pointer;
-    
+
 }
+
 .my_friend_name p {
     word-wrap: break-word;
-    
+
 }
 
 .titleMyFriendsBlock {
@@ -263,11 +247,10 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
-.wrapper_posts {
-    margin-right: 0;
-}
+    .wrapper_posts {
+        margin-right: 0;
+    }
 }
 </style>

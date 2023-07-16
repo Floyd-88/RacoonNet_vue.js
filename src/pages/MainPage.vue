@@ -1,37 +1,39 @@
 <template>
-  <NavigationNetEnter/>
+  <NavigationNetEnter />
   <div class="wrapper_main">
     <template v-if="getModulRegister">
-      <UImodal> <RegisterNet/> </UImodal>
+      <UImodal>
+        <RegisterNet />
+      </UImodal>
     </template>
-   
+
 
     <div class="wrapper_mainPage">
       <div class="wrapper_title">
         <h2 class=" name_net_title">
           RacсoonNet
         </h2>
-        <h3 class="welcome_title">Добро пожаловать в социальную сеть для общения со своими друзьями и родными</h3>  
+        <h3 class="welcome_title">Добро пожаловать в социальную сеть для общения со своими друзьями и родными</h3>
       </div>
-      <div class="wrapper_form"> <LoginNet/> </div>
+      <div class="wrapper_form">
+        <LoginNet />
+      </div>
     </div>
 
   </div>
-
 </template>
 
 <script>
-// import NavigationNet from "@/components/layout/NavigationNet.vue";
 import SocketioService from "../services/socketio.service";
 import { mapGetters } from 'vuex';
 export default {
-    name: "MainPage",
-    created() {
-        SocketioService.disconnect();
-    },
-    computed: {
-        ...mapGetters({ getModulRegister: "registrationStore/getModulRegister" })
-    },
+  name: "MainPage",
+  created() {
+    SocketioService.disconnect();
+  },
+  computed: {
+    ...mapGetters({ getModulRegister: "registrationStore/getModulRegister" })
+  },
 }
 </script>
 
@@ -39,6 +41,7 @@ export default {
 .wrapper_main {
   padding: 120px 20px 5px;
 }
+
 .wrapper_mainPage {
   display: flex;
   flex-direction: row;
@@ -80,30 +83,27 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
-
   .wrapper_main {
-  padding: 105px 0px 5px;
-}
+    padding: 105px 0px 5px;
+  }
 
-.name_net_title {
-  display: none;
-}
+  .name_net_title {
+    display: none;
+  }
 
   .wrapper_mainPage {
-  flex-direction: column;
-  margin-top: 0;
-}
+    flex-direction: column;
+    margin-top: 0;
+  }
 
-.welcome_title {
-  text-align: center;
-  font-size: 22px;
+  .welcome_title {
+    text-align: center;
+    font-size: 22px;
 
-}
+  }
 
-.wrapper_form {
-  width: 350px;
-}
-}
-</style>
+  .wrapper_form {
+    width: 350px;
+  }
+}</style>

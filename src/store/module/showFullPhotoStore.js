@@ -63,52 +63,69 @@ export const showFullPhotoStore = {
     },
 
     actions: {
-        showFullAvaPhoto({ commit }, body) {
+        showFullAvaPhoto({
+            commit
+        }, body) {
             commit("setShowFullAvaPhoto", body.bool);
             commit("setEditAva", body.load)
         },
 
 
         //открыте картинки по которой кликнули
-        async fullSizePhoto({ commit }, body) {
+        async fullSizePhoto({
+            commit
+        }, body) {
             const bool = body.bool;
             const index = body.elem;
             const id = body.id;
             commit("setIsModalFullSize", bool);
             commit("setIndexPhoto", index);
-            commit('loadPhotoStore/setPhotoId', id, { root: true });
+            commit('loadPhotoStore/setPhotoId', id, {
+                root: true
+            });
 
             document.body.style.overflow = "hidden";
         },
 
-        async FULL_SIZE_PHOTO_POST({ commit }, body) {
+        async FULL_SIZE_PHOTO_POST({
+            commit
+        }, body) {
             const bool = body.bool;
             const index = body.elem;
             const id = body.id;
 
             commit("setIsModalFullSize", bool);
             commit("setIndexPhoto", index);
-            commit('loadPhotoStore/setPhotoId', id, { root: true });
+            commit('loadPhotoStore/setPhotoId', id, {
+                root: true
+            });
             commit('setPostID', body.postID);
 
             document.body.style.overflow = "hidden";
         },
 
-        async FULL_SIZE_PHOTO_MESSAGE({ commit }, body) {
+        async FULL_SIZE_PHOTO_MESSAGE({
+            commit
+        }, body) {
             const bool = body.bool;
             const index = body.elem;
             const id = body.id;
 
             commit("setIsModalFullSize", bool);
             commit("setIndexPhoto", index);
-            commit('loadPhotoStore/setPhotoId', id, { root: true });
+            commit('loadPhotoStore/setPhotoId', id, {
+                root: true
+            });
             commit('setMessageID', body.messageID);
 
             document.body.style.overflow = "hidden";
         },
 
         //закрытие картинки по которой кликнули
-        closeModalFullSize({ commit, getters }, bool) {
+        closeModalFullSize({
+            commit,
+            getters
+        }, bool) {
             commit("setIsModalFullSize", bool);
             commit('setPostID', "");
             commit('setMessageID', "");

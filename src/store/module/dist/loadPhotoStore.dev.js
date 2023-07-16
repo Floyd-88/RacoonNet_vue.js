@@ -11,9 +11,6 @@ var _socketio = _interopRequireDefault(require("../../services/socketio.service"
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-// import router from "@/router/router";
-// const controller = new AbortController();
-// const signal = controller.signal;
 var loadPhotoStore = {
   state: function state() {
     return {
@@ -218,10 +215,7 @@ var loadPhotoStore = {
           commit("setIsModalLoadPhoto", false);
           commit("showFullPhotoStore/setIsModalFullSize", false, {
             root: true
-          }); // commit("authorizationStore/setUserAva", res.data.ava, {
-          //     root: true
-          // })
-
+          });
           commit("setProgressLoadPhoto", 0);
           resolve(res);
         })["catch"](function (err) {
@@ -246,8 +240,7 @@ var loadPhotoStore = {
                 formData.append('files[' + i + ']', file);
               }
 
-              formData.append('id', body.addresseeID); // formData.append('id', JSON.parse(localStorage.getItem('user')).userID);
-              //добавляем категорию к фотографии если она есть
+              formData.append('id', body.addresseeID); //добавляем категорию к фотографии если она есть
 
               if (rootGetters["galleryStore/getSelectedLoadThemaPhoto"]) {
                 formData.append('category', rootGetters["galleryStore/getSelectedLoadThemaPhoto"]);
@@ -515,9 +508,7 @@ var loadPhotoStore = {
                 });
                 commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                   root: true
-                }); // commit("galleryStore/removeArrayFilterPhotos", getters.getIdPhoto, {
-                //     root: true
-                // });
+                });
               }));
 
             case 31:
@@ -554,9 +545,6 @@ var loadPhotoStore = {
                 id: getters.getUser.userID,
                 nameAva: nameAva
               }).then(function () {
-                // commit("authorizationStore/setUserAva", res.data.user.ava, {
-                //     root: true
-                // });
                 commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                   root: true
                 });
@@ -619,34 +607,7 @@ var loadPhotoStore = {
           }
         }
       }, null, null, [[1, 9]]);
-    } //загрузить последнии добавленные фотографии через пост
-    // async LOAD_LAST_PHOTOS(context, photos) {
-    //     return new Promise((resolve, reject) => {
-    //         axios.get('http://localhost:8000/load_last_photos', {
-    //                 params: photos
-    //             })
-    //             .then((response) => {
-    //                 resolve(response)
-    //             }).catch((err) => {
-    //                 reject(err)
-    //             })
-    //     })
-    // },
-    //удаление изображение с сервера
-    // async DELETE_PHOTO_SERVER(context, nameAva) {
-    //     try {
-    //         if (nameAva !== "ava/ava_1.jpg") {
-    //             axios.delete('http://localhost:8000/delete_photo_server', {
-    //                 params: {
-    //                     photo: nameAva,
-    //                 }
-    //             })
-    //         }
-    //     } catch (err) {
-    //         console.log(err);
-    //     }
-    // },
-
+    }
   },
   namespaced: true
 };

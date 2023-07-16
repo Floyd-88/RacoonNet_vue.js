@@ -1,8 +1,5 @@
 import axios from "axios";
 import SocketioService from "../../services/socketio.service";
-// import router from "@/router/router";
-// const controller = new AbortController();
-// const signal = controller.signal;
 
 export const loadPhotoStore = {
 
@@ -188,9 +185,6 @@ export const loadPhotoStore = {
                         commit("showFullPhotoStore/setIsModalFullSize", false, {
                             root: true
                         });
-                        // commit("authorizationStore/setUserAva", res.data.ava, {
-                        //     root: true
-                        // })
                         commit("setProgressLoadPhoto", 0);
                         resolve(res)
                     })
@@ -218,7 +212,6 @@ export const loadPhotoStore = {
                 formData.append('files[' + i + ']', file);
             }
             formData.append('id', body.addresseeID);
-            // formData.append('id', JSON.parse(localStorage.getItem('user')).userID);
 
             //добавляем категорию к фотографии если она есть
             if (rootGetters["galleryStore/getSelectedLoadThemaPhoto"]) {
@@ -318,8 +311,7 @@ export const loadPhotoStore = {
 
         //получить все фотографии
         async loadAllPhotos({
-            commit,
-            // state
+            commit
         }, id) {
             try {
                 commit("setIsNotPhoto", false);
@@ -419,9 +411,6 @@ export const loadPhotoStore = {
                         commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                             root: true
                         });
-                        // commit("galleryStore/removeArrayFilterPhotos", getters.getIdPhoto, {
-                        //     root: true
-                        // });
                     });
                 } catch (err) {
                     console.log(err);
@@ -444,9 +433,6 @@ export const loadPhotoStore = {
                     id: getters.getUser.userID,
                     nameAva: nameAva
                 }).then(() => {
-                    // commit("authorizationStore/setUserAva", res.data.user.ava, {
-                    //     root: true
-                    // });
                     commit("showFullPhotoStore/setShowFullAvaPhoto", false, {
                         root: true
                     });
@@ -456,7 +442,6 @@ export const loadPhotoStore = {
                 console.log(err);
             }
         },
-
 
         //лайкнуть фото
         async SAVE_LIKE_COUNT_PHOTO({
@@ -481,38 +466,6 @@ export const loadPhotoStore = {
                 console.error(err);
             }
         },
-
-        //загрузить последнии добавленные фотографии через пост
-        // async LOAD_LAST_PHOTOS(context, photos) {
-        //     return new Promise((resolve, reject) => {
-        //         axios.get('http://localhost:8000/load_last_photos', {
-        //                 params: photos
-        //             })
-        //             .then((response) => {
-        //                 resolve(response)
-
-        //             }).catch((err) => {
-        //                 reject(err)
-        //             })
-        //     })
-
-        // },
-
-        //удаление изображение с сервера
-        // async DELETE_PHOTO_SERVER(context, nameAva) {
-        //     try {
-        //         if (nameAva !== "ava/ava_1.jpg") {
-        //             axios.delete('http://localhost:8000/delete_photo_server', {
-        //                 params: {
-        //                     photo: nameAva,
-        //                 }
-        //             })
-        //         }
-        //     } catch (err) {
-        //         console.log(err);
-        //     }
-        // },
-
     },
     namespaced: true
 }

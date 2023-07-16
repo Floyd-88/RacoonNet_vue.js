@@ -146,14 +146,6 @@
         </div>
       </div>
 
-      <!--      <label class="form_label_register" for="password-confirm">Is this an administrator account?</label>-->
-      <!--      <div>-->
-      <!--        <select v-model="is_admin">-->
-      <!--          <option value=1>Yes</option>-->
-      <!--          <option value=0>No</option>-->
-      <!--        </select>-->
-      <!--      </div>-->
-
       <div class="wrapper_form_register_btn">
         <button class="form_register_btn" type="submit"
           :disabled="v$.$invalid && !getDouble_password && getUserRegister.selectedDay && getUserRegister.selectedMonth && getUserRegister.selectedYear && getUserRegister.selectedGender">
@@ -202,6 +194,7 @@ export default {
           $message: 'Invalid Name'
         }
       },
+
       surname: {
         required,
         min: minLength(2),
@@ -211,6 +204,7 @@ export default {
           $message: 'Invalid Name'
         }
       },
+
       email: { required, email },
       password: { required, min: minLength(8), max: maxLength(30), },
       password_confirmation: { required },
@@ -220,12 +214,14 @@ export default {
           $message: 'Invalid Name'
         }
       },
+
       city: {
         required, min: minLength(2), max: maxLength(20), name_validation: {
           $validator: validName,
           $message: 'Invalid Name'
         }
       },
+
       selectedDay: { required },
       selectedMonth: { required },
       selectedYear: { required },
@@ -281,7 +277,7 @@ export default {
 
         this.register(user)
           .then((resp) => {
-            if(resp) {
+            if (resp) {
               this.setModulRegister(false);
               this.$router.push(`/id${resp.data.user.userID}`);
               this.setUserRegister();
@@ -472,10 +468,8 @@ export default {
 }
 
 .form_register_input {
-  /*margin: 5px;*/
   height: 40px;
   width: 100%;
-  /*padding-left: 3px;*/
 }
 
 .wrapper_form_register_date {
@@ -497,10 +491,6 @@ export default {
   margin: 0 5px;
 }
 
-/* .option_form_register_date {
-
-} */
-
 .wrapper_form_register_gender {
   margin-bottom: 15px;
 }
@@ -513,10 +503,6 @@ export default {
   height: 100%;
   width: 32%;
 }
-
-/* .option_form_register_gender {
-
-} */
 
 .wrapper_form_register_btn {
   display: flex;
@@ -549,9 +535,7 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
-
   .wrapper_form_register {
     width: 350px;
   }

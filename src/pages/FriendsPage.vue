@@ -55,16 +55,16 @@
       <template v-if="getModalWriteMessage">
         <UImodal>
           <WriteMessage :user="{
-            name: user.name,
-            surname: user.surname,
-            ava: user.ava,
-            userID: user.userID
-          }" />
+              name: user.name,
+              surname: user.surname,
+              ava: user.ava,
+              userID: user.userID
+            }" />
         </UImodal>
       </template>
 
       <UImodal class="modal_fone" v-if="getIsModalLoadPhoto">
-        <FileUpload :addresseeID="String(user.userID)"/>
+        <FileUpload :addresseeID="String(user.userID)" />
       </UImodal>
 
     </div>
@@ -76,127 +76,124 @@
 import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
-    name: "FriendsPage",
-    emits: ["getUserInfo"],
-    data() {
-        return {
-            btnFone: "allFriends",
-            userTokenID: JSON.parse(localStorage.getItem("user"))?.userID,
-        };
-    },
-    mounted() {
-        if (this.getCountFriends === 0) {
-            this.GET_USER_MY_FRIENDS(this.$route.query.id);
+  name: "FriendsPage",
+  emits: ["getUserInfo"],
+  data() {
+    return {
+      btnFone: "allFriends",
+      userTokenID: JSON.parse(localStorage.getItem("user"))?.userID,
+    };
+  },
+  mounted() {
+    if (this.getCountFriends === 0) {
+      this.GET_USER_MY_FRIENDS(this.$route.query.id);
+    }
+    //подгрузка новой партии новостей при скроле страницы
+    const options = {
+      rootMargin: "0px",
+      threshold: 1
+    };
+    const callback = (entries) => {
+      if (entries[0].isIntersecting) {
+        if (this.getIsFriendShow === "allFriends" && this.getTitleFriend === "Друзья" && this.getCountFriends !== 0) {
+          this.GET_USER_MY_FRIENDS(this.$route.query.id);
         }
-        //подгрузка новой партии новостей при скроле страницы
-        const options = {
-            rootMargin: "0px",
-            threshold: 1
-        };
-        const callback = (entries) => {
-            if (entries[0].isIntersecting) {
-                if (this.getIsFriendShow === "allFriends" && this.getTitleFriend === "Друзья" && this.getCountFriends !== 0) {
-                    this.GET_USER_MY_FRIENDS(this.$route.query.id);
-                }
-                else if (this.getIsFriendShow === "friendsFromMe" && this.getCountFriends !== 0) {
-                    this.GET_USER_ADD_FRIENDS_FROM_ME();
-                }
-                else if (this.getIsFriendShow === "friendsMe" && this.getCountFriends !== 0) {
-                    this.GET_USER_ADD_FRIENDS_ME();
-                }
-                if (this.getIsFriendShow === "allFriends" && this.getTitleFriend === "Поиск друзей" && this.getCountFriends !== 0) {
-                    this.SEARCH_USERS_FRIENDS({
-                        name: this.getSearchFriendName,
-                        surname: this.getSearchFriendSurname,
-                        country: this.getSearchFriendCountry,
-                        city: this.getSearchFriendCity,
-                        ageAfter: this.getSearchFriendAgeAfter,
-                        ageBefore: this.getSearchFriendAgeBefore,
-                        sex: this.getSearchFriendSex,
-                    });
-                }
-            }
-        };
-        const observer = new IntersectionObserver(callback, options);
-        observer.observe(this.$refs.observer);
+        else if (this.getIsFriendShow === "friendsFromMe" && this.getCountFriends !== 0) {
+          this.GET_USER_ADD_FRIENDS_FROM_ME();
+        }
+        else if (this.getIsFriendShow === "friendsMe" && this.getCountFriends !== 0) {
+          this.GET_USER_ADD_FRIENDS_ME();
+        }
+        if (this.getIsFriendShow === "allFriends" && this.getTitleFriend === "Поиск друзей" && this.getCountFriends !== 0) {
+          this.SEARCH_USERS_FRIENDS({
+            name: this.getSearchFriendName,
+            surname: this.getSearchFriendSurname,
+            country: this.getSearchFriendCountry,
+            city: this.getSearchFriendCity,
+            ageAfter: this.getSearchFriendAgeAfter,
+            ageBefore: this.getSearchFriendAgeBefore,
+            sex: this.getSearchFriendSex,
+          });
+        }
+      }
+    };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
 
-        if(!this.getUser.userID) {
-          this.loadUser({ id: JSON.parse(localStorage.getItem('user'))?.userID })
-        }
+    if (!this.getUser.userID) {
+      this.loadUser({ id: JSON.parse(localStorage.getItem('user'))?.userID })
+    }
+  },
+  beforeUnmount() {
+    this.setIsFriendShow("allFriends");
+    this.setUsersMyFriends([]);
+    this.setUsersMyFriendsFilter([]);
+    this.setCountFriendsNull();
+    this.setSearchUsersFriends([]);
+  },
+
+  methods: {
+    ...mapMutations({
+      setIsFriendShow: "friendsStore/setIsFriendShow",
+      setUsersMyFriends: "friendsStore/setUsersMyFriends",
+      setCountFriendsNull: "friendsStore/setCountFriendsNull",
+      setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter",
+      setSearchUsersFriends: "friendsStore/setSearchUsersFriends",
+      setTitleFriend: "friendsStore/setTitleFriend",
+      setSearchFriend: "friendsStore/setSearchFriend",
+    }),
+
+    ...mapActions({
+      GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
+      SEARCH_USERS_FRIENDS: "friendsStore/SEARCH_USERS_FRIENDS",
+      GET_USER_ADD_FRIENDS_FROM_ME: "friendsStore/GET_USER_ADD_FRIENDS_FROM_ME",
+      GET_USER_ADD_FRIENDS_ME: "friendsStore/GET_USER_ADD_FRIENDS_ME",
+      loadUser: "authorizationStore/loadUser",
+    }),
+
+    getUserInfo(user) {
+      this.user = user;
     },
-    beforeUnmount() {
-        this.setIsFriendShow("allFriends");
+
+    getAllFriends() {
+      if (this.getIsFriendShow !== "allFriends" || this.getTitleFriend === "Поиск друзей") {
+        this.setTitleFriend("Друзья");
+        this.setSearchFriend();
         this.setUsersMyFriends([]);
         this.setUsersMyFriendsFilter([]);
         this.setCountFriendsNull();
-        this.setSearchUsersFriends([]);
-        // this.setUsersFriendsMe([]);
-        // this.setUsersFriendsFromMe([]);
-    },
-    methods: {
-        ...mapMutations({
-            setIsFriendShow: "friendsStore/setIsFriendShow",
-            setUsersMyFriends: "friendsStore/setUsersMyFriends",
-            setCountFriendsNull: "friendsStore/setCountFriendsNull",
-            setUsersMyFriendsFilter: "friendsStore/setUsersMyFriendsFilter",
-            setSearchUsersFriends: "friendsStore/setSearchUsersFriends",
-            setTitleFriend: "friendsStore/setTitleFriend",
-            setSearchFriend: "friendsStore/setSearchFriend",
-            // setUsersFriendsMe: "friendsStore/setUsersFriendsMe",
-            // setUsersFriendsFromMe: "friendsStore/setUsersFriendsFromMe"
-        }),
-        ...mapActions({
-            GET_USER_MY_FRIENDS: "friendsStore/GET_USER_MY_FRIENDS",
-            SEARCH_USERS_FRIENDS: "friendsStore/SEARCH_USERS_FRIENDS",
-            GET_USER_ADD_FRIENDS_FROM_ME: "friendsStore/GET_USER_ADD_FRIENDS_FROM_ME",
-            GET_USER_ADD_FRIENDS_ME: "friendsStore/GET_USER_ADD_FRIENDS_ME",
-            loadUser: "authorizationStore/loadUser",
-        }),
-
-        getUserInfo(user) {
-            this.user = user;
-        },
-
-        getAllFriends() {
-            if (this.getIsFriendShow !== "allFriends" || this.getTitleFriend === "Поиск друзей") {
-                this.setTitleFriend("Друзья");
-                this.setSearchFriend();
-                this.setUsersMyFriends([]);
-                this.setUsersMyFriendsFilter([]);
-                this.setCountFriendsNull();
-                this.GET_USER_MY_FRIENDS(this.$route.query.id);
-            }
-            this.setIsFriendShow("allFriends");
-        }
-    },
-    computed: {
-        ...mapGetters({
-            isLoggedIn: "authorizationStore/isLoggedIn",
-            getIsFriendShow: "friendsStore/getIsFriendShow",
-            getModalWriteMessage: "messageStore/getModalWriteMessage",
-            getUser: "authorizationStore/getUser",
-            getTitleFriend: "friendsStore/getTitleFriend",
-            getSearchFriendName: "friendsStore/getSearchFriendName",
-            getSearchFriendSurname: "friendsStore/getSearchFriendSurname",
-            getSearchFriendCountry: "friendsStore/getSearchFriendCountry",
-            getSearchFriendCity: "friendsStore/getSearchFriendCity",
-            getSearchFriendAgeAfter: "friendsStore/getSearchFriendAgeAfter",
-            getSearchFriendAgeBefore: "friendsStore/getSearchFriendAgeBefore",
-            getSearchFriendSex: "friendsStore/getSearchFriendSex",
-            getCountFriends: "friendsStore/getCountFriends",
-            getIsUIloadMoreFriends: "friendsStore/getIsUIloadMoreFriends",
-            getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
-        }),
-    },
-    watch: {
-        $route() {
-            const id = this.$route.query.id;
-            if (id) {
-                this.GET_USER_MY_FRIENDS(id);
-            }
-        }
-    },
-    // components: { FileUpload }
+        this.GET_USER_MY_FRIENDS(this.$route.query.id);
+      }
+      this.setIsFriendShow("allFriends");
+    }
+  },
+  computed: {
+    ...mapGetters({
+      isLoggedIn: "authorizationStore/isLoggedIn",
+      getIsFriendShow: "friendsStore/getIsFriendShow",
+      getModalWriteMessage: "messageStore/getModalWriteMessage",
+      getUser: "authorizationStore/getUser",
+      getTitleFriend: "friendsStore/getTitleFriend",
+      getSearchFriendName: "friendsStore/getSearchFriendName",
+      getSearchFriendSurname: "friendsStore/getSearchFriendSurname",
+      getSearchFriendCountry: "friendsStore/getSearchFriendCountry",
+      getSearchFriendCity: "friendsStore/getSearchFriendCity",
+      getSearchFriendAgeAfter: "friendsStore/getSearchFriendAgeAfter",
+      getSearchFriendAgeBefore: "friendsStore/getSearchFriendAgeBefore",
+      getSearchFriendSex: "friendsStore/getSearchFriendSex",
+      getCountFriends: "friendsStore/getCountFriends",
+      getIsUIloadMoreFriends: "friendsStore/getIsUIloadMoreFriends",
+      getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
+    }),
+  },
+  watch: {
+    $route() {
+      const id = this.$route.query.id;
+      if (id) {
+        this.GET_USER_MY_FRIENDS(id);
+      }
+    }
+  },
 }
 </script>
 
@@ -215,7 +212,6 @@ export default {
 }
 
 .my_friends {
-  /* white-space: nowrap; */
   display: flex;
   flex-direction: column;
   flex: 0 0 70%;
@@ -229,7 +225,6 @@ export default {
   flex: 0 0 100%;
 }
 
-
 .wrapper_my_friends_params {
   border-radius: 5px;
 }
@@ -238,8 +233,6 @@ export default {
   border-radius: 5px;
   padding: 8px;
 }
-
-.my_friends_params_choice {}
 
 .my_friends_params_choice_btn {
   width: 100%;
@@ -255,34 +248,27 @@ export default {
   border-bottom: 1px solid;
 }
 
-/* .my_friends_params_choice_btn:hover {
-  filter: brightness(90%);
-} */
 .activeBtn {
   filter: brightness(90%);
 }
 
-.observer {
-  /* border: 1px solid black */
-}
-
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
+  .wrapper_main {
+    padding: 120px 0px 5px;
+  }
 
-.wrapper_main {
-  padding: 120px 0px 5px;
-}
+  .main {
+    margin-left: 0px;
+  }
 
-.main{
-  margin-left: 0px;
-}
-.wrapper_my_friends {
+  .wrapper_my_friends {
     display: flex;
     flex-direction: column-reverse;
-}
-.my_friends {
+  }
+
+  .my_friends {
     margin-right: 0px;
-}
+  }
 }
 </style>

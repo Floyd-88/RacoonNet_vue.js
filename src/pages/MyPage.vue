@@ -65,22 +65,17 @@ export default {
     this.setPosts([])
     this.setPhotosPostsArray([]);
     this.setCountPostsNull()
-    // this.loadPostServer(this.$route.params.id);
-    // this.LOAD_DIALOGS();
   },
 
   methods: {
     ...mapActions({
       loadAllPhotos: "loadPhotoStore/loadAllPhotos",
-      // LOAD_DIALOGS: "messageStore/LOAD_DIALOGS",
-      // loadPostServer: "postsMyPageStore/loadPostServer",
     }),
 
     ...mapMutations({
       setPosts: "postsMyPageStore/setPosts",
       setCountPostsNull: "postsMyPageStore/setCountPostsNull",
       setPhotosPostsArray: "postsMyPageStore/setPhotosPostsArray"
-      // setArrayMessages: "messageStore/setArrayMessages"
     })
 
   },
@@ -91,17 +86,9 @@ export default {
       getModulEditProfile: "editProfileStore/getModulEditProfile",
       getUser: "authorizationStore/getUser",
       getModalWriteMessage: "messageStore/getModalWriteMessage",
-      // getArrayMessages: "messageStore/getArrayMessages"
       getStatus: "authorizationStore/getStatus"
     }),
   },
-
-  // watch: {
-  //   $route() {
-  //     // this.$route.params.id
-  //     this.loadAllPhotos();
-  //   }
-  // }
 }
 
 </script>
@@ -129,7 +116,6 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 0 0 70%;
-  /*overflow: hidden;*/
 }
 
 .wrapper_posts {
@@ -192,7 +178,6 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
   .wrapper_main {
     padding: 120px 0px 0px;

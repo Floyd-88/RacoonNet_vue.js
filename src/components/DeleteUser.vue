@@ -19,13 +19,8 @@
           <label class="change_password_label" for="old_password">Ваш пароль:</label>
         </div>
         <div class="wrapper_form_change_password_input">
-          <input class="form_register_input" 
-          id="old_password" 
-          type="password" 
-          placeholder="Укажите Ваш пароль"
-          v-model="check_password" 
-          :class="{ invalid: (v$.password.$error) }" 
-          @input="setErrorPassword('')">
+          <input class="form_register_input" id="old_password" type="password" placeholder="Укажите Ваш пароль"
+            v-model="check_password" :class="{ invalid: (v$.password.$error) }" @input="setErrorPassword('')">
         </div>
       </div>
     </div>
@@ -76,15 +71,15 @@ export default {
 
     deleteUserProfile() {
       if (this.getPassword) {
-       let user = {
-        password: this.getPassword
-      }
+        let user = {
+          password: this.getPassword
+        }
         this.removeUser(user)
           .then(() => {
-          this.setModulEditProfile(false)
-          this.setModuleDelete(false)
-          this.$router.push('/')
-          this.setPassword("");
+            this.setModulEditProfile(false)
+            this.setModuleDelete(false)
+            this.$router.push('/')
+            this.setPassword("");
           })
           .catch((err) => {
             if (err.err) {
@@ -157,13 +152,9 @@ export default {
   margin-top: 10px;
 }
 
-/* .form_register_input {} */
-
 .form_register_input {
-  /*margin: 5px;*/
   height: 30px;
   width: 100%;
-  /*padding-left: 3px;*/
 }
 
 .error-msg {
@@ -202,15 +193,13 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
-
   .form_password {
     width: 340px;
-}
+  }
 
-.title_delete_profile[data-v-2aeb3746] {
+  .title_delete_profile[data-v-2aeb3746] {
     font-size: 15px;
-}
+  }
 }
 </style>

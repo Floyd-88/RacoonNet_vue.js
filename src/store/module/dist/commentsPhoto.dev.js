@@ -36,7 +36,6 @@ var commentsPhoto = {
     };
   },
   getters: {
-    // getIsShowWriteComment: state => state.isShowWriteComment,
     getCommentPhoto: function getCommentPhoto(state) {
       return state.commentPost;
     },
@@ -54,9 +53,6 @@ var commentsPhoto = {
     }
   },
   mutations: {
-    // setIsShowWriteComment(state) {
-    //     state.isShowWriteComment = !state.isShowWriteComment;
-    // },
     setCommentPhoto: function setCommentPhoto(state, text) {
       state.commentPhoto = text;
     },
@@ -102,11 +98,7 @@ var commentsPhoto = {
               newCommentsPhoto.date = _context.sent;
               _context.next = 9;
               return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:8000/load_comments_photo.js', newCommentsPhoto).then(function (response) {
-                commit("setCommentsPhotoArray", [].concat(_toConsumableArray(state.commentsPhotoArray), [response.data])); // commit("setAddPosts", response.data);
-                // commit("setCountPosts", 1);
-                // commit("setCommentsArray", [...state.commentsArray, state.commentPost]);
-                // commit("setCommentPost", "")
-                //отправляем уведомление адресату без перезагрузки страницы
+                commit("setCommentsPhotoArray", [].concat(_toConsumableArray(state.commentsPhotoArray), [response.data])); //отправляем уведомление адресату без перезагрузки страницы
 
                 _socketio["default"].sendNotice(response.data.userID);
               })["catch"](function (error) {

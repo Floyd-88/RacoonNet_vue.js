@@ -129,10 +129,11 @@
 
         <div class="wrapper_checkboxes_filter_btn">
             <UIbtn class="checkboxes_filter_btn" @click="GET_PHOTO_FILTER_THEMA()">Отфильтровать</UIbtn>
-            <UIbtn class="checkboxes_filter_btn checkboxes_filter_btn_not" @click="GET_PHOTO_NOT_FILTER()">Убрать все фильтры </UIbtn>
+            <UIbtn class="checkboxes_filter_btn checkboxes_filter_btn_not" @click="GET_PHOTO_NOT_FILTER()">Убрать все
+                фильтры </UIbtn>
 
         </div>
-</div>
+    </div>
 </template>
 
 <script>
@@ -141,14 +142,9 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
     name: "CategoryFilter",
-    data() {
-        return {
-            // checkedCat: [],
-        }
-    },
 
     methods: {
-        ...mapMutations({setCheckedCat: "galleryStore/setCheckedCat"}),
+        ...mapMutations({ setCheckedCat: "galleryStore/setCheckedCat" }),
         ...mapActions({
             GET_PHOTO_FILTER_THEMA: "galleryStore/GET_PHOTO_FILTER_THEMA",
             GET_PHOTO_NOT_FILTER: "galleryStore/GET_PHOTO_NOT_FILTER"
@@ -163,7 +159,7 @@ export default {
 
         chooseCat: {
             get() {
-               return this.getCheckedCat;
+                return this.getCheckedCat;
             },
             set(value) {
                 this.setCheckedCat(value);
@@ -171,39 +167,40 @@ export default {
         }
     },
 
-  components: { UIbtn }
+    components: { UIbtn }
 }
 
 </script>
 
 <style scoped>
 .wrapper_header_checkboxes {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
 }
 
 .header_checkboxes {
-  padding: 0 10px 5px 2px;
-  display: flex;
-  align-items: center;
+    padding: 0 10px 5px 2px;
+    display: flex;
+    align-items: center;
 }
 
 .header_checkboxes label {
-  padding-left: 3px;
+    padding-left: 3px;
 }
 
 .wrapper_checkboxes_filter {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 .wrapper_checkboxes_filter_btn {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 .checkboxes_filter_btn {
-  background: #0197d6c2;
+    background: #0197d6c2;
 }
+
 .checkboxes_filter_btn_not {
     margin-left: 10px;
     background: whitesmoke;

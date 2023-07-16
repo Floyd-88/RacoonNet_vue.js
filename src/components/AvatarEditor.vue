@@ -1,19 +1,18 @@
 <template>
     <div class="wrapper_edit_ava">
         <div class="block_vue_avatar">
-            <vue-avatar class="vue_avatar" :width="400" :height="400" :borderRadius="borderRadius" :scale="scale" ref="vueavatar"
-                @vue-avatar-editor:image-ready="onImageReady"
+            <vue-avatar class="vue_avatar" :width="400" :height="400" :borderRadius="borderRadius" :scale="scale"
+                ref="vueavatar" @vue-avatar-editor:image-ready="onImageReady"
                 :image="photo_name ? require(`../assets/${photo_name}`) : ''">
             </vue-avatar>
-            <div class="preview_info" :class="{'active_load': getProgressLoadPhoto}">              
-                   <!-- полоса загрузки фото -->
-                   <template v-if="getProgressLoadPhoto">
-                    <div class="preview_info_progress" 
-                         :style="{'width': getProgressLoadPhoto}">
-                        {{getProgressLoadPhoto}}
+            <div class="preview_info" :class="{ 'active_load': getProgressLoadPhoto }">
+                <!-- полоса загрузки фото -->
+                <template v-if="getProgressLoadPhoto">
+                    <div class="preview_info_progress" :style="{ 'width': getProgressLoadPhoto }">
+                        {{ getProgressLoadPhoto }}
                     </div>
-                   </template>
-                </div>
+                </template>
+            </div>
         </div>
         <div class="block_scale">
             <label>
@@ -22,7 +21,6 @@
                 <input type="range" min=1 max=3 step=0.02 v-model='computedScaleNumber' />
             </label>
         </div>
-<!-- <div>{{ sliderAvaEdit }}</div> -->
         <div class="block_radius">
             <label>
                 Radius : {{ computedRadiusNumber }}px
@@ -60,15 +58,15 @@ export default {
             scale: 1,
             borderRadius: 0,
             btn_save: false
-            
+
         };
     },
 
     methods: {
-    ...mapActions({
-        addAvaServer: "loadPhotoStore/addAvaServer",
+        ...mapActions({
+            addAvaServer: "loadPhotoStore/addAvaServer",
         }),
-    ...mapMutations({setUserAva: "authorizationStore/setUserAva"}),
+        ...mapMutations({ setUserAva: "authorizationStore/setUserAva" }),
 
         saveClicked: function saveClicked() {
             let img = this.$refs.vueavatar.getImageScaled();
@@ -77,7 +75,7 @@ export default {
                     setTimeout(() => {
                         this.setUserAva(res.data.ava);
                     }, 3000)
-                } ) 
+                })
             this.btn_save = false
         },
 
@@ -89,7 +87,7 @@ export default {
 
     computed: {
 
-        ...mapGetters({getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto"}),
+        ...mapGetters({ getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto" }),
 
         computedScaleNumber: {
             get() {
@@ -119,10 +117,7 @@ export default {
     align-items: center;
 }
 
-.block_vue_avatar {
-}
-
-.vue_avatar  {
+.vue_avatar {
     height: 450px;
     background: whitesmoke;
 }
@@ -137,10 +132,6 @@ export default {
     color: whitesmoke;
 
 }
-
-.block_btn_save_ava {}
-
-.result_image {}
 
 .preview_info {
     position: absolute;
@@ -167,10 +158,9 @@ export default {
     align-items: center;
     justify-content: center;
     transition: width .22s;
-    /* bottom: 4px; */
 }
+
 .active_load {
     bottom: 4px;
 }
-
 </style>

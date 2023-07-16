@@ -86,8 +86,7 @@ var updatePasswordStore = {
     updatePasword: function updatePasword(_ref, user) {
       var getters = _ref.getters;
       return new Promise(function (resolve, reject) {
-        var url = "http://localhost:8000/password"; // user.email = getters.getUserEmail
-
+        var url = "http://localhost:8000/password";
         user.id = getters.getUserID;
         (0, _axios["default"])({
           url: url,

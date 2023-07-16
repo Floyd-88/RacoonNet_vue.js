@@ -15,7 +15,9 @@
                 <div class="wrapper_my_friend_card_show_btns">
                     <div class="wrapper_my_friend_card_btns">
                         <div class="my_friend_card_btn_write_message">
-                            <UIbtn class="btn_write_message" @click="DELETE_FRIEND({id: user.id, query: this.$route.query.id, userID: user.userID})">Отменить заявку</UIbtn>
+                            <UIbtn class="btn_write_message"
+                                @click="DELETE_FRIEND({ id: user.id, query: this.$route.query.id, userID: user.userID })">
+                                Отменить заявку</UIbtn>
                         </div>
                     </div>
                 </div>
@@ -38,8 +40,8 @@ export default {
     name: "InviteFriendsFromMe",
 
     mounted() {
-        if(this.getCountFriends === 0) {
-        this.GET_USER_ADD_FRIENDS_FROM_ME();
+        if (this.getCountFriends === 0) {
+            this.GET_USER_ADD_FRIENDS_FROM_ME();
         }
     },
 
@@ -65,7 +67,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters({ 
+        ...mapGetters({
             getUsersFriendsFromMe: "friendsStore/getUsersFriendsFromMe",
             getIsNotFriends: "friendsStore/getIsNotFriends",
             getCountFriends: "friendsStore/getCountFriends"
@@ -81,8 +83,6 @@ export default {
     border-bottom: 1px solid;
     margin-bottom: 20px;
 }
-
-.my_friends_header {}
 
 .my_friends_header h3 {
     padding: 0 0 8px 0;
@@ -115,8 +115,6 @@ export default {
     padding-right: 10px;
 }
 
-.btn_write_message {}
-
 .wrapper_text_not_friends {
     font-size: 15px;
     font-family: Russo One, fantasy, sans-serif;
@@ -126,7 +124,6 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
     .wrapper_my_friend_card_btns {
         flex-direction: column;

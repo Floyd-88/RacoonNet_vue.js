@@ -19,10 +19,7 @@
                     <CardFriend :user="user" />
 
                     <!-- блок с кнопками -->
-                    <FriendCardBtns 
-                        v-if="userTokenID == this.$route.query.id"
-                        :user="user" 
-                        @getUserInfo="getUserInfo" />
+                    <FriendCardBtns v-if="userTokenID == this.$route.query.id" :user="user" @getUserInfo="getUserInfo" />
                 </div>
             </div>
         </template>
@@ -48,7 +45,7 @@
                 <div class="my_friend_card">
                     <CardFriend :user="user" />
 
-                <!-- блок с кнопками -->
+                    <!-- блок с кнопками -->
 
                     <!-- друзья -->
                     <template v-if="user.type_user === 'друзья'">
@@ -60,9 +57,9 @@
                                 </div>
                                 <div class="my_friend_card_btn_delete_friend">
                                     <UIbtn class="btn_write_add_friend"
-                                        :class="{'btn_delete_friend': user.textBTN === 'Удалить из друзей' || user.textBTN ===  'Отменить заявку'}" 
+                                        :class="{ 'btn_delete_friend': user.textBTN === 'Удалить из друзей' || user.textBTN === 'Отменить заявку' }"
                                         @click="removeFriend(user)">
-                                        {{  user.textBTN = user.textBTN || "Удалить из друзей"  }}
+                                        {{ user.textBTN = user.textBTN || "Удалить из друзей" }}
                                     </UIbtn>
                                 </div>
                             </div>
@@ -78,10 +75,10 @@
                                     </UIbtn>
                                 </div>
                                 <div class="my_friend_card_btn_delete_friend">
-                                    <UIbtn class="btn_write_add_friend" 
-                                        :class="{'btn_delete_friend': user.textBTN === 'Отменить заявку'}" 
+                                    <UIbtn class="btn_write_add_friend"
+                                        :class="{ 'btn_delete_friend': user.textBTN === 'Отменить заявку' }"
                                         @click="removeFriend(user)">
-                                            {{ user.textBTN = user.textBTN || "Отменить заявку"  }}
+                                        {{ user.textBTN = user.textBTN || "Отменить заявку" }}
                                     </UIbtn>
                                 </div>
                             </div>
@@ -100,42 +97,40 @@
 
                                 <template v-if="user.acceptBTN === 'removeFriend'">
                                     <div class="my_friend_card_btn_delete_friend">
-                                    <UIbtn class="btn_write_add_friend"
-                                        :class="{'btn_delete_friend': user.textBTN === 'Удалить из друзей' || user.textBTN ===  'Отменить заявку'}" 
-                                        @click="removeFriend(user)">
-                                        {{  user.textBTN = user.textBTN || "Удалить из друзей"  }}
-                                    </UIbtn>
-                                </div>
+                                        <UIbtn class="btn_write_add_friend"
+                                            :class="{ 'btn_delete_friend': user.textBTN === 'Удалить из друзей' || user.textBTN === 'Отменить заявку' }"
+                                            @click="removeFriend(user)">
+                                            {{ user.textBTN = user.textBTN || "Удалить из друзей" }}
+                                        </UIbtn>
+                                    </div>
                                 </template>
 
                                 <template v-else-if="user.acceptBTN === 'addFriend'">
                                     <div class="my_friend_card_btn_delete_friend">
-                                    <UIbtn class="btn_write_add_friend" 
-                                    :class="{'btn_delete_friend': user.textBTN === 'Отменить заявку'}" 
-                                    @click="addFriend(user)">
-                                    {{ user.textBTN = user.textBTN || "Добавить в друзья" }}
-                                    </UIbtn>
-                                </div>
+                                        <UIbtn class="btn_write_add_friend"
+                                            :class="{ 'btn_delete_friend': user.textBTN === 'Отменить заявку' }"
+                                            @click="addFriend(user)">
+                                            {{ user.textBTN = user.textBTN || "Добавить в друзья" }}
+                                        </UIbtn>
+                                    </div>
                                 </template>
 
                                 <template v-else>
                                     <div class="my_friend_card_btn_write_show_block">
-                                    <div class="my_friend_card_btn_write_message">
-                                        <UIbtn class="btn_write_add_friend add_friend" 
-                                            @click="acceptFriend(user)">
-                                            Принять
-                                        </UIbtn>
-                                    </div>
+                                        <div class="my_friend_card_btn_write_message">
+                                            <UIbtn class="btn_write_add_friend add_friend" @click="acceptFriend(user)">
+                                                Принять
+                                            </UIbtn>
+                                        </div>
 
-                                    <div class="my_friend_card_btn_delete_friend">
-                                        <UIbtn class="btn_delete_friend" 
-                                            @click="refusalFriend(user)">
-                                            Отказаться
-                                        </UIbtn>
+                                        <div class="my_friend_card_btn_delete_friend">
+                                            <UIbtn class="btn_delete_friend" @click="refusalFriend(user)">
+                                                Отказаться
+                                            </UIbtn>
+                                        </div>
                                     </div>
-                                     </div>
                                 </template>
-                               
+
 
                             </div>
                         </div>
@@ -150,10 +145,10 @@
                                     </UIbtn>
                                 </div>
                                 <div class="my_friend_card_btn_delete_friend">
-                                    <UIbtn class="btn_write_add_friend" 
-                                    :class="{'btn_delete_friend': user.textBTN === 'Отменить заявку'}" 
-                                    @click="addFriend(user)">
-                                    {{ user.textBTN = user.textBTN || "Добавить в друзья" }}
+                                    <UIbtn class="btn_write_add_friend"
+                                        :class="{ 'btn_delete_friend': user.textBTN === 'Отменить заявку' }"
+                                        @click="addFriend(user)">
+                                        {{ user.textBTN = user.textBTN || "Добавить в друзья" }}
                                     </UIbtn>
                                 </div>
                             </div>
@@ -192,7 +187,6 @@ export default {
         ...mapMutations({
             setTitleFriend: "friendsStore/setTitleFriend",
             setModalWriteMessage: "messageStore/setModalWriteMessage",
-            // setIsFriendShow: "friendsStore/setIsFriendShow",
             setSearchFriend: "friendsStore/setSearchFriend",
             setSearchUsersFriends: "friendsStore/setSearchUsersFriends",
             setCountFriendsNull: "friendsStore/setCountFriendsNull",
@@ -235,13 +229,11 @@ export default {
             }
         },
         async acceptFriend(user) {
-            // user.acceptBTN = "removeFriend";
-            await this.AGREE_ADD_FRIEND_USER({id: user.id, userID: user.userID});
+            await this.AGREE_ADD_FRIEND_USER({ id: user.id, userID: user.userID });
             user.type_user = "друзья";
             user.textBTN = "Удалить из друзей"
         },
         refusalFriend(user) {
-            // user.acceptBTN = "addFriend";
             this.DELETE_FRIEND({ id: user.id, query: this.$route.query.id, userID: user.userID })
                 .then(() => {
                     user.type_user = null;
@@ -255,7 +247,6 @@ export default {
             getUsersMyFriendsFilter: "friendsStore/getUsersMyFriendsFilter",
             getTitleFriend: "friendsStore/getTitleFriend",
             getSearchUsersFriends: "friendsStore/getSearchUsersFriends",
-            // getTextBtnFfriend: "friendsStore/getTextBtnFfriend",
             getUser: "authorizationStore/getUser",
             getIsNotFriends: "friendsStore/getIsNotFriends",
         }),
@@ -265,9 +256,6 @@ export default {
 </script>
 
 <style scoped>
-.wrapper_my_friends_header {}
-
-.my_friends_header {}
 
 .my_friends_header h3 {
     padding: 0 0 8px 0;
@@ -275,8 +263,6 @@ export default {
     font-family: Russo One, fantasy, sans-serif;
     font-weight: 300;
 }
-
-.wrapper_my_friends_list {}
 
 .my_friend_card {
     display: flex;
@@ -337,8 +323,8 @@ export default {
 
 .btn_delete_friend {
     filter: opacity(0.7);
-    /* min-width: auto; */
 }
+
 .wrapper_show_btns {
     margin-left: 10px;
 }
@@ -353,38 +339,40 @@ export default {
 
 @media (max-width: 761px) {
     .wrapper_my_friend_card_show_btns {
-    flex-direction: column-reverse;
-    align-items: flex-end;
-    justify-content: flex-end;
-    padding-right: 0;
-}
-.btn_write_message {
-    min-width: 95px;
-    width: 95px;
-    margin-bottom: 10px;
-}
+        flex-direction: column-reverse;
+        align-items: flex-end;
+        justify-content: flex-end;
+        padding-right: 0;
+    }
 
-.btn_delete_friend {
-    min-width: 95px;
-    width: 95px;
-    margin-bottom: 7px;
-}
+    .btn_write_message {
+        min-width: 95px;
+        width: 95px;
+        margin-bottom: 10px;
+    }
 
-.my_friend_card_btn_write_show_block {
-    flex-direction: column;
-}
+    .btn_delete_friend {
+        min-width: 95px;
+        width: 95px;
+        margin-bottom: 7px;
+    }
 
-.btn_write_add_friend {
-    min-width: 95px;
-    margin-bottom: 7px;
-}
+    .my_friend_card_btn_write_show_block {
+        flex-direction: column;
+    }
 
-.btn_write_add_friend {
-    width: 95px;
-}
-.wrapper_my_friend_card_name {
-    max-width: 110px;
-    word-break: break-word;
-}
+    .btn_write_add_friend {
+        min-width: 95px;
+        margin-bottom: 7px;
+    }
+
+    .btn_write_add_friend {
+        width: 95px;
+    }
+
+    .wrapper_my_friend_card_name {
+        max-width: 110px;
+        word-break: break-word;
+    }
 }
 </style>

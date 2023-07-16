@@ -9,8 +9,7 @@
             <div class="wrapper_header_user_name">
                 <div class="header_ava_user" @click="$router.push({ name: 'mypage', params: { id: getUser.userID } })">
                     <template v-if="getUser.ava != undefined || getUser.ava != null">
-                        <!-- <img :src="pathAva" alt="ava"> -->
-                        <UIAva :ava="this.getUser.ava"/>
+                        <UIAva :ava="this.getUser.ava" />
                     </template>
                 </div>
                 <div class="header_name_user" @click="$router.push({ name: 'mypage', params: { id: getUser.userID } })">
@@ -32,103 +31,92 @@
 
             <template v-if="getStatus === 'success'">
                 <div class="wrapper_message_dialog_user" v-for="(message, index) in messageArray" :key="message.id">
-                <div class="dialog_ava_user" :ref="'message' + message.id">
-                    <template v-if="message.sender == $route.params.id">
-                        <div @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
-                            <!-- <img :src="pathAva" alt="ava"> -->
-                            <UIAva :ava="this.getUser.ava"/>
-                        </div>
-                    </template>
-                    <template v-else>
-                        <!-- <img :src="pathAvaMy" alt="ava" > -->
-                        <div @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
-                            <UIAva :ava="message.ava"/>
-                        </div>
-                    </template>
-
-                </div>
-                <div class="wrapper_block_message_user">
-                    <div class="wrapper_message_user">
-                        <div class="message_name_user"
-                            @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
-                            <p>{{ message.name + " " + message.surname }}</p>
-                        </div>
-                        <div class="message_time">
-                            <p>{{ message.date }}</p>
-                        </div>
-                        <div class="message_btn_delete" v-if="message.isMesssageDel">
-                            <UIbtn @click="DELETE_MESSAGES({ messageID: message.id, photos: message.photos })">Удалить
-                            </UIbtn>
-                        </div>
-                    </div>
-
-                    <div class="message_text" :class="{ 'active_text_fone': message.isMesssageDel, 'not_read_message': message.readed === 0 && message.sender === +id}"
-                        @click="showBtnDelete(message, index)">
-
-                        <!-- фотографии к сообщению -->
-                        <div class="wrapper_block_photo_post">
-                            <div class="wrapper_block_photo_post_first">
-                                <template
-                                    v-for="(photo, index) in messagePhotos.filter(i => i.messageID === message.id).slice(0, 1)"
-                                    :key="index">
-                                    <div class="wrapper_photo_post size_photo_1" 
-                                        v-if="message.id === photo.messageID"
-                                        @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index, id: photo.messageID, messageID: message.id })"
-                                        @load="scrollToElement()">
-                                        <!-- <img class="photo_post" 
-                                            :src="myPhotos(photo)" 
-                                            :alt="'photo' + photo.id"
-                                            > -->
-                                            <UIPhoto :photo="photo"/>
-
-                                    </div>
-                                </template>
+                    <div class="dialog_ava_user" :ref="'message' + message.id">
+                        <template v-if="message.sender == $route.params.id">
+                            <div @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
+                                <UIAva :ava="this.getUser.ava" />
                             </div>
+                        </template>
+                        <template v-else>
+                            <div @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
+                                <UIAva :ava="message.ava" />
+                            </div>
+                        </template>
 
-                            <div class="wrapper_block_photo_post_another"
-                                v-if="messagePhotos.filter(i => i.messageID === message.id).slice(1).length > 0">
-                                <template
-                                    v-for="(photo, index) in messagePhotos.filter(i => i.messageID === message.id).slice(1)"
-                                    :key="index">
-                                    <div class="wrapper_photo_post photo_another" 
-                                        v-if="message.id === photo.messageID"
-                                        @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index + 1, id: photo.messageID, messageID: message.id })"
-                                        @load="scrollToElement()">
-                                        <!-- <img class="photo_post" 
-                                            :src="myPhotos(photo)" 
-                                            :alt="'photo' + photo.id"
-                                            > -->
-                                            <UIPhoto :photo="photo"/>
-
-                                    </div>
-                                </template>
+                    </div>
+                    <div class="wrapper_block_message_user">
+                        <div class="wrapper_message_user">
+                            <div class="message_name_user"
+                                @click="$router.push({ name: 'mypage', params: { id: message.sender } })">
+                                <p>{{ message.name + " " + message.surname }}</p>
+                            </div>
+                            <div class="message_time">
+                                <p>{{ message.date }}</p>
+                            </div>
+                            <div class="message_btn_delete" v-if="message.isMesssageDel">
+                                <UIbtn @click="DELETE_MESSAGES({ messageID: message.id, photos: message.photos })">Удалить
+                                </UIbtn>
                             </div>
                         </div>
 
+                        <div class="message_text"
+                            :class="{ 'active_text_fone': message.isMesssageDel, 'not_read_message': message.readed === 0 && message.sender === +id }"
+                            @click="showBtnDelete(message, index)">
 
-                        <!-- текст сообщения -->
-                        <div v-if="messageText(message.message).length < 800">
-                            <p>
-                                {{ messageText(message.message) }}
-                            </p>
+                            <!-- фотографии к сообщению -->
+                            <div class="wrapper_block_photo_post">
+                                <div class="wrapper_block_photo_post_first">
+                                    <template
+                                        v-for="(photo, index) in messagePhotos.filter(i => i.messageID === message.id).slice(0, 1)"
+                                        :key="index">
+                                        <div class="wrapper_photo_post size_photo_1" v-if="message.id === photo.messageID"
+                                            @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index, id: photo.messageID, messageID: message.id })"
+                                            @load="scrollToElement()">
+                                            <UIPhoto :photo="photo" />
+
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <div class="wrapper_block_photo_post_another"
+                                    v-if="messagePhotos.filter(i => i.messageID === message.id).slice(1).length > 0">
+                                    <template
+                                        v-for="(photo, index) in messagePhotos.filter(i => i.messageID === message.id).slice(1)"
+                                        :key="index">
+                                        <div class="wrapper_photo_post photo_another" v-if="message.id === photo.messageID"
+                                            @click.stop="FULL_SIZE_PHOTO_MESSAGE({ 'bool': true, 'elem': index + 1, id: photo.messageID, messageID: message.id })"
+                                            @load="scrollToElement()">
+                                            <UIPhoto :photo="photo" />
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+
+                            <!-- текст сообщения -->
+                            <div v-if="messageText(message.message).length < 800">
+                                <p>
+                                    {{ messageText(message.message) }}
+                                </p>
+                            </div>
+                            <div v-else>
+                                <p v-if="!message.isFullText">
+                                    {{ messageText(message.message).slice(0, 800) }}
+                                </p>
+                                <p v-else>
+                                    {{ messageText(message.message) }}
+                                </p>
+                                <p class="more_text_message" v-if="!message.isFullText"
+                                    @click.stop="moreTextMessage(message)">
+                                    Показать еще
+                                </p>
+                            </div>
                         </div>
-                        <div v-else>
-                            <p v-if="!message.isFullText">
-                                {{ messageText(message.message).slice(0, 800) }}
-                            </p>
-                            <p v-else>
-                                {{ messageText(message.message) }}
-                            </p>
-                            <p class="more_text_message" v-if="!message.isFullText" @click.stop="moreTextMessage(message)">
-                                Показать еще
-                            </p>
-                        </div>
+
                     </div>
-
                 </div>
-            </div>
             </template>
-            
+
 
             <!-- -- -->
             <div class="wrapper_not_messages" v-if="messageArray.length < 1 && getIsNotMessages">
@@ -152,8 +140,8 @@
                         </div>
                     </div>
 
-                    <textarea class="new_message" id="name" placeholder="Введите сообщение" v-model="changeMessage" :disabled="getUser.delete === 1"
-                        :class="{ invalid: (v$.messageUser.$error) }">
+                    <textarea class="new_message" id="name" placeholder="Введите сообщение" v-model="changeMessage"
+                        :disabled="getUser.delete === 1" :class="{ invalid: (v$.messageUser.$error) }">
                     </textarea>
                 </div>
             </div>
@@ -165,7 +153,8 @@
                 <UIbtn class="btn_addPhoto" @click="addPostPhoto()" :disabled="getUser.delete === 1">
                 </UIbtn>
 
-                <button class="form_message_btn" type="submit" @click="submitMessage()" :disabled="v$.$invalid || getUser.delete === 1">
+                <button class="form_message_btn" type="submit" @click="submitMessage()"
+                    :disabled="v$.$invalid || getUser.delete === 1">
                     Написать
                 </button>
             </div>
@@ -185,7 +174,6 @@
 </template>
 
 <script>
-// import SocketioService from "../../services/socketio.service";
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, maxLength } from "@vuelidate/validators";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
@@ -218,7 +206,6 @@ export default {
     mounted() {
         this.setCountMessagesNull();
         this.setArrayMessages([]);
-        // this.scrollToElement();
         this.id = this.$route.params.id;
         this.LOAD_MESSAGES_USER(this.id)
             .then(() => {
@@ -226,21 +213,15 @@ export default {
                 if (this.$refs.scrollToMe) {
                     this.$nextTick(function () {
                         setTimeout(() => {
-                        this.scrollToElement();
+                            this.scrollToElement();
                         }, 1000)
                     });
                 }
                 // ----------------------------------------------------------------------------------
-                if(this.messageArray[0]) {
+                if (this.messageArray[0]) {
                     this.conv_id = this.messageArray[0].conv_id;
                 }
             });
-        // this.scrollToElement();
-        // console.log(this.getArrayMessages)
-        // SocketioService.subscribeToMessages((err, data) => {
-        //     if (err) return console.log(err)
-        //     this.setArrayMessages([...this.getArrayMessages, data])
-        // });
 
         //подгрузка новой партии сообщений при скроле страницы
         const options = {
@@ -274,21 +255,6 @@ export default {
         observer.observe(this.$refs.observer);
     },
 
-    // ----------------------------------------------------
-    // updated() {
-        // console.log('updated')
-        // if (this.scrolPhotoDown === true) {
-        //     if (this.$refs.scrollToMe) {
-        //         this.$nextTick(function () {
-        //             console.log('hhhhhhhhhhhhhhhhover')
-        //             // this.scrollToElement();
-        //         })
-        //     }
-        // }
-        // this.scrolPhotoDown = false;
-    // },
-    // ------------------------------------------------------
-
     async unmounted() {
         if (this.messageArray.length > 0) {
             this.setCountDialogsNull();
@@ -315,11 +281,9 @@ export default {
             UPDATE_FLAGS_UNREAD_MESSAGE: "messageStore/UPDATE_FLAGS_UNREAD_MESSAGE",
             FULL_SIZE_PHOTO_MESSAGE: "showFullPhotoStore/FULL_SIZE_PHOTO_MESSAGE",
             closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
-            // NULL_UNREAD_MESSAGE: "messageStore/NULL_UNREAD_MESSAGE"
         }),
-        
+
         ...mapMutations({
-            // setModalWriteMessage: "messageStore/setModalWriteMessage",
             setMessageUser: "messageStore/setMessageUser",
             setArrayMessagesUnread: "messageStore/setArrayMessagesUnread",
             setCountMessagesNull: "messageStore/setCountMessagesNull",
@@ -341,7 +305,6 @@ export default {
             this.WRITE_MESSAGE_USER({ addresseeID: this.$route.params.id })
                 .then(() => {
                     this.$nextTick(function () {
-                        // this.scrolPhotoDown = false;
                         this.scrollToElement();
                     });
                 });
@@ -366,7 +329,7 @@ export default {
                 }
             }
         },
-        
+
         //прокрутка сообщений вверх
         scrollToElementUP(top) {
             try {
@@ -399,7 +362,7 @@ export default {
 
         goBackMessage() {
             this.$router.go(-1);
-            if(this.messageArray[0]) {
+            if (this.messageArray[0]) {
                 this.UPDATE_FLAGS_UNREAD_MESSAGE(this.messageArray[0].conv_id);
             }
         }
@@ -430,9 +393,9 @@ export default {
                 this.scrolPhotoDown = true;
                 if (this.scrolPhotoDown === true) {
                     if (this.$refs.scrollToMe) {
-                            this.scrollToElement();
-                        }
+                        this.scrollToElement();
                     }
+                }
                 this.scrolPhotoDown = false;
 
                 this.setMessageUser(value);
@@ -474,7 +437,7 @@ export default {
     margin-bottom: 20px;
 }
 
-/* .header_btn_back {} */
+
 .header_btn_back button {
     padding: 6px;
     font-size: 14px;
@@ -512,7 +475,6 @@ export default {
     flex-grow: 1;
     overflow: auto;
     position: relative;
-    /* border: 1px solid; */
 }
 
 .wrapper_message_dialog_user {
@@ -520,7 +482,6 @@ export default {
     margin: 0px 15px 25px 10px;
 }
 
-/* .dialog_ava_user {} */
 .dialog_ava_user img {
     width: 40px;
     border-radius: 100%;
@@ -619,9 +580,6 @@ export default {
     font-size: 14px;
 }
 
-.invalid {
-    /* border: 1px solid red; */
-}
 
 .active_text_fone {
     background: aliceblue;
@@ -667,8 +625,6 @@ export default {
 .wrapper_block_photo_post_first {
     display: flex;
     width: 75%;
-    /* flex: 1.5; */
-    /* background-color: rgb(0 0 0 / 10%); */
     align-items: center;
     justify-content: center;
 }
@@ -677,16 +633,12 @@ export default {
     display: flex;
     flex-direction: column;
     width: 25%;
-    /* flex: 1; */
-    /* background-color: rgb(0 0 0 / 10%); */
     margin-left: 10px;
 }
 
 .wrapper_photo_post {
     height: -webkit-fill-available;
-    /* margin: 10px; */
     padding-bottom: 10px;
-    /* border-radius: 8px; */
     overflow: hidden;
 }
 
@@ -702,7 +654,6 @@ export default {
 .size_photo_1 {
     width: 100%;
     height: 100%;
-    /* max-height: 450px; */
 }
 
 .more_text_message {
@@ -718,7 +669,6 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
     .wrapper_block_write_message {

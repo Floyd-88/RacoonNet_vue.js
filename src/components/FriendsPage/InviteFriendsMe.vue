@@ -8,30 +8,33 @@
     <!-- карточка с другом -->
     <template v-if="getUsersFriendsMe.length > 0">
         <div class="wrapper_my_friends_list" v-for="user in getUsersFriendsMe" :key="user.userID">
-        <div class="my_friend_card">
-            <CardFriend :user="user"/>
+            <div class="my_friend_card">
+                <CardFriend :user="user" />
 
-            <!-- блок с кнопками -->
-            <div class="wrapper_my_friend_card_show_btns">
-                <div class="wrapper_my_friend_card_btns">
-                    <div class="my_friend_card_btn_write_message">
-                        <UIbtn class="btn_write_message" @click="AGREE_ADD_FRIEND_USER({id: user.id, userID: user.userID})">Принять приглашение</UIbtn>
+                <!-- блок с кнопками -->
+                <div class="wrapper_my_friend_card_show_btns">
+                    <div class="wrapper_my_friend_card_btns">
+                        <div class="my_friend_card_btn_write_message">
+                            <UIbtn class="btn_write_message"
+                                @click="AGREE_ADD_FRIEND_USER({ id: user.id, userID: user.userID })">Принять приглашение
+                            </UIbtn>
+                        </div>
+                        <div class="my_friend_card_btn_delete_friend">
+                            <UIbtn class="btn_delete_friend"
+                                @click="DELETE_FRIEND({ id: user.id, query: this.$route.query.id, userID: user.userID })">
+                                Отказаться от дружбы</UIbtn>
+                        </div>
                     </div>
-                <div class="my_friend_card_btn_delete_friend">
-                    <UIbtn class="btn_delete_friend" @click="DELETE_FRIEND({id: user.id, query: this.$route.query.id, userID: user.userID})">Отказаться от дружбы</UIbtn>
                 </div>
-                </div>
-            </div>
 
+            </div>
         </div>
-    </div>
     </template>
     <template v-else>
         <div class="wrapper_text_not_friends" v-if="getIsNotFriends">
             <p>Список входящих заявок пуст</p>
         </div>
     </template>
-   
 </template>
     
 <script>
@@ -42,8 +45,8 @@ export default {
 
     mounted() {
         this.setUsersFriendsMe([]);
-        if(this.getCountFriends === 0) {
-        this.GET_USER_ADD_FRIENDS_ME();
+        if (this.getCountFriends === 0) {
+            this.GET_USER_ADD_FRIENDS_ME();
         }
     },
 
@@ -62,7 +65,7 @@ export default {
             setUsersFriendsMe: "friendsStore/setUsersFriendsMe",
         }),
 
-        ...mapActions({ 
+        ...mapActions({
             GET_USER_ADD_FRIENDS_ME: "friendsStore/GET_USER_ADD_FRIENDS_ME",
             AGREE_ADD_FRIEND_USER: "friendsStore/AGREE_ADD_FRIEND_USER",
             DELETE_FRIEND: "friendsStore/DELETE_FRIEND"
@@ -71,7 +74,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters({ 
+        ...mapGetters({
             getUsersFriendsMe: "friendsStore/getUsersFriendsMe",
             getIsNotFriends: "friendsStore/getIsNotFriends",
             getCountFriends: "friendsStore/getCountFriends"
@@ -122,8 +125,6 @@ export default {
     padding-right: 10px;
 }
 
-.btn_write_message {}
-
 .btn_delete_friend {
     filter: opacity(0.7);
 }
@@ -137,7 +138,6 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
     .wrapper_my_friend_card_btns {
         flex-direction: column;
@@ -166,5 +166,4 @@ export default {
         font-size: 12px;
         padding: 2px;
     }
-}
-</style>
+}</style>

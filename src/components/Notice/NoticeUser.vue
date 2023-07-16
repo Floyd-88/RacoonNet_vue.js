@@ -8,24 +8,20 @@
                 <div class="wrapper_message_user">
                     <div class="wrapper_message_user_content">
                         <div class="message_user_ava" @click="getUserNotice(notice.userID)">
-                            <!-- <img class="ava_posts" :src="require(`../assets/${notice.ava}`)" alt="ava"> -->
-                                <UIAva :ava="notice.ava"/>
+                            <UIAva :ava="notice.ava" />
                         </div>
                         <div class="message_user_content">
                             <div class="message_user_name">
-                                <p>
-                                    <!-- {{ "Pink" + " " + "Floyd" }} -->
-                                </p>
                                 <div class="message_user_del">
                                     <UIbtn @click="NOTICE_ARRAY_DELETE(notice.id)">
                                         Скрыть
                                     </UIbtn>
                                 </div>
                             </div>
-                            <div class="message_user_text" :class="{'active_message_user_text': notice.show_notice === 0}" @click="showModalWindowOneNotice(notice)">
+                            <div class="message_user_text" :class="{ 'active_message_user_text': notice.show_notice === 0 }"
+                                @click="showModalWindowOneNotice(notice)">
                                 <p>
-                                    <span class="message_user_text_name"
-                                        @click.stop="getUserNotice(notice.userID)">
+                                    <span class="message_user_text_name" @click.stop="getUserNotice(notice.userID)">
                                         {{ `${notice.name} ${notice.surname}` }}
                                     </span>
                                     {{ (notice.selectedGender === "woman") ? (notice.text_notice.split(" ")[0] + 'a') + " "
@@ -38,10 +34,8 @@
                     <div class="wrapper_message_user_btn">
                         <div class="message_user_date">
                             <p>{{ notice.date.slice(0, 10) }}</p>
-                            <!-- <p class="show_btn_delete" v-if="dialog.isShowBtnDelete" @click="btnDialogDel(dialog)">...</p> -->
                         </div>
                     </div>
-                    <!-- <div ref="observer" class="observer"></div> -->
                 </div>
 
 
@@ -53,15 +47,13 @@
     <template v-else>
         <div class="wrapper_all_messages_users">
             <div class="not_notice">
-                <!-- <div class="wrapper_message_user_content"> -->
                 <p>У Вас нет новых уведомлений</p>
-                <!-- </div> -->
             </div>
 
         </div>
     </template>
     <UImodal v-if="getIsShowModalWindowOneNotice">
-        <NoticeOneUser @getUserNotice="getUserNotice"/>
+        <NoticeOneUser @getUserNotice="getUserNotice" />
     </UImodal>
 </template>
 
@@ -74,7 +66,6 @@ export default {
     methods: {
         ...mapMutations({
             setIsShowModalWindowNotice: "noticeStore/setIsShowModalWindowNotice",
-            // setNoticeArrayDelete: "noticeStore/setNoticeArrayDelete",
             setIsShowModalWindowOneNotice: "noticeStore/setIsShowModalWindowOneNotice",
             setSelectNotice: "noticeStore/setSelectNotice",
         }),
@@ -82,7 +73,7 @@ export default {
             NOTICE_ARRAY_DELETE: "noticeStore/NOTICE_ARRAY_DELETE",
             GET_PHOTOS_POST_NOTICE: "noticeStore/GET_PHOTOS_POST_NOTICE"
         }),
- 
+
         showModalWindowOneNotice(notice) {
             if (notice.text_notice !== "пригласил Вас в друзья" && notice.text_notice !== "принял Вашу заявку в друзья") {
                 this.setIsShowModalWindowOneNotice(true);
@@ -101,7 +92,6 @@ export default {
     computed: {
         ...mapGetters({
             getNoticeArray: "noticeStore/getNoticeArray",
-            // noticeTextArray: "noticeStore/noticeTextArray",
             getIsShowModalWindowOneNotice: "noticeStore/getIsShowModalWindowOneNotice"
         })
     },
@@ -144,7 +134,6 @@ export default {
     filter: brightness(90%);
 }
 
-/* .message_user_ava {} */
 .ava_posts {
     width: 70px;
     border-radius: 100%;
@@ -193,7 +182,7 @@ export default {
 }
 
 .message_user_text p {
-    font-family:'Times New Roman', Times, serif;
+    font-family: 'Times New Roman', Times, serif;
     word-break: break-word;
     font-size: 15px;
     min-width: 355px;
@@ -245,34 +234,34 @@ export default {
 @media (max-width: 761px) {
 
     .wrapper_all_messages_users {
-    min-width: 350px;
-}
+        min-width: 350px;
+    }
 
     .ava_posts {
-    width: 55px;
-}
+        width: 55px;
+    }
 
-.wrapper_message_user {
-padding: 10px 5px 5px 5px;
-    flex-direction: column-reverse;
-}
+    .wrapper_message_user {
+        padding: 10px 5px 5px 5px;
+        flex-direction: column-reverse;
+    }
 
-.wrapper_message_user_content{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+    .wrapper_message_user_content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-.message_user_content {
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-padding-left: 0px;
-}
+    .message_user_content {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        padding-left: 0px;
+    }
 
-.message_user_text p{
-    min-width: 300px;
-    width: 330px;
-}
+    .message_user_text p {
+        min-width: 300px;
+        width: 330px;
+    }
 }
 </style>

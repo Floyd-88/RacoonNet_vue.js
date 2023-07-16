@@ -3,13 +3,12 @@
 
   <div class="wrapper_main">
     <div class="main">
-      <ContentNews :isNotNews="isNotNews"/>
-    <!-- </div> -->
-    <div ref="observer" class="observer"></div>
-    <template v-if="isUIloadMoreContent">
-      <UIloadMoreContent/>
-    </template>
-  </div>
+      <ContentNews :isNotNews="isNotNews" />
+      <div ref="observer" class="observer"></div>
+      <template v-if="isUIloadMoreContent">
+        <UIloadMoreContent />
+      </template>
+    </div>
   </div>
 </template>
 
@@ -37,27 +36,27 @@ export default {
       if (entries[0].isIntersecting) {
         this.isUIloadMoreContent = true; //показывать что идет загрузка
 
-        if(this.loadNews) {
+        if (this.loadNews) {
           this.loadNews = false;
           this.LOAD_NEWS_FRIENDS_USERS()
-        .then((response) => {
-        this.isNotNews = false;
+            .then((response) => {
+              this.isNotNews = false;
 
-        this.isUIloadMoreContent = false;
-          if(response.data.length === 0) {
-              this.isNotNews = true;
-            }
+              this.isUIloadMoreContent = false;
+              if (response.data.length === 0) {
+                this.isNotNews = true;
+              }
 
-          this.loadNews = true;
+              this.loadNews = true;
 
-        })
-        .catch((err) => {
-          if (err.code === "ERR_CANCELED") {
-              console.log("Загрузка была отменена")
-            }
+            })
+            .catch((err) => {
+              if (err.code === "ERR_CANCELED") {
+                console.log("Загрузка была отменена")
+              }
 
-          this.loadNews = true;
-        });
+              this.loadNews = true;
+            });
         }
       } else {
         this.isUIloadMoreContent = false; //отключать загрузку
@@ -84,7 +83,7 @@ export default {
       setCommentsArray: "commentsPost/setCommentsArray",
       setCommentsCommentArray: "commentsPost/setCommentsCommentArray"
     }),
-    ...mapActions({ 
+    ...mapActions({
       LOAD_NEWS_FRIENDS_USERS: "postsMyPageStore/LOAD_NEWS_FRIENDS_USERS",
     })
   },
@@ -107,21 +106,16 @@ export default {
   margin-left: 180px;
 }
 
-.observer {
-    /* border: 1px solid; */
-}
-
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
   .wrapper_main {
     padding: 120px 0px 5px;
-}
+  }
 
-.main{
+  .main {
     margin-left: 0px;
-}
+  }
 }
 </style>
 

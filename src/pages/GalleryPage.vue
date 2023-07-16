@@ -23,8 +23,7 @@
               </div>
 
               <div class="all_photos" @click="fullSizePhoto({ bool: true, elem: index, id: photo.id })">
-                <UIPhoto :photo="photo"/>
-                <!-- <img class="photo" :src="require(`../assets/${photo.photo_name}`)" :alt="photo.photo_name"> -->
+                <UIPhoto :photo="photo" />
               </div>
             </div>
 
@@ -43,8 +42,6 @@
           </div>
         </div>
       </div>
-
-
 
     </div>
   </div>
@@ -78,9 +75,6 @@ export default {
         });
     }
 
-    // this.setFilterPhoto(this.getAllPhotosMyPage);
-    // console.log(this.getFilterPhoto)
-
     // обсервер срабатывает каждый раз когда докручиваем страницу донизу
     const options = {
       rootMargin: "0px",
@@ -89,7 +83,6 @@ export default {
     const callback = (entries) => {
       if (entries[0].isIntersecting) {
         this.setLimitAllPhoto(8);
-        // this.loadAllPhotos(JSON.parse(localStorage.getItem('user')).userID);
       }
     };
     const observer = new IntersectionObserver(callback, options);
@@ -99,18 +92,13 @@ export default {
 
   methods: {
     ...mapMutations({
-      // setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
-      // setCountPhoto: "loadPhotoStore/setCountPhoto",
       setLimitAllPhoto: "loadPhotoStore/setLimitAllPhoto",
-      // setArrayFilterPhotos: "galleryStore/setArrayFilterPhotos"
-
     }),
 
     ...mapActions({
       loadUser: "authorizationStore/loadUser",
       loadAllPhotos: "loadPhotoStore/loadAllPhotos",
       fullSizePhoto: "showFullPhotoStore/fullSizePhoto",
-      // modalLoadPhoto: "loadPhotoStore/modalLoadPhoto",
       closeModalFullSize: "showFullPhotoStore/closeModalFullSize",
 
     }),
@@ -128,35 +116,19 @@ export default {
       }
     },
 
-    // myPhotos(photo) {
-    //   try {
-    //     return require(`../assets/photo/${photo}`);
-    //   } catch (err) {
-    //     return require(`../assets/ava/ava_1.jpg`);
-    //   }
-    // },
-
   },
 
   computed: {
     ...mapGetters({
       isLoggedIn: "authorizationStore/isLoggedIn",
-
       getUser: "authorizationStore/getUser",
-
       getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
       getLimitAllPhoto: "loadPhotoStore/getLimitAllPhoto",
-      // getMyPhotosMyPage: "loadPhotoStore/getMyPhotosMyPage",
       getIsModalLoadPhoto: "loadPhotoStore/getIsModalLoadPhoto",
-      // getIsModalAllPhotos: "loadPhotoStore/getIsModalAllPhotos",
       getIsModalFullSize: "showFullPhotoStore/getIsModalFullSize",
-
       getArrayFilterPhotos: "galleryStore/getArrayFilterPhotos",
-
       getCheckedCat: "galleryStore/getCheckedCat",
-
       getIsNotPhoto: "loadPhotoStore/getIsNotPhoto",
-
       getIsNotCat: "galleryStore/getIsNotCat"
     }),
 
@@ -176,7 +148,6 @@ export default {
 }
 
 /* ------------------------ */
-
 .wrapper_header_checkboxes {
   display: flex;
   flex-wrap: wrap;
@@ -205,7 +176,6 @@ export default {
   background: #0197d6c2;
 }
 
-
 /* --------------------------- */
 .title_pthoto_name {
   margin-top: 10px;
@@ -217,7 +187,6 @@ export default {
 .wrapper_contents_allPhotos {
   width: 100%;
   display: flex;
-  /* padding: 20px; */
 }
 
 .wrapper_preview_allPhotos {
@@ -289,7 +258,6 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
   .wrapper_main {
     padding: 120px 0px 5px;

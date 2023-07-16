@@ -112,7 +112,6 @@ var editProfileStore = {
             resolve(resp);
           }
         })["catch"](function (err) {
-          // commit('auth_error', err);
           reject(err);
         });
       });

@@ -63,16 +63,11 @@ export default {
 .wrapper_my_friend_card_btns {
     display: flex;
     padding-top: 5px;
-
 }
 
 .my_friend_card_btn_write_message {
     padding-right: 10px;
 }
-
-.my_friend_card_btn_delete_friend {}
-
-.btn_write_message {}
 
 .btn_delete_friend {
     filter: opacity(0.7);
@@ -89,7 +84,6 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
     .wrapper_my_friend_card_btns {
         flex-direction: column;

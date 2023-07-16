@@ -3,32 +3,24 @@
     <div class="wrapper_text_new_post">
 
       <div class="input-errors" v-for="(error, index) of v$.postText.$errors" :key="index">
-          <div class="error-msg" v-if="error.$message === 'Value is required'">
-            Вы не написали комментарий
-          </div>
-          <div class="error-msg" v-else-if="error.$message === 'The maximum length allowed is 40000'">
-            Вы превысили допустимое количество символов
-          </div>
+        <div class="error-msg" v-if="error.$message === 'Value is required'">
+          Вы не написали комментарий
         </div>
+        <div class="error-msg" v-else-if="error.$message === 'The maximum length allowed is 40000'">
+          Вы превысили допустимое количество символов
+        </div>
+      </div>
 
-      <textarea
-          class="text_new_post"
-          placeholder="Введите текст поста"
-          @click.stop
-          v-model.trim="addPostText"
-          @blur="v$.postText.$reset()"
-          :class="{ invalid: (v$.postText.$error) }">
+      <textarea class="text_new_post" placeholder="Введите текст поста" @click.stop v-model.trim="addPostText"
+        @blur="v$.postText.$reset()" :class="{ invalid: (v$.postText.$error) }">
         </textarea>
     </div>
 
     <div class="wrapper_btn_addPost">
-      <UIbtn class="btn_addPhoto"
-          @click="addPostPhoto(postText)">
+      <UIbtn class="btn_addPhoto" @click="addPostPhoto(postText)">
       </UIbtn>
 
-      <UIbtn class="btn_addPost"
-             @click="addPostPage()"
-             :disabled="v$.$invalid">
+      <UIbtn class="btn_addPost" @click="addPostPage()" :disabled="v$.$invalid">
         Добавить
       </UIbtn>
     </div>
@@ -44,16 +36,16 @@ export default {
   name: "AddPost",
 
   setup() {
-        return { v$: useVuelidate() }
-    },
+    return { v$: useVuelidate() }
+  },
 
-    validations: {
-      postText: {
-            required,
-            min: minLength(1),
-            max: maxLength(40000),
-        },
+  validations: {
+    postText: {
+      required,
+      min: minLength(1),
+      max: maxLength(40000),
     },
+  },
 
   data() {
     return {
@@ -61,36 +53,35 @@ export default {
   },
 
   methods: {
-...mapMutations({
-  setPostText: "postsMyPageStore/setPostText",
-  setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
-  setIsLoadPhotoPost: "loadPhotoStore/setIsLoadPhotoPost"
-  }),
-...mapActions({addPost: "postsMyPageStore/addPost"}),
+    ...mapMutations({
+      setPostText: "postsMyPageStore/setPostText",
+      setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
+      setIsLoadPhotoPost: "loadPhotoStore/setIsLoadPhotoPost"
+    }),
+    ...mapActions({ addPost: "postsMyPageStore/addPost" }),
 
-   addPostPhoto() {
-    this.setIsLoadPhotoPost(true);
-    // this.addPost(postText)
-    this.setIsModalLoadPhoto(true);
-   },
+    addPostPhoto() {
+      this.setIsLoadPhotoPost(true);
+      this.setIsModalLoadPhoto(true);
+    },
 
-   addPostPage() {
-    if(this.getIsNotRepeatAddPost) {
-      this.addPost(); 
+    addPostPage() {
+      if (this.getIsNotRepeatAddPost) {
+        this.addPost();
+      }
     }
-   }
   },
 
   computed: {
-...mapState({postText: (state) => state.postsMyPageStore.postText,}),
+    ...mapState({ postText: (state) => state.postsMyPageStore.postText, }),
 
-...mapGetters({
-  getUser: "authorizationStore/getUser",
-  getPostText: "postsMyPageStore/getPostText",
-  getIsNotRepeatAddPost: "postsMyPageStore/getIsNotRepeatAddPost"
-}),
+    ...mapGetters({
+      getUser: "authorizationStore/getUser",
+      getPostText: "postsMyPageStore/getPostText",
+      getIsNotRepeatAddPost: "postsMyPageStore/getIsNotRepeatAddPost"
+    }),
 
-addPostText: {
+    addPostText: {
       get() {
         return this.getPostText;
       },
@@ -122,12 +113,12 @@ addPostText: {
 }
 
 .btn_addPhoto {
- background-image: url("../../assets/icons/camera_4.svg");
-    background-size: 58%;
-    background-repeat: no-repeat;
-    width: 60px;
-    background-position: center;
-    margin-right: 10px;
+  background-image: url("../../assets/icons/camera_4.svg");
+  background-size: 58%;
+  background-repeat: no-repeat;
+  width: 60px;
+  background-position: center;
+  margin-right: 10px;
 }
 
 .btn_addPost {
@@ -137,21 +128,22 @@ addPostText: {
   font-family: Russo One, fantasy, sans-serif;
   background: #00adef;
 }
+
 .btn_addPost:hover {
   filter: brightness(80%);
   transition: 0.3s;
 }
 
 .input-errors {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .error-msg {
-    color: red;
-    font-size: 14px;
+  color: red;
+  font-size: 14px;
 }
 
 .invalid {
-    border: 1px solid red;
+  border: 1px solid red;
 }
 </style>

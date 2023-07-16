@@ -117,7 +117,6 @@ export default {
 }
 
 .close_new_message {
-    /* display: none; */
     top: -15px;
     margin: -5px;
     width: 15px;

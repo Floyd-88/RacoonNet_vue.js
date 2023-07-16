@@ -108,7 +108,6 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
   .wrapper_nav {
@@ -131,7 +130,6 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* background-color: cornflowerblue; */
     width: 100%;
     box-shadow: 0px 2px 3px 0px rgb(0 0 0 / 30%);
   }
@@ -151,7 +149,6 @@ export default {
   .slideDown-enter-active,
   .slideDown-leave-active {
     transition: all 0.3s ease;
-    /* overflow: hidden; */
   }
 
   .slideDown-enter-from,

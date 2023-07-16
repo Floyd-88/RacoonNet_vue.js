@@ -1,7 +1,7 @@
 <template>
     <div class="my_friends_filter">
         <input type="text" placeholder="Поиск среди друзей" v-model="filterFriends">
-</div>
+    </div>
 </template>
 
 <script>
@@ -17,24 +17,23 @@ export default {
     },
 
     methods: {
-        ...mapMutations({setNameFriendUser: "friendsStore/setNameFriendUser"})
+        ...mapMutations({ setNameFriendUser: "friendsStore/setNameFriendUser" })
     },
 
     computed: {
         ...mapGetters({
-            // getUsersMyFriends: "friendsStore/getUsersMyFriends",
             getNameFriendUser: "friendsStore/getNameFriendUser"
         }),
 
         //двухстороннее связывние со store
         filterFriends: {
-        get() {
-            return this.getNameFriendUser;
+            get() {
+                return this.getNameFriendUser;
+            },
+            set(value) {
+                this.setNameFriendUser(value);
+            }
         },
-        set(value) {
-            this.setNameFriendUser(value);
-        }
-    },
     }
 
 

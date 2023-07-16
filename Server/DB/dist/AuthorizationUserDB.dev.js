@@ -115,15 +115,7 @@ function () {
       return this.connection.execute("SELECT userID, pass_token FROM users WHERE email = ?", [token], function (err, user) {
         callback(err, user[0]);
       });
-    } // //
-    // selectByEmail(email, callback) {
-    //     this.connection.execute(
-    //         `SELECT userID, is_admin FROM users WHERE email = ?`, [email],
-    //         function(err, row) {
-    //             callback(err, row[0]);
-    //         })
-    // }
-    //получение пароля для сверки
+    } //получение пароля для сверки
 
   }, {
     key: "getPassword",
@@ -155,12 +147,7 @@ function () {
       return this.connection.execute("UPDATE users SET name='\u0423\u0414\u0410\u041B\u0415\u041D', surname='', email=NULL, year_user=0, month_user=0, day_user=0, selectedGender='', country='', city='', delete_user=1 WHERE userID =?", user, function (err) {
         callback(err);
       });
-    } // deleteUserDB(id, callback) {
-    //     return this.connection.execute('DELETE FROM `users` WHERE userID = ?', id, (err) => {
-    //         callback(err);
-    //     })
-    // }
-    // меняем аватарку пользователя
+    } // меняем аватарку пользователя
 
   }, {
     key: "updateAva",

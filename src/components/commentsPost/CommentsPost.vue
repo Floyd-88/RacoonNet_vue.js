@@ -16,12 +16,12 @@
                     <div class="my_friend_ava" @mouseover.stop="user.isNameUserLike = true"
                         @mouseleave.stop="user.isNameUserLike = false"
                         @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_post}` } })">
-                        <!-- <img :src="loadAva(user.ava)" alt="ava"> -->
-                        <UIAva :ava="user.ava"/>
+                        <UIAva :ava="user.ava" />
 
                     </div>
                     <div class="wrapper_like_user_name" v-if="user.isNameUserLike">
-                        <p class="like_user_name" @mouseleave="closeUserLikes(post)">{{ user.name + " " + user.surname }}</p>
+                        <p class="like_user_name" @mouseleave="closeUserLikes(post)">{{ user.name + " " + user.surname }}
+                        </p>
                     </div>
                 </div>
 
@@ -58,8 +58,7 @@
                     <div class="my_friend" v-for="user in getUsersLikesPost" :key="user.author_likes_post">
                         <div class="my_friend_ava_full"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_post}` } })">
-                            <!-- <img :src="loadAva(user.ava)" alt="ava"> -->
-                            <UIAva :ava="user.ava"/>
+                            <UIAva :ava="user.ava" />
                         </div>
                         <div class="my_friend_name"
                             @click="$router.push({ name: 'mypage', params: { id: `${user.author_likes_post}` } })">
@@ -97,14 +96,11 @@ export default {
 
     methods: {
         ...mapMutations({
-            // setIsShowWriteComment: "commentsPost/setIsShowWriteComment",
             setUsersLikesPost: "commentsPost/setUsersLikesPost",
             setShowModalBlockUsersLikesPost: "commentsPost/setShowModalBlockUsersLikesPost"
         }),
         ...mapActions({
-            // LOAD_COMMENTS_POST: "commentsPost/LOAD_COMMENTS_POST",
             SAVE_LIKE_COUNT_POST: "postsMyPageStore/SAVE_LIKE_COUNT_POST",
-            // LOAD_AUTHOR_LIKES: "postsMyPageStore/LOAD_AUTHOR_LIKES",
             GET_USER_LIKES_POST: "commentsPost/GET_USER_LIKES_POST"
         }),
 
@@ -152,12 +148,6 @@ export default {
             this.setShowModalBlockUsersLikesPost(false)
             this.setUsersLikesPost([]);
         },
-
-        // closeNameUserLikePost(user) {
-        //     user.isNameUserLike = false;
-        //     // post.activeLikesUsers = false;
-        //     // this.setUsersLikesPost([]);
-        // }
     },
 
     computed: {
@@ -199,8 +189,6 @@ export default {
     margin-left: 5px;
     cursor: pointer;
 }
-
-.wrapper_comments_show_btn {}
 
 .comments_show_btn {
     width: 30px;
@@ -284,14 +272,12 @@ export default {
     align-items: center;
     justify-content: center;
     z-index: 3;
-    /* opacity: 0.1; */
 }
 
 .modal_show_users_likes_window {
     position: relative;
     width: max-content;
     height: max-content;
-    /* padding-bottom: 10px; */
     border-radius: 5px;
     background: whitesmoke;
     box-shadow: 3px 6px 5px 1px rgb(0 0 0 / 5%);
@@ -309,16 +295,12 @@ export default {
     bottom: -20px;
 }
 
-.like_user_name {}
-
 .my_friend {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 5px;
 }
-
-.my_friend_ava_full {}
 
 .my_friend_ava_full img {
     width: 64px;

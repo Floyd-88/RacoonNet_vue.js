@@ -9,8 +9,6 @@ var _axios = _interopRequireDefault(require("axios"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-// import axios from "axios";
-// import SocketioService from "../../services/socketio.service";
 var noticeStore = {
   state: function state() {
     return {
@@ -87,11 +85,6 @@ var noticeStore = {
               commit = _ref.commit;
               return _context.abrupt("return", new Promise(function (resolve, reject) {
                 _axios["default"].get("http://localhost:8000/new_notice").then(function (res) {
-                  // res.data.map(notice => {
-                  //     if (notice.selectedGender === "woman") {
-                  //         notice.text = state.noticeTextArray
-                  //     }
-                  // })
                   commit("setNoticeArray", res.data);
                   resolve();
                 })["catch"](function (err) {

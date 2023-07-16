@@ -21,6 +21,7 @@ export default {
   color: black;
   box-shadow: 0px 2px 3px 0px rgb(0 0 0 / 40%);
 }
+
 .btn:hover {
   filter: brightness(90%);
   transition: 0.3s;

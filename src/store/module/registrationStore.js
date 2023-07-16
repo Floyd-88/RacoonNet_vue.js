@@ -1,6 +1,4 @@
 import axios from "axios";
-// import SocketioService from "../../services/socketio.service";
-
 
 export const registrationStore = {
     modulRegister: false,

@@ -104,15 +104,6 @@ class AuthorizationUserDB {
             })
     }
 
-    // //
-    // selectByEmail(email, callback) {
-    //     this.connection.execute(
-    //         `SELECT userID, is_admin FROM users WHERE email = ?`, [email],
-    //         function(err, row) {
-    //             callback(err, row[0]);
-    //         })
-    // }
-
     //получение пароля для сверки
     getPassword(id, callback) {
         this.connection.execute(
@@ -140,15 +131,10 @@ class AuthorizationUserDB {
 
     //удаление пользователя
     deleteUserDB(user, callback) {
-            return this.connection.execute(`UPDATE users SET name='УДАЛЕН', surname='', email=NULL, year_user=0, month_user=0, day_user=0, selectedGender='', country='', city='', delete_user=1 WHERE userID =?`, user, (err) => {
-                callback(err);
-            });
-        }
-        // deleteUserDB(id, callback) {
-        //     return this.connection.execute('DELETE FROM `users` WHERE userID = ?', id, (err) => {
-        //         callback(err);
-        //     })
-        // }
+        return this.connection.execute(`UPDATE users SET name='УДАЛЕН', surname='', email=NULL, year_user=0, month_user=0, day_user=0, selectedGender='', country='', city='', delete_user=1 WHERE userID =?`, user, (err) => {
+            callback(err);
+        });
+    }
 
     // меняем аватарку пользователя
     updateAva(ava, callback) {
@@ -156,10 +142,5 @@ class AuthorizationUserDB {
             callback(err);
         });
     }
-
-
 }
-
-
-
 module.exports = AuthorizationUserDB;

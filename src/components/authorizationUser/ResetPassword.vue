@@ -68,7 +68,6 @@
                     </div>
                 </div>
 
-
             </div>
         </div>
 
@@ -245,13 +244,9 @@ export default {
     width: 200px;
 }
 
-/* .form_register_input {} */
-
 .form_register_input {
-    /*margin: 5px;*/
     height: 30px;
     width: 100%;
-    /*padding-left: 3px;*/
 }
 
 .error-msg {
@@ -297,14 +292,12 @@ export default {
 }
 
 @media (max-width: 761px) {
+    .wrapper_form {
+        width: 350px;
+    }
 
-.wrapper_form {
-  width: 350px;
+    .wrapper_form_change_password_input {
+        width: 190px;
+    }
 }
-
-.wrapper_form_change_password_input {
-  width: 190px;
-}
-}
-
 </style>

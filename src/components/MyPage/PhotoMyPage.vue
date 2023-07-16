@@ -74,7 +74,6 @@ export default {
             closeModalFullSize: "showFullPhotoStore/closeModalFullSize"
         }),
     },
-    
     computed: {
         ...mapGetters({
             getUser: "authorizationStore/getUser",
@@ -102,7 +101,6 @@ export default {
     top: 0;
     right: 0;
     cursor: auto;
-    /* opacity: 0; */
 }
 
 .wrapper_contents_myPhoto {
@@ -170,7 +168,6 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
   .wrapper_contents_myPhoto {

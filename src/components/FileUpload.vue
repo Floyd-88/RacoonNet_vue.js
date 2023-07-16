@@ -80,7 +80,6 @@ export default {
 
     methods: {
         ...mapMutations({
-            // setIsModalLoadPhoto: "loadPhotoStore/setIsModalLoadPhoto",
             setArrayLoadImage: "loadPhotoStore/setArrayLoadImage",
             setMessageLoadPhoto: "loadPhotoStore/setMessageLoadPhoto",
             setUrlsImages: "loadPhotoStore/setUrlsImages",
@@ -93,8 +92,6 @@ export default {
             removePreviewImage: "loadPhotoStore/removePreviewImage",
             addPhotoServer: "loadPhotoStore/addPhotoServer",
             cancelLoadPhoto: "loadPhotoStore/cancelLoadPhoto",
-            // LOAD_MESSAGES_PHOTOS: "messageStore/LOAD_MESSAGES_PHOTOS"
-
         }),
 
         choosePhoto() {
@@ -167,9 +164,9 @@ export default {
                             newMessagePhotos.destinationID = this.addresseeID;
                             newMessagePhotos.arrayPhotos = resp;
 
-                                SocketioService.sendMessage(this.getArrayMessages[this.getArrayMessages.length - 1]);
+                            SocketioService.sendMessage(this.getArrayMessages[this.getArrayMessages.length - 1]);
 
-                                SocketioService.sendMessagePhotos(newMessagePhotos);
+                            SocketioService.sendMessagePhotos(newMessagePhotos);
                         }
                     }
                     this.notShowBtnAddPhotos = true;
@@ -193,7 +190,6 @@ export default {
             getArrayLoadImage: "loadPhotoStore/getArrayLoadImage",
             getUrlsImages: "loadPhotoStore/getUrlsImages",
             getProgressLoadPhoto: "loadPhotoStore/getProgressLoadPhoto",
-            // getUser: "authorizationStore/getUser",
             getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
             getPhotosMessagesArray: "messageStore/getPhotosMessagesArray",
             getArrayMessages: "messageStore/getArrayMessages"
@@ -218,8 +214,6 @@ export default {
     height: 30px;
 }
 
-/* .load_photo {} */
-
 .wrapper_preview_photos {
     display: flex;
     justify-content: center;
@@ -241,11 +235,6 @@ export default {
     width: 100%;
     height: auto;
 }
-
-/* .preview_image.removing {
-    transform: scale(0);
-    transition: transform .3s;
-} */
 
 .preview_image:hover .preview_remove {
     opacity: 1;
@@ -296,7 +285,6 @@ export default {
     align-items: center;
     justify-content: center;
     transition: width .22s;
-    /* bottom: 4px; */
 }
 
 .active_load {
@@ -311,7 +299,6 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
 
     .form_load_photo {

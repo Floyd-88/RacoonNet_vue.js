@@ -1,19 +1,12 @@
 <template>
     <template v-if="!isEditAva">
         <div class="wrapper_block_full_size" :class="{'wrapper_block_full_size_action': getMessageID}">
-            <!-- <transition-group name='fade' tag='div'> -->
             <div class="wrapper_block_full_size_img" :class="{'wrapper_block_full_size_img_action': getMessageID}">
                 <div class="wrapper_full_size_img">
-                    <!-- <img class="full_size_img" 
-                            v-if="currentImg.photo"
-                            :src="require(`../assets/${currentImg.photo.photo_name}`)" 
-                            :alt="currentImg.photo.photo_name" /> -->
                         <div class="full_size_img" >
                             <UIPhoto :photo="currentImg.photo" :full_size="true"/>
                         </div>
                 </div>
-                <!-- </transition-group> -->
-                <!-- <button class="prev" v-on:click.left="setPrevIndexPhoto" >&#10094;</button> -->
                 <a class="prev" @click.prevent="setPrevIndexPhoto" href='#'>&#10094;</a>
                 <a class="next" @click.prevent="setNextIndexPhoto" href='#'>&#10095;</a>
 
@@ -131,7 +124,6 @@ export default {
             getAllPhotosMyPage: "loadPhotoStore/getAllPhotosMyPage",
             getIndexPhoto: "showFullPhotoStore/getIndexPhoto",
             getModulePhotoRemove: "loadPhotoStore/getModulePhotoRemove",
-            // getIdPhoto: "loadPhotoStore/getIdPhoto",
             getPhotosPostsArray: "postsMyPageStore/getPhotosPostsArray",
             getPhotosMessagesArray: "messageStore/getPhotosMessagesArray",
             getPostID: "showFullPhotoStore/getPostID",
@@ -188,7 +180,6 @@ export default {
             } else if (this.getMessageID) {
                 if (this.getPhotosMessagesArray.length > 0) {
                     let photosMessageArray = this.getPhotosMessagesArray.filter(photo => photo.messageID === this.getMessageID)
-                    // this.setCommentsPhotoArray([])
 
                     if (photosMessageArray.length > 0) {
                         if (this.getIndexPhoto === -1) {
@@ -203,7 +194,6 @@ export default {
                         }
                         if (photo) {
                             this.setPhotoId(photo.photoID);
-                            // this.LOAD_COMMENTS_PHOTO(photo.photoID)
                             return { photo, photosMessageArray };
                         }
                     } else {
@@ -250,14 +240,6 @@ export default {
 </script>
 
 <style scoped>
-/* .fade-enter-active, .fade-leave-active {
-  transition: all 1s;
-} 
-.fade-enter, .fade-leave-to {
-  opacity: 0; 
-  transform: translateX(30px);
-} */
-
 .wrapper_block_full_size_ava {
     display: flex;
     width: 700px;
@@ -380,10 +362,6 @@ export default {
     font-family: Russo One, fantasy, sans-serif;
 }
 
-.wrapper_block_info_count {}
-
-.wrapper_block_info_remove_photo {}
-
 .remove_photo {
     border: none;
     background: repeat;
@@ -415,8 +393,6 @@ export default {
     font-size: 17px;
 }
 
-/* .wrapper_save_editPost_btn {} */
-
 .save_editPost_btn {
     width: 80px;
     margin-left: 5px;
@@ -424,9 +400,7 @@ export default {
 }
 
 /* МЕДИА-ЗАПРОСЫ */
-
 @media (max-width: 761px) {
-
     .wrapper_block_full_size {
     width: 360px;
     height: auto;

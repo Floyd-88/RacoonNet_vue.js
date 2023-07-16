@@ -4,7 +4,9 @@ const bodyParser = require('body-parser'); //промежуточное ПО п�
 const fs = require('fs') //получение доступа к файловой системе
 const fileUpload = require('express-fileupload');
 const sharp = require('sharp'); //обрабатывает изображения
-const { validationResult } = require('express-validator'); //валидирует данные полученные в запросах
+const {
+    validationResult
+} = require('express-validator'); //валидирует данные полученные в запросах
 
 
 const mailer = require('./nodemailer'); //отправка сообщений на почту
@@ -67,7 +69,9 @@ const app = express(); //создаем объект который предст
 const http = require('http').createServer(app); //создаем http-сервер
 
 const router = express.Router(); //определяем Router для объединения дочерних подмаршрутов
-router.use(bodyParser.urlencoded({ extended: false })); //анализирует в виде закодированных в URL данных в формате application/x-www-form-urlencoded (false - без вложенных объекто)
+router.use(bodyParser.urlencoded({
+    extended: false
+})); //анализирует в виде закодированных в URL данных в формате application/x-www-form-urlencoded (false - без вложенных объекто)
 router.use(bodyParser.json()); //анализирует текст как JSON
 
 
@@ -2555,19 +2559,6 @@ io.on("connection", (socket) => {
             })
         }
     });
-
-
-
-    //удаление фото из папки на сервере
-    // router.delete('/delete_photo_server', authenticateJWT, function(req, res) {
-    //     console.log(req.query.photo)
-    //     fs.unlink(`../src/assets/${req.query.photo}`, (err) => {
-    //         if (err) console.log(err)
-    //     });
-    // })
-
-
-
 });
 
 app.use(router)

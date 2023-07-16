@@ -1,6 +1,4 @@
 import axios from "axios";
-// import SocketioService from "../../services/socketio.service";
-
 export const authorizationStore = {
     state: () => ({
         status: "success",
@@ -134,7 +132,9 @@ export const authorizationStore = {
                 if (localStorage.getItem('refreshToken')) {
                     axios({
                         url: "http://localhost:8000/del_refresh_token",
-                        data: { refreshToken: localStorage.getItem('refreshToken') },
+                        data: {
+                            refreshToken: localStorage.getItem('refreshToken')
+                        },
                         method: "POST"
                     })
                 }
@@ -169,23 +169,15 @@ export const authorizationStore = {
                             commit("editProfileStore/setEditingUser", user, {
                                 root: true
                             });
-                            commit("postsMyPageStore/setPostText", "", { root: true })
+                            commit("postsMyPageStore/setPostText", "", {
+                                root: true
+                            })
 
                             commit("auth_request", "success")
-                                // window.location.href = `/id${user.userID}`;
-
-                            //при открытии профиля сохраняем информацию об id в комнате
-                            // SocketioService.sendUserID(id.id, cb => {
-                            //     console.log(cb);
-                            // });
-
                             resolve(resp);
                         }
                     })
                     .catch((err) => {
-                        // commit('auth_error');
-                        // localStorage.removeItem('token');
-                        // localStorage.removeItem('user');
                         reject(err);
                     })
             })
@@ -209,13 +201,18 @@ export const authorizationStore = {
         },
 
         //обновление токена
-        UPDATE_TOKEN({ commit, dispatch }) {
+        UPDATE_TOKEN({
+            commit,
+            dispatch
+        }) {
             commit("auth_request", "loading")
             return new Promise((resolve, reject) => {
                 if (localStorage.getItem('refreshToken')) {
                     axios({
                             url: "http://localhost:8000/refresh",
-                            data: { refreshToken: localStorage.getItem('refreshToken') },
+                            data: {
+                                refreshToken: localStorage.getItem('refreshToken')
+                            },
                             method: "POST"
                         })
                         .then(response => {
@@ -234,12 +231,6 @@ export const authorizationStore = {
                             if (err) {
                                 if (err.code !== "ERR_CANCELED") {
                                     dispatch("logout")
-                                        // commit('logout');
-                                        // localStorage.removeItem('token');
-                                        // localStorage.removeItem('refreshToken');
-                                        // localStorage.removeItem('user');
-                                        // delete axios.defaults.headers.common['Authorization'];
-                                        // return window.location.href = '/'
                                 }
                                 reject(err);
                             }

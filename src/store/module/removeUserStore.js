@@ -30,7 +30,6 @@ export const removeUserStore = {
             return new Promise((resolve, reject) => {
                 let url = "http://localhost:8000/delete_user";
 
-                // user.email = getters.getUser.email;
                 user.id = getters.getUser.userID;
                 user.allPhoto = [...getters.allPhoto, ...getters.postPhoto];
                 user.nameAva = getters.getUser.ava
@@ -41,7 +40,9 @@ export const removeUserStore = {
                         method: 'DELETE'
                     })
                     .then((resp) => {
-                        dispatch('authorizationStore/logout', null, { root: true })
+                        dispatch('authorizationStore/logout', null, {
+                            root: true
+                        })
                         resolve(resp);
                     })
                     .catch((err) => {

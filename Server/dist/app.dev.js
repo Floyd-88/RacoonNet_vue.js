@@ -2103,13 +2103,7 @@ io.on("connection", function (socket) {
         error: error
       });
     }
-  }); //удаление фото из папки на сервере
-  // router.delete('/delete_photo_server', authenticateJWT, function(req, res) {
-  //     console.log(req.query.photo)
-  //     fs.unlink(`../src/assets/${req.query.photo}`, (err) => {
-  //         if (err) console.log(err)
-  //     });
-  // })
+  });
 });
 app.use(router);
 var port = process.env.PORT || 8000;

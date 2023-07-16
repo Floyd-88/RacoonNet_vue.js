@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions} from 'vuex';
 import UIbtn from '../UI/UIbtn.vue';
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, maxLength } from "@vuelidate/validators";
@@ -105,18 +105,13 @@ export default {
     },
 
     methods: {
-        ...mapMutations({
-            // setCommentPost: "commentsPost/setCommentPost",
-            // setUnderCommentPost: "commentsPost/setUnderCommentPost",
-            // setCommentsArray: "commentsPost/setCommentsArray"
-        }),
         ...mapActions({
             SAVE_COMMENTS_POST: "commentsPost/SAVE_COMMENTS_POST",
             SAVE_UNDER_COMMENTS_POST: "commentsPost/SAVE_UNDER_COMMENTS_POST"
         }),
 
         clickWriteCommentPost() {
-            this.SAVE_COMMENTS_POST({ postID: this.post.id, textMessage: this.commentText, userPage: this.$route.params.id || this.post.authorPost});
+            this.SAVE_COMMENTS_POST({ postID: this.post.id, textMessage: this.commentText, userPage: this.$route.params.id || this.post.authorPost });
             this.$emit("showComments", 1);
             this.commentText = "";
             this.v$.commentText.$reset();
@@ -138,31 +133,6 @@ export default {
             this.underCommentText = "";
             this.v$.underCommentText.$reset()
         },
-
-        // setCommentText(value) {
-        //         this.commentText = value;
-        //         this.v$.commentText.$touch();
-        //     }
-    },
-
-    computed: {
-        ...mapGetters({
-            // getCommentPost: "commentsPost/getCommentPost",
-            // getUnderCommentPost: "commentsPost/getUnderCommentPost"
-        }),
-        ...mapState({
-            // commentPost: (state) => state.commentsPost.commentPost,
-            // underCommentPost: (state) => state.commentsPost.underCommentPost
-        }),
-        // underCommentText: {
-        //     get() {
-        //         return this.getUnderCommentPost;
-        //     },
-        //     set(value) {
-        //         this.setUnderCommentPost(value);
-        //         this.v$.underCommentPost.$touch();
-        //     }
-        // }
     },
 
     watch: {
@@ -195,7 +165,6 @@ export default {
     width: 100%;
     height: 70px;
     border-radius: 5px;
-    /* border: 1px solid; */
     padding: 3px;
     resize: none;
 }

@@ -16,7 +16,7 @@ export default {
 .modal_fone {
   display: flex;
   position: fixed;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   top: 0;
   left: 0;
   right: 0;
@@ -25,19 +25,19 @@ export default {
   justify-content: center;
   z-index: 3;
   overflow: auto;
-  /* opacity: 0.1; */
 }
+
 .modal_window {
   position: relative;
   width: max-content;
   height: max-content;
-  /* padding-bottom: 10px; */
   border-radius: 5px;
   background: whitesmoke;
   box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 70%);
   overflow-y: auto;
   overflow-x: hidden;
 }
+
 .close_modal {
   position: absolute;
   top: 5px;
@@ -46,10 +46,9 @@ export default {
   height: 30px;
   cursor: pointer;
   border: 1px solid black;
-    background-image: url("../../assets/icons/close.svg");
+  background-image: url("../../assets/icons/close.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
-
 </style>

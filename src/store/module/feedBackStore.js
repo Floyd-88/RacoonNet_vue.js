@@ -35,7 +35,10 @@ export const feedBackStore = {
     },
 
     actions: {
-        async SEND_MESSAGE_PROBLEM_USER({ getters, commit }) {
+        async SEND_MESSAGE_PROBLEM_USER({
+            getters,
+            commit
+        }) {
 
             await axios.post('http://localhost:8000/problem_user', {
                     cause: getters.getMessageFeedBack.selectedCause,

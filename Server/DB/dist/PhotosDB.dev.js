@@ -19,7 +19,7 @@ function () {
     this.connection = mysql.createConnection(config); // подключаем базу данных
 
     this.createTablePhotos();
-    this.createTablePhotosLikes(); // this.createTablePhotosPost();
+    this.createTablePhotosLikes();
   } //создаем таблицу БД с фотографиями
 
 

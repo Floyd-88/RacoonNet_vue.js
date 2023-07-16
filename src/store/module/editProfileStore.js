@@ -74,13 +74,19 @@ export const editProfileStore = {
 
     actions: {
 
-        closeModalEditProfile({ commit, getters }) {
+        closeModalEditProfile({
+            commit,
+            getters
+        }) {
             commit("setModulEditProfile", false);
             commit('setEditingUser', getters.getUser); //если изменения небыли внесены возвращаем полям старые значения при закрытии окна
         },
 
         //редактирование профиля
-        updateProfile({ commit, getters }, user) {
+        updateProfile({
+            commit,
+            getters
+        }, user) {
             return new Promise((resolve, reject) => {
 
                 let url = "http://localhost:8000/editProfile";
@@ -101,7 +107,6 @@ export const editProfileStore = {
                         }
                     })
                     .catch(err => {
-                        // commit('auth_error', err);
                         reject(err);
                     })
             })

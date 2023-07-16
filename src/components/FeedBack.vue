@@ -32,45 +32,31 @@
 
                 <!--название проблемы-->
                 <div class="wrapper_form_feedBack_input">
-                    <div class="input-errors" 
-                        v-for="(error, index) of v$.title.$errors" 
-                        :key="index">
-                        <div class="error-msg" 
-                            v-if="error.$message === 'Value is required'">
+                    <div class="input-errors" v-for="(error, index) of v$.title.$errors" :key="index">
+                        <div class="error-msg" v-if="error.$message === 'Value is required'">
                             Необходимо указать краткое название
                         </div>
                     </div>
-                    <input class="form_feedBack_input_name_problem"
-                        :class="{invalid: (v$.title.$error)}" 
-                        id="name_problem" type="text"
-                        placeholder="Краткое название" 
-                        autofocus 
-                        v-model="feedBackTitle">
+                    <input class="form_feedBack_input_name_problem" :class="{ invalid: (v$.title.$error) }" id="name_problem"
+                        type="text" placeholder="Краткое название" autofocus v-model="feedBackTitle">
                 </div>
 
                 <!--описание проблемы-->
                 <div class="form_feedBack_input_description_problem ">
-                    <div class="input-errors"
-                        v-for="(error, index) of v$.description.$errors"
-                        :key="index">
-                        
-                        <div class="error-msg"
-                            v-if="error.$message === 'Value is required'">
+                    <div class="input-errors" v-for="(error, index) of v$.description.$errors" :key="index">
+
+                        <div class="error-msg" v-if="error.$message === 'Value is required'">
                             Опишите возникшую проблему
                         </div>
                     </div>
-                    <textarea class="form_feedBack_description_problem" 
-                        :class="{invalid: (v$.description.$error)}" 
-                        id="description_problem"
-                        placeholder="Подробно опишите возникшую у Вас проблему" 
+                    <textarea class="form_feedBack_description_problem" :class="{ invalid: (v$.description.$error) }"
+                        id="description_problem" placeholder="Подробно опишите возникшую у Вас проблему"
                         v-model="feedBackDescription"></textarea>
                 </div>
             </div>
 
             <div class="wrapper_form_feedBack_btn">
-                <button class="form_feedBack_btn" 
-                    type="submit"
-                    :disabled="v$.$invalid && getMessageFeedBack.selectedCause">
+                <button class="form_feedBack_btn" type="submit" :disabled="v$.$invalid && getMessageFeedBack.selectedCause">
                     Отправить обращение
                 </button>
             </div>
@@ -91,8 +77,8 @@ export default {
     components: { CloseModal },
 
     setup() {
-    return {v$: useVuelidate()}
-  },
+        return { v$: useVuelidate() }
+    },
 
     validations() {
         return {
@@ -112,13 +98,13 @@ export default {
     },
 
     methods: {
-        ...mapMutations({ 
+        ...mapMutations({
             setIsModalFeedBack: "feedBackStore/setIsModalFeedBack",
             setMessageFeedBackSelectedCause: "feedBackStore/setMessageFeedBackSelectedCause",
             setMessageFeedBackTitle: "feedBackStore/setMessageFeedBackTitle",
-            setMessageFeedBackDescription: "feedBackStore/setMessageFeedBackDescription",            
-         }),
-         ...mapActions({SEND_MESSAGE_PROBLEM_USER: "feedBackStore/SEND_MESSAGE_PROBLEM_USER"}),
+            setMessageFeedBackDescription: "feedBackStore/setMessageFeedBackDescription",
+        }),
+        ...mapActions({ SEND_MESSAGE_PROBLEM_USER: "feedBackStore/SEND_MESSAGE_PROBLEM_USER" }),
 
         feedBackSubmit() {
             this.SEND_MESSAGE_PROBLEM_USER()
@@ -177,8 +163,7 @@ export default {
 }
 </script>
 
-<style scoped>
-.form_feedBack_title {
+<style scoped>.form_feedBack_title {
     font-size: 20px;
     display: flex;
     justify-content: center;
@@ -190,10 +175,6 @@ export default {
 .wrapper_form_feedBack {
     padding: 0 20px 20px 20px;
 }
-
-.form_feedBack {}
-
-.wrapper_form_feedBack_name {}
 
 .form_label_feedBack {
     font-family: Russo One, fantasy, sans-serif;
@@ -218,15 +199,11 @@ export default {
     font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
 }
 
-.wrapper_form_feedBack_input {}
-
 .form_feedBack_input_name_problem {
     width: 100%;
     height: 30px;
     margin-bottom: 10px;
 }
-
-.form_feedBack_input_description_problem {}
 
 .form_feedBack_description_problem {
     width: 100%;
@@ -254,10 +231,11 @@ export default {
 }
 
 .error-msg {
-  color: red;
-  font-size: 14px;
+    color: red;
+    font-size: 14px;
 }
+
 .invalid {
-  border: 1px solid red;
+    border: 1px solid red;
 }
 </style>

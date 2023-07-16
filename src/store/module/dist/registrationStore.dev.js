@@ -9,7 +9,6 @@ var _axios = _interopRequireDefault(require("axios"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-// import SocketioService from "../../services/socketio.service";
 var registrationStore = {
   modulRegister: false,
   state: function state() {

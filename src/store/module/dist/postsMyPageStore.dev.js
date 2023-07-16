@@ -53,7 +53,6 @@ var postsMyPageStore = {
       limitNews: 10,
       // лимит новостей на странице
       likesPost: "",
-      // isLoadPhotoPost: "" //загрузка фотографий в пост
       photosPostsArray: [],
       //фотографии к постам
       isNotRepeatAddPost: true //предотвращение потворной отправки поста
@@ -83,7 +82,6 @@ var postsMyPageStore = {
     getLikesPost: function getLikesPost(state) {
       return state.likesPost;
     },
-    // getIsLoadPhotoPost: (state) => state.isLoadPhotoPost
     getPhotosPostsArray: function getPhotosPostsArray(state) {
       return state.photosPostsArray;
     },
@@ -152,9 +150,6 @@ var postsMyPageStore = {
     setLikesPost: function setLikesPost(state, value) {
       state.likesPost = value;
     },
-    // setIsLoadPhotoPost(state, bool) {
-    //     state.isLoadPhotoPost = bool
-    // }
     setPhotosPostsArray: function setPhotosPostsArray(state, value) {
       state.photosPostsArray = value;
     },
@@ -211,9 +206,7 @@ var postsMyPageStore = {
                     }
                   } else {
                     resolve(response.data);
-                  } // console.log(response)
-                  // resolve(response)
-
+                  }
                 })["catch"](function (err) {
                   reject(err);
                 });
@@ -264,11 +257,7 @@ var postsMyPageStore = {
 
                       case 6:
                         //отправляем уведомление адресату без перезагрузки страницы
-                        _socketio["default"].sendNotice(newPost.id); //отправляем уведомление всем кто находится в комнате(MyPage)
-                        // SocketioService.sendInfoNewPost("add post", cb => {
-                        //     console.log(cb);
-                        // });
-
+                        _socketio["default"].sendNotice(newPost.id);
 
                       case 7:
                       case "end":
@@ -350,10 +339,7 @@ var postsMyPageStore = {
               return regeneratorRuntime.awrap(_axios["default"]["delete"]('http://localhost:8000/dataBase_delete', {
                 data: paramsBody
               }).then(function () {
-                commit("setCountPostDel"); //отправляем уведомление всем кто находится в комнате(MyPage)
-                // SocketioService.sendInfoNewPost("delete post", cb => {
-                //     console.log(cb);
-                // });
+                commit("setCountPostDel");
               })["catch"](function (error) {
                 console.log(error);
               }));
@@ -395,11 +381,7 @@ var postsMyPageStore = {
                 }).then(function (response) {
                   if (response.data.length > 0) {
                     commit("setNewsPostsFriends", [].concat(_toConsumableArray(state.newsPostsFriends), _toConsumableArray(response.data)));
-                    commit("setCountNews", 10); // response.data.forEach(post => {
-                    //     dispatch("commentsPost/LOAD_COMMENTS_POST", post.authorPost, { root: true });
-                    //     dispatch("commentsPost/LOAD_COMMENTS_COMMENT", post.authorPost, { root: true });
-                    // })
-
+                    commit("setCountNews", 10);
                     response.data.forEach(function (post) {
                       if (post.photos === "1") {
                         dispatch("LOAD_POST_PHOTOS", {

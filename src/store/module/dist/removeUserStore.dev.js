@@ -54,8 +54,7 @@ var removeUserStore = {
       var getters = _ref.getters,
           dispatch = _ref.dispatch;
       return new Promise(function (resolve, reject) {
-        var url = "http://localhost:8000/delete_user"; // user.email = getters.getUser.email;
-
+        var url = "http://localhost:8000/delete_user";
         user.id = getters.getUser.userID;
         user.allPhoto = [].concat(_toConsumableArray(getters.allPhoto), _toConsumableArray(getters.postPhoto));
         user.nameAva = getters.getUser.ava;

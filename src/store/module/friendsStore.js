@@ -38,7 +38,6 @@ export const friendsStore = {
         getTextBtnFfriend: (state) => state.textBtnFfriend,
         getIsFriend: (state) => state.isFriend,
         getTitleFriend: (state) => state.titleFriend,
-        // getNotificationAddFriends: (state) => state.notificationAddFriends,
         getUsersFriendsMe: (state) => state.usersFriendsMe,
         getUsersMyFriends: (state) => state.usersMyFriends,
         getUsersMyFriendsFilter: (state) => {
@@ -75,10 +74,6 @@ export const friendsStore = {
             state.isFriend = bool;
         },
 
-        // setNotificationAddFriends(state, value) {
-        //     state.notificationAddFriends = value
-        // },
-
         setTitleFriend(state, value) {
             state.titleFriend = value
         },
@@ -109,7 +104,6 @@ export const friendsStore = {
         setNameFriendUser(state, value) {
             state.nameFriendUser = value;
         },
-
 
         setSearchFriendName(state, value) {
             state.searchFriend.name = value;
@@ -273,7 +267,9 @@ export const friendsStore = {
 
                         //отправляем уведомление адресату без перезагрузки страницы
                         SocketioService.sendNotice(value.userID);
-                        dispatch("noticeStore/GET_NEW_NOTICE", null, { root: true });
+                        dispatch("noticeStore/GET_NEW_NOTICE", null, {
+                            root: true
+                        });
                     })
             } catch (err) {
                 console.log(err)
@@ -457,7 +453,9 @@ export const friendsStore = {
                                 state.isNotFriends = true;
                             }
                         }
-                        dispatch("noticeStore/GET_NEW_NOTICE", null, { root: true });
+                        dispatch("noticeStore/GET_NEW_NOTICE", null, {
+                            root: true
+                        });
 
                         let addresseeID = {
                                 text_notice: res.data,

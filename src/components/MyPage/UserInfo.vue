@@ -6,25 +6,23 @@
       <!-- блок с аватаркой -->
       <div class="wrapper_ava_user" @mouseenter="show_btn_photo" @mouseleave="active_btn = false">
         <div class="block_ava_user">
-          <UIAva :ava="getUser.ava"/>
+          <UIAva :ava="getUser.ava" />
         </div>
 
         <div class="wrapper_btn_main_photo" v-if="getUser.is_editProfile">
 
           <transition v-if="text_btn === 'Загрузить главное фото'" name="mainPhoto">
-            <button class="btn_main_photo" v-show="active_btn"
-              @click="showFullAvaPhoto({ bool: true, load: 'load' })">{{ text_btn }}</button>
+            <button class="btn_main_photo" v-show="active_btn" @click="showFullAvaPhoto({ bool: true, load: 'load' })">{{
+              text_btn }}</button>
           </transition>
 
           <transition v-else name="mainPhoto">
-            <button class="btn_main_photo" v-show="active_btn"
-              @click="showFullAvaPhoto({ bool: true, load: 'edit' })">{{ text_btn }}</button>
+            <button class="btn_main_photo" v-show="active_btn" @click="showFullAvaPhoto({ bool: true, load: 'edit' })">{{
+              text_btn }}</button>
           </transition>
 
         </div>
       </div>
-
-      <!-- <div @click="editToken">Поменять токен</div> -->
 
       <!-- модальное окно для загрузки-редактирования аватарки  -->
       <div @click="setShowFullAvaPhoto(false)">
@@ -39,40 +37,33 @@
           <p v-if="getUser.name" class="name_user">{{ getUser.name + " " + getUser.surname }}</p>
         </div>
         <div class="wrapper_city_user">
-          <p v-if="getUser.country" class="city_user">Страна: <span class="city_user_name">{{ getUser.country }}</span></p>
-          <p v-if="getUser.city"  class="city_user">Город:  <span class="city_user_name">{{ getUser.city }}</span></p>
+          <p v-if="getUser.country" class="city_user">Страна: <span class="city_user_name">{{ getUser.country }}</span>
+          </p>
+          <p v-if="getUser.city" class="city_user">Город: <span class="city_user_name">{{ getUser.city }}</span></p>
           <p v-if="age" class="city_user">Возраст: <span class="city_user_name">{{ age }}</span></p>
-          <p v-if="getUser.selectedGender"  class="city_user">Пол: <span class="city_user_name">{{ getUser.selectedGender }}</span></p>
+          <p v-if="getUser.selectedGender" class="city_user">Пол: <span class="city_user_name">{{ getUser.selectedGender
+          }}</span></p>
         </div>
       </div>
 
     </div>
 
     <div class="wrapper_btn" v-if="getIsBtnsBlock">
-      <UIbtn 
-      v-if="getUser.is_editProfile"
-      class="redaction_profile_btn" 
-      @click="setModulEditProfile(true)">
-      Редактировать профиль
+      <UIbtn v-if="getUser.is_editProfile" class="redaction_profile_btn" @click="setModulEditProfile(true)">
+        Редактировать профиль
       </UIbtn>
 
-      <UIbtn 
-      v-if="!getUser.is_editProfile && getToken"
-      class="redaction_profile_btn" 
-      @click="setModalWriteMessage(true)">
-      Написать сообщение
+      <UIbtn v-if="!getUser.is_editProfile && getToken" class="redaction_profile_btn" @click="setModalWriteMessage(true)">
+        Написать сообщение
       </UIbtn>
 
-      <UIbtn 
-      v-if="!getUser.is_editProfile && getToken && getIsFriend"
-      ref = addFriendBtn
-      class="add_friend_btn"
-      :class="{'add_friend_btn_togle': getTextBtnFfriend === 'Заявка отправлена'}" 
-      @click="addFriend(getTextBtnFfriend)">
-      {{ getTextBtnFfriend }}
+      <UIbtn v-if="!getUser.is_editProfile && getToken && getIsFriend" ref=addFriendBtn class="add_friend_btn"
+        :class="{ 'add_friend_btn_togle': getTextBtnFfriend === 'Заявка отправлена' }"
+        @click="addFriend(getTextBtnFfriend)">
+        {{ getTextBtnFfriend }}
       </UIbtn>
     </div>
-      
+
   </div>
 </template>
 
@@ -87,7 +78,7 @@ export default {
   data() {
     return {
       active_btn: false,
-      text_btn: "",   
+      text_btn: "",
     };
   },
 
@@ -102,9 +93,6 @@ export default {
     ...mapActions({
       showFullAvaPhoto: "showFullPhotoStore/showFullAvaPhoto",
       ADD_FRIEND: "friendsStore/ADD_FRIEND",
-      // CHECK_REQUEST_FRIEND: "friendsStore/CHECK_REQUEST_FRIEND"
-      // age: "authorizationStore/age",
-
     }),
 
     show_btn_photo() {
@@ -118,19 +106,14 @@ export default {
 
     //приглашение в друзья
     addFriend(nameBTN) {
-      if(nameBTN === "Рассмотреть заявку") {
-      this.setCountFriendsNull();
+      if (nameBTN === "Рассмотреть заявку") {
+        this.setCountFriendsNull();
         this.setIsFriendShow("friendsMe");
         this.$router.push({ name: 'friendspage', query: { id: JSON.parse(localStorage.getItem('user')).userID } });
       } else {
         this.ADD_FRIEND(this.$route.params.id);
       }
     }
-
-    // editToken() {
-    //   localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSWx5YSIsImlkIjoyLCJpYXQiOjE2NzYzMjA0NjUsImV4cCI6MTY3NjQwNjg2NX0=.kWsqEdmYWjsShYxCy8TV2ivBk7J_wLCqNaAlilrs2VE");
-    // }
-
   },
 
   computed: {
@@ -140,23 +123,22 @@ export default {
       getToken: "authorizationStore/getToken",
       getTextBtnFfriend: "friendsStore/getTextBtnFfriend",
       getIsFriend: "friendsStore/getIsFriend",
-      // getStatus: "authorizationStore/getStatus",
       getIsBtnsBlock: "friendsStore/getIsBtnsBlock"
     }),
 
     //вычисляет возраст пользователя
     age() {
-            const today = new Date();
-            const birthday = this.getUser.year_user + "-" + this.getUser.month_user + "-" + this.getUser.day_user;
-            const birthDate = new Date(birthday);
-            const age = today.getFullYear() - birthDate.getFullYear();
-            if (
-                today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
-            ) {
-                return age - 1;
-            }
-            return age;
-        },
+      const today = new Date();
+      const birthday = this.getUser.year_user + "-" + this.getUser.month_user + "-" + this.getUser.day_user;
+      const birthDate = new Date(birthday);
+      const age = today.getFullYear() - birthDate.getFullYear();
+      if (
+        today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+      ) {
+        return age - 1;
+      }
+      return age;
+    },
 
   },
 
@@ -176,10 +158,6 @@ export default {
   0% {
     transform: scale(0);
   }
-
-  /* 50% {
-    transform: scale(1);
-  } */
   100% {
     transform: scale(1);
   }
@@ -194,8 +172,6 @@ export default {
   box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 40%);
 }
 
-/* .wrapper_ava_user {
-} */
 .wrapper_info {
   display: flex;
 }
@@ -216,11 +192,6 @@ export default {
   overflow: hidden;
   border-radius: 100%;
 }
-
-/* .ava_user {
-  width: 100%;
-  height: auto;
-} */
 
 .wrapper_btn_main_photo {
   width: 83%;
@@ -245,8 +216,6 @@ export default {
   transition: 0.3s;
 }
 
-/* .wrapper_name_user {
-} */
 .name_user {
   font-size: 20px;
   font-family: Russo One, fantasy, sans-serif;
@@ -259,7 +228,6 @@ export default {
 .city_user {
   font-size: 16px;
   font-family: Russo One, fantasy, sans-serif;
-  /*margin-bottom: 5px;*/
 }
 
 .city_user_name {
@@ -269,9 +237,9 @@ export default {
 
 .wrapper_btn {
   margin: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .redaction_profile_btn {
@@ -288,88 +256,87 @@ export default {
   border: 2px solid #00adef;
 
 }
+
 .add_friend_btn_togle {
   /* filter: opacity(0.5); */
-    background: content-box;
-    /* transition: 0.3s; */
-    z-index: 1;
-    border: 2px solid #00adef;
-    box-shadow: 0px 1px 3px 0px rgb(0 0 0 / 40%);
+  background: content-box;
+  /* transition: 0.3s; */
+  z-index: 1;
+  border: 2px solid #00adef;
+  box-shadow: 0px 1px 3px 0px rgb(0 0 0 / 40%);
 }
+
 .add_friend_btn_togle:hover {
-    /* filter: opacity(0.5); */
-    background: content-box;
-    /* transition: 0.3s; */
+  /* filter: opacity(0.5); */
+  background: content-box;
+  /* transition: 0.3s; */
 }
 
 /* МЕДИА-ЗАПРОСЫ */
 
 @media (max-width: 761px) {
-.wrapper_user {
-flex-direction: column;
-}
+  .wrapper_user {
+    flex-direction: column;
+  }
 
-.wrapper_info {
+  .wrapper_info {
     flex-direction: column;
     align-items: center;
-}
+  }
 
-.block_ava_user {
+  .block_ava_user {
     width: 100px;
     height: 100px;
     margin-top: 10px;
-}
+  }
 
-.wrapper_info_user{
-  margin: 10px;
+  .wrapper_info_user {
+    margin: 10px;
     width: 100%;
     padding: 0 20px;
-}
+  }
 
-.wrapper_name_user {
+  .wrapper_name_user {
     display: flex;
     justify-content: center;
-}
+  }
 
-.wrapper_city_user{
+  .wrapper_city_user {
     margin-top: 15px;
     display: flex;
     flex-direction: column;
-}
+  }
 
-.city_user{
+  .city_user {
     font-size: 17px;
     opacity: 0.9;
-}
+  }
 
-.city_user_name{
+  .city_user_name {
     font-size: 17px;
-}
+  }
 
-.redaction_profile_btn {
+  .redaction_profile_btn {
     font-size: 15px;
-}
+  }
 
-.name_user{
-  text-align: center;
-}
+  .name_user {
+    text-align: center;
+  }
 
-/* МЕДИА-ЗАПРОСЫ */
-
-@media (max-width: 761px) {
   .wrapper_btn_main_photo {
-  width: 146%;
-}
-.btn_main_photo {
-  font-size: 12px;
-}
+      width: 146%;
+    }
 
-.add_friend_btn {
-  width: auto;
-  font-size: 15px;
+    .btn_main_photo {
+      font-size: 12px;
+    }
 
-}
+    .add_friend_btn {
+      width: auto;
+      font-size: 15px;
 
-}
+    }
+
 }
 </style>

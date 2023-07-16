@@ -124,9 +124,15 @@ export const messageStore = {
 
     actions: {
         //сохранение сообщений в базе данных
-        async WRITE_MESSAGE_USER({ state, commit, dispatch }, body) {
+        async WRITE_MESSAGE_USER({
+            state,
+            commit,
+            dispatch
+        }, body) {
 
-            let date = await dispatch("postsMyPageStore/newDate", null, { root: true });
+            let date = await dispatch("postsMyPageStore/newDate", null, {
+                root: true
+            });
 
             let message = {
                 destinationID: body.addresseeID,
@@ -161,7 +167,10 @@ export const messageStore = {
         },
 
         //получение всех диалогов пользователя
-        async LOAD_DIALOGS({ commit, state }, body) {
+        async LOAD_DIALOGS({
+            commit,
+            state
+        }, body) {
             await commit("setIsNotDialogs", false);
             await commit("setIsUIloadMoreDialogs", true);
 
@@ -182,10 +191,6 @@ export const messageStore = {
                         } else {
                             commit("setIsNotDialogs", true);
                         }
-                        // let count = resp.data.reduce((accum, item) => accum + item.unread, 0);
-                        // commit("setCountNewMessage", count)
-                        // commit("setMessageUser", "")
-                        // commit("setModalWriteMessage", false)
                         resolve(resp);
                     })
                     .catch((err) => {
@@ -197,7 +202,11 @@ export const messageStore = {
         },
 
         //получение переписки с конкретным пользователем
-        async LOAD_MESSAGES_USER({ commit, state, dispatch }, id) {
+        async LOAD_MESSAGES_USER({
+            commit,
+            state,
+            dispatch
+        }, id) {
             await commit("setIsNotMessages", false);
             await commit("setIsUIloadMoreMessages", true);
 
@@ -224,7 +233,9 @@ export const messageStore = {
 
                                 await resp.data.forEach(async message => {
                                     if (message.photos === "1") {
-                                        await dispatch("LOAD_MESSAGES_PHOTOS", { messageID: message.id });
+                                        await dispatch("LOAD_MESSAGES_PHOTOS", {
+                                            messageID: message.id
+                                        });
                                     }
                                 });
                                 resolve(resp);
@@ -240,14 +251,18 @@ export const messageStore = {
         },
 
         //удаление сообщения
-        async DELETE_MESSAGES({ state }, body) {
+        async DELETE_MESSAGES({
+            state
+        }, body) {
             try {
                 let message_params = {
                     deleteID: body.messageID,
                     photos: body.photos
                 }
 
-                await axios.delete("http://localhost:8000/user_messages", { data: message_params })
+                await axios.delete("http://localhost:8000/user_messages", {
+                        data: message_params
+                    })
                     .then(function() {
                         state.arrayMessages = state.arrayMessages.filter(message => message.id !== body.messageID);
                     })
@@ -257,7 +272,10 @@ export const messageStore = {
         },
 
         //удаление диалога
-        async DELETE_DIALOGS({ state, commit }, body) {
+        async DELETE_DIALOGS({
+            state,
+            commit
+        }, body) {
             try {
                 let dialogs_params = {
                     dialogsID: body.convID,
@@ -276,12 +294,15 @@ export const messageStore = {
         },
 
         //обновление флагов непрочитанных сообщений после выхода из переписки
-        async UPDATE_FLAGS_UNREAD_MESSAGE({ commit }, conv_id) {
+        async UPDATE_FLAGS_UNREAD_MESSAGE({
+            commit
+        }, conv_id) {
             try {
-                await axios.put("http://localhost:8000/unread_messages", { conv_id })
+                await axios.put("http://localhost:8000/unread_messages", {
+                        conv_id
+                    })
                     .then(function() {
                         commit("setArrayDialogsConvID", conv_id)
-                            // commit("setCountNewMessage", getters.getCountNewMessage - res.data.count)
                     })
             } catch (err) {
                 console.log(err)
@@ -289,7 +310,10 @@ export const messageStore = {
         },
 
         //обновление диалогов без перезагрузки через сокеты
-        UPDATE_DIALOGS_SOCKETS({ state, commit }, data) {
+        UPDATE_DIALOGS_SOCKETS({
+            state,
+            commit
+        }, data) {
             state.arrayDialogs.map((dialog) => {
                 if (dialog.convId == data.conv_id) {
                     dialog.message = data.message,
@@ -320,12 +344,17 @@ export const messageStore = {
             }
 
             state.arrayDialogs.sort((a, b) => {
-                if (a.unread) { return b.id - a.id }
+                if (a.unread) {
+                    return b.id - a.id
+                }
             });
         },
 
         //загрузка фотографий к сообщениям
-        async LOAD_MESSAGES_PHOTOS({ commit, state }, params) {
+        async LOAD_MESSAGES_PHOTOS({
+            commit,
+            state
+        }, params) {
             try {
                 await axios.get('http://localhost:8000/message_photos.js', {
                     params

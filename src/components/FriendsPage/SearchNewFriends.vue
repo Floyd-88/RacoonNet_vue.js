@@ -70,7 +70,8 @@
                         <div class="search_form search_age search_age_before">
                             <select class="search_form_title_select" name="" id="" v-model.trim="searchAgeBefore">
                                 <option class="search_form_title_option" value="" selected>До</option>
-                                <option class="search_form_title_option" v-for="n in 100 - ((searchAgeAfter) ? (searchAgeAfter - 1) : 0)"
+                                <option class="search_form_title_option"
+                                    v-for="n in 100 - ((searchAgeAfter) ? (searchAgeAfter - 1) : 0)"
                                     :value="(searchAgeAfter) ? n + searchAgeAfter - 1 : n"
                                     :key="(searchAgeAfter) ? n + searchAgeAfter - 1 : n">
                                     {{ (searchAgeAfter) ? n + searchAgeAfter - 1 : n }}
@@ -92,9 +93,8 @@
             <!-- ------------- -->
         </div>
         <div class="wrapper_search_new_friends_btn">
-            <UIbtn class="search_new_friends_btn" 
-            @click="search_users()"
-            :disabled="v$.$invalid || !isblockBtnSearchUsers">Найти новых друзей</UIbtn>
+            <UIbtn class="search_new_friends_btn" @click="search_users()" :disabled="v$.$invalid || !isblockBtnSearchUsers">
+                Найти новых друзей</UIbtn>
         </div>
     </div>
 </template>
@@ -141,14 +141,14 @@ export default {
                 }
             },
             country: {
-                max: maxLength(30), 
+                max: maxLength(30),
                 name_validation: {
                     $validator: validName,
                     $message: 'Invalid Name'
                 }
             },
             city: {
-                max: maxLength(30), 
+                max: maxLength(30),
                 name_validation: {
                     $validator: validName,
                     $message: 'Invalid Name'
@@ -251,7 +251,6 @@ export default {
             },
             set(value) {
                 this.setSearchFriendAgeAfter(value)
-                // this.v$.city.$touch()
             }
         },
         searchAgeBefore: {
@@ -260,7 +259,6 @@ export default {
             },
             set(value) {
                 this.setSearchFriendAgeBefore(value)
-                // this.v$.city.$touch()
             }
         },
         searchSex: {
@@ -269,7 +267,6 @@ export default {
             },
             set(value) {
                 this.setSearchFriendSex(value)
-                // this.v$.city.$touch()
             }
         },
     }
@@ -321,15 +318,11 @@ export default {
     opacity: 0.9;
 }
 
-.wrapper_search_new_friends_filter_form {}
-
 .search_form {
     margin-bottom: 10px;
     display: flex;
     flex-direction: column;
 }
-
-.search_country {}
 
 .search_form_title {
     font-size: 15px;
@@ -338,8 +331,6 @@ export default {
 .search_form_title_input {
     height: 25px;
 }
-
-.search_city {}
 
 .wrapper_search_age {
     display: flex;
@@ -352,8 +343,6 @@ export default {
     justify-content: flex-start;
 }
 
-.search_age {}
-
 .search_age_before {
     padding-left: 10px;
 }
@@ -362,8 +351,6 @@ export default {
     width: 70px;
     height: 25px;
 }
-
-.search_form_title_option {}
 
 .search_sex {
     width: 80px;
